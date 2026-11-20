@@ -260,6 +260,12 @@ def _entry_from_card(card: dict) -> dict:
 
     ``image``, ``usd`` and ``eur`` (DEC-1075) are the front-face image path
     (see _image_path) and the non-foil prices as numbers (see _price).
+
+    ``back_face`` holds the second face's ``type_line`` and ``oracle_text`` on a
+    modal DFC whose second face is a land (spell // land cards and Pathways),
+    and only there: the goldfish plays such a card as its land face and reads
+    that face's mana and enters-tapped text. A transform card's land back is
+    left out: it is cast as its front.
     """
     layout = card.get("layout", "normal")
     entry = {
@@ -286,6 +292,9 @@ def _entry_from_card(card: dict) -> dict:
             entry["toughness"] = front.get("toughness")
     if layout in ("modal_dfc", "transform"):
         entry["layout"] = layout
+    if layout == "modal_dfc" and len(faces) == 2 and "Land" in faces[1].get("type_line", ""):
+        entry["back_face"] = {"type_line": faces[1]["type_line"],
+                              "oracle_text": faces[1].get("oracle_text", "")}
     entry["image"] = _image_path(card)
     entry["usd"] = _price(card, "usd")
     entry["eur"] = _price(card, "eur")

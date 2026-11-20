@@ -49,7 +49,7 @@ def run_assembly(context, decklist, metadata, n=1500, seed=exporter.GOLDFISH_SEE
                     int(round(exporter.compute_avg_cmc(decklist, metadata) * 2)))
     for _ in range(n):
         _by_turn, assembly_turn = exporter.simulate_goldfish_game(
-            decklist, metadata, context, threshold)
+            decklist, context, threshold)
         earliest = assembly_turn[0]
         if earliest is not None:
             for turn in range(earliest, exporter.NUM_TURNS + 1):
@@ -151,7 +151,7 @@ class OneTutorOneSlotTests(unittest.TestCase):
         return exporter.combo_assembled_this_turn(
             turn=3, hand=hand, permanents=self.mana, library=library,
             assembly_line=self.line, profiles=self.profiles, tutor_meta=self.tutor_meta,
-            pool=exporter.GoldfishManaPool(exporter.turn_sources(self.mana, 3)))
+            pool=exporter.GoldfishManaPool([frozenset({"C"})] * len(self.mana)))
 
     def test_one_tutor_two_empty_slots_not_assembled(self):
         # 1 tutor, neither piece drawn -> cannot cover both slots.

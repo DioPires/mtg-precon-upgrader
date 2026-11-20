@@ -137,6 +137,8 @@ Read the proxy curve from the deck's `simulation.json` → `goldfish.byTurn[T].c
 
 Re-fit note (DEC-935 / DEC-937, 2026-09-30): until DEC-937 the goldfish spent its turn's mana more than once (the pool was rebuilt before every cast). The fix moved every fast deck exactly one turn later and left the slow decks alone, so both tables in this section shifted one turn. Per-deck evidence and the row-by-row check: `agents/ceo/analysis/dec937-band-refit.md`. The Tier X/Y/Z "T6 gain" estimates above predate the fix and read one turn early.
 
+Mana-model note (2026-11-19): the goldfish's mana model changed on 2026-11-19. Each permanent now gives the mana its own text gives a pilot on a normal turn: one ability a turn, lands by their entry rules, fetches by the lands they find, one-shot and conditional mana, mana creatures that do not attack when tapped (the goldfish methodology in each `simulation.json` states the rules). Every deck's best-of reading (the better of `comboLethal` and `lethalProxy`, the statistic both tables read) moved, so the rows of both tables in this section, and the decks they name "at re-fit", await a re-fit on the new readings. Until then the deck lists are the 2026-09-30 record, not current placements.
+
 These cutoffs apply to the proxy as a *floor* (real-game readiness is higher — see caveats below).
 
 ### B2/B3 Reality Check (sub-B4 turn bands)

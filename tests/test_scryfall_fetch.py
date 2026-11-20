@@ -444,6 +444,40 @@ class FetchCardMetadataRunTests(DeckDirCase):
         self.assertEqual(
             metadata["Bonecrusher Giant // Stomp"]["image"], image_path("Bonecrusher Giant // Stomp"))
 
+    def test_back_face_only_on_a_modal_dfc_whose_back_is_a_land(self):
+        """The goldfish plays these as their land face (mana model, 2026-11-19)."""
+        self.write_deck("one", "Valakut Awakening", "Blightstep Pathway", "Birgi, God of Storytelling",
+                        "Growing Rites of Itlimoc")
+        valakut = make_card("Valakut Awakening // Valakut Stoneforge", layout="modal_dfc",
+                            type_line="Instant // Land")
+        valakut["card_faces"][0].update(type_line="Instant", oracle_text="Draw.")
+        valakut["card_faces"][1].update(
+            type_line="Land", oracle_text="This land enters tapped.\n{T}: Add {R}.")
+        pathway = make_card("Blightstep Pathway // Searstep Pathway", layout="modal_dfc",
+                            type_line="Land // Land")
+        pathway["card_faces"][0].update(type_line="Land", oracle_text="{T}: Add {B}.")
+        pathway["card_faces"][1].update(type_line="Land", oracle_text="{T}: Add {R}.")
+        birgi = make_card("Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+                          layout="modal_dfc", type_line="Legendary Creature — God // Legendary Artifact")
+        birgi["card_faces"][0].update(type_line="Legendary Creature — God", oracle_text="Boast.")
+        birgi["card_faces"][1].update(type_line="Legendary Artifact", oracle_text="Discard.")
+        rites = make_card("Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun", layout="transform",
+                          type_line="Legendary Enchantment // Legendary Land")
+        rites["card_faces"][0].update(type_line="Legendary Enchantment", oracle_text="Look.")
+        rites["card_faces"][1].update(type_line="Legendary Land", oracle_text="{T}: Add {G}.")
+        fake = FakeScryfall([valakut, pathway, birgi, rites])
+
+        code, _ = self.run_metadata(fake)
+
+        self.assertEqual(code, 0)
+        metadata = json.loads(self.output.read_text())
+        self.assertEqual(metadata["Valakut Awakening"]["back_face"],
+                         {"type_line": "Land", "oracle_text": "This land enters tapped.\n{T}: Add {R}."})
+        self.assertEqual(metadata["Blightstep Pathway"]["back_face"],
+                         {"type_line": "Land", "oracle_text": "{T}: Add {R}."})
+        self.assertNotIn("back_face", metadata["Birgi, God of Storytelling"])
+        self.assertNotIn("back_face", metadata["Growing Rites of Itlimoc"])
+
     def test_full_name_answers_before_front_face(self):
         """"Brainstorm" is a card and also the second part of another card."""
         self.write_deck("one", "Brainstorm", "Harmonized Trio // Brainstorm")

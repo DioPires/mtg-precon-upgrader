@@ -7,6 +7,7 @@ data/commanders/{id}/simulation.json.
 """
 
 import argparse
+import itertools
 import json
 import math
 import os
@@ -144,13 +145,10 @@ LAND_SUBTYPE_COLORS = {
     "Mountain": "R",
     "Forest": "G",
 }
-NUMBER_WORDS = {
-    "a": 1,
-    "an": 1,
-    "one": 1,
-    "two": 2,
-    "three": 3,
-}
+# The one word-to-number table: card counts ("two lands", "create two
+# tokens", "seven or more lands").
+COUNT_WORDS = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+               "seven": 7}
 
 # KEY_COMBOS slot schema (DEC-363): a combo is a list of *slots*; the combo is
 # assembled when every slot is filled. A slot is a list of interchangeable cards
@@ -845,10 +843,11 @@ AMASS_ARMY_ENGINE = {
 #   extraHatchNames       — each adds one hatch per Egg death (Annie Joins Up
 #                           doubles Atla's legendary trigger; Roaming Throne
 #                           naming Shaman doubles it again — three with both)
-#   untapperName/untapperRequiresName — Thornbite Staff untaps the commander per
-#                           creature death, but only counts while Ashnod's Altar
-#                           is out (its {C}{C} pays the next activation) and only
-#                           if the Staff was already on the battlefield when the
+#   untapperName/untapperRequiresName — Thornbite Staff untaps the commander as
+#                           an Egg dies to any outlet; a further activation that
+#                           turn only while Ashnod's Altar is out (its {C}{C}
+#                           pays it); and only if the Staff was already on the
+#                           battlefield when the
 #                           commander entered (the sim has no equip path, so the
 #                           free "whenever a Shaman enters, attach" is the only
 #                           way it lands)
@@ -931,13 +930,13 @@ COMMANDER_HATCH_ENGINE = {
 #   landfallMakers — one creature token per natural land drop while on the
 #       battlefield; the drop comes before the turn's casts, so from the turn
 #       after the maker was cast
-#   activatedMakers — one creature token for this cost, at most once per
-#       turn, paid after combat out of the mana the turn's casts left, in
-#       name order. A land must be untapped this turn, and its own {T} is
-#       charged as one more mana of its colour: the pool does not record which
-#       land paid for what.
+#   activatedMakers — one creature token for this cost (without the
+#       maker's own {T}), at most once per turn, paid after combat out of the
+#       mana the turn's casts left, in name order. The maker must be untapped
+#       and is tapped for it; a land maker's own mana leaves the pool.
 #   needsTappedCreature — activated makers whose cost untaps a tapped
-#       creature you control: only on a turn something attacked
+#       creature you control: only while a creature is tapped (it attacked
+#       or was tapped for mana), which the cost then untaps
 #   doublerNames / extraFoodName — the replacements above
 #   artifactTokensReplacedBy — a permanent that turns artifact tokens into
 #       creatures the engine does not credit: while it is on the battlefield
@@ -1000,9 +999,9 @@ TOKEN_MAKER_ENGINE = {
             # "{W}, {T}, Untap a tapped creature you control: Create a 1/1
             # green and white Citizen creature token."
             "Halo Fountain": {"W": 1},
-            # "{2}{W}{W}, {T}: Create a 1/1 white Human creature token." and
-            # "{T}: Add {W}.", so its own {T} is charged as a third {W}.
-            "Castle Ardenvale": {"generic": 2, "W": 3},
+            # "{2}{W}{W}, {T}: Create a 1/1 white Human creature token." Its
+            # own {T}: the Castle must be untapped and is tapped for it.
+            "Castle Ardenvale": {"generic": 2, "W": 2},
         },
         "needsTappedCreature": {"Halo Fountain"},
         # "If an effect would create one or more tokens under your control,
@@ -1068,7 +1067,7 @@ TOKEN_MAKER_ENGINE = {
         ),
         "notModeled": (
             "the commander's mana and +1/+1 counter abilities",
-            "Halo Fountain's untap",
+            "Halo Fountain's draw and win abilities",
             "Treasure and Food being spent",
             "untaps on opponents' turns (Seedborn Muse, Drumbellower)",
             "Caretaker's Talent's level 3 anthem (\"Creature tokens you control "
@@ -1541,104 +1540,909 @@ def is_permanent_card(meta: dict) -> bool:
     return any(marker in type_line for marker in ("Land", "Artifact", "Creature", "Enchantment", "Planeswalker", "Battle"))
 
 
-def extract_land_subtypes(meta: dict) -> set[str]:
-    """Extract basic land subtypes from a land type line."""
-    type_line = meta.get("type_line", "")
-    if "Land" not in type_line or "—" not in type_line:
-        return set()
-    _, subtype_blob = type_line.split("—", 1)
-    return {subtype.strip() for subtype in subtype_blob.split() if subtype.strip() in LAND_SUBTYPE_COLORS}
+def type_words(type_line: str) -> frozenset:
+    """The words of one face's type line: supertypes, card types and subtypes."""
+    return frozenset(re.findall(r"[\w'-]+", type_line))
 
 
-def parse_add_clause_atoms(clause: str, commander_colors: list[str]) -> list[frozenset]:
-    """Convert a single oracle Add-clause into mana atoms."""
-    lower = clause.lower()
-    if "one mana of any color in your commander's color identity" in lower:
-        return [frozenset(commander_colors)]
-    if "one mana of any color" in lower:
-        colors = commander_colors or list("WUBRG")
-        return [frozenset(colors)]
-
-    symbols = re.findall(r"\{([WUBRGC])\}", clause)
-    if not symbols:
-        return []
-    if " or " in lower:
-        return [frozenset(symbols)]
-    return [frozenset({symbol}) for symbol in symbols]
+def extract_land_subtypes(type_line: str) -> set[str]:
+    """Basic land types on one face's type line."""
+    return {word for word in type_words(type_line) if word in LAND_SUBTYPE_COLORS}
 
 
-def mana_atoms_for_card(meta: dict, commander_colors: list[str]) -> list[frozenset]:
-    """Infer mana atoms a permanent can generate from oracle text."""
-    oracle = meta.get("oracle_text", "")
-    activation_match = re.search(r"^\{[^}]+\},\s*\{T\}: Add([^.\n]+)", oracle)
-    if activation_match:
-        symbols = re.findall(r"\{([WUBRGC])\}", activation_match.group(1))
-        if symbols:
-            return [frozenset(symbols)]
+def battlefield_face(meta: dict) -> tuple[str, str]:
+    """The type line and oracle text of the face a card is on the battlefield as.
 
-    atoms = []
-    for clause in re.findall(r"Add([^.\n]+)", oracle):
-        atoms.extend(parse_add_clause_atoms(clause, commander_colors))
-
-    if atoms:
-        return atoms
-
-    # Fetchlands / land tutors function as access to typed colored mana.
-    lower = oracle.lower()
-    if "Land" in meta.get("type_line", "") and "search your library for a" in lower:
-        colors = {
-            color for subtype, color in LAND_SUBTYPE_COLORS.items()
-            if subtype.lower() in lower
-        }
-        if colors:
-            return [frozenset(colors)]
-
-    return []
+    The metadata holds the front face's text and the joined type line
+    ("A // B"). A modal DFC whose front is not a land but whose back is
+    (``back_face``) is played as its land face; any other card is its front
+    face, so a transform card with a land back (Growing Rites of Itlimoc) is
+    cast as its front.
+    """
+    front_type = meta.get("type_line", "").split(" // ")[0]
+    back = meta.get("back_face")
+    if back and "Land" not in front_type:
+        return back["type_line"], back["oracle_text"]
+    return front_type, meta.get("oracle_text", "")
 
 
-def mana_source_delay(meta: dict) -> int | None:
-    """Turns until a permanent begins producing mana after being cast."""
-    type_line = meta.get("type_line", "")
-    oracle = meta.get("oracle_text", "")
-    if "Land" in type_line:
-        return 0
-    if "{T}" not in oracle or "Add" not in oracle:
+def strip_reminder_text(text: str) -> str:
+    return re.sub(r"\([^)]*\)", "", text)
+
+
+# The subject of a quoted ability a card grants, matched in full (M1): the
+# card itself receives it when it has the type named beside the subject
+# ("Creatures you control have" on a creature, "All Slivers have" on a
+# Sliver, "This Saga gains" on itself).
+SELF_GRANT_SUBJECTS = {
+    "creatures you control have": "Creature",
+    "all slivers have": "Sliver",
+    "sliver creatures you control have": "Sliver",
+    "this saga gains": "",
+}
+# Subjects whose grant reaches only other permanents (a named floor): tokens,
+# Treasures, a target, and lands (read as colours every land makes,
+# ``landGrant``, read on the battlefield by land_grant).
+OTHER_GRANT_SUBJECTS = (
+    r"other [\w ]+ you control have",
+    r"creature tokens you control have", r"treasures you control have",
+    r"lands you control have", r".*\btarget land gains", r".*\btokens? with",
+    r".*\. it has", r".*\bbecomes a treasure artifact with",
+    r"enchanted permanent is a colorless land with",
+)
+# A line a card's mana is read from (M2): "add", "adds" or "produces".
+MANA_WORDS = r"\b(?:adds?|produces?)\b"
+
+
+def quoted_grants(text: str) -> list[tuple[str, str, str]]:
+    """Each quoted ability with mana in a card's text, as (subject, ability,
+    reading): "self" for a subject in SELF_GRANT_SUBJECTS, "other" for one in
+    OTHER_GRANT_SUBJECTS, "unread" for any other subject."""
+    out = []
+    for line in strip_reminder_text(text).split("\n"):
+        for subject, quoted in re.findall(r'([^"]*)"([^"]*)"', line):
+            if not re.search(MANA_WORDS, quoted, re.I):
+                continue
+            subject = re.sub(r"^(?:[IVX]+, )*[IVX]+ — ", "", subject.strip()).strip().lower()
+            reading = ("self" if subject in SELF_GRANT_SUBJECTS
+                       else "other" if any(re.fullmatch(p, subject) for p in OTHER_GRANT_SUBJECTS)
+                       else "unread")
+            out.append((subject, quoted, reading))
+    return out
+
+
+def own_ability_lines(text: str, words: frozenset) -> list[str]:
+    """A permanent's own ability lines: reminder and quoted text removed, and a
+    quoted ability granted to a group the card belongs to added as a line of
+    its own (M1). The subject must match a SELF_GRANT_SUBJECTS entry in full:
+    "Other creatures you control have" grants nothing to the card itself."""
+    lines = []
+    for line in strip_reminder_text(text).split("\n"):
+        for subject, quoted in re.findall(r'([^"]*)"([^"]*)"', line):
+            subject = re.sub(r"^(?:[IVX]+, )*[IVX]+ — ", "", subject.strip()).strip().lower()
+            word = SELF_GRANT_SUBJECTS.get(subject)
+            if word is not None and (not word or word in words):
+                lines.append(quoted)
+        line = re.sub(r'"[^"]*"', '""', line).strip()
+        if line:
+            lines.append(line)
+    return lines
+
+
+MANA_SYMBOL = r"\{([WUBRGC])\}"
+# Card types and supertypes: a changeling is every creature type, never these.
+CARD_TYPE_WORDS = frozenset({"Artifact", "Basic", "Battle", "Creature", "Enchantment",
+                             "Kindred", "Land", "Legendary", "Planeswalker", "Snow"})
+# CR 205.3i, for "This land is every nonbasic land type" (Planar Nexus).
+NONBASIC_LAND_TYPES = frozenset({"Cave", "Cloud", "Desert", "Gate", "Lair", "Locus", "Mine",
+                                 "Planet", "Power-Plant", "Sphere", "Tower", "Town", "Urza's"})
+# Sentences beside a mana ability that change nothing the goldfish counts.
+MANA_RIDERS = (
+    r"deals \d+ damage to you", r"^you gain \d+ life", r"^until end of turn, you don't lose",
+    r"^if you spend this mana to cast", r"^when that mana is spent", r"^if any of that mana is spent",
+    r"^when you do,", r"^choose a color\.$", r"^activate only during your turn",
+    r"^activate only once each turn",
+)
+# Mana verdicts that credit nothing because the mana needs something the
+# goldfish does not see (M2, M5, M9): named floors.
+MANA_FLOORS = ("condition floor", "graveyard floor", "chosen type floor")
+
+
+def mana_condition(text: str):
+    """A condition the goldfish evaluates on its own battlefield (M5); None
+    when it needs anything else (graveyard, hand, opponents, a counter put by
+    another card): that ability then counts at its unconditional floor;
+    "unread" for wording no rule covers, which the fleet guard rejects."""
+    lower = text.lower().strip().rstrip(".")
+    types = re.fullmatch(r"you control an? (\w+)(?: or an? (\w+))?", lower)
+    if types and all(t is None or t.capitalize() in LAND_SUBTYPE_COLORS for t in types.groups()):
+        return ("anyType", frozenset(t.capitalize() for t in types.groups() if t))
+    if lower == "you control an artifact":
+        return ("atLeast", "Artifact", 1)
+    count = re.fullmatch(r"you control (\w+) or more (artifacts|lands)", lower)
+    if count and count.group(1) in COUNT_WORDS:
+        return ("atLeast", count.group(2)[:-1].capitalize(), COUNT_WORDS[count.group(1)])
+    tron = re.fullmatch(r"you control an urza's ([\w-]+) and an urza's ([\w-]+)", lower)
+    if tron:
+        return ("landTypes", frozenset(t.title() for t in tron.groups()))
+    if lower == "a card is exiled with this land":
+        return ("imprinted",)  # read as the land enters (imprint_from_hand)
+    if any(phrase in lower for phrase in ("opponent", "graveyard", "luck counter")):
         return None
-    if "Creature" in type_line:
-        return 1
-    if re.search(r"^\{[^}]+\},\s*\{T\}", oracle):
-        return 1
-    return 0
+    return "unread"
 
 
-def parse_land_ramp_profile(meta: dict) -> dict | None:
-    """Detect spells that put lands directly onto battlefield."""
-    oracle = meta.get("oracle_text", "")
-    lower = oracle.lower()
-    type_line = meta.get("type_line", "")
-    if "search your library" not in lower or "onto the battlefield" not in lower:
+def parse_mana_cost(cost: str, name: str) -> tuple[str, int]:
+    """(kind, mana paid) of an activated or loyalty cost (M3).
+
+    kind: "free" ({T}, mana, life, a plus or zero loyalty cost), "once" (the
+    cost names the permanent itself: "Sacrifice this artifact", "Sacrifice
+    Lotus Petal"), "minus" (a minus loyalty cost), "tapArtifact" ("Tap an
+    untapped artifact you control": board_term_atoms counts the artifacts
+    that lose nothing by it), "resource" (anything else: another permanent,
+    "a" or "an" permanent of a type even when the card is of that type, since
+    a pilot feeds Krark-Clan Ironworks, Skirk Prospector or Ashnod's Altar
+    with other permanents; a card from hand or graveyard; exert), "unread"
+    (wording no rule covers, and removing counters from the permanent: what
+    the counters allow is not read).
+    """
+    cost = cost.strip()
+    if re.fullmatch(r"\+?\d+", cost):
+        return "free", 0
+    if re.fullmatch(r"[−-]\d+", cost):
+        return "minus", 0
+    kind, mana = "free", 0
+    short_name = name.split(" // ")[0].split(",")[0].lower()
+    for part in (part.strip() for part in cost.split(",")):
+        low = part.lower()
+        if re.fullmatch(r"(\{[^}]+\})+", part):
+            mana += sum(int(sym) if sym.isdigit() else 1
+                        for sym in re.findall(r"\{([^}]+)\}", part) if sym not in ("T", "X"))
+        elif re.fullmatch(r"pay \d+ life", low):
+            continue
+        elif low.startswith("sacrifice this ") or low == f"sacrifice {short_name}":
+            kind = "once"
+        elif low == "tap an untapped artifact you control":
+            kind = "tapArtifact"
+        elif low.startswith("remove ") and "counter" in low:
+            return "unread", mana
+        elif low.startswith(("sacrifice ", "tap ", "exert ", "exile ", "discard ", "remove ")):
+            return "resource", mana
+        else:
+            return "unread", mana
+    return kind, mana
+
+
+def parse_mana_effect(effect: str, own_colors: frozenset, power: int,
+                      commander_colors: list[str]) -> dict:
+    """The mana one ability's effect makes (M1-M5).
+
+    ``atoms``: one per mana, at the floor with the card alone on the
+    battlefield; ``board``: a term the goldfish evaluates each turn on its own
+    battlefield; ``gate``: an "Activate only if" condition it evaluates;
+    ``restricted``: "Spend this mana only ..." (counted in full, owner
+    decision); ``imprint``: the mana an imprinted card gives (atoms
+    "instead", or "colors" of the exiled card); ``oneColour``: all of the
+    ability's mana is one colour chosen as it is made ("three mana of any one
+    color", "Choose a color. Add ... of that color"); ``verdict``: how the
+    ability was read ("unread" when no rule covers a sentence). A condition
+    inside the ability ("If you control a Dragon, add ...") is read as a gate
+    when the goldfish sees it, a floor when it needs anything else, and
+    "unread" otherwise.
+    """
+    cmd = frozenset(commander_colors)
+    out = {"atoms": [], "board": None, "gate": None, "restricted": False,
+           "imprint": None, "oneColour": False, "verdict": "credited"}
+    sentences = [s for s in re.split(r"(?<=\.)\s+", effect.strip()) if s]
+    main = next(s for s in sentences if re.search(r"\badds?\b", s, re.I))
+    out["oneColour"] = bool(re.search(r"mana of any one color|^choose a color\.$", effect.strip(), re.I)
+                            or any(s.lower() == "choose a color." for s in sentences))
+    for sentence in sentences:
+        lower = sentence.lower()
+        if sentence is main or any(re.search(rider, lower) for rider in MANA_RIDERS):
+            continue
+        conditional = re.fullmatch(r"if (.*?), (?:instead )?add (.*?)(?: instead)?\.", sentence, re.I)
+        if lower.startswith("spend this mana only"):
+            out["restricted"] = True
+        elif lower.startswith("activate only if"):
+            out["gate"] = mana_condition(lower[len("activate only if "):])
+            if out["gate"] is None:
+                out["verdict"] = "condition floor"
+        elif conditional:
+            # "If <condition>, add <more> instead": evaluated when the goldfish
+            # sees the condition (Tron, an imprinted card), else the
+            # unconditional floor.
+            gate = mana_condition(conditional.group(1))
+            if gate == "unread":
+                out["verdict"] = "unread"
+            elif gate is not None:
+                alt = parse_mana_effect("Add " + conditional.group(2) + ".", own_colors, power,
+                                        commander_colors)
+                if gate == ("imprinted",):
+                    out["imprint"] = tuple(alt["atoms"])
+                else:
+                    out["board"] = ("gate", gate, tuple(alt["atoms"]))
+        else:
+            out["verdict"] = "unread"
+    before, _, after = re.split(r"\b(adds?)\b", main, maxsplit=1, flags=re.I)
+    after = after.strip().rstrip(".")
+    low = after.lower()
+    symbols = re.findall(MANA_SYMBOL, after)
+    each = re.fullmatch(r"(\{[wubrgc]\}) for each ([\w' ]+?)(?: you control| on the battlefield)?", low)
+    lead = before.strip().rstrip(",").strip().lower()
+    if lead and lead != "for each color among permanents you control":
+        # A condition inside the ability: "If you control a Dragon, add ...".
+        condition = re.fullmatch(r"if (.*)", lead)
+        gate = mana_condition(condition.group(1)) if condition else "unread"
+        if gate == "unread":
+            out["verdict"] = "unread"
+            return out
+        if gate is None:
+            out["verdict"] = "condition floor"
+            return out
+        out["gate"] = gate
+    if lead == "for each color among permanents you control":
+        out["atoms"] = [frozenset({color}) for color in "WUBRG" if color in own_colors]
+        out["board"] = ("vivid",)
+    elif re.fullmatch(r"(an additional )?(\{[WUBRGC]\})+", after):
+        out["atoms"] = [frozenset({symbol}) for symbol in symbols]
+    elif re.fullmatch(r"(\{[WUBRGC]\})+(, (\{[WUBRGC]\})+)*,? or (\{[WUBRGC]\})+", after):
+        size = max(len(re.findall(MANA_SYMBOL, group))
+                   for group in re.split(r",? or |, ", after))
+        out["atoms"] = [frozenset(symbols)] * size
+    elif re.fullmatch(r"(\w+) mana in any combination of (colors|(\{[wubrgc]\})+(, (\{[wubrgc]\})+)*,? "
+                      r"and/or (\{[wubrgc]\})+)", low) and low.split()[0] in COUNT_WORDS:
+        # "of colors": each mana any colour (the commander's colours, as for
+        # "one mana of any color"); else the colours named. The amount from
+        # the count-word table (Cascading Cataracts' five).
+        out["atoms"] = [frozenset(symbols) or cmd] * COUNT_WORDS[low.split()[0]]
+    elif re.fullmatch(r"(two|three) mana of any one color", low):
+        out["atoms"] = [cmd] * COUNT_WORDS[low.split()[0]]
+    elif low.startswith("one mana of any color among legendary"):
+        if "graveyard" in low:
+            out["verdict"] = "graveyard floor"
+        else:
+            kinds = ("Creature", "Planeswalker") if "creatures and planeswalkers" in low else ()
+            out["board"] = ("legendColors", kinds)
+    elif low == "one mana of any of the exiled card's colors":
+        out["imprint"] = "colors"
+    elif low == "one mana of any type that a land you control could produce":
+        # Reflecting Pool: the colours the other lands on the battlefield
+        # could make, read each turn; nothing with no other land.
+        out["board"] = ("landColors",)
+    elif low in ("one mana of any color", "one mana of any color in your commander's color identity",
+                 "one mana of any color that a land an opponent controls could produce"):
+        # Colours of opponents' lands (Exotic Orchard, Fellwar Stone) count as
+        # the commander's colours: opponents are not modelled (judgement).
+        out["atoms"] = [cmd]
+    elif re.fullmatch(r"x mana (of any one color|in any combination of .*), where x is .*'s power"
+                      r"|an amount of \{[wubrgc]\} equal to .*'s power", low):
+        # Variable amount: what the card alone guarantees, its printed power.
+        out["atoms"] = [frozenset(symbols) or cmd] * power
+        out["verdict"] = "printed power"
+    elif re.fullmatch(r"x mana of any one color, where x is the number of elves on the battlefield", low):
+        out["board"] = ("count", ("type", "Elf"), cmd)
+    elif low == "an amount of mana of that color equal to your devotion to that color":
+        out["board"] = ("count", ("devotion",), cmd)
+    elif low == ("an amount of mana of that color equal to the number of creatures you control "
+                 "of the chosen type"):
+        out["verdict"] = "chosen type floor"
+    elif each:
+        noun = each.group(2)
+        word = {"elf": "Elf", "creature": "Creature", "swamp": "Swamp", "urza's land": "Urza's"}.get(
+            noun if noun == "urza's land" else noun.rstrip("s").replace("elve", "elf"))
+        if "graveyard" in noun:
+            out["verdict"] = "graveyard floor"
+        elif word is None:
+            out["verdict"] = "unread"
+        else:
+            out["board"] = ("count", ("type", word), frozenset(symbols))
+    else:
+        out["verdict"] = "unread"
+    return out
+
+
+# Triggered mana whose event the goldfish does not model (named floors),
+# matched in full: a sacrifice it feeds with other permanents (Crime
+# Novelist), a land the goldfish never exiles to it (Extraplanar Lens). Any
+# other wording (Rose, Cutthroat Raider's Junk) is not read.
+TRIGGER_FLOORS = (
+    r"whenever you sacrifice an artifact, put a \+1/\+1 counter on this creature and add \{[wubrg]\}\.",
+    r"whenever a land with the same name as the exiled card is tapped for mana, its controller adds "
+    r"one mana of any type that land produced\.",
+)
+# A card that gives up one of its controller's lands as part of what it does
+# (Harrow, Crop Rotation, Roiling Regrowth, Mox Diamond's discard): no rule
+# reads what that costs the goldfish.
+GIVES_UP_LAND = (r"\b(?:sacrifice|sacrifices|discard|discards|return|returns) "
+                 r"(?:an?|one|two|three|four|five|six|seven|x|another|any number of|up to \w+)? ?"
+                 r"(?:untapped |tapped |basic |nonbasic |snow )*"
+                 r"(?:lands?|land cards?|plains|islands?|swamps?|mountains?|forests?)\b")
+
+
+def gives_up_land(text: str) -> bool:
+    """Whether a card gives up one of its lands as part of what it does
+    (GIVES_UP_LAND): in its spell text, a cost, a replacement as it enters or
+    its own abilities, not in a separate "Whenever" or "At the beginning"
+    trigger (Sutina, Speaker of the Tajuru's return on attack)."""
+    return any(re.search(GIVES_UP_LAND, line, re.I)
+               for line in strip_reminder_text(text).split("\n")
+               if not re.match(r"(Whenever|At the beginning) ", line.strip()))
+
+
+# A permanent that changes the land types of lands: granting types (Prismatic
+# Omen, Dryad of the Ilysian Grove; Urborg's "Each land is a Swamp" on a land
+# is read, eachLandIs) or setting them ("Nonbasic lands are Islands").
+LAND_TYPE_CHANGE = (r"\b(?:each land|lands you control|all lands|nonbasic lands|lands)\b[^.\"]*\b(?:is|are)\b"
+                    r"[^.\"]*\b(?:land types?|the chosen type|plains|islands?|swamps?|mountains?|forests?)\b")
+
+
+def mana_trigger(line: str):
+    """A triggered "add" ability the goldfish evaluates (M2): an on-cast term
+    or a board term; None for a named floor (TRIGGER_FLOORS); "unread" for any
+    other trigger (a landfall "add" included)."""
+    lower = line.lower()
+    cast = re.match(r"whenever you cast a spell, add \{([wubrgc])\}\.", lower)
+    if cast:
+        return ("onCast", frozenset({cast.group(1).upper()}))
+    tapped = re.fullmatch(r"whenever you tap an? (swamp|creature|permanent) for (mana|\{c\}), "
+                          r"add an additional \{([wubrgc])\}\.", lower)
+    if tapped:
+        source = {"swamp": "swampsTapped", "creature": "creatureSources",
+                  "permanent": "colorlessSources"}[tapped.group(1)]
+        return ("extra", source, frozenset({tapped.group(3).upper()}), 0)
+    if any(re.fullmatch(pattern, lower) for pattern in TRIGGER_FLOORS):
         return None
-    if "land card" not in lower and not any(f"{subtype.lower()} card" in lower for subtype in LAND_SUBTYPE_COLORS):
+    return "unread"
+
+
+def parse_land_search(text: str) -> dict | None:
+    """Lands a "search your library for ... land" effect moves (M8), or None.
+
+    count: lands put onto the battlefield; toHand: lands put into the hand;
+    perType: one land of each named type ("a Forest card and a Plains card");
+    sharedType: the lands share a basic land type. A put that depends on
+    opponents ("If an opponent controls more lands than you") counts as its
+    other branch. The whole clause up to its first comma is read: "unread"
+    for a land search whose count or filter no rule places ("up to X",
+    "four", "that many", "a snow land card", a qualification after "card":
+    "with different names", "that each have a basic land type", "of each
+    basic land type", "or Planet card").
+    """
+    lower = text.lower()
+    found = re.search(r"search your library for (up to )?(a|an|one|two|three) "
+                      r"((?:basic )?[\w,' ]*?)cards?\b", lower)
+    if not found:
+        clause = re.search(r"search your library for ([^.]*?)\bcards?\b", lower)
+        if clause and re.search(r"\b(?:lands?|plains|islands?|swamps?|mountains?|forests?)\b", clause.group(1)):
+            return "unread"
         return None
-    if any(marker in type_line for marker in ("Artifact", "Creature", "Enchantment")) and "enters" not in lower:
+    count = COUNT_WORDS[found.group(2)]
+    kinds = found.group(3).strip()
+    if not set(re.findall(r"[a-z']+", kinds)) <= {"basic", "land", "plains", "island", "swamp", "mountain",
+                                                   "forest", "or", "and"}:
+        if re.search(r"\b(?:lands?|plains|islands?|swamps?|mountains?|forests?)\b", kinds):
+            return "unread"
         return None
-
-    count = 1
-    count_match = re.search(r"(up to )?(a|an|one|two|three)\s+[^.]*land cards?", lower)
-    if count_match:
-        count = NUMBER_WORDS.get(count_match.group(2), 1)
-
-    allowed_subtypes = {
-        subtype for subtype in LAND_SUBTYPE_COLORS
-        if f"{subtype.lower()} card" in lower or f"{subtype.lower()} cards" in lower
-    }
-
+    # The rest of the clause after "card": nothing, a shared land type, a
+    # second named type ("a Forest card and a Plains card"; Yasharn's "a
+    # basic Forest card and a basic Plains card"), or the verb that follows.
+    tail = re.match(r"[^,.;\n]*", lower[found.end():]).group(0).strip()
+    second = re.fullmatch(r"and an? (?:basic )?(\w+) card", tail)
+    per_type = []
+    if second:
+        first = kinds.replace("basic", "").strip().capitalize()
+        if first not in LAND_SUBTYPE_COLORS or second.group(1).capitalize() not in LAND_SUBTYPE_COLORS:
+            return "unread"
+        per_type = [first, second.group(1).capitalize()]
+        count = len(per_type)
+    allowed = {t for t in LAND_SUBTYPE_COLORS if t.lower() in kinds} | set(per_type)
+    if not allowed and "land" not in kinds:
+        return None  # not a land search (Ringsight's "a card that shares a color")
+    if not second and tail and tail != "that share a land type" and not re.match(r"and (?:put|reveal)\b", tail):
+        return "unread"
+    if not second and re.match(r",? (?:and )?an? \w+ card", lower[found.end():]):
+        return "unread"  # a list of cards, one clause each (Shard Convergence)
+    # A condition before the land search in its sentence: one that reads
+    # opponents is a floor (None), any other is not read.
+    lead = re.split(r"[.:\n]", lower[:found.start()])[-1]
+    if re.search(r"\bif\b", lead):
+        return None if "opponent" in lead else "unread"
+    after = lower[found.end():]
+    # Each destination the text names is read, or the search is refused:
+    # a split between the battlefield and the hand only in these words, and
+    # no later "instead" (Embermouth Sentinel) unless it depends on opponents
+    # (the floor above).
+    split = re.search(r"put (one|two) (?:of them )?onto the battlefield tapped and the (other|rest) into your hand",
+                      after)
+    opponents = "if an opponent controls more lands than you" in after
+    if split:
+        # Cultivate, Nissa's Pilgrimage, Viewpoint Synchronization.
+        on_battlefield = COUNT_WORDS[split.group(1)]
+        to_hand = 1 if split.group(2) == "other" else count - on_battlefield
+    elif re.search(r"\binstead\b", after) and not opponents:
+        return "unread"
+    elif "onto the battlefield" in after and "into your hand" in after and not opponents:
+        return "unread"
+    elif opponents or re.search(r"put (them|it|that card) into your hand", after):
+        on_battlefield, to_hand = 0, count
+    elif "onto the battlefield" in after:
+        on_battlefield, to_hand = count, 0
+    else:
+        return None
     return {
-        "count": count,
-        "basicOnly": "basic land card" in lower or "basic land cards" in lower,
-        "allowedSubtypes": allowed_subtypes,
-        "entersTapped": "onto the battlefield tapped" in lower,
+        "count": on_battlefield,
+        "toHand": to_hand,
+        "basicOnly": "basic" in kinds,
+        "allowedSubtypes": allowed,
+        "perType": per_type,
+        "sharedType": "share a land type" in after,
+        "entersTapped": "onto the battlefield tapped" in after,
     }
+
+
+def parse_land_entry(text: str) -> tuple | str:
+    """How a land enters (M6, M7), as a rule land_enters_tapped evaluates on
+    the battlefield (and the hand) as the land is played; "unread" for wording
+    no rule covers.
+
+    Opponents follow the vanilla four-player model of the per-deck mana
+    simulations: "unless you have two or more opponents" is always met, and
+    "unless your opponents control eight or more lands" is met from your
+    fourth land drop (DEC-688 / DEC-929: mana_simulation_gathering_shadow.py
+    114-120, mana_simulation_eternal_agony.py 180-186,
+    mana_simulation_hoard_and_bleed.py 223-229).
+    """
+    lower = strip_reminder_text(text).lower()
+    if "you may pay 2 life" in lower or "you may pay 3 life" in lower:
+        return ("untapped",)
+    # A fetch land's own text about the land it puts onto the battlefield
+    # (landCrack) is not about how the fetch land enters.
+    lower = re.sub(r"search your library.*", "", lower, flags=re.S)
+    reveal =re.search(r"you may reveal an? (\w+) or (\w+) card from your hand\. if you don't, "
+                       r"this land enters tapped", lower)
+    if reveal:
+        return ("reveal", frozenset(t.capitalize() for t in reveal.groups()))
+    unless = re.search(r"enters tapped unless (.*?)\.", lower)
+    if unless:
+        condition = unless.group(1)
+        types = re.fullmatch(r"you control an? (\w+)(?: or an? (\w+))?", condition)
+        other = re.fullmatch(r"you control (two|three) or (fewer|more) other lands", condition)
+        basics = re.fullmatch(r"you control (a|two) (?:or more )?basic lands?", condition)
+        typed = re.fullmatch(r"you control three or more other (islands|swamps)", condition)
+        if condition == "you have two or more opponents":
+            return ("untapped",)
+        if condition == "your opponents control eight or more lands":
+            return ("otherLandsAtLeast", 3)
+        if types and all(t is None or t.capitalize() in LAND_SUBTYPE_COLORS for t in types.groups()):
+            return ("anyType", frozenset(t.capitalize() for t in types.groups() if t))
+        if condition == "you control a legendary creature":
+            return ("legendaryCreature",)
+        if other:
+            return ("otherLandsAtMost" if other.group(2) == "fewer" else "otherLandsAtLeast",
+                    COUNT_WORDS[other.group(1)])
+        if basics:
+            return ("basicsAtLeast", COUNT_WORDS[basics.group(1)])
+        if typed:
+            return ("otherTypeAtLeast", typed.group(1)[:-1].capitalize(), 3)
+        return "unread"
+    if "if you control two or more other lands, this land enters tapped" in lower:
+        return ("otherLandsAtMost", 1)
+    if "enters tapped" in lower:
+        return ("tapped",)
+    return ("untapped",)
+
+
+def card_mana_model(name: str, meta: dict, commander_colors: list[str]) -> dict:
+    """The mana a permanent gives the goldfish (owner-approved 2026-11-19).
+
+    A permanent gives the mana its own text gives a pilot on a normal turn,
+    using only itself and what the goldfish has on its own battlefield; mana
+    that needs anything else is not credited (a named floor):
+    M1 the face on the battlefield, without reminder or quoted text; basic
+       land types make their colour (Urborg is itself a Swamp); an ability a
+       card grants counts for itself when it is one of the permanents granted
+       (the grant's subject matched in full, SELF_GRANT_SUBJECTS); a grant to
+       lands is read as colours every land can make (``landGrant``).
+    M2 activated and plus or zero loyalty abilities make mana ("add", "adds",
+       "produces"); a triggered "add" counts only where the goldfish evaluates
+       it (mana_trigger).
+    M3 free costs: {T}, life, a plus or zero loyalty cost; mana in the cost
+       nets produced minus paid; a cost that names the permanent itself
+       ("Sacrifice this artifact") or a permanent that does not untap gives
+       the mana once, held until a turn spends it ("{N}: Untap this" re-arms
+       it, ``onceRearm``); tapping an untapped artifact counts the artifacts
+       that lose nothing by it (Urza); any other resource gives nothing;
+       removing the permanent's own counters is not read.
+    M4 a permanent taps once: its best single ability; at one mana, the union
+       of the colours of the abilities it could use instead.
+    M5 conditions on its own battlefield are evaluated each turn
+       (``manaBoard``); other conditions count at the floor; restricted mana
+       counts in full; variable amounts count what the card alone guarantees.
+       An imprint from the hand is made as the card enters (``imprint``).
+    M6 land faces, fetch lands (cracked for a land of the library as they
+       are played, ``landCrack``), entry rules, lands given up as it enters
+       (``landEntryCost``).
+    M7 a creature whose mana ability uses {T}, or a permanent that enters
+       tapped, makes mana from the next turn; a costed non-land ability
+       (Signets) also from the next turn, a floor: using it the turn the
+       permanent is cast needs a spare mana the goldfish does not plan for.
+
+    Returns ``manaAtoms`` (one mana a turn per atom, the floor with the card
+    alone), ``manaOnce`` (one-shot atoms) and ``onceLeaves`` (spending them
+    sacrifices it), ``manaBoard`` (terms evaluated each turn), ``manaOnCast``
+    (atoms per spell cast while it is out), ``manaSourceDelay`` (0 this turn,
+    1 from the next, None when it gives nothing), ``manaTapsSelf`` (an
+    ability it is tapped for mana by has {T}: a creature then does not
+    attack), ``manaOneColour`` (all of one activation's mana is one colour),
+    ``manaTurns`` (a Saga's turns of mana), ``imprint``, the land fields and
+    ``verdicts``: each mana line with how it was read; build_goldfish_profile
+    refuses a card with an "unread" verdict.
+    """
+    type_line, text = battlefield_face(meta)
+    words = type_words(type_line)
+    is_land = "Land" in words
+    model = {"isLand": is_land, "manaAtoms": [], "manaOnce": [], "onceLeaves": False,
+             "onceRearm": None, "manaOneColour": False,
+             "manaBoard": [], "manaOnCast": [], "manaSourceDelay": None, "manaTapsSelf": False,
+             "manaTurns": None, "imprint": None, "landEntry": None, "landEntryCost": None,
+             "landFaces": None, "landFetch": None, "landCrack": None, "landTypes": frozenset(),
+             "eachLandIs": None, "landGrant": None, "landOutputs": [], "entersTapped": False,
+             "verdicts": []}
+    if not is_land and not ({"Artifact", "Creature", "Enchantment", "Planeswalker"} & words):
+        return model  # an instant or sorcery: not a permanent's mana (floor)
+    try:
+        power = max(0, int(meta.get("power") or 0))
+    except ValueError:
+        power = 0
+    # A land face is colourless; Dryad Arbor, a land creature, has its colour.
+    own_colors = (frozenset(meta.get("colors") or []) if not is_land or "Creature" in words
+                  else frozenset())
+    stripped = strip_reminder_text(text)
+    for subject, quoted, reading in quoted_grants(text):
+        if reading == "unread":
+            model["verdicts"].append((f'{subject} "{quoted}"', "unread"))
+        elif reading == "other" or SELF_GRANT_SUBJECTS[subject] not in words | {""}:
+            if subject == "lands you control have":
+                # A grant to every land (Chromatic Lantern): its colours, read
+                # only for exactly "{T}: Add" one mana with nothing else in
+                # the grant or after it (Resonating Lute's two restricted mana
+                # is not read).
+                cost, _, effect = quoted.partition(":")
+                read = parse_mana_effect(effect, own_colors, power, commander_colors)
+                whole = re.search(rf'^Lands you control have "{re.escape(quoted)}"\.?$', stripped, re.M)
+                plain = (cost.strip() == "{T}" and len(read["atoms"]) == 1 and whole is not None
+                         and read["verdict"] == "credited" and not read["restricted"]
+                         and read["gate"] is None and read["board"] is None)
+                model["landGrant"] = frozenset(read["atoms"][0]) if plain else None
+                model["verdicts"].append((quoted, "land grant" if plain else "unread"))
+            else:
+                model["verdicts"].append((quoted, "grant floor"))
+    lines = own_ability_lines(text, words)
+    lasting, once = [], []
+    costed = False
+    level = False
+    for line in lines:
+        if re.fullmatch(r"(\{[^}]+\})+: Level \d+|LEVEL \d+(-\d+|\+)?", line):
+            level = True  # the abilities below belong to a level not gained
+            continue
+        if not re.search(MANA_WORDS, line, re.I):
+            continue
+        if level:
+            model["verdicts"].append((line, "unread"))
+            continue
+        if line.startswith("Max speed — "):
+            model["verdicts"].append((line, "condition floor"))  # speed counts opponents' life
+            continue
+        if line.startswith("Exhaust — "):
+            model["verdicts"].append((line, "unread"))  # once a game: no rule reads it
+            continue
+        body = re.sub(r"^(?!(?:[IVX]+, )*[IVX]+ —)[A-Z][\w' ]* — ", "", line)
+        if re.match(r"(When|Whenever|At) ", body):
+            term = mana_trigger(body)
+            if term is None or term == "unread":
+                model["verdicts"].append((line, "trigger floor" if term is None else "unread"))
+            elif term[0] == "onCast":
+                model["manaOnCast"].append(term[1])
+                model["verdicts"].append((line, "on cast"))
+            else:
+                if "earthbend" in stripped.lower():
+                    term = term[:3] + (1,)  # its earthbent land is a creature tapped for mana
+                model["manaBoard"].append(term)
+                model["verdicts"].append((line, "board extra"))
+            continue
+        cost, sep, effect = body.partition(":")
+        if not sep or not re.search(r"\badds?\b", effect, re.I):
+            model["verdicts"].append((line, "unread"))
+            continue
+        if is_land:
+            # What the ability's effect makes, before its cost is netted and
+            # whatever the cost or condition (Reflecting Pool reads it,
+            # land_could_produce): a fixed output, or a board term evaluated
+            # on the battlefield (Cabal Coffers' Swamps).
+            printed = parse_mana_effect(effect, own_colors, power, commander_colors)
+            if printed["verdict"] != "unread" and printed["board"] is not None:
+                model["landOutputs"].append(("board", printed["board"]))
+            elif printed["verdict"] != "unread" and printed["atoms"]:
+                model["landOutputs"].append(("fixed", frozenset().union(*printed["atoms"])))
+        kind, paid = parse_mana_cost(cost, name)
+        if kind not in ("free", "once", "tapArtifact"):
+            model["verdicts"].append((line, {"resource": "needs another resource",
+                                             "minus": "minus loyalty"}.get(kind, kind)))
+            continue
+        read = parse_mana_effect(effect, own_colors, power, commander_colors)
+        if "unread" in (read["verdict"], read["gate"]):
+            model["verdicts"].append((line, "unread"))
+            continue
+        if read["verdict"] in MANA_FLOORS:
+            model["verdicts"].append((line, read["verdict"]))
+            continue
+        # Whatever this ability credits below, using it taps the permanent
+        # when its cost has {T} (a count or gated creature included).
+        taps = "{T}" in cost
+        net = len(read["atoms"]) - paid
+        colours = frozenset().union(*read["atoms"]) if read["atoms"] else frozenset()
+        if kind == "tapArtifact":
+            # Each untapped artifact that loses nothing by it (no mana of its
+            # own, not a creature) pays it; a token artifact it makes as it
+            # enters is one (Urza's Construct).
+            own = 1 if re.search(r"When \w+ enters, create [^.]*artifact[^.]*token", stripped) else 0
+            model["manaBoard"].append(("count", ("idleArtifacts", own), colours, 0, None))
+            model["verdicts"].append((line, "board"))
+            continue
+        if read["imprint"] is not None:
+            model["imprint"] = {"atoms": None if read["imprint"] == "colors" else read["imprint"]}
+            model["verdicts"].append((line, "imprint"))
+            model["manaTapsSelf"] |= taps
+            if read["imprint"] == "colors":
+                continue
+        board = read["board"]
+        if board is not None and board[0] == "count":
+            model["manaBoard"].append(("count", board[1], board[2], paid, read["gate"]))
+            model["verdicts"].append((line, "board"))
+            model["manaTapsSelf"] |= taps
+            model["manaOneColour"] |= read["oneColour"]
+            continue
+        if board is not None:
+            model["manaBoard"].append(board)
+            model["manaTapsSelf"] |= taps
+        if read["gate"] is not None:
+            if net > 0:
+                model["manaBoard"].append(("gate", read["gate"], tuple([colours] * net)))
+                model["manaTapsSelf"] |= taps
+            model["verdicts"].append((line, "gated" if net > 0 else "filter"))
+            continue
+        if net <= 0:
+            model["verdicts"].append((line, "board" if board else read["verdict"]
+                                      if read["verdict"] == "printed power" else "filter"))
+            continue
+        atoms = list(read["atoms"]) if not paid else [colours] * net
+        model["manaTapsSelf"] |= taps
+        model["manaOneColour"] |= read["oneColour"] and len(atoms) > 1
+        if kind == "once":
+            once.append(atoms)
+            model["onceLeaves"] = True
+            model["verdicts"].append((line, "once"))
+            continue
+        lasting.append(atoms)
+        costed = costed or bool(paid)
+        model["verdicts"].append((line, "restricted, in full" if read["restricted"]
+                                  else read["verdict"]))
+    imprint = re.search(r"Imprint — When this \w+ enters, you may exile an? ([\w, ]+?) card"
+                        r"(?: with mana value (\d+) or greater)? from your hand", stripped)
+    if model["imprint"] is not None and imprint:
+        kinds = imprint.group(1)
+        model["imprint"].update(colorless="colorless" in kinds, nonartifact="nonartifact" in kinds,
+                                nonland="nonland" in kinds,
+                                minValue=int(imprint.group(2) or 0))
+    elif model["imprint"] is not None:
+        model["verdicts"].append(("imprint", "unread"))
+    if is_land:
+        intrinsic = frozenset(LAND_SUBTYPE_COLORS[t] for t in words if t in LAND_SUBTYPE_COLORS)
+        each_land = re.search(r"Each land is an? (\w+) in addition", stripped)
+        if each_land:
+            model["eachLandIs"] = each_land.group(1)
+            intrinsic |= {LAND_SUBTYPE_COLORS[each_land.group(1)]}
+            model["landGrant"] = frozenset({LAND_SUBTYPE_COLORS[each_land.group(1)]})
+        if intrinsic:
+            lasting.append([intrinsic])
+            model["manaTapsSelf"] = True
+            model["landOutputs"].append(("fixed", intrinsic))
+        model["landTypes"] = (NONBASIC_LAND_TYPES if "This land is every nonbasic land type" in stripped
+                              else frozenset(w for w in words if w not in CARD_TYPE_WORDS))
+        fetch_cost = re.search(r"^(.*?): Search your library", stripped, re.M)
+        search = parse_land_search(stripped)
+        if search == "unread":
+            model["verdicts"].append(("search", "unread"))
+        elif search and fetch_cost and "Sacrifice this land" not in fetch_cost.group(1):
+            # A search behind a cost that keeps the land (Thawing Glaciers,
+            # back to the hand at the cleanup step): not read.
+            model["verdicts"].append((fetch_cost.group(0), "unread"))
+        elif search and fetch_cost and "Sacrifice this land" in fetch_cost.group(1):
+            _, fetch_paid = parse_mana_cost(fetch_cost.group(1), name)
+            tail = stripped.lower()[stripped.lower().index("search your library"):]
+            if fetch_paid == 0:
+                # A fetch land (M6): cracked as it is played for a land of the
+                # library that it can find; it makes no mana of its own.
+                untap = (("landsAtLeast", 4) if "four or more lands, untap" in tail
+                         else ("elf",) if "behold an elf" in tail else None)
+                model["landCrack"] = dict(search, untapIf=untap)
+                model["verdicts"].append((fetch_cost.group(0), "crack"))
+            else:
+                model["landFetch"] = dict(search, tapsSelf="{T}" in fetch_cost.group(1),
+                                          cost=parse_generic_mana_cost(
+                                              "".join(re.findall(r"\{[^}T]+\}", fetch_cost.group(1)))))
+                model["verdicts"].append((fetch_cost.group(0), "land fetch"))
+        # A land creature (Dryad Arbor) enters by its own rule and is summoning
+        # sick: untapped, its mana from the next turn (put_land_onto_battlefield).
+        model["landEntry"] = parse_land_entry(text)
+        if model["landCrack"] and model["landEntry"] != ("untapped",):
+            # A fetch land with an entry rule of its own (Grasslands enters
+            # tapped): cracking it as it is played is not read.
+            model["verdicts"].append(("a fetch land's own entry rule", "unread"))
+        short_name = re.escape(name.split(" // ")[0].split(",")[0])
+        for line in stripped.split("\n"):
+            if (re.match(r"(When|Whenever|At) ", line) and "you may" not in line
+                    and re.search(rf"(?:sacrifice|return|exile) (?:this land|{short_name})\b", line)):
+                # It sacrifices, returns or exiles itself (City of Traitors):
+                # not read.
+                model["verdicts"].append((line, "unread"))
+        if re.search(r"choose a basic land type|as a copy of", stripped, re.I):
+            # Its land type, or the land it copies, is chosen as it enters
+            # (Multiversal Passage, Thran Portal, Vesuva): not read.
+            model["verdicts"].append(("a type or copy chosen as it enters", "unread"))
+        given_up = re.search(r"(if this land would enter, )?sacrifice (two)(?: untapped)? lands"
+                             r"|return (a) land you control to its owner's hand", stripped.lower())
+        if given_up:
+            # Lands it takes as it enters (M6): sacrificed "instead" of entering
+            # (gone before they are tapped), or by an entering trigger (tapped
+            # in response first) and returned to the hand or sacrificed.
+            model["landEntryCost"] = {
+                "count": COUNT_WORDS[given_up.group(2) or given_up.group(3)],
+                "now": bool(given_up.group(1)), "toHand": bool(given_up.group(3))}
+        elif re.search(r"(?:enters|would enter)[^.]*\b(?:sacrifice|return)\b", stripped.lower()):
+            # Any other sacrifice or return as it enters: of lands in other
+            # words (Coral Atoll's "an untapped Island"), or of itself (Brokers
+            # Hideout).
+            model["verdicts"].append(("lands taken as it enters", "unread"))
+        back = meta.get("back_face")
+        if back and "Land" in meta.get("type_line", "").split(" // ")[0]:
+            # Two land faces (Pathways): the face is chosen as it is played.
+            model["landFaces"] = [
+                card_mana_model(name, {"type_line": face["type_line"], "oracle_text": face["oracle_text"]},
+                                commander_colors)["manaAtoms"]
+                for face in ({"type_line": type_line, "oracle_text": text}, back)]
+    else:
+        for line in lines:
+            cost, sep, effect = line.partition(":")
+            found = parse_land_search(effect) if sep and "Search your library" in effect else None
+            if found == "unread":
+                model["verdicts"].append((line, "unread"))
+                continue
+            kind, paid = parse_mana_cost(cost, name) if found else ("", 0)
+            if found and kind == "once" and found["count"]:
+                model["landFetch"] = dict(found, tapsSelf="{T}" in cost, cost=parse_generic_mana_cost(
+                    "".join(re.findall(r"\{[^}T]+\}", cost))))
+                model["verdicts"].append((line, "land fetch"))
+            elif found and found["count"] and kind in ("free", "unread", "tapArtifact"):
+                # A land search the permanent keeps after (no self-sacrifice):
+                # repeatable, not read. Another permanent sacrificed for it
+                # (Elvish Reclaimer's land) nets nothing: not credited.
+                model["verdicts"].append((line, "unread"))
+    if once and lasting and model["onceLeaves"]:
+        # A sacrifice-for-mana ability beside its lasting mana (Crystal Vein:
+        # {C}, or sacrifice it for {C}{C}): alternatives, not both; not read.
+        model["verdicts"].append(("lasting mana or sacrificing it for more", "unread"))
+    each_land = re.search(r"Each land is an? \w+ in addition to its other land types", stripped)
+    for line in stripped.split("\n"):
+        if not re.search(LAND_TYPE_CHANGE, line, re.I) or (is_land and each_land
+                                                            and each_land.group(0) in line):
+            continue
+        set_to = re.fullmatch(r"Nonbasic lands are (Plains|Island|Swamp|Mountain|Forest)s?\.", line)
+        if set_to and sorted(commander_colors) == [LAND_SUBTYPE_COLORS[set_to.group(1)]]:
+            # Setting the type of every nonbasic land to the type of the
+            # commander's only colour (Harbinger of the Seas in a mono-blue
+            # deck): not applied to the goldfish's own lands, a named floor
+            # (owner-accepted, review round 3). In any other deck (Blood Moon,
+            # Magus of the Moon beside other colours) it is not read.
+            model["verdicts"].append((line, "land types set, not applied"))
+        else:
+            # Granting land types (Prismatic Omen, Dryad of the Ilysian
+            # Grove): every land's mana changes; no rule reads it.
+            model["verdicts"].append((line, "unread"))
+    # M4: one activation a turn, its best free ability; at one mana the union
+    # of the colours of the abilities it could use instead.
+    if lasting:
+        best = max(len(atoms) for atoms in lasting)
+        model["manaAtoms"] = ([frozenset().union(*(atoms[0] for atoms in lasting))] if best == 1
+                              else list(next(atoms for atoms in lasting if len(atoms) == best)))
+    # A count term's value with the card alone on the battlefield is its floor.
+    for term in model["manaBoard"]:
+        if term[0] == "count" and term[1][0] in ("type", "idleArtifacts") and term[4] is None:
+            if term[1][0] == "idleArtifacts":
+                alone = term[1][1]
+            else:
+                alone = 1 if term[1][1] in words or (term[1][1] not in CARD_TYPE_WORDS
+                                                     and "Changeling" in stripped) else 0
+            if alone - term[3] > len(model["manaAtoms"]):
+                model["manaAtoms"] = [term[2]] * (alone - term[3])
+    if "doesn't untap during your untap step" in stripped and model["manaAtoms"]:
+        once.append(model["manaAtoms"])
+        model["manaAtoms"] = []
+        rearm = re.search(r"^(\{\d+\}): Untap this \w+\.$", stripped, re.M)
+        if rearm:
+            model["onceRearm"] = parse_generic_mana_cost(rearm.group(1))
+    if once:
+        model["manaOnce"] = max(once, key=len)
+    if (not is_land and gives_up_land(stripped)
+            and (model["manaAtoms"] or model["manaOnce"] or model["manaBoard"] or model["manaOnCast"]
+                 or model["landFetch"] or model["imprint"])):
+        # Mana from a card that gives up a land to enter or as it acts (Mox
+        # Diamond's discard): what that costs the goldfish is not read.
+        model["verdicts"].append(("gives up a land", "unread"))
+    chapters = re.findall(r"^([IVX]+)(?:, [IVX]+)* —", stripped, re.M)
+    if chapters and (model["manaAtoms"] or model["manaOnce"] or model["manaBoard"]):
+        # A Saga is sacrificed after its last chapter resolves, on the turn
+        # (chapters - 1) after it enters; it is tapped for mana first, so its
+        # mana lasts as many turns as it has chapters.
+        model["manaTurns"] = max(("I", "II", "III", "IV", "V").index(c) + 1 for c in chapters)
+    if not is_land:
+        # A non-land permanent that enters tapped, a rider after it included
+        # (Nevinyrral's Disk; Noble's Purse "enters tapped and with three coin
+        # counters"), is tapped until the next untap step, for every reader
+        # (Urza's grant), and its mana comes from the next turn.
+        short = re.escape(name.split(" // ")[0].split(",")[0])
+        model["entersTapped"] = bool(re.search(rf"^(?:This \w+|{short}) enters tapped(?:\.| and\b)",
+                                               stripped, re.M))
+    if is_land:
+        model["manaSourceDelay"] = 0
+    elif (model["manaAtoms"] or model["manaOnce"] or model["manaBoard"] or model["manaOnCast"]
+          or model["imprint"]):
+        # A creature's mana comes the turn it enters only from an activated
+        # ability without {T} (Urza taps another artifact); a {T} ability is
+        # summoning sick, and a triggered extra (Crypt Ghast) is read from the
+        # next turn's pool, as every board term is.
+        costs = [line.partition(":")[0] for line in lines
+                 if ":" in line and re.search(MANA_WORDS, line, re.I)]
+        sick = "Creature" in words and (any("{T}" in cost for cost in costs) or not costs)
+        model["manaSourceDelay"] = 1 if (sick or costed or model["entersTapped"]) else 0
+    return model
+
+
+def is_mana_source(profile: dict) -> bool:
+    """A permanent with lasting mana (at least one every turn), a spell that
+    puts a land onto the battlefield, or a permanent with a land-fetching
+    ability the goldfish activates (M7, M8): the cast order's ramp tier, the
+    mulligan's cheap ramp, the ramp count and the DEC-944 hold exemption.
+    A permanent whose mana an imprint sets (Chrome Mox) is one too. One-shot
+    sources and cards with no credited mana are not."""
+    return (bool(profile["manaAtoms"]) or bool(profile["landRamp"] and profile["landRamp"]["count"])
+            or bool(profile["landFetch"]) or bool(profile["imprint"]))
+
+
+def parse_land_ramp_profile(meta: dict, name: str = "") -> dict | str | None:
+    """Lands a spell, or a permanent's entering trigger ("When this creature
+    enters" or "When <its short name> enters"), moves as it resolves (M8).
+    Refused, as the reason no rule reads it: "unread" for a search no rule
+    places (a condition before it, its count or filter: parse_land_search),
+    "gives up a land" for a card that sacrifices, discards or returns a land
+    as it resolves or as a cost (Harrow, Crop Rotation, Roiling Regrowth)."""
+    type_line, text = battlefield_face(meta)
+    words = type_words(type_line)
+    if "Land" in words:
+        return None
+    spell = bool({"Instant", "Sorcery"} & words)
+    short = re.escape(name.split(" // ")[0].split(",")[0]) if name else r"this \w+"
+    for line in own_ability_lines(text, words):
+        if spell or re.match(rf"When (?:this \w+|{short}) enters, ", line):
+            found = parse_land_search(line)
+            if found == "unread":
+                return found
+            if found and (found["count"] or found["toHand"]):
+                if gives_up_land(text):
+                    return "gives up a land"
+                return found
+    return None
 
 
 def immediate_draw_count(name: str, meta: dict) -> int:
@@ -1764,9 +2568,6 @@ def targets_only_creatures(meta: dict) -> bool:
     return not re.search(r"\btargets?\b(?!\s+creature\b)", lowered)
 
 
-_CREATE_COUNT_WORDS = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5}
-
-
 def creature_token_count(meta: dict) -> int:
     """Fixed creature-token count a card makes on resolution (DEC-393).
 
@@ -1797,46 +2598,79 @@ def creature_token_count(meta: dict) -> int:
         if "for each" in lower:
             continue
         for count_token in re.findall(r"\bcreate (a|an|one|two|three|four|five|\d+)\b[^.]*?\bcreature tokens?\b", lower):
-            total += int(count_token) if count_token.isdigit() else _CREATE_COUNT_WORDS.get(count_token, 1)
+            total += int(count_token) if count_token.isdigit() else COUNT_WORDS.get(count_token, 1)
     return total
 
 
-def land_enters_tapped(meta: dict, battlefield_lands: list[dict]) -> bool:
-    """Best-effort ETB tapped heuristic for generic goldfish simulation."""
-    oracle = meta.get("oracle_text", "")
-    lower = oracle.lower()
-    if "enters tapped" not in lower:
-        return False
-    if "you may pay 2 life" in lower:
-        return False
-    if "unless you have two or more opponents" in lower:
-        return False
-
-    other_land_count = len(battlefield_lands)
-    subtype_set = set()
-    basic_count = 0
-    for land in battlefield_lands:
-        subtype_set.update(land.get("subtypes", set()))
-        if land.get("isBasic"):
-            basic_count += 1
-
-    if "unless you control two or fewer other lands" in lower:
-        return other_land_count > 2
-    if "unless you control two or more other lands" in lower:
-        return other_land_count < 2
-    if "unless you control a basic land" in lower:
-        return basic_count == 0
-    if "unless you control" in lower:
-        required_subtypes = {subtype for subtype in LAND_SUBTYPE_COLORS if subtype.lower() in lower}
-        if required_subtypes:
-            return not any(subtype in subtype_set for subtype in required_subtypes)
-
-    return True
+def land_types_on_battlefield(battlefield_lands: list[dict], profiles: dict) -> list[frozenset]:
+    """Each land's land types, with a type another land gives every land
+    ("Each land is a Swamp": Urborg)."""
+    granted = {profiles[land["name"]]["eachLandIs"] for land in battlefield_lands} - {None}
+    return [profiles[land["name"]]["landTypes"] | granted for land in battlefield_lands]
 
 
-def choose_best_land_index(library: list[str], metadata: dict, commander_colors: list[str],
-                           battlefield_lands: list[dict], candidate_indices: list[int]) -> int | None:
-    """Choose best land target from library for ramp/fetch effects."""
+def has_creature_type(profile: dict, word: str) -> bool:
+    """A permanent's creature type, a changeling having every one."""
+    return word in profile["typeWords"] or (profile["changeling"] and word not in CARD_TYPE_WORDS)
+
+
+def land_enters_tapped(rule: tuple, battlefield_lands: list[dict], permanents: list[dict],
+                       profiles: dict, hand: list[str]) -> bool:
+    """Whether a land enters tapped under its entry rule (parse_land_entry),
+    read against the lands and permanents already on the battlefield and the
+    rest of the hand (a Snarl's reveal, Elven Passage's behold)."""
+    kind = rule[0]
+    if kind == "reveal":
+        return not any(profiles[card]["subtypes"] & rule[1] for card in hand)
+    if kind in ("untapped", "tapped"):
+        return kind == "tapped"
+    if kind == "otherLandsAtMost":
+        return len(battlefield_lands) > rule[1]
+    if kind == "otherLandsAtLeast":
+        return len(battlefield_lands) < rule[1]
+    if kind == "basicsAtLeast":
+        return sum(1 for land in battlefield_lands if land["isBasic"]) < rule[1]
+    land_types = land_types_on_battlefield(battlefield_lands, profiles)
+    if kind == "anyType":
+        return not any(rule[1] & types for types in land_types)
+    if kind == "otherTypeAtLeast":
+        return sum(1 for types in land_types if rule[1] in types) < rule[2]
+    others = [profiles[permanent["name"]] for permanent in permanents]
+    if kind == "legendaryCreature":
+        return not any({"Legendary", "Creature"} <= profile["typeWords"] for profile in others)
+    if kind == "elf":
+        # Behold an Elf you control or an Elf card in the hand.
+        return not any("Creature" in profile["typeWords"] and has_creature_type(profile, "Elf")
+                       for profile in others + [profiles[card] for card in hand])
+    raise ValueError(f"unknown land entry rule {rule!r}")
+
+
+def land_colors(profile: dict) -> set[str]:
+    """Every colour a land can make: its atoms, both faces, its board terms."""
+    atoms = list(profile["manaAtoms"]) + [atom for face in profile["landFaces"] or [] for atom in face]
+    for term in profile["manaBoard"]:
+        if term[0] == "gate":
+            atoms += list(term[2])
+        elif term[0] == "count":
+            atoms.append(term[2])
+    return set().union(*atoms) if atoms else set()
+
+
+def usable_this_turn(profile: dict, tapped: bool) -> bool:
+    """Whether a land's mana can be spent the turn it enters, for choosing a
+    land to play and a land a search finds alike: it does not enter tapped
+    and is not a land creature (summoning sick: Dryad Arbor)."""
+    return not tapped and "Creature" not in profile["typeWords"]
+
+
+def choose_best_land_index(library: list[str], profiles: dict, commander_colors: list[str],
+                           battlefield_lands: list[dict], permanents: list[dict],
+                           candidate_indices: list[int], tapped_test=None) -> int | None:
+    """Choose best land target from library for ramp/fetch effects.
+
+    ``tapped_test(name)`` says whether the land would enter tapped; by
+    default its own entry rule, with a hand that reveals and beholds nothing.
+    """
     if not candidate_indices:
         return None
 
@@ -1847,9 +2681,12 @@ def choose_best_land_index(library: list[str], metadata: dict, commander_colors:
     best_index = None
     best_score = None
     for idx in candidate_indices:
-        meta = metadata.get(library[idx], {})
-        colors = set().union(*mana_atoms_for_card(meta, commander_colors)) if mana_atoms_for_card(meta, commander_colors) else set()
-        untapped_bonus = 10 if not land_enters_tapped(meta, battlefield_lands) else 0
+        profile = profiles[library[idx]]
+        colors = land_colors(profile)
+        tapped = (tapped_test(library[idx]) if tapped_test is not None
+                  else land_enters_tapped(profile["landEntry"], battlefield_lands, permanents,
+                                          profiles, []))
+        untapped_bonus = 10 if usable_this_turn(profile, tapped) else 0
         new_colors = len((set(colors) & set(commander_colors)) - present_colors)
         score = (
             untapped_bonus,
@@ -1864,38 +2701,49 @@ def choose_best_land_index(library: list[str], metadata: dict, commander_colors:
     return best_index
 
 
-def select_ramp_targets(library: list[str], metadata: dict, commander_colors: list[str],
-                        battlefield_lands: list[dict], ramp_profile: dict) -> list[str]:
-    """Select concrete land cards from library for a ramp effect."""
-    candidate_indices = []
-    for idx, name in enumerate(library):
-        meta = metadata.get(name, {})
-        type_line = meta.get("type_line", "")
-        if "Land" not in type_line:
-            continue
-        if ramp_profile["basicOnly"] and "Basic" not in type_line:
-            continue
-        subtypes = extract_land_subtypes(meta)
-        if ramp_profile["allowedSubtypes"] and not (subtypes & ramp_profile["allowedSubtypes"]):
-            continue
-        candidate_indices.append(idx)
+def select_ramp_targets(library: list[str], profiles: dict, commander_colors: list[str],
+                        battlefield_lands: list[dict], permanents: list[dict],
+                        ramp_profile: dict, count: int, tapped_test=None) -> list[str]:
+    """Take from the library the land cards a land search finds (M8), at
+    most `count`: one per named type for "a Forest card and a Plains card";
+    for "share a land type" the most lands of one basic land type (a legal
+    set), the type whose best land scores best on a tie. Land types are the
+    printed ones of the card's front face, what it is in the library (a card
+    there has no granted type, and a modal DFC whose front is a spell is not
+    a land card)."""
+    if count <= 0:
+        return []
 
-    selected = []
-    for _ in range(ramp_profile["count"]):
-        best_idx = choose_best_land_index(library, metadata, commander_colors, battlefield_lands, candidate_indices)
-        if best_idx is None:
-            break
-        selected.append(library.pop(best_idx))
-        candidate_indices = [idx - 1 if idx > best_idx else idx for idx in candidate_indices if idx != best_idx]
-        selected_meta = metadata.get(selected[-1], {})
-        battlefield_lands.append({
-            "name": selected[-1],
-            "colors": set().union(*mana_atoms_for_card(selected_meta, commander_colors)) if mana_atoms_for_card(selected_meta, commander_colors) else set(),
-            "subtypes": extract_land_subtypes(selected_meta),
-            "isBasic": "Basic" in selected_meta.get("type_line", ""),
-        })
-        battlefield_lands.pop()
-    return selected
+    def fits(name: str, types: set) -> bool:
+        profile = profiles[name]
+        if not profile["libraryLand"] or (ramp_profile["basicOnly"] and not profile["libraryBasic"]):
+            return False
+        return not types or bool(profile["librarySubtypes"] & types)
+
+    def take(types: set) -> str | None:
+        candidates = [idx for idx, name in enumerate(library) if fits(name, types)]
+        best_idx = choose_best_land_index(library, profiles, commander_colors, battlefield_lands,
+                                          permanents, candidates, tapped_test)
+        return None if best_idx is None else library.pop(best_idx)
+
+    if ramp_profile["sharedType"]:
+        sizes = {land_type: min(count, sum(1 for name in library if fits(name, {land_type})))
+                 for land_type in LAND_SUBTYPE_COLORS}
+        size = max(sizes.values())
+        if size == 0:
+            return []
+        tied = [land_type for land_type, n in sizes.items() if n == size]
+        leaders = {choose_best_land_index(
+            library, profiles, commander_colors, battlefield_lands, permanents,
+            [idx for idx, name in enumerate(library) if fits(name, {land_type})], tapped_test): land_type
+            for land_type in tied}
+        land_type = leaders[choose_best_land_index(library, profiles, commander_colors,
+                                                   battlefield_lands, permanents, sorted(leaders),
+                                                   tapped_test)]
+        return [take({land_type}) for _ in range(size)]
+    wanted = ([{land_type} for land_type in ramp_profile["perType"]][:count]
+              if ramp_profile["perType"] else [ramp_profile["allowedSubtypes"]] * count)
+    return [name for name in (take(types) for types in wanted) if name is not None]
 
 
 def mana_value_combat(mana_value: int) -> int:
@@ -1910,27 +2758,46 @@ def mana_value_impact(mana_value: int) -> int:
 
 def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
                            commander_colors: list[str], commander_name: str) -> dict:
-    """Compile per-card goldfish heuristics from metadata."""
+    """Compile per-card goldfish heuristics from metadata.
+
+    Raises ValueError for a card whose mana text no rule reads (an "unread"
+    verdict, entry rule or land search): nothing is read by accident.
+    """
     mana_cost = parse_generic_mana_cost(meta.get("mana_cost", ""))
     type_line = meta.get("type_line", "")
     oracle = meta.get("oracle_text", "")
-    is_land = "Land" in type_line
+    mana = card_mana_model(name, meta, commander_colors)
+    is_land = mana["isLand"]
+    face_type, face_text = battlefield_face(meta)
     is_threat = is_threat_card(name, meta, category_names) or name == commander_name
     is_draw = is_draw_card(meta)
     is_interaction = is_interaction_card(meta, category_names)
-    land_ramp = None if is_land else parse_land_ramp_profile(meta)
-    mana_atoms = mana_atoms_for_card(meta, commander_colors) if is_static_source_card(meta) else []
-    source_delay = mana_source_delay(meta)
+    land_ramp = None if is_land else parse_land_ramp_profile(meta, name)
+    unread = [line for line, verdict in mana["verdicts"] if verdict == "unread"]
+    if mana["landEntry"] == "unread":
+        unread.append("how it enters")
+    if land_ramp == "unread":
+        unread.append("its land search (a condition before it, its count or its filter)")
+    if land_ramp == "gives up a land":
+        unread.append("the land it gives up as it resolves or as its cost")
+    if not is_land and not (meta.get("mana_cost") or "").strip():
+        # No mana cost: it cannot be cast for mana (suspend, an alternative
+        # cost); read as free it would be cast at once.
+        unread.append("how it is cast (no mana cost)")
+    if unread:
+        raise ValueError(f"{name}: no rule reads {unread}; extend card_mana_model")
     # An X spell is not a mana source in the goldfish: it is cast under the X
     # rule (X_SPELL_MIN_X) with the mana left at its place in the cast order,
     # so it neither sorts first as ramp, skips the DEC-944 holds, counts as
-    # the mulligan's cheap ramp nor as a ramp permanent. The one castable X
-    # card in the fleet with a mana-source classification (Springleaf Parade)
-    # reads as a source only through the "{T}: Add" it grants its creature
-    # tokens, which the goldfish does not model. Lands are outside the X rule:
-    # an MDFC whose front has {X} (Agadeem's Awakening) is played as its land.
+    # the mulligan's cheap ramp nor as a ramp permanent. No castable X card in
+    # the fleet has a mana ability of its own (Springleaf Parade grants one to
+    # its creature tokens, which the goldfish does not model). Lands are
+    # outside the X rule: an MDFC whose front has {X} (Agadeem's Awakening) is
+    # played as its land.
     if mana_cost["X"] and not is_land:
-        land_ramp, mana_atoms, source_delay = None, [], None
+        land_ramp = None
+        mana = dict(mana, manaAtoms=[], manaOnce=[], manaBoard=[], manaOnCast=[],
+                    manaSourceDelay=None, landFetch=None)
 
     impact = 0
     if is_threat:
@@ -1973,74 +2840,472 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
         "isThreat": is_threat,
         "isDraw": is_draw,
         "isInteraction": is_interaction,
-        "manaAtoms": mana_atoms,
-        "manaSourceDelay": source_delay,
+        **{key: mana[key] for key in (
+            "manaAtoms", "manaOnce", "onceLeaves", "onceRearm", "manaBoard", "manaOnCast",
+            "manaSourceDelay", "manaTapsSelf", "manaOneColour", "manaTurns", "imprint",
+            "landEntry", "landEntryCost", "landFaces", "landFetch", "landCrack", "landTypes",
+            "eachLandIs", "landGrant", "landOutputs", "entersTapped")},
+        # An activated ability of its own with {T} in its cost (Isochron
+        # Scepter): a line that names it needs it untapped (urzaKeep).
+        "tapAbility": any("{T}" in line.partition(":")[0]
+                          for line in own_ability_lines(face_text, type_words(face_type)) if ":" in line),
+        # A draw ability whose cost has {T} (The One Ring): activating it taps
+        # the permanent (CAST_TURN_ACTIVATION_DRAW, PERMANENT_DRAW_ENGINE).
+        "drawTapsSelf": bool(re.search(r"^[^:\n]*\{T\}[^:\n]*:[^\n]*\bdraw", strip_reminder_text(face_text),
+                                       re.M | re.I)),
+        # How each mana line was read (card_mana_model), for the methodology.
+        "manaVerdicts": tuple(mana["verdicts"]),
+        # A creature with vigilance attacks untapped, so it can still be
+        # tapped for mana after combat (spend_order).
+        "vigilance": bool(re.search(r"(^|\n|, )vigilance\b", strip_reminder_text(face_text).lower())),
         "landRamp": land_ramp,
         "immediateDraw": CAST_TURN_ACTIVATION_DRAW.get(name, immediate_draw_count(name, meta)),
         "targetsOnlyCreature": targets_only_creatures(meta),
         "tokenCreatures": creature_token_count(meta),
         "impact": impact,
         "combat": combat,
-        "subtypes": extract_land_subtypes(meta),
-        "isBasic": "Basic" in type_line,
+        # The face on the battlefield, for the board terms and entry rules.
+        "typeWords": type_words(face_type),
+        # A land face is colourless; Dryad Arbor, a land creature, has its colour.
+        "colors": (frozenset(meta.get("colors") or [])
+                   if not is_land or "Creature" in type_words(face_type) else frozenset()),
+        "changeling": "Changeling" in face_text,
+        # Printed basic land types, read in the hand (a Snarl's reveal) and
+        # the library (searches); a type granted on the battlefield (Urborg)
+        # is read there only (land_types_on_battlefield).
+        "subtypes": extract_land_subtypes(face_type),
+        "isBasic": "Basic" in type_words(face_type),
+        # What the card is in the library, for land searches: its front face
+        # (a modal DFC whose front is a spell is not a land card there:
+        # Hagra Mauling).
+        "libraryLand": "Land" in type_words(type_line.split(" // ")[0]),
+        "librarySubtypes": extract_land_subtypes(type_line.split(" // ")[0]),
+        "libraryBasic": "Basic" in type_words(type_line.split(" // ")[0]),
     }
 
 
 class GoldfishManaPool:
-    """Flexible mana pool backed by source atoms."""
+    """The turn's mana (ManaAtom, one per mana) and the sources it has used.
 
-    def __init__(self, sources=None):
+    ``tapped``: the ids of the sources the turn's spending has used: their
+    other mana is already made (floating) and costs nothing more.
+    ``tapping``: the ids of the sources whose own {T} a payment used (settle
+    taps them). ``added``: every mana that entered the turn's pool, kept
+    through spending (the turn's availableMana). ``post_combat``: after combat
+    no creature attacks again, so a creature's mana costs what a land's does.
+    ``turn``: the turn the pool belongs to; ``board_key``: the board its
+    unspent mana was last read from (refresh_pool); ``lasting_only``: the end
+    of the turn's pool, which holds no one-shot mana. The pool answers questions
+    (can_cast) and builds the pool a payment leaves (pay); mana leaves the
+    turn's pool only through spend_mana.
+
+    The spend preference, in one place (GoldfishManaPool.rank, lower first):
+      0    floating mana: more mana of a source the turn has already used
+           (Sol Ring's second {C}), and mana with no source (a cast trigger,
+           a Saga tapped as it leaves, lands tapped before they were given up);
+      1    lands, noncreature permanents, creatures whose mana does not tap
+           them, that could not attack anyway (summoning sick, no combat) or
+           that attack anyway (vigilance: the pilot attacks first and casts
+           after combat), and after combat every creature;
+      1.5  a permanent whose own {T} ability the turn uses later
+           (``manaReserve``: Castle Ardenvale, Myriad Landscape, High Market);
+      2    one-shot mana (Lotus Petal, Mana Vault, Basalt Monolith);
+      3+   a creature that could still attack: 3 plus its combat.
+    The preferred payment takes the fewest of those creatures, then the
+    least combat, then the fewest one-shot sources; then the lowest ranks,
+    the narrowest colours first. A one-colour activation (Lotus Field,
+    Nykthos) that pays is activated for one colour: its other mana is that
+    colour, and mana it makes only for another colour is not made.
+
+    With requirements to keep (pay) a payment is exact: one is found
+    whenever the cost and every requirement can be paid together, never
+    otherwise, and it is the most preferred payment that keeps them.
+    """
+
+    def __init__(self, sources=None, tapped=None, added=None, post_combat=False, turn=None,
+                 tapping=None, board_key=None, lasting_only=False, records=None):
         self.sources = list(sources or [])
+        self.tapped = set(tapped or ())
+        self.tapping = set(tapping or ())
+        self.added = len(self.sources) if added is None else added
+        self.post_combat = post_combat
+        self.turn = turn
+        self.board_key = board_key
+        self.lasting_only = lasting_only
+        # The records whose ids ``tapped``, ``tapping`` and ``board_key``
+        # hold, kept alive for the turn: a record that leaves mid-turn (a
+        # sacrificed Lotus Petal) is not freed, so its id is never reused by
+        # a permanent that enters later.
+        self.records = {} if records is None else records
 
     @property
     def total(self) -> int:
         return len(self.sources)
 
-    def _allocate(self, pips: dict) -> tuple[bool, list[frozenset] | None]:
-        needed = {color: pips.get(color, 0) for color in COLOR_SYMBOLS}
-        generic = pips.get("generic", 0)
-        total_needed = generic + sum(needed.values())
-        if self.total < total_needed:
-            return False, None
+    def add(self, atoms) -> None:
+        """Mana that comes online during the turn with no source to read it
+        from again: a cast trigger's, mana tapped before its source left."""
+        atoms = list(atoms)
+        self.sources.extend(atoms)
+        self.added += len(atoms)
 
-        available = list(self.sources)
-        for _ in range(sum(needed.values())):
-            best_color = None
-            best_ratio = float("inf")
-            for color in COLOR_SYMBOLS:
-                if needed[color] <= 0:
-                    continue
-                supply = sum(1 for source in available if color in source)
-                if supply == 0:
-                    return False, None
-                ratio = supply / needed[color]
-                if ratio < best_ratio:
-                    best_ratio = ratio
-                    best_color = color
+    def _derived(self, sources, tapped=None, tapping=None, post_combat=None) -> "GoldfishManaPool":
+        return GoldfishManaPool(sources, self.tapped if tapped is None else tapped,
+                                self.added, self.post_combat if post_combat is None else post_combat,
+                                self.turn, self.tapping if tapping is None else tapping, self.board_key,
+                                self.lasting_only, self.records)
 
-            best_idx = None
-            best_flex = float("inf")
-            for idx, source in enumerate(available):
-                if best_color in source and len(source) < best_flex:
-                    best_idx = idx
-                    best_flex = len(source)
-            if best_idx is None:
-                return False, None
-            available.pop(best_idx)
-            needed[best_color] -= 1
+    def without(self, keep) -> "GoldfishManaPool":
+        """The pool with only the mana ``keep(atom)`` accepts (an attacker's
+        mana leaves with it); the rest of its state carries over."""
+        return self._derived([atom for atom in self.sources if keep(atom)])
 
-        available.sort(key=len)
-        if len(available) < generic:
-            return False, None
-        return True, available[generic:]
+    def after_combat(self) -> "GoldfishManaPool":
+        """The same pool once combat is over (``post_combat``)."""
+        return self._derived(self.sources, post_combat=True)
+
+    def lasting(self) -> "GoldfishManaPool":
+        """The end of the turn's pool: its lasting mana (one-shot mana not
+        spent is kept for a later turn)."""
+        pool = self._derived([atom for atom in self.sources if not getattr(atom, "once", False)])
+        pool.lasting_only = True
+        return pool
+
+    def rank(self, atom) -> float:
+        """The spend preference of one mana (the class docstring)."""
+        sid = atom_source_id(atom)
+        if sid is None or sid in self.tapped:
+            return 0
+        order = getattr(atom, "order", 0)
+        if order >= 2:
+            return 1 if self.post_combat else order + 1
+        if order == 1:
+            return 2
+        return 1.5 if getattr(atom, "reserve", False) else 1
 
     def can_cast(self, pips: dict) -> bool:
-        success, _ = self._allocate(pips)
-        return success
+        return self._allocate(pips) is not None
 
-    def after_spending(self, pips: dict) -> "GoldfishManaPool":
-        success, remaining = self._allocate(pips)
-        return GoldfishManaPool(remaining if success else [])
+    def pay(self, pips: dict, keep=()) -> "GoldfishManaPool | None":
+        """The pool a payment of ``pips`` leaves, or None when none can pay.
+
+        ``keep``: requirements the pool left must still pay, each a list of
+        costs any one of which keeps it (a held activation, a gate with each
+        of its lines). The payment and the requirements are checked jointly:
+        the preferred payment when it keeps them, else the most preferred of
+        every payment (_payments) that keeps them all; None when none does.
+        """
+        payment = self._allocate(pips)
+        if payment is None:
+            return None
+        first = self._after(*payment)
+        if self._keeps(first, keep):
+            return first
+        # A requirement paid together with the payment from this pool: a
+        # payment that keeps it exists only if both can be paid at once.
+        if not all(any(self.can_cast(combine_mana_costs([pips, cost])) for cost in costs)
+                   for costs in keep):
+            return None
+        for used, pinned in self._payments(pips):
+            option = self._after(used, pinned)
+            if self._keeps(option, keep):
+                return option
+        return None
+
+    @staticmethod
+    def _keeps(pool: "GoldfishManaPool", keep) -> bool:
+        return all(any(pool.can_cast(cost) for cost in costs) for costs in keep)
+
+    def _after(self, used: set, pinned: dict) -> "GoldfishManaPool":
+        """The pool a payment (the mana at ``used``, the one-colour
+        activations it made in ``pinned``) leaves."""
+        atoms = self.sources
+        sids = {atom_source_id(atoms[i]) for i in used} - {None}
+        tapping = {atom_source_id(atoms[i]) for i in used if getattr(atoms[i], "taps", False)} - {None}
+        return self._derived(self._left(used, pinned), self.tapped | sids, self.tapping | tapping)
+
+    def _groups(self, indices) -> dict:
+        """The one-colour activations among ``indices`` that could make more
+        than one colour: {group: the colours its mana could be}."""
+        groups: dict = {}
+        for i in indices:
+            group = getattr(self.sources[i], "group", None)
+            if group is not None:
+                groups.setdefault(group, set()).update(self.sources[i])
+        return {group: union for group, union in groups.items() if len(union) > 1}
+
+    def _allocate(self, pips: dict):
+        """The preferred exact payment of ``pips``: (mana indices used,
+        {one-colour activation: its colour}) or None. A payment is found
+        whenever one exists (pips matched to mana by augmenting paths, each
+        one-colour activation tried unused and at each colour). Creatures
+        that could attack are allowed only when needed: the fewest, then the
+        least combat, then the fewest one-shot sources; one-shot sources
+        likewise."""
+        colours = [colour for colour in COLOR_SYMBOLS for _ in range(pips.get(colour, 0))]
+        need = len(colours) + pips.get("generic", 0)
+        if self.total < need:
+            return None
+        if need == 0:
+            return set(), {}
+        by_source: dict = {}
+        for index, atom in enumerate(self.sources):
+            by_source.setdefault(atom_source_id(atom), []).append(index)
+        free, once, creatures = [], [], []
+        for sid, indices in by_source.items():
+            rank = self.rank(self.sources[indices[0]])
+            (free if rank < 2 else once if rank == 2 else creatures).append(sid)
+        if self._payment(colours, need, by_source, list(by_source)) is None:
+            return None
+        combat = {sid: self.rank(self.sources[by_source[sid][0]]) for sid in creatures}
+
+        def fewest_once(chosen):
+            for count in range(len(once) + 1):
+                for picked in itertools.combinations(once, count):
+                    payment = self._payment(colours, need, by_source, free + list(picked) + list(chosen))
+                    if payment is not None:
+                        return count, payment
+            return None
+
+        for size in range(len(creatures) + 1):
+            best = None
+            ordered = sorted(itertools.combinations(sorted(creatures, key=lambda s: combat[s]), size),
+                             key=lambda c: sum(combat[s] for s in c))
+            for chosen in ordered:
+                key = sum(combat[s] for s in chosen)
+                if best is not None and key > best[0]:
+                    break
+                if self._payment(colours, need, by_source, free + once + list(chosen)) is None:
+                    continue
+                count, payment = fewest_once(chosen)
+                # Equal combat given up: the fewest one-shot sources.
+                if best is None or count < best[1]:
+                    best = (key, count, payment)
+            if best is not None:
+                return best[2]
+        return None
+
+    def _left(self, used: set, pinned: dict) -> list:
+        """The mana a payment leaves. A one-colour activation that paid is
+        that colour; its mana that colour does not make is not made
+        (Nykthos: each colour its own devotion)."""
+        left = []
+        for i, atom in enumerate(self.sources):
+            if i in used:
+                continue
+            group = getattr(atom, "group", None)
+            if group in pinned:
+                if pinned[group] not in atom:
+                    continue
+                if len(atom) > 1:
+                    atom = retag(atom, frozenset({pinned[group]}))
+            left.append(atom)
+        return left
+
+    def _payment(self, colours: list[str], need: int, by_source: dict, allowed: list):
+        """(mana indices, {one-colour activation: colour}) paying ``colours``
+        and the generic rest from the sources in ``allowed``, or None."""
+        return self._match(colours, need, [i for sid in allowed for i in by_source[sid]])
+
+    def _match(self, colours: list[str], need: int, indices: list):
+        """The cheapest payment of ``colours`` and ``need`` mana in all from
+        the mana at ``indices``: (mana indices, {one-colour activation: the
+        colour it is made as}), or None. Each one-colour activation is tried
+        unused first, then at each colour, the one that makes the most first
+        (then the colour the rest of the mana makes least)."""
+        atoms = self.sources
+        if len(indices) < need:
+            return None
+        groups = self._groups(indices)
+
+        def colour_order(group):
+            members = [i for i in indices if getattr(atoms[i], "group", None) == group]
+            others = [i for i in indices if getattr(atoms[i], "group", None) != group]
+            return [None] + sorted(groups[group], key=lambda c: (
+                -sum(1 for i in members if c in atoms[i]), sum(1 for i in others if c in atoms[i]), c))
+
+        group_ids = list(groups)
+        for choice in itertools.product(*[colour_order(g) for g in group_ids]):
+            chosen = dict(zip(group_ids, choice))
+
+            def colours_of(i, chosen=chosen):
+                group = getattr(atoms[i], "group", None)
+                if group in chosen:
+                    return frozenset({chosen[group]})
+                return atoms[i]
+
+            def cost(i):
+                one_colour = getattr(atoms[i], "group", None) in chosen
+                return (self.rank(atoms[i]), 1 if one_colour else len(atoms[i]), i)
+
+            # An unused activation makes nothing here; one made as a colour
+            # makes the mana that colour makes.
+            usable = [i for i in indices
+                      if getattr(atoms[i], "group", None) not in chosen
+                      or (chosen[getattr(atoms[i], "group", None)] is not None
+                          and chosen[getattr(atoms[i], "group", None)] in atoms[i])]
+            if len(usable) < need:
+                continue
+            order = sorted(usable, key=cost)
+            pips = sorted(colours, key=lambda c: sum(1 for i in usable if c in colours_of(i)))
+            match: dict = {}
+
+            def augment(p, seen):
+                for i in order:
+                    if pips[p] in colours_of(i) and i not in seen:
+                        seen.add(i)
+                        if i not in match or augment(match[i], seen):
+                            match[i] = p
+                            return True
+                return False
+
+            if not all(augment(p, set()) for p in range(len(pips))):
+                continue
+            used = set(match)
+            # Generic: mana of sources this payment already uses first, then
+            # the cheapest.
+            using = {atom_source_id(atoms[i]) for i in used}
+            rest = sorted((i for i in usable if i not in used),
+                          key=lambda i: (atom_source_id(atoms[i]) not in using, cost(i)))
+            generic = need - len(pips)
+            if len(rest) < generic:
+                continue
+            used |= set(rest[:generic])
+            touched = {getattr(atoms[i], "group", None) for i in used}
+            pinned = {group: colour for group, colour in chosen.items()
+                      if colour is not None and group in touched}
+            if any(colour is not None and group not in touched for group, colour in chosen.items()):
+                continue  # made as a colour but not used: the unused trial covers it
+            return used, pinned
+        return None
+
+    def _payments(self, pips: dict):
+        """Every payment of ``pips`` that leaves a different pool, most
+        preferred first (fewest creatures that could attack, least combat,
+        fewest one-shot sources, lowest ranks, narrowest colours): mana of one
+        rank and colours is interchangeable (a source's mana together), and
+        each one-colour activation is unused or made as each colour it can
+        make, paying any number of the mana it makes."""
+        colours = [colour for colour in COLOR_SYMBOLS for _ in range(pips.get(colour, 0))]
+        need = len(colours) + pips.get("generic", 0)
+        atoms = self.sources
+        groups = self._groups(range(len(atoms)))
+        kinds: dict = {}
+        members: dict = {}
+        for i, atom in enumerate(atoms):
+            group = getattr(atom, "group", None)
+            if group in groups:
+                members.setdefault(group, []).append(i)
+                continue
+            rank = self.rank(atom)
+            own = atom_source_id(atom) if rank >= 2 else None  # counted per source
+            kinds.setdefault((rank, tuple(sorted(atom)), own), []).append(i)
+        for key in kinds:
+            sizes = Counter(atom_source_id(atoms[i]) for i in kinds[key])
+            kinds[key].sort(key=lambda i: (atom_source_id(atoms[i]) not in self.tapped,
+                                           getattr(atoms[i], "taps", False),
+                                           -sizes[atom_source_id(atoms[i])], i))
+        items = [("kind", key, len(kinds[key])) for key in sorted(kinds, key=lambda k: (k[0], len(k[1]), k[1]))]
+        for group in groups:
+            made = {c: [i for i in members[group] if c in atoms[i]] for c in sorted(groups[group])}
+            items.append(("group", group, made))
+        room = []
+        for item in items:
+            room.append(item[2] if item[0] == "kind" else max(len(v) for v in item[2].values()))
+        room = [sum(room[pos:]) for pos in range(len(items))] + [0]
+        found = []
+
+        def walk(pos: int, left: int, picks: list) -> None:
+            if left == 0:
+                found.append(list(picks))
+                return
+            if pos == len(items) or room[pos] < left:
+                return
+            item = items[pos]
+            if item[0] == "kind":
+                for n in range(min(item[2], left), -1, -1):
+                    walk(pos + 1, left - n, picks + ([(item, n)] if n else []))
+            else:
+                walk(pos + 1, left, picks)
+                for colour, made in item[2].items():
+                    for n in range(1, min(len(made), left) + 1):
+                        walk(pos + 1, left - n, picks + [(item, (colour, n))])
+
+        walk(0, need, [])
+        candidates = []
+        for picks in found:
+            used, pinned, mana = set(), {}, []
+            for item, pick in picks:
+                if item[0] == "kind":
+                    chosen = kinds[item[1]][:pick]
+                    used.update(chosen)
+                    mana += [atoms[i] for i in chosen]
+                else:
+                    colour, n = pick
+                    chosen = item[2][colour][:n]
+                    used.update(chosen)
+                    pinned[item[1]] = colour
+                    mana += [frozenset({colour})] * n
+            candidates.append((self._preference(used), len(candidates), used, pinned, mana))
+        candidates.sort(key=lambda c: c[:2])
+        for _, _, used, pinned, mana in candidates:
+            if _plain_payable(mana, colours):
+                yield used, pinned
+
+    def _preference(self, used) -> tuple:
+        """The order of preference of a payment (the class docstring)."""
+        ranks: dict = {}
+        for i in used:
+            sid = atom_source_id(self.sources[i])
+            if sid is not None and sid not in self.tapped:
+                ranks[sid] = max(ranks.get(sid, 0), self.rank(self.sources[i]))
+        creatures = [rank for rank in ranks.values() if rank > 2]
+        return (len(creatures), sum(creatures), sum(1 for rank in ranks.values() if rank == 2),
+                sum(self.rank(self.sources[i]) for i in used),
+                sum(1 if getattr(self.sources[i], "group", None) is not None else len(self.sources[i])
+                    for i in used))
+
+
+def _plain_payable(mana: list, colours: list[str]) -> bool:
+    """Whether these mana (each paying one of its colours) pay ``colours``,
+    the rest generic: augmenting-path matching."""
+    match: dict = {}
+
+    def augment(p, seen):
+        for j, colour_set in enumerate(mana):
+            if colours[p] in colour_set and j not in seen:
+                seen.add(j)
+                if j not in match or augment(match[j], seen):
+                    match[j] = p
+                    return True
+        return False
+
+    return len(mana) >= len(colours) and all(augment(p, set()) for p in range(len(colours)))
+
+
+def atom_source_id(atom):
+    """The id of the permanent record a mana comes from (None for mana with no
+    source: floating mana, and mana in tests)."""
+    source = getattr(atom, "source", None)
+    return None if source is None else id(source)
+
+
+def retag(atom, colours: frozenset):
+    """The same mana (source, order, one-shot, group, reserve, taps) with
+    other colours."""
+    mana = ManaAtom(colours)
+    for key in ("source", "order", "once", "group", "reserve", "taps"):
+        setattr(mana, key, getattr(atom, key, getattr(ManaAtom, key)))
+    return mana
+
+
+def floated(atom):
+    """Mana already made before the turn's pool is built (a Saga tapped as
+    it leaves, lands tapped before an entering land takes them): it has no
+    source left to tap, so it is floating mana (GoldfishManaPool.rank 0)."""
+    mana = retag(atom, frozenset(atom))
+    mana.source = None
+    return mana
 
 
 def combine_mana_costs(costs: list[dict]) -> dict:
@@ -2197,13 +3462,6 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
             commander_colors=commander_colors,
             commander_name=commander_name,
         )
-    # TOKEN_MAKER_ENGINE: the commander's "Tap two untapped tokens you
-    # control: Add one mana of any color." needs two untapped tokens, and the
-    # engine spends tokens only on attacking and on the commander draw, so the
-    # ability is not modelled: no mana atoms (mana_atoms_for_card reads it as
-    # mana from nothing).
-    if TOKEN_MAKER_ENGINE.get(deck_id) is not None:
-        profiles[commander_name] = dict(profiles[commander_name], manaAtoms=[])
     combo_lines = extract_combo_lines(deck_data, profiles)
     assembly_lines = build_combo_assembly_lines(deck_id, decklist, commander_name)
     # Tutor/reanim tables drive both the winConditions combo-readiness check and
@@ -2240,8 +3498,44 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
            for slot in line["slots"]
            for member in slot["members"]}
     )
+    # Cards an imprint never exiles, in every deck whether or not it has a
+    # gate: tutors and reanimation spells by their roles, and every combo-line
+    # and assembly-line member (imprint_from_hand).
+    imprint_keep = (frozenset(extract_tutor_metadata(deck_data)) | extract_reanimation_names(deck_data)
+                    | line_members)
+    # Permanents with a {T} ability the turn uses after its casts: an
+    # activated token maker (Castle Ardenvale), a once-per-untap hatch outlet
+    # (High Market), a land fetch with {T} (Myriad Landscape) whose search can
+    # net a land in this deck (activate_land_fetches; Urza's Cave in a deck
+    # whose lands it would only swap one for one is not). Their mana is spent
+    # last among the lands (GoldfishManaPool.rank), so the ability is left to
+    # them when other mana pays.
+    token_makers = TOKEN_MAKER_ENGINE.get(deck_id)
+    hatch_engine = COMMANDER_HATCH_ENGINE.get(deck_id)
+
+    def fetch_nets_a_land(name: str) -> bool:
+        search = profiles[name]["landFetch"]
+        found = len(select_ramp_targets([card for card in decklist if card != name], profiles,
+                                        commander_colors, [], [], search, search["count"]))
+        return found - (1 if profiles[name]["isLand"] else 0) >= 1
+
+    reserve = ((set(token_makers["activatedMakers"]) if token_makers else set())
+               | (set(hatch_engine["limitedOutletNames"]) if hatch_engine else set())
+               | {name for name, profile in profiles.items()
+                  if profile["landFetch"] and profile["landFetch"]["tapsSelf"] and fetch_nets_a_land(name)})
+    for name in reserve & set(profiles):
+        profiles[name] = dict(profiles[name], manaReserve=True)
+    # Combo-line and assembly-line members Urza never taps for {U}
+    # (urza_eligible): those whose line needs them untapped, a member with an
+    # activated ability of its own with {T} in its cost (Isochron Scepter).
+    # Another member (an Equipment such as Sword of Feast and Famine) can be
+    # tapped for {U}.
+    for name in line_members & set(profiles):
+        if profiles[name]["tapAbility"]:
+            profiles[name] = dict(profiles[name], urzaKeep=True)
     return {
         "profiles": profiles,
+        "imprintKeep": imprint_keep,
         "commanderName": commander_name,
         "commanderColors": commander_colors,
         "comboLines": combo_lines,
@@ -2290,7 +3584,7 @@ def should_goldfish_mulligan(hand: list[str], profiles: dict) -> bool:
     cheap_ramp = sum(
         1 for name in hand
         if not profiles[name]["isLand"]
-        and (profiles[name]["manaSourceDelay"] is not None or profiles[name]["landRamp"])
+        and is_mana_source(profiles[name])
         and profiles[name]["cmc"] <= 2
     )
     return lands <= 1 or lands >= 6 or (lands == 2 and cheap_ramp == 0)
@@ -2330,10 +3624,54 @@ def commander_mulligan_goldfish(decklist: list[str], profiles: dict) -> tuple[li
     return library, hand
 
 
-def choose_land_to_play(hand: list[str], profiles: dict, metadata: dict,
-                        battlefield_lands: list[dict], commander_colors: list[str]) -> str | None:
-    """Pick best land from hand for current board."""
-    land_names = [name for name in hand if profiles[name]["isLand"]]
+def crack_target_tapped(crack: dict, target: str, battlefield_lands: list[dict],
+                        permanents: list[dict], profiles: dict, hand: list[str]) -> bool:
+    """Whether the land a fetch land finds enters tapped (M6): by its own
+    entry rule when the search puts it onto the battlefield untapped; when the
+    search puts it tapped, untapped only by the search's own rule ("if you
+    control four or more lands, untap that land", "behold an Elf").
+    ``battlefield_lands`` is the battlefield without the fetch land."""
+    if not crack["entersTapped"]:
+        return land_enters_tapped(profiles[target]["landEntry"], battlefield_lands, permanents,
+                                  profiles, hand)
+    rule = crack["untapIf"]
+    if rule is None:
+        return True
+    if rule[0] == "landsAtLeast":
+        return len(battlefield_lands) + 1 < rule[1]
+    return land_enters_tapped(rule, battlefield_lands, permanents, profiles, hand)
+
+
+def crack_target(name: str, library: list[str], profiles: dict, commander_colors: list[str],
+                 battlefield_lands: list[dict], permanents: list[dict], hand: list[str],
+                 take: bool) -> tuple[str | None, bool]:
+    """The land fetch land ``name`` finds in the library (the best legal
+    target) and whether it enters tapped; with ``take`` it is removed from the
+    library. (None, True) when nothing legal is left."""
+    crack = profiles[name]["landCrack"]
+    search_in = library if take else list(library)
+    test = lambda target: crack_target_tapped(crack, target, battlefield_lands, permanents,  # noqa: E731
+                                              profiles, hand)
+    found = select_ramp_targets(search_in, profiles, commander_colors, battlefield_lands,
+                                permanents, crack, 1, tapped_test=test)
+    if not found:
+        return None, True
+    return found[0], test(found[0])
+
+
+def choose_land_to_play(hand: list[str], profiles: dict, battlefield_lands: list[dict],
+                        permanents: list[dict], commander_colors: list[str],
+                        library: list[str] = ()) -> str | None:
+    """Pick best land from hand for current board.
+
+    A land that sacrifices or returns N lands as it enters (Scorched Ruins,
+    Lotus Field, Simic Growth Chamber) is played only with N other lands out.
+    A fetch land scores as the land it would find in ``library`` (none: it
+    makes nothing).
+    """
+    land_names = [name for name in hand if profiles[name]["isLand"]
+                  and (profiles[name]["landEntryCost"] or {"count": 0})["count"]
+                  <= len(battlefield_lands)]
     if not land_names:
         return None
 
@@ -2345,9 +3683,18 @@ def choose_land_to_play(hand: list[str], profiles: dict, metadata: dict,
     best_score = None
     for name in land_names:
         profile = profiles[name]
-        meta = metadata.get(name, {})
-        colors = set().union(*profile["manaAtoms"]) if profile["manaAtoms"] else set()
-        untapped_bonus = 10 if not land_enters_tapped(meta, battlefield_lands) else 0
+        rest_of_hand = list(hand)
+        rest_of_hand.remove(name)
+        if profile["landCrack"]:
+            target, tapped = crack_target(name, list(library), profiles, commander_colors,
+                                          battlefield_lands, permanents, rest_of_hand, take=False)
+            colors = land_colors(profiles[target]) if target else set()
+        else:
+            colors = land_colors(profile)
+            tapped = land_enters_tapped(profile["landEntry"], battlefield_lands, permanents,
+                                        profiles, rest_of_hand)
+        untapped_bonus = 10 if usable_this_turn(profiles[target] if profile["landCrack"] and target
+                                                else profile, tapped) else 0
         score = (
             untapped_bonus,
             len((colors & set(commander_colors)) - present_colors),
@@ -2369,16 +3716,20 @@ def proactive_cast_priority(name: str, profile: dict, commander_name: str,
     DEC-944 — ``line_members`` are the cards named by the deck's combo gate
     (``winConditions[] kind:'combo'``) and KEY_COMBOS assembly slots. A piece
     outranks the generic threat/draw/filler tiers because it is the cast that
-    advances the turn's line; mana sources still come first (they are mana
-    positive across the turn and the line needs the mana) and the commander
-    still comes before them (most of the fleet's engines gate on the commander
-    being on the battlefield). For a deck with no combo configuration
-    ``line_members`` is empty and the relative order is exactly as before.
+    advances the turn's line. The order: mana sources first (they are mana
+    positive across the turn and the line needs the mana), then the commander
+    (most of the fleet's engines gate on the commander being on the
+    battlefield), then the line's pieces, then threats, draw, other
+    permanents and the rest; interaction last. For a deck with no combo
+    configuration ``line_members`` is empty and the relative order is exactly
+    as before.
     """
     if profile["isInteraction"]:
         return (99, 99, 99, name)
-    if profile["landRamp"] or profile["manaSourceDelay"] is not None:
-        ramp_value = len(profile["manaAtoms"]) + (profile["landRamp"]["count"] if profile["landRamp"] else 0)
+    if is_mana_source(profile):
+        ramp_value = (len(profile["manaAtoms"])
+                      + (profile["landRamp"]["count"] if profile["landRamp"] else 0)
+                      + (profile["landFetch"]["count"] if profile["landFetch"] else 0))
         return (0, profile["cmc"], -ramp_value, name)
     if name == commander_name and not commander_cast:
         return (1, 0, -profile["impact"], name)
@@ -2393,13 +3744,380 @@ def proactive_cast_priority(name: str, profile: dict, commander_name: str,
     return (6, profile["cmc"], 0, name)
 
 
-def turn_sources(permanents: list[dict], turn: int) -> list[frozenset]:
-    """Collect currently active mana sources."""
-    sources = []
-    for permanent in permanents:
-        if permanent["manaActiveTurn"] <= turn:
-            sources.extend(permanent["manaAtoms"])
-    return sources
+def board_has_type(permanent: dict, word: str, profiles: dict, granted: set) -> bool:
+    """Whether a permanent on the goldfish battlefield has a type word: a land
+    its land types (with a type another land gives every land), any card its
+    type line (a changeling every creature type)."""
+    profile = profiles[permanent["name"]]
+    if permanent["kind"] == "land" and (word in profile["landTypes"] or word in granted):
+        return True
+    return word in profile["typeWords"] or (
+        permanent["kind"] != "land" and profile["changeling"] and word not in CARD_TYPE_WORDS
+        and word not in LAND_SUBTYPE_COLORS)
+
+
+def board_condition(test: tuple, permanents: list[dict], profiles: dict, granted: set) -> bool:
+    """A mana condition (mana_condition) read on the goldfish battlefield."""
+    if test[0] == "anyType":
+        return any(board_has_type(p, word, profiles, granted)
+                   for p in permanents if p["kind"] == "land" for word in test[1])
+    if test[0] == "atLeast":
+        return sum(1 for p in permanents if board_has_type(p, test[1], profiles, granted)) >= test[2]
+    # "landTypes": every one of these land types is on the battlefield (Tron).
+    return all(any(p["kind"] == "land" and board_has_type(p, word, profiles, granted)
+                   for p in permanents) for word in test[1])
+
+
+def land_grant(permanents: list[dict], profiles: dict) -> frozenset:
+    """Colours every land can make from a permanent on the battlefield (F2):
+    Urborg ("Each land is a Swamp": {B}), Chromatic Lantern ("Lands you
+    control have "{T}: Add one mana of any color."")."""
+    return frozenset().union(*(profiles[p["name"]]["landGrant"] or frozenset() for p in permanents))
+
+
+def with_grant(atoms: list, grant: frozenset) -> list:
+    """A land's mana with a granted mana ability: a land still taps once, so
+    at one mana (or none) the granted colours join its own (M4); a land that
+    makes more keeps its own."""
+    if not grant or len(atoms) > 1:
+        return atoms
+    return [(atoms[0] if atoms else frozenset()) | grant]
+
+
+def land_could_produce(land: dict, permanents: list[dict], profiles: dict, turn: int) -> frozenset:
+    """The colours a land on the battlefield could produce (Reflecting Pool,
+    G4): its mana as played (a Pathway's face, whose other face is not
+    read), what each of its mana abilities' effects would make on this
+    board, read before the ability's cost is netted and whatever its
+    activation condition or cost (``landOutputs``: The Mycosynth Gardens'
+    "{1}, {T}: any color", Spire of Industry's any colour with no artifact
+    out; Cabal Coffers makes black only with a Swamp out), and a grant to
+    every land."""
+    profile = profiles[land["name"]]
+    colours = set().union(*land["manaAtoms"]) if land["manaAtoms"] else set()
+    for kind, output in ([] if profile["landFaces"] else profile.get("landOutputs", ())):
+        if kind == "fixed":
+            colours |= output
+        elif output[0] == "count":
+            colours.update(*board_term_atoms(("count", output[1], output[2], 0, None), [], permanents,
+                                             profiles, turn, land))
+        elif output[0] != "landColors":  # another Reflecting Pool copies nothing
+            colours.update(*board_term_atoms(output, [], permanents, profiles, turn, land))
+    for atom in record_atoms(land, permanents, profiles, turn):
+        colours |= atom
+    return frozenset(colours)
+
+
+def board_term_atoms(term: tuple, atoms: list[frozenset], permanents: list[dict],
+                     profiles: dict, turn: int, owner: dict | None = None) -> list[frozenset]:
+    """A permanent's mana this turn: ``atoms`` with one board term read on the
+    goldfish's own battlefield (M5). A term that makes more mana replaces the
+    floor; one of equal size, one mana, joins its colours (M4). ``owner`` is
+    the permanent the term belongs to (Reflecting Pool reads the other
+    lands)."""
+    granted = {profiles[p["name"]]["eachLandIs"] for p in permanents if p["kind"] == "land"} - {None}
+    kind = term[0]
+    if kind == "gate":
+        if not board_condition(term[1], permanents, profiles, granted):
+            return atoms
+        candidate = list(term[2])
+    elif kind == "count":
+        _, key, colours, cost, gate = term
+        if gate is not None and not board_condition(gate, permanents, profiles, granted):
+            return atoms
+        if key[0] == "devotion":
+            # Each colour with its own devotion: the mana costs of the
+            # permanents (a land, an MDFC's land face too, has none). The
+            # k-th mana is every colour with devotion k or more past the
+            # cost; the activation is one colour (manaOneColour), so a colour
+            # pays only the mana it makes (GoldfishManaPool._left).
+            devotion = {colour: sum(profiles[p["name"]]["manaCost"][colour] for p in permanents
+                                    if p["kind"] != "land")
+                        for colour in "WUBRG" if colour in colours}
+            top = max(devotion.values(), default=0) - cost
+            candidate = [frozenset(c for c, n in devotion.items() if n - cost >= k)
+                         for k in range(1, top + 1)]
+            if len(candidate) > len(atoms):
+                return candidate
+            if len(candidate) == len(atoms) == 1:
+                return [atoms[0] | candidate[0]]
+            return atoms
+        if key[0] == "idleArtifacts":
+            # Its own artifact token (Urza's Construct): his own mana. Each
+            # other eligible artifact taps for its own {U} (board_mana,
+            # urza_eligible): it is the permanent that gets tapped (G5).
+            count = key[1]
+        else:
+            count = sum(1 for p in permanents if board_has_type(p, key[1], profiles, granted))
+        candidate = [colours] * (count - cost)
+    elif kind == "vivid":
+        colours = frozenset().union(*(profiles[p["name"]]["colors"] for p in permanents))
+        candidate = [frozenset({colour}) for colour in "WUBRG" if colour in colours]
+    elif kind == "landColors":
+        # Reflecting Pool: what the other lands could produce (land_could_produce:
+        # the face a Pathway was played as, every colour their mana abilities
+        # make whatever their activation conditions, a grant to every land);
+        # another Pool makes nothing of its own to copy.
+        colours = frozenset().union(*(
+            land_could_produce(p, permanents, profiles, turn) for p in permanents
+            if p["kind"] == "land" and p is not owner
+            and not any(t[0] == "landColors" for t in profiles[p["name"]]["manaBoard"])))
+        candidate = [colours] if colours else []
+    else:  # legendColors: colours among legendary permanents (of these types)
+        colours = frozenset().union(*(
+            profiles[p["name"]]["colors"] for p in permanents
+            if "Legendary" in profiles[p["name"]]["typeWords"]
+            and (not term[1] or set(term[1]) & profiles[p["name"]]["typeWords"])))
+        candidate = [colours] if colours else []
+    if len(candidate) > len(atoms):
+        return candidate
+    if len(candidate) == len(atoms) == 1:
+        return [atoms[0] | candidate[0]]
+    return atoms
+
+
+class ManaAtom(frozenset):
+    """One mana from one permanent: its colours, the permanent's record
+    (``source``), whether it is one-shot mana (``once``), its spend order
+    (``order``, spend_order), whether its permanent has a {T} ability the
+    turn uses later (``reserve``), whether spending it taps that permanent
+    (``taps``: an ability with {T}, an extra a {T} ability fires) and, for
+    mana that is all one colour as it is made (Lotus Field, Nykthos, a
+    source that makes {C} or a colour beside Forsaken Monument), its
+    activation (``group``). GoldfishManaPool.rank reads them: a turn taps a
+    creature for mana only when its spending needs it."""
+    source = None
+    order = 0
+    once = False
+    group = None
+    reserve = False
+    taps = False
+
+
+def tag_atoms(atoms, source: dict, order: int, once: bool = False, group=None,
+              reserve: bool = False, taps: bool = False) -> list:
+    """Tag a permanent's mana atoms for the turn's pool (ManaAtom)."""
+    tagged = []
+    for atom in atoms:
+        mana = ManaAtom(atom)
+        mana.source, mana.order, mana.once, mana.group = source, order, once, group
+        mana.reserve, mana.taps = reserve, taps
+        tagged.append(mana)
+    return tagged
+
+
+def spend_order(record: dict, profiles: dict, turn: int) -> int:
+    """When the goldfish spends a permanent's mana (GoldfishManaPool.rank): 0
+    for lands, noncreature permanents and every creature whose mana does not
+    tap it, that could not attack anyway (summoning sick, no combat) or that
+    attacks anyway (vigilance, M9: the pilot attacks first and taps it for
+    mana after combat); 2 plus its combat for a creature that taps for mana
+    instead of attacking, so the least combat is given up first. One-shot
+    mana is at least 1 (permanent_mana)."""
+    profile = profiles[record["name"]]
+    if ("Creature" not in profile["typeWords"] or not profile["manaTapsSelf"] or profile["vigilance"]
+            or record["combat"] <= 0 or record["combatReadyTurn"] > turn):
+        return 0
+    return 2 + record["combat"]
+
+
+def record_atoms(permanent: dict, permanents: list[dict], profiles: dict, turn: int) -> list:
+    """A permanent's lasting mana this turn: its floor with its board terms
+    read (board_term_atoms) and, for a land, the colours a permanent grants
+    every land (with_grant)."""
+    atoms = permanent["manaAtoms"]
+    for term in permanent.get("manaBoard", ()):
+        if term[0] != "extra":
+            atoms = board_term_atoms(term, atoms, permanents, profiles, turn, permanent)
+    if permanent["kind"] == "land":
+        atoms = with_grant(atoms, land_grant(permanents, profiles))
+    return atoms
+
+
+def urza_grant(present: list[dict]) -> frozenset:
+    """The colours Urza, Lord High Artificer's "Tap an untapped artifact you
+    control: Add {U}" gives each eligible artifact (an ``idleArtifacts``
+    count term on a permanent whose mana is online)."""
+    return frozenset().union(*(term[2] for p in present for term in p.get("manaBoard", ())
+                               if term[0] == "count" and term[1][0] == "idleArtifacts"))
+
+
+def urza_eligible(permanent: dict, profiles: dict) -> bool:
+    """An artifact Urza taps for {U}: noncreature, with no mana of its own
+    (tapping it loses nothing), and not one the goldfish needs untapped for
+    something else: a combo-line or assembly-line member whose line needs it
+    untapped, one with an activated ability of its own with {T} in its cost
+    (``urzaKeep``, build_goldfish_context: Isochron Scepter; an Equipment
+    such as Sword of Feast and Famine is tapped). One whose own {T} ability was
+    used (The One Ring's draw) is tapped, so it offers nothing (board_mana)."""
+    profile = profiles[permanent["name"]]
+    words = profile["typeWords"]
+    return (permanent["kind"] != "land" and "Artifact" in words and "Creature" not in words
+            and not profile.get("urzaKeep") and not own_mana(permanent))
+
+
+def own_mana(permanent: dict) -> bool:
+    """Whether a permanent has mana of its own (lasting, one-shot or read on
+    the battlefield), as opposed to mana only a grant gives it."""
+    return bool(permanent["manaAtoms"] or permanent.get("manaOnce") or permanent.get("manaBoard"))
+
+
+def mana_taps_it(permanent: dict, profiles: dict) -> bool:
+    """Whether using the permanent's own mana taps it: an ability with {T},
+    or a land's mana from a grant to every land when it has none of its own
+    (Maze of Ith beside Urborg: the granted ability is "{T}: Add")."""
+    return bool(profiles[permanent["name"]]["manaTapsSelf"]) or (
+        permanent["kind"] == "land" and not own_mana(permanent))
+
+
+def extra_fires(term: tuple, permanent: dict, atoms: list, profiles: dict, granted: set) -> str | None:
+    """Whether a triggered "add an additional" term (mana_trigger) fires for
+    one activation of ``permanent`` making ``atoms``: "always", "colourless"
+    (Forsaken Monument on an activation that makes {C} or a colour: only when
+    it makes {C}) or None."""
+    source = term[1]
+    profile = profiles[permanent["name"]]
+    if not atoms:
+        return None
+    if source == "swampsTapped":
+        return "always" if (permanent["kind"] == "land"
+                            and board_has_type(permanent, "Swamp", profiles, granted)) else None
+    if not profile["manaTapsSelf"]:
+        return None
+    if source == "creatureSources":
+        return "always" if "Creature" in profile["typeWords"] else None
+    # colorlessSources: "Whenever you tap a permanent for {C}".
+    if any(atom == frozenset({"C"}) for atom in atoms):
+        return "always"
+    if len(atoms) == 1 and "C" in atoms[0]:
+        return "colourless"
+    return None
+
+
+def permanent_mana(permanent: dict, permanents: list[dict], profiles: dict, turn: int,
+                   extras: list, urza: frozenset, granted: set) -> list:
+    """One untapped permanent's mana for the pool, tagged: its lasting mana
+    (record_atoms; one activation's mana shares a group when it is all one
+    colour), its one-shot mana unless spent, the {U} Urza gives it, and the
+    extras the active triggers add for it (``extras``: (term, owner)). An
+    extra that fires only on the colourless choice of an activation joins
+    that activation's group, so it is made only when the activation makes
+    {C}."""
+    profile = profiles[permanent["name"]]
+    order = spend_order(permanent, profiles, turn)
+    reserve = bool(profile.get("manaReserve"))
+    taps = mana_taps_it(permanent, profiles)
+    group = id(permanent) if profile["manaOneColour"] else None
+    lasting = list(record_atoms(permanent, permanents, profiles, turn))
+    once = [] if permanent.get("onceSpent") else list(permanent.get("manaOnce", ()))
+    once_group = group
+    lasting_extra, once_extra = [], []
+    for term, _owner in extras:
+        fires = extra_fires(term, permanent, lasting, profiles, granted)
+        if fires:
+            lasting_extra.append(term[2])
+            if fires == "colourless":
+                group = group or id(permanent)
+        # Monument also fires on one-shot {C} (Basalt Monolith): that extra
+        # is one-shot too.
+        fires_once = (extra_fires(term, permanent, once, profiles, granted)
+                      if term[1] == "colorlessSources" else None)
+        if fires_once:
+            once_extra.append(term[2])
+            if fires_once == "colourless":
+                once_group = once_group or id(permanent)
+    tagged = tag_atoms(lasting + lasting_extra, permanent, order, group=group, reserve=reserve, taps=taps)
+    tagged += tag_atoms(once + once_extra, permanent, max(order, 1), once=True, group=once_group,
+                        taps=taps)
+    if permanent.get("tapped"):
+        # Tapped (it attacked, or a {T} ability of its own was used): only a
+        # permanent whose mana does not tap it gets here (board_mana: Urza's
+        # own {U}, which taps his Construct), and Urza taps only untapped
+        # artifacts.
+        return tagged
+    if urza and urza_eligible(permanent, profiles):
+        tagged += tag_atoms([urza], permanent, 0, reserve=reserve, taps=True)
+    return tagged
+
+
+def board_mana(permanents: list[dict], turn: int, profiles: dict, used=frozenset()) -> list:
+    """The mana the goldfish battlefield offers now, tagged (ManaAtom): each
+    permanent whose mana is online (a Saga's only while it lasts) and not yet
+    used this turn (``used``: GoldfishManaPool.tapped), untapped or with mana
+    that does not tap it (Urza's own {U}, after he attacked), with the extras
+    the active triggers add for it (Crypt Ghast, Badgermole Cub, Forsaken
+    Monument; the Cub's earthbent land as a source of its own), the {U}
+    Urza gives each untapped eligible artifact, and a grant to every land on
+    a land with no mana of its own (Maze of Ith beside Urborg or Chromatic
+    Lantern; a fetch land left with nothing to find). GoldfishManaPool's
+    unspent mana is always this plus mana already floating (refresh_pool)."""
+    present = [p for p in permanents
+               if p["manaActiveTurn"] <= turn and p.get("manaLastTurn", turn) >= turn]
+    extras = [(term, owner) for owner in present for term in owner.get("manaBoard", ())
+              if term[0] == "extra"]
+    urza = urza_grant(present)
+    grant = land_grant(permanents, profiles)
+    sources = [p for p in present
+               if id(p) not in used
+               and (not p.get("tapped") or not mana_taps_it(p, profiles))
+               and (own_mana(p) or (urza and urza_eligible(p, profiles))
+                    or (grant and p["kind"] == "land"))]
+    granted = ({profiles[p["name"]]["eachLandIs"] for p in permanents if p["kind"] == "land"} - {None}
+               if sources else set())
+    out = []
+    for permanent in sources:
+        out += permanent_mana(permanent, permanents, profiles, turn, extras, urza, granted)
+    for term, owner in extras:
+        if term[3]:
+            # The earthbent land: a land creature, tapped for mana, that the
+            # goldfish does not keep a record of.
+            land = owner.setdefault("earthbentLand", {"name": f"{owner['name']} (earthbent land)"})
+            if id(land) not in used:
+                out += tag_atoms([term[2]] * term[3], land, 0, taps=True)
+    return out
+
+
+def board_key(permanents: list[dict], used) -> tuple:
+    """What board_mana reads that can change during a turn: which permanents
+    are on the battlefield, which are tapped or spent other than by this
+    turn's spending, their imprinted mana, readiness, combat and online
+    turn."""
+    return tuple((id(p), bool(p.get("tapped")) and id(p) not in used,
+                  bool(p.get("onceSpent")) and id(p) not in used, id(p["manaAtoms"]),
+                  p.get("combatReadyTurn"), p.get("combat"), p["manaActiveTurn"]) for p in permanents)
+
+
+def refresh_pool(pool: "GoldfishManaPool", permanents: list[dict], profiles: dict,
+                 turn: int) -> "GoldfishManaPool":
+    """Read the pool's unspent mana from the board again (invariant I1): it is
+    the mana already floating (no source, or a source this turn has used)
+    plus board_mana for every permanent not yet used. Called after every
+    resolution (a cast, a land put onto the battlefield, a permanent leaving,
+    a trigger or grant source entering); mana new to the pool counts as
+    added (availableMana). Returns the pool, changed in place."""
+    if pool.turn is None:
+        pool.turn = turn
+    key = board_key(permanents, pool.tapped)
+    if key == pool.board_key:
+        return pool
+    floating, fresh_before = [], Counter()
+    for atom in pool.sources:
+        sid = atom_source_id(atom)
+        if sid is None or sid in pool.tapped:
+            floating.append(atom)
+        else:
+            fresh_before[sid] += 1
+    fresh = [atom for atom in board_mana(permanents, turn, profiles, pool.tapped)
+             if not (pool.lasting_only and atom.once)]
+    fresh_after = Counter(atom_source_id(atom) for atom in fresh)
+    pool.added += sum(max(0, n - fresh_before[sid]) for sid, n in fresh_after.items())
+    pool.sources = floating + fresh
+    pool.board_key = key
+    # Every record the pool has read stays alive for the turn (records): the
+    # ids board_key, tapped and tapping hold stay unique, a source that
+    # sacrificed itself included.
+    pool.records.update((id(p), p) for p in permanents)
+    return pool
 
 
 def piece_type_matches(piece_types: set[str], tutor_targets: set[str]) -> bool:
@@ -2486,8 +4204,21 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
     AND the synthetic combined mana cost is payable from ``pool`` — the mana still
     unspent this turn after the main-phase casts (DEC-937), not a fresh turn pool.
     """
+    return any(pool.can_cast(cost) for cost in combo_line_costs(
+        turn, hand, permanents, combo_lines, profiles, tutor_meta, reanim_names,
+        commander_in_play, commander_play_turn, commander_name))
+
+
+def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
+                     combo_lines: list[dict], profiles: dict, tutor_meta: dict,
+                     reanim_names: set[str], commander_in_play: bool,
+                     commander_play_turn: int | None, commander_name: str = "") -> list[dict]:
+    """The combined mana cost of each combo line whose pieces all resolve
+    this turn (combo_ready_this_turn, which pays any one of them): the costs
+    a spend keeps the combo gate by keeping one of payable."""
+    costs = []
     if not combo_lines:
-        return False
+        return costs
     battlefield_names = {permanent["name"] for permanent in permanents if permanent["kind"] != "land"}
     hand_names = set(hand)
     bargainable = is_bargainable_battlefield(
@@ -2623,12 +4354,9 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
 
         if not line_ok:
             continue
-        if not to_cast_costs:
-            return True  # all pieces already on battlefield
-        combined = combine_mana_costs(to_cast_costs)
-        if pool.can_cast(combined):
-            return True
-    return False
+        # All pieces already on the battlefield: nothing to pay.
+        costs.append(combine_mana_costs(to_cast_costs))
+    return costs
 
 
 def _max_bipartite_matching(slot_options: list[list[int]]) -> dict[int, int]:
@@ -2677,6 +4405,15 @@ def combo_assembled_this_turn(turn: int, hand: list[str], permanents: list[dict]
     tutors and reanimation are excluded: they are not library finders that put a
     piece in hand.
     """
+    cost = assembly_tutor_cost(hand, permanents, library, assembly_line, profiles, tutor_meta)
+    return cost is not None and pool.can_cast(cost)
+
+
+def assembly_tutor_cost(hand: list[str], permanents: list[dict], library: list[str],
+                        assembly_line: dict, profiles: dict, tutor_meta: dict) -> dict | None:
+    """The mana the tutors that fill a combo's open slots cost
+    (combo_assembled_this_turn): nothing when every slot is filled, None when
+    the slots cannot be filled this turn whatever the mana."""
     battlefield_names = {p["name"] for p in permanents}
     drawn = battlefield_names | set(hand)
     library_set = set(library)
@@ -2690,7 +4427,7 @@ def combo_assembled_this_turn(turn: int, hand: list[str], permanents: list[dict]
         open_slots.append(slot)
 
     if not open_slots:
-        return True
+        return combine_mana_costs([])
 
     # Candidate tutors: generic to-hand tutors currently in hand, cheapest first
     # so the matching prefers affordable tutors when several could fill a slot.
@@ -2700,7 +4437,7 @@ def combo_assembled_this_turn(turn: int, hand: list[str], permanents: list[dict]
     ]
     tutors_in_hand.sort(key=lambda n: profiles[n]["manaCost"].get("total", 0))
     if len(tutors_in_hand) < len(open_slots):
-        return False  # cannot cover every open slot one-tutor-one-slot
+        return None  # cannot cover every open slot one-tutor-one-slot
 
     def tutor_can_fetch(meta: dict, slot: dict) -> bool:
         mv_cap = meta.get("mv_cap")
@@ -2724,29 +4461,34 @@ def combo_assembled_this_turn(turn: int, hand: list[str], permanents: list[dict]
             if tutor_can_fetch(tutor_meta[tname], slot)
         ]
         if not options:
-            return False  # this slot has no legal tutor — combo not assemblable
+            return None  # this slot has no legal tutor — combo not assemblable
         slot_options.append(options)
 
     assignment = _max_bipartite_matching(slot_options)
     if len(assignment) < len(open_slots):
-        return False  # no one-tutor-one-slot assignment covers all open slots
+        return None  # no one-tutor-one-slot assignment covers all open slots
 
-    # Mana gate: pay for exactly the tutors in the chosen assignment out of the
+    # Mana gate: exactly the tutors in the chosen assignment, paid out of the
     # mana still unspent this turn (DEC-937).
-    combined = combine_mana_costs([
+    return combine_mana_costs([
         profiles[tutors_in_hand[tutor_idx]]["manaCost"] for tutor_idx in assignment
     ])
-    return pool.can_cast(combined)
 
 
-def metrics_from_board(turn: int, permanents: list[dict], commander_name: str,
+def metrics_from_board(turn: int, permanents: list[dict], profiles: dict, commander_name: str,
                        commander_in_play: bool, cumulative_damage: float,
                        meaningful_threshold: int, combo_ready_ever: bool,
-                       extra_combat: float = 0.0) -> dict:
+                       extra_combat: float = 0.0, available_mana: int = 0) -> dict:
     """Summarize goldfish board state at end of turn.
 
     ``extra_combat`` carries damage from sources outside the permanent list
     (the DEC-404 token ledger, which the token makers also feed).
+    ``available_mana`` is the mana the pilot could have spent this turn: the
+    turn's pool as it was built plus every mana added during the turn
+    (GoldfishManaPool.added: cast triggers, sources and lands that came online
+    untapped, mana of lands given up or a Saga leaving after it was tapped).
+    The board counts (lands, ramp, threats, pressure) are read after the
+    turn's end-of-turn actions (land fetches, a Saga leaving).
     """
     lands = sum(1 for permanent in permanents if permanent["kind"] == "land")
     ramp = sum(1 for permanent in permanents if permanent["kind"] == "ramp")
@@ -2761,7 +4503,7 @@ def metrics_from_board(turn: int, permanents: list[dict], commander_name: str,
         "lands": lands,
         "ramp": ramp,
         "threats": threats,
-        "availableMana": len(turn_sources(permanents, turn)),
+        "availableMana": available_mana,
         "pressure": pressure,
         "combat": combat,
         "cumulativeDamage": cumulative_damage,
@@ -2773,9 +4515,110 @@ def metrics_from_board(turn: int, permanents: list[dict], commander_name: str,
     }
 
 
+def put_land_onto_battlefield(land_name: str, turn: int, tapped: bool, permanents: list[dict],
+                              battlefield_lands: list[dict], profiles: dict,
+                              commander_colors: list[str]) -> dict:
+    """Record a land entering the goldfish battlefield and return its record.
+
+    A card with two land faces (a Pathway) enters as the face that adds a
+    commander colour not yet among the lands, the front on a tie (M6). A
+    Saga's mana lasts its ``manaTurns``; then it leaves (leave_battlefield).
+    A land that enters tapped is tapped until the next untap step (one
+    state for every own-{T} check). The record carries the land's one-shot
+    and on-cast mana too.
+    """
+    profile = profiles[land_name]
+    atoms = profile["manaAtoms"]
+    if profile["landFaces"]:
+        present = set().union(*(land["colors"] for land in battlefield_lands))
+        front = profile["landFaces"][0]
+        atoms = max(profile["landFaces"], key=lambda face: (
+            len((set().union(*face) & set(commander_colors)) - present), face is front))
+    record = {
+        "name": land_name,
+        "kind": "land",
+        "manaAtoms": atoms,
+        "manaOnce": profile["manaOnce"],
+        "manaBoard": profile["manaBoard"],
+        "manaOnCast": profile["manaOnCast"],
+        # A land creature (Dryad Arbor) is summoning sick: untapped, but its
+        # {T} mana comes from the next turn.
+        "manaActiveTurn": turn + (1 if tapped or "Creature" in profile["typeWords"] else 0),
+        "combatReadyTurn": 99,
+        "impact": 0,
+        "combat": 0,
+        "isThreat": False,
+        "tapped": tapped,
+    }
+    if profile["manaTurns"] is not None:
+        record["manaLastTurn"] = turn + profile["manaTurns"] - 1
+    permanents.append(record)
+    battlefield_lands.append({
+        "name": land_name,
+        "colors": set().union(*atoms) if profile["landFaces"] else land_colors(profile),
+        "isBasic": profile["isBasic"],
+    })
+    return record
+
+
+def leave_battlefield(record: dict, permanents: list[dict], battlefield_lands: list[dict]) -> None:
+    """A permanent leaves the battlefield: its record and, for a land, its
+    entry in ``battlefield_lands``, so every later reading of the turn (land
+    counts, conditions, board terms) no longer sees it."""
+    permanents[:] = [p for p in permanents if p is not record]
+    if record["kind"] == "land":
+        battlefield_lands.pop(next(i for i, land in enumerate(battlefield_lands)
+                                   if land["name"] == record["name"]))
+
+
+def fetch_lands(search: dict, count: int, turn: int, pool: "GoldfishManaPool",
+                library: list[str], hand: list[str], permanents: list[dict], battlefield_lands: list[dict],
+                profiles: dict, commander_colors: list[str]) -> int:
+    """Put `count` lands a land search finds onto the battlefield (M8); a land
+    enters tapped when the search or the land's own text says so, and gives
+    up the lands its entry takes as a land that is played does (Simic Growth
+    Chamber returns one to ``hand``; give_up_lands: the mana of a land tapped
+    first and not yet used this turn floats). The pool is read from the
+    board again (refresh_pool: an untapped land's mana joins this turn's
+    pool, with the extras and grants already out). Returns how many
+    entered."""
+    fetched = select_ramp_targets(library, profiles, commander_colors, battlefield_lands,
+                                  permanents, search, count)
+    for land_name in fetched:
+        if profiles[land_name]["landEntryCost"]:
+            # Their unused mana is already in the pool (and in availableMana):
+            # it stays, floating, as they leave.
+            pool.sources.extend(floated(atom) for atom in give_up_lands(
+                profiles[land_name]["landEntryCost"], turn, hand, permanents, battlefield_lands, profiles)
+                if atom_source_id(atom) not in pool.tapped)
+        tapped = search["entersTapped"] or land_enters_tapped(
+            profiles[land_name]["landEntry"], battlefield_lands, permanents, profiles, [])
+        put_land_onto_battlefield(land_name, turn, tapped, permanents, battlefield_lands,
+                                  profiles, commander_colors)
+    refresh_pool(pool, permanents, profiles, turn)
+    return len(fetched)
+
+
+def crack_fetch_land(name: str, turn: int, library: list[str], hand: list[str],
+                     permanents: list[dict], battlefield_lands: list[dict], profiles: dict,
+                     commander_colors: list[str]) -> dict:
+    """Play a fetch land and crack it at once (M6): the legal land it finds
+    leaves the library and enters with its own types, colours and entry rule
+    (crack_target_tapped); the fetch land is sacrificed. With nothing legal
+    left in the library the fetch land stays on the battlefield and makes
+    nothing. Returns the record of the land now on the battlefield."""
+    target, tapped = crack_target(name, library, profiles, commander_colors, battlefield_lands,
+                                  permanents, hand, take=True)
+    if target is None:
+        return put_land_onto_battlefield(name, turn, False, permanents, battlefield_lands, profiles,
+                                         commander_colors)
+    return put_land_onto_battlefield(target, turn, tapped, permanents, battlefield_lands, profiles,
+                                     commander_colors)
+
+
 def resolve_cast_effects(name: str, profile: dict, turn: int, pool: "GoldfishManaPool",
                          library: list[str], hand: list[str], permanents: list[dict],
-                         battlefield_lands: list[dict], profiles: dict, metadata: dict,
+                         battlefield_lands: list[dict], profiles: dict,
                          commander_colors: list[str]) -> None:
     """Apply the on-resolution effects of a cast spell (ramp fetch, board record, draw).
 
@@ -2783,55 +4626,45 @@ def resolve_cast_effects(name: str, profile: dict, turn: int, pool: "GoldfishMan
     so both credit identical board impact.
     """
     if profile["landRamp"]:
-        fetched = select_ramp_targets(
-            library=library,
-            metadata=metadata,
-            commander_colors=commander_colors,
-            battlefield_lands=battlefield_lands,
-            ramp_profile=profile["landRamp"],
-        )
-        for land_name in fetched:
-            land_profile = profiles[land_name]
-            colors = set().union(*land_profile["manaAtoms"]) if land_profile["manaAtoms"] else set()
-            land_record = {
-                "name": land_name,
-                "kind": "land",
-                "manaAtoms": land_profile["manaAtoms"],
-                "manaActiveTurn": turn + (1 if profile["landRamp"]["entersTapped"] else 0),
-                "combatReadyTurn": 99,
-                "impact": 0,
-                "combat": 0,
-                "isThreat": False,
-            }
-            permanents.append(land_record)
-            battlefield_lands.append({
-                "name": land_name,
-                "colors": colors,
-                "subtypes": land_profile["subtypes"],
-                "isBasic": land_profile["isBasic"],
-            })
-            if not profile["landRamp"]["entersTapped"]:
-                pool.sources.extend(land_profile["manaAtoms"])
+        ramp = profile["landRamp"]
+        fetch_lands(ramp, ramp["count"], turn, pool, library, hand, permanents, battlefield_lands,
+                    profiles, commander_colors)
+        hand.extend(select_ramp_targets(library, profiles, commander_colors, battlefield_lands,
+                                        permanents, ramp, ramp["toHand"]))
 
     if profile["isPermanent"]:
-        mana_active_turn = turn + (profile["manaSourceDelay"] or 0)
-        if profile["manaSourceDelay"] == 0 and profile["manaAtoms"]:
-            pool.sources.extend(profile["manaAtoms"])
-        permanents.append({
+        record = {
             "name": name,
-            "kind": "ramp" if (profile["landRamp"] or profile["manaSourceDelay"] is not None) else "spell",
+            "kind": "ramp" if is_mana_source(profile) else "spell",
             "manaAtoms": profile["manaAtoms"],
-            "manaActiveTurn": mana_active_turn,
+            "manaOnce": profile["manaOnce"],
+            "manaBoard": profile["manaBoard"],
+            "manaOnCast": profile["manaOnCast"],
+            "manaActiveTurn": turn + (profile["manaSourceDelay"] or 0),
             "combatReadyTurn": turn + (1 if profile["combat"] > 0 else 99),
             "impact": profile["impact"],
             "combat": profile["combat"],
             "isThreat": profile["isThreat"],
             "enteredTurn": turn,
-        })
+            # Tapped until the next untap step: it enters tapped (Nevinyrral's
+            # Disk), or its {T} draw is activated the turn it enters (The One
+            # Ring, CAST_TURN_ACTIVATION_DRAW).
+            "tapped": bool(profile.get("entersTapped")
+                           or (profile.get("drawTapsSelf") and CAST_TURN_ACTIVATION_DRAW.get(name))),
+        }
+        if profile["manaTurns"] is not None:
+            record["manaLastTurn"] = turn + profile["manaTurns"] - 1
+        permanents.append(record)
 
     for _ in range(profile["immediateDraw"]):
         if library:
             hand.append(library.pop())
+    # The pool is read from the board again (refresh_pool, invariant I1): a
+    # permanent whose mana comes online this turn adds it, as its text gives
+    # it on the battlefield it enters (Urza: his Construct, and a {U} for each
+    # idle artifact), with the extras and grants already out; a grant or
+    # trigger source entering changes the untapped sources' mana.
+    refresh_pool(pool, permanents, profiles, turn)
 
 
 def count_creature_permanents(permanents: list[dict], profiles: dict) -> int:
@@ -2906,15 +4739,18 @@ def spell_qualifies_for_cascade(profile: dict, cascade: dict) -> bool:
 def resolve_cascade_triggers(spell_profile: dict, cascade: dict, turn: int,
                              pool: "GoldfishManaPool", library: list[str], hand: list[str],
                              permanents: list[dict], battlefield_lands: list[dict],
-                             profiles: dict, metadata: dict, commander_colors: list[str],
-                             reserved_pieces: set[str]) -> None:
+                             profiles: dict, commander_colors: list[str],
+                             reserved_pieces: set[str], context: dict | None = None,
+                             commander_in_play: bool = True) -> None:
     """Resolve commander-granted cascade off a qualifying cast (DEC-385).
 
     Each trigger digs the library top-down: the first nonland card with lesser
     mana value is free-cast via ``resolve_cast_effects``; the cards dug past it
     go to the bottom (library order is already random, so no reshuffle needed).
-    "May cast" is declined for reactive spells (no goldfish targets) and for
-    reserved non-permanent combo pieces/tutors — those are bottomed instead.
+    "May cast" is declined for reactive spells (no goldfish targets), for
+    reserved non-permanent combo pieces/tutors and for a Chrome Mox with no
+    card in hand to imprint (can_imprint_from_hand) — those are bottomed
+    instead; a cascaded Mox imprints as a paid one does (imprint_on_entry).
     With ``fromHandOnly`` (Zhulodok-style grants) free-casts never re-trigger;
     without it, qualifying free-casts recurse, bounded because every hit costs
     strictly less than its parent.
@@ -2932,15 +4768,21 @@ def resolve_cascade_triggers(spell_profile: dict, cascade: dict, turn: int,
         if hit is None:
             return
         hit_profile = profiles[hit]
-        if hit_profile["isInteraction"] or (hit in reserved_pieces and not hit_profile["isPermanent"]):
+        imprints = context is not None and hit_profile["imprint"] and not hit_profile["isLand"]
+        if (hit_profile["isInteraction"] or (hit in reserved_pieces and not hit_profile["isPermanent"])
+                or (imprints and not can_imprint_from_hand(hit, hit_profile, hand, profiles, context,
+                                                           commander_in_play))):
             library.insert(0, hit)
             continue
         resolve_cast_effects(hit, hit_profile, turn, pool, library, hand, permanents,
-                             battlefield_lands, profiles, metadata, commander_colors)
+                             battlefield_lands, profiles, commander_colors)
+        if imprints:
+            imprint_on_entry(hit, hit_profile, turn, pool, hand, permanents, profiles, context,
+                             commander_in_play)
         if not cascade.get("fromHandOnly") and spell_qualifies_for_cascade(hit_profile, cascade):
             resolve_cascade_triggers(hit_profile, cascade, turn, pool, library, hand,
-                                     permanents, battlefield_lands, profiles, metadata,
-                                     commander_colors, reserved_pieces)
+                                     permanents, battlefield_lands, profiles,
+                                     commander_colors, reserved_pieces, context, commander_in_play)
 
 
 def set_entry_ready_turn(permanents: list[dict], name: str, ready_turn: int) -> None:
@@ -2984,7 +4826,7 @@ def team_haste_active(haste_sources: dict, permanents: list[dict]) -> bool:
 
 def hatch_from_library(turn: int, pool: "GoldfishManaPool", library: list[str],
                        hand: list[str], permanents: list[dict],
-                       battlefield_lands: list[dict], profiles: dict, metadata: dict,
+                       battlefield_lands: list[dict], profiles: dict,
                        commander_colors: list[str],
                        ready_turn: int | None = None) -> str | None:
     """Put the top creature card of the library onto the battlefield free (DEC-938).
@@ -3011,7 +4853,7 @@ def hatch_from_library(turn: int, pool: "GoldfishManaPool", library: list[str],
     if hit is None:
         return None
     resolve_cast_effects(hit, profiles[hit], turn, pool, library, hand, permanents,
-                         battlefield_lands, profiles, metadata, commander_colors)
+                         battlefield_lands, profiles, commander_colors)
     if ready_turn is not None:
         set_entry_ready_turn(permanents, hit, ready_turn)
     return hit
@@ -3039,7 +4881,239 @@ def hatch_entry_eggs(hatch_engine: dict, name: str, permanents: list[dict]) -> i
     return base * hatch_egg_multiplier(hatch_engine, permanents)
 
 
-def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
+def settle_tapped(pool: "GoldfishManaPool", before: "GoldfishManaPool", permanents: list[dict],
+                  battlefield_lands: list[dict], profiles: dict) -> "GoldfishManaPool":
+    """Record on each permanent what one payment did (R1: one tapped state
+    per permanent per turn), reading only the sources it newly used (the
+    payment's pool less ``before``, the pool it was made from): a source
+    whose own {T} paid (``tapping``: a {T} mana ability, an artifact Urza
+    tapped for {U}; not Urza himself) is tapped, except a vigilant creature
+    (M9: it attacks first and taps for mana after combat); a one-shot source
+    (Mana Vault, Basalt Monolith, Lotus Petal) is spent, and one that
+    sacrifices itself for its mana leaves the battlefield at once (its mana
+    stays in the pool). Returns the pool."""
+    newly_used = pool.tapped - before.tapped
+    newly_tapping = pool.tapping - before.tapping
+    for record in list(permanents):
+        if id(record) in newly_tapping:
+            profile = profiles[record["name"]]
+            if not (profile["vigilance"] and "Creature" in profile["typeWords"]):
+                record["tapped"] = True
+        if id(record) not in newly_used:
+            continue
+        if record.get("manaOnce") and not record["manaAtoms"] and not record.get("onceSpent"):
+            record["onceSpent"] = True
+            if profiles[record["name"]]["onceLeaves"]:
+                leave_battlefield(record, permanents, battlefield_lands)
+    return pool
+
+
+def find_payment(pool: "GoldfishManaPool", cost: dict, keep=(), strict: bool = True,
+                 taps: dict | None = None) -> "GoldfishManaPool | None":
+    """The pool a payment of ``cost`` leaves (GoldfishManaPool.pay), or None.
+
+    ``keep``: the requirements the payment must leave payable (the turn's
+    held activation and reachable gates, checked jointly with it); with
+    ``strict`` False a cast that is never held back (the commander, a line
+    piece, a mana source) takes the preferred payment when none keeps them.
+    ``taps``: the permanent whose own {T} is part of the cost (Castle
+    Ardenvale, Myriad Landscape, High Market, the hatch commander): it must
+    be untapped, and its own mana cannot pay (it is tapped for the
+    ability)."""
+    if taps is not None:
+        if taps.get("tapped"):
+            return None
+        pool = pool.without(lambda atom: getattr(atom, "source", None) is not taps)
+    paid = pool.pay(cost, keep)
+    if paid is None and keep and not strict:
+        paid = pool.pay(cost)
+    return paid
+
+
+def spend_mana(pool: "GoldfishManaPool", cost: dict, permanents: list[dict],
+               battlefield_lands: list[dict], profiles: dict, keep=(), strict: bool = True,
+               taps: dict | None = None,
+               paid: "GoldfishManaPool | None" = None) -> "GoldfishManaPool | None":
+    """Every spend of the turn's mana (casts, X, activations, the end of the
+    turn's untaps and land fetches): finds the payment (find_payment, or
+    ``paid``, the payment find_payment already found for this same cost),
+    commits that same payment and settles it before the next one
+    (settle_tapped: exactly the permanents whose own {T} paid are tapped;
+    ``taps`` is tapped for its ability). Returns the pool left, or None
+    (nothing changes) when the cost cannot be paid."""
+    if paid is None:
+        paid = find_payment(pool, cost, keep, strict, taps)
+    if paid is None:
+        return None
+    settle_tapped(paid, pool, permanents, battlefield_lands, profiles)
+    if taps is not None:
+        taps["tapped"] = True
+    return paid
+
+
+def rearm_once_sources(permanents: list[dict], pool: "GoldfishManaPool", battlefield_lands: list[dict],
+                       profiles: dict) -> "GoldfishManaPool":
+    """A spent one-shot source with its own "{N}: Untap this" (Basalt
+    Monolith), spent this turn or an earlier one, is untapped at the end of
+    the turn with N of the lasting mana the turn left (M3), each payment
+    settled before the next (spend_mana). Returns the pool left."""
+    for permanent in list(permanents):
+        cost = profiles[permanent["name"]]["onceRearm"]
+        if cost is None or not permanent.get("onceSpent"):
+            continue
+        left = spend_mana(pool, cost, permanents, battlefield_lands, profiles)
+        if left is not None:
+            pool = left
+            permanent["onceSpent"] = False
+            permanent["tapped"] = False
+    return pool
+
+
+def give_up_lands(cost: dict, turn: int, hand: list[str], permanents: list[dict],
+                  battlefield_lands: list[dict], profiles: dict) -> list:
+    """Give up the lands a land takes as it enters (``landEntryCost``, M6):
+    the least mana first. They leave at once, so every condition the land
+    reads as it enters, and every later one, counts fewer lands. Lands
+    sacrificed "instead" of entering (Scorched Ruins) go untapped; lands an
+    entering trigger takes (Lotus Field, Simic Growth Chamber) are tapped in
+    response first, and that mana is returned for this turn's pool. A land
+    returned to the hand (Growth Chamber) can be played again."""
+    lands = [p for p in permanents if p["kind"] == "land" and p["manaActiveTurn"] <= turn]
+    chosen = sorted(lands, key=lambda p: (
+        len(p["manaAtoms"]) + len(p.get("manaBoard", ())),
+        len(frozenset().union(*p["manaAtoms"])) if p["manaAtoms"] else 0, p["name"]))[:cost["count"]]
+    gone = {id(p) for p in chosen}
+    floating = [] if cost["now"] else [
+        atom for atom in board_mana(permanents, turn, profiles)
+        if id(atom.source) in gone and not atom.once]
+    for record in chosen:
+        leave_battlefield(record, permanents, battlefield_lands)
+        if cost["toHand"]:
+            hand.append(record["name"])
+    return floating
+
+
+def imprint_choice(profile: dict, hand: list[str], profiles: dict, context: dict,
+                   commander_in_play: bool) -> str | None:
+    """The card an imprint would exile from ``hand`` (imprint_from_hand), or
+    None when no card can be exiled for it."""
+    rule = profile["imprint"]
+
+    def eligible(card: str) -> bool:
+        card_profile = profiles[card]
+        front = card_profile["typeLine"].split(" // ")[0]
+        return not (card_profile["isLand"] or "Land" in front or card in context["imprintKeep"]
+                    or (rule.get("colorless") and not card_profile["isColorless"])
+                    or (rule.get("nonartifact") and "Artifact" in front)
+                    or card_profile["cmc"] < rule.get("minValue", 0)
+                    or (rule["atoms"] is None and not card_profile["colors"]))
+
+    cards = [card for card in ordered_unique(hand) if eligible(card)]
+    idle = [card for card in cards if profiles[card]["isInteraction"]
+            and card not in context["reservedPieces"]]
+    castable = [card for card in cards if not goldfish_never_casts(card, profiles[card], context)]
+    if idle:
+        return max(idle, key=lambda c: (len(profiles[c]["colors"]), profiles[c]["cmc"], c))
+    if castable:
+        return max(castable, key=lambda c: (
+            proactive_cast_priority(c, profiles[c], context["commanderName"], commander_in_play,
+                                    context["lineMembers"])[:-1], profiles[c]["cmc"], c))
+    return None
+
+
+def imprint_from_hand(record: dict, profile: dict, hand: list[str], profiles: dict,
+                      context: dict, commander_in_play: bool) -> str | None:
+    """Imprint as the permanent enters (owner-approved 2026-11-19): exile the
+    eligible card from the hand that the goldfish gets least from and set the
+    permanent's mana. Ugin's Labyrinth: a colourless card with mana value 7
+    or greater, then {C}{C} instead of {C}. Chrome Mox: a nonartifact,
+    nonland card, then one mana of its colours (a colourless one gives
+    nothing, so it is never chosen); with no such card the Mox gives nothing.
+
+    The card chosen is interaction the goldfish never casts (no targets) if
+    the hand has any, else the castable card last in its own cast order (ties:
+    the higher mana value). Never exiled, in every deck: tutors and
+    reanimation spells (by their roles), every combo-line and assembly-line
+    member (``imprintKeep``), reserved combo pieces and the deploy engine's
+    Equipment. A card with a land face is played as its land, never
+    imprinted. Returns the card exiled, or None.
+    """
+    card = imprint_choice(profile, hand, profiles, context, commander_in_play)
+    if card is None:
+        return None
+    hand.remove(card)
+    rule = profile["imprint"]
+    record["manaAtoms"] = (list(rule["atoms"]) if rule["atoms"] is not None
+                           else [frozenset(profiles[card]["colors"])])
+    return card
+
+
+def can_imprint_from_hand(name: str, profile: dict, hand: list[str], profiles: dict, context: dict,
+                          commander_in_play: bool) -> bool:
+    """Whether a cast of a non-land permanent whose mana an imprint sets
+    (Chrome Mox: nothing without one) has a card in hand to exile, besides
+    the card itself: the paid cast and a cascade's free cast are declined
+    without one."""
+    if not profile["imprint"] or profile["isLand"] or profile["imprint"]["atoms"] is not None:
+        return True
+    rest = list(hand)
+    if name in rest:
+        rest.remove(name)
+    return imprint_choice(profile, rest, profiles, context, commander_in_play) is not None
+
+
+def imprint_on_entry(name: str, profile: dict, turn: int, pool: "GoldfishManaPool", hand: list[str],
+                     permanents: list[dict], profiles: dict, context: dict,
+                     commander_in_play: bool) -> None:
+    """A cast non-land imprint permanent (Chrome Mox) as it enters, paid or
+    cascaded: the card it exiles from the hand sets its mana, usable at once
+    (it is an artifact). A put that is not a cast (a hatch, the deploy
+    engine) imprints nothing: a floor."""
+    if not profile["imprint"] or profile["isLand"]:
+        return
+    record = next(p for p in reversed(permanents) if p["name"] == name)
+    imprint_from_hand(record, profile, hand, profiles, context, commander_in_play)
+    refresh_pool(pool, permanents, profiles, turn)
+
+
+def activate_land_fetches(turn: int, pool: "GoldfishManaPool", library: list[str], hand: list[str],
+                          permanents: list[dict], battlefield_lands: list[dict], profiles: dict,
+                          commander_colors: list[str]) -> "GoldfishManaPool":
+    """Land-fetching permanents (M8): Wayfarer's Bauble, Sakura-Tribe Elder,
+    Myriad Landscape. Each is sacrificed at the end of the turn when ``pool``
+    (the mana the turn left) pays its cost and it puts more lands onto the
+    battlefield than it takes away; one whose cost has {T} must be untapped
+    (a creature also not summoning sick), and its own mana cannot pay
+    (spend_mana ``taps``). Each payment is settled before the next: a land
+    that paid the Bauble is tapped and cannot pay its own {T}. The lands
+    enter as the search says. Returns the pool left."""
+    for permanent in list(permanents):
+        search = profiles[permanent["name"]]["landFetch"]
+        if search is None or not any(p is permanent for p in permanents):
+            continue
+        if (search["tapsSelf"] and "Creature" in profiles[permanent["name"]]["typeWords"]
+                and permanent.get("enteredTurn") == turn):
+            # A creature's own {T} ability is summoning sick the turn it
+            # enters (Embodiment of Spring); a fetch without {T} is not
+            # (Sakura-Tribe Elder).
+            continue
+        refresh_pool(pool, permanents, profiles, turn)
+        found = len(select_ramp_targets(list(library), profiles, commander_colors,
+                                        battlefield_lands, permanents, search, search["count"]))
+        if found - (1 if permanent["kind"] == "land" else 0) < 1:
+            continue
+        left = spend_mana(pool, search["cost"], permanents, battlefield_lands, profiles,
+                          taps=permanent if search["tapsSelf"] else None)
+        if left is None:
+            continue
+        pool = left
+        leave_battlefield(permanent, permanents, battlefield_lands)
+        fetch_lands(search, search["count"], turn, pool, library, hand, permanents, battlefield_lands,
+                    profiles, commander_colors)
+    return pool
+
+
+def simulate_goldfish_game(decklist: list[str], context: dict,
                            meaningful_threshold: int) -> dict:
     """Simulate one solitaire game with heuristic sequencing."""
     profiles = context["profiles"]
@@ -3189,7 +5263,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 return
             hatched = hatch_from_library(
                 turn, pool, library, hand, permanents, battlefield_lands,
-                profiles, metadata, commander_colors, ready_turn=ready_turn)
+                profiles, commander_colors, ready_turn=ready_turn)
             hatches_left -= 1
             if hatched is None:
                 return
@@ -3265,6 +5339,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             and commander_record["combatReadyTurn"] <= turn)
         commander_ready = (
             commander_in_play and commander_play_turn is not None
+            and commander_record is not None and not commander_record.get("tapped")
             and (commander_play_turn < turn
                  or commander_hasted_on_entry
                  or (haste_sources is not None
@@ -3273,6 +5348,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         limited_outlet = bool(hatch_engine["limitedOutletNames"] & board)
         return {
             "board": board,
+            "commander": commander_record,
             "instantOutlet": instant_outlet,
             "limitedOutlet": limited_outlet,
             "outletOnline": instant_outlet or limited_outlet,
@@ -3298,68 +5374,104 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 costs.append(combat_modifiers["paidCombatCost"])
         return combine_mana_costs(costs) if costs else None
 
-    def gate_reach(test_pool: "GoldfishManaPool") -> tuple:
-        """Which still-open gates are reachable from `test_pool` (DEC-944).
+    def assault_hold(current_pool: "GoldfishManaPool") -> dict | None:
+        """The held Aggravated Assault (DEC-940) the hatch engine's payments
+        keep (the Egg activation, Skullclamp, High Market's {T}): its cost
+        while it is on the battlefield with an attacker and the pool can pay
+        it, else None."""
+        if combat_modifiers is None:
+            return None
+        board = {permanent["name"] for permanent in permanents}
+        cost = combat_modifiers["paidCombatCost"]
+        if (combat_modifiers["paidCombatName"] in board and ready_attackers(permanents, turn)
+                and current_pool.can_cast(cost)):
+            return cost
+        return None
 
-        One flag per gate that has not already fired this game: the comboLethal
-        gate, then one per unassembled KEY_COMBOS line. Hand and battlefield are
-        read as they stand, so only the mana differs between two calls.
-        """
-        reach = []
+    def gate_costs(cast: str | None = None) -> list[list[dict]]:
+        """The still-open gates (DEC-944), each as the costs any one of which
+        reaches it: the comboLethal gate (one cost per line whose pieces
+        resolve), then one per unassembled KEY_COMBOS line (its tutors' cost;
+        none when no tutor can fill its slots). Hand and battlefield are read
+        as they stand; with ``cast``, a line piece being cast, as they will
+        stand once it is on the battlefield (G1: the rest of the line)."""
+        board, in_hand = permanents, hand
+        if cast is not None:
+            in_hand = list(hand)
+            if cast in in_hand:
+                in_hand.remove(cast)
+            board = permanents + [{"name": cast, "kind": "spell", "enteredTurn": turn}]
+        gates = []
         if combo_lines and not combo_ready_ever:
-            reach.append(combo_ready_this_turn(
-                turn=turn, hand=hand, permanents=permanents,
-                combo_lines=combo_lines, profiles=profiles,
-                tutor_meta=tutor_meta, reanim_names=reanim_names,
-                commander_in_play=commander_in_play,
-                commander_play_turn=commander_play_turn,
-                pool=test_pool, commander_name=commander_name))
+            gates.append(combo_line_costs(
+                turn, in_hand, board, combo_lines, profiles, tutor_meta, reanim_names,
+                commander_in_play, commander_play_turn, commander_name))
         for idx, line in enumerate(assembly_lines):
             if assembly_turn[idx] is not None:
                 continue
-            reach.append(combo_assembled_this_turn(
-                turn=turn, hand=hand, permanents=permanents, library=library,
-                assembly_line=line, profiles=profiles, tutor_meta=tutor_meta,
-                pool=test_pool))
-        return tuple(reach)
+            cost = assembly_tutor_cost(in_hand, board, library, line, profiles, tutor_meta)
+            gates.append([] if cost is None else [cost])
+        return gates
 
-    def spend_keeps_gates(current_pool: "GoldfishManaPool", cost: dict,
-                          baseline: tuple | None = None) -> bool:
-        """Does paying `cost` leave every reachable gate still reachable (DEC-944)?"""
-        if not has_gates:
-            return True
-        if baseline is None:
-            baseline = gate_reach(current_pool)
-        if not any(baseline):
-            return True
-        after = gate_reach(current_pool.after_spending(cost))
-        return not any(was and not now for was, now in zip(baseline, after))
+    def holds(current_pool: "GoldfishManaPool", held: dict | None = None,
+              cast: str | None = None) -> list[list[dict]]:
+        """What a spend must leave payable (DEC-944), for find_payment: each
+        gate `current_pool` reaches now, and the held activation `held`. Where
+        the held activation and a gate can be paid together now, they are kept
+        together, from the same mana (G2: the activation plus each of the
+        gate's lines); a gate it cannot be paid with is kept on its own, and
+        the activation alone when it goes with no gate. A gate it cannot reach
+        holds nothing back."""
+        gates = ([costs for costs in gate_costs(cast)
+                  if any(current_pool.can_cast(cost) for cost in costs)] if has_gates else [])
+        if held is None:
+            return gates
+        keep, joined = [], False
+        for costs in gates:
+            together = [combine_mana_costs([held, cost]) for cost in costs]
+            if any(current_pool.can_cast(cost) for cost in together):
+                keep.append(together)
+                joined = True
+            else:
+                keep.append(costs)
+        return keep if joined else [[held]] + keep
 
-    def spend_keeps_holds(current_pool: "GoldfishManaPool", cost: dict,
-                          held: dict | None, baseline: tuple) -> bool:
-        """Does paying `cost` still pay `held` and keep every reachable gate
-        (DEC-944)? Filler casts and X spells are both held by this."""
-        if (held is not None
-                and not current_pool.after_spending(cost).can_cast(held)):
+    def refresh() -> None:
+        """Read the pool's unspent mana from the board again (refresh_pool)."""
+        refresh_pool(pool, permanents, profiles, turn)
+
+    def spend(cost: dict, keep=(), strict: bool = True, taps: dict | None = None,
+              paid: "GoldfishManaPool | None" = None) -> bool:
+        """Pay `cost` out of the turn's pool through spend_mana (the one
+        payment path) and keep what it leaves, read from the board again (a
+        source that sacrificed itself is gone). False, with nothing paid, when
+        no payment keeps `keep`."""
+        nonlocal pool
+        left = spend_mana(pool, cost, permanents, battlefield_lands, profiles, keep, strict, taps, paid)
+        if left is None:
             return False
-        return spend_keeps_gates(current_pool, cost, baseline)
+        pool = left
+        refresh()
+        return True
 
-    def x_to_pay(current_pool: "GoldfishManaPool", cost: dict,
-                 held: dict | None, baseline: tuple) -> int | None:
-        """Largest X >= X_SPELL_MIN_X `current_pool` pays for an X spell while
-        keeping the DEC-944 holds."""
-        top = (current_pool.total - cost["total"]) // cost["X"]
+    def x_payment(cost: dict, keep) -> tuple | None:
+        """(X, the payment) for an X spell: the largest X >= X_SPELL_MIN_X the
+        pool pays while keeping the DEC-944 holds, or None."""
+        top = (pool.total - cost["total"]) // cost["X"]
         for x in range(top, X_SPELL_MIN_X - 1, -1):
-            paid = x_spell_cost(cost, x)
-            if (current_pool.can_cast(paid)
-                    and spend_keeps_holds(current_pool, paid, held, baseline)):
-                return x
+            paid = find_payment(pool, x_spell_cost(cost, x), keep)
+            if paid is not None:
+                return x, paid
         return None
 
     by_turn = {}
 
     for turn in range(1, NUM_TURNS + 1):
         copy_gate_uses = 0
+        # Untap step (R1): every permanent untaps, except a one-shot source
+        # that does not untap (its ``onceSpent`` stays until it re-arms).
+        for permanent in permanents:
+            permanent["tapped"] = bool(permanent.get("onceSpent")) and not permanent["manaAtoms"]
         # TOKEN_MAKER_ENGINE commander draw: the tokens untapped at the last
         # opponent's end step are every Food except any that entered tapped on
         # your last turn, and the creature tokens made then, which could not
@@ -3433,33 +5545,43 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                     continue
                 activations += 1
                 draw_engine_activations[permanent["name"]] = activations
+                if profiles[permanent["name"]].get("drawTapsSelf"):
+                    permanent["tapped"] = True  # its {T}: no mana for Urza this turn
                 for _ in range(activations):
                     if library:
                         hand.append(library.pop())
 
-        land_name = choose_land_to_play(hand, profiles, metadata, battlefield_lands, commander_colors)
+        # A Saga's last chapter resolves after the draw step, before the land
+        # drop: it is tapped for its mana in response (that mana joins this
+        # turn's pool) and leaves the battlefield (F4).
+        floating_mana = []
+        for permanent in list(permanents):
+            if permanent.get("manaLastTurn") == turn:
+                # Its mana and the extras the triggers out add for it.
+                floating_mana += [atom for atom in board_mana(permanents, turn, profiles)
+                                  if atom.source is permanent]
+                leave_battlefield(permanent, permanents, battlefield_lands)
+        land_name = choose_land_to_play(hand, profiles, battlefield_lands, permanents,
+                                        commander_colors, library)
         if land_name:
             hand.remove(land_name)
-            land_profile = profiles[land_name]
-            enters_tapped_now = land_enters_tapped(metadata[land_name], battlefield_lands)
-            colors = set().union(*land_profile["manaAtoms"]) if land_profile["manaAtoms"] else set()
-            land_record = {
-                "name": land_name,
-                "kind": "land",
-                "manaAtoms": land_profile["manaAtoms"],
-                "manaActiveTurn": turn + (1 if enters_tapped_now else 0),
-                "combatReadyTurn": 99,
-                "impact": 0,
-                "combat": 0,
-                "isThreat": False,
-            }
-            permanents.append(land_record)
-            battlefield_lands.append({
-                "name": land_name,
-                "colors": colors,
-                "subtypes": land_profile["subtypes"],
-                "isBasic": land_profile["isBasic"],
-            })
+            if profiles[land_name]["landEntryCost"]:
+                # Mana of lands given up that was tapped first (a Lotus Field
+                # or Growth Chamber trigger) joins this turn's pool only.
+                floating_mana += give_up_lands(profiles[land_name]["landEntryCost"], turn, hand,
+                                               permanents, battlefield_lands, profiles)
+            if profiles[land_name]["landCrack"]:
+                land_record = crack_fetch_land(land_name, turn, library, hand, permanents,
+                                               battlefield_lands, profiles, commander_colors)
+            else:
+                land_record = put_land_onto_battlefield(
+                    land_name, turn,
+                    land_enters_tapped(profiles[land_name]["landEntry"], battlefield_lands,
+                                       permanents, profiles, hand),
+                    permanents, battlefield_lands, profiles, commander_colors)
+            if profiles[land_name]["imprint"]:
+                imprint_from_hand(land_record, profiles[land_name], hand, profiles, context,
+                                  commander_in_play)
             # TOKEN_MAKER_ENGINE landfall makers: one token per natural land
             # drop (one creation event each); lands a fetch land or a ramp
             # spell puts onto the battlefield are a floor.
@@ -3479,17 +5601,26 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                             hatch_engine, permanents)
 
         # DEC-937 — one pool per turn. It is built once, after the land drop,
-        # and carried through every cast: `after_spending` below removes the
-        # sources each spell consumed, and `resolve_cast_effects` extends it
-        # with sources that come online untapped. Rebuilding it per cast (the
+        # and carried through every cast: each payment (spend, spend_mana)
+        # removes the mana it used, and after every resolution its unspent
+        # mana is read from the board again (refresh_pool, invariant I1: the
+        # mana already floating plus what the untapped permanents not yet
+        # used give). Rebuilding it per cast from every permanent (the
         # pre-DEC-937 behaviour) let the goldfish spend the same lands again
-        # for every spell in the turn.
-        pool = GoldfishManaPool(turn_sources(permanents, turn))
+        # for every spell in the turn. Mana already floating (a Saga's, lands
+        # given up) has no source left to tap: it is spent first.
+        pool = GoldfishManaPool([floated(atom) for atom in floating_mana], turn=turn)
+        refresh()
+
         while True:
+            refresh()
             candidates = []
             for name in ordered_unique(hand):
                 profile = profiles[name]
                 if goldfish_never_casts(name, profile, context):
+                    continue
+                # Chrome Mox is not cast while nothing can be exiled for it.
+                if not can_imprint_from_hand(name, profile, hand, profiles, context, commander_in_play):
                     continue
                 # DEC-393 — hold per_other_creature engine fuel (spells that
                 # target only the commander) until the commander is online;
@@ -3517,17 +5648,20 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 line_members))
             # DEC-944 — cast priority. The commander, mana sources and the
             # line's own pieces go first and are never held back. Anything
-            # else is filler, and filler only gets cast if the pool it leaves
-            # behind still pays for (b) the turn's combo/assembly gate and
-            # (c) the deck's configured paid activations. A hold the pool
-            # cannot afford in the first place is dropped rather than left to
-            # block development for nothing.
-            baseline = gate_reach(pool) if has_gates else ()
+            # else is filler, and filler only gets cast if a payment leaves
+            # (b) the turn's reachable combo/assembly gates and (c) the deck's
+            # configured paid activations payable (holds, checked jointly
+            # with the payment). The casts never held back take a payment
+            # that keeps them when there is one. A hold the pool cannot
+            # afford in the first place is dropped rather than left to block
+            # development for nothing.
             held = engine_hold_cost()
             if held is not None and not pool.can_cast(held):
                 held = None
+            keep = holds(pool, held)
             chosen = None
             chosen_x = None
+            paid = None
             for name in candidates:
                 profile = profiles[name]
                 # An X spell (X_SPELL_MIN_X) takes the mana left after the
@@ -3535,17 +5669,20 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 # X = 0; an X spell is never a mana source (its profile says
                 # so), so nothing else exempts it from the holds.
                 if profile["manaCost"]["X"] and name not in line_members:
-                    chosen_x = x_to_pay(pool, profile["manaCost"], held, baseline)
-                    if chosen_x is None:
+                    found = x_payment(profile["manaCost"], keep)
+                    if found is None:
                         continue
+                    chosen_x, paid = found
                     chosen = name
                     break
-                if (name == commander_name or name in line_members
-                        or profile["landRamp"]
-                        or profile["manaSourceDelay"] is not None):
-                    chosen = name
-                    break
-                if not spend_keeps_holds(pool, profile["manaCost"], held, baseline):
+                never_held = (name == commander_name or name in line_members
+                              or is_mana_source(profile))
+                # G1: a line piece keeps the rest of its line, priced with the
+                # piece on the battlefield, not the piece's own cost again.
+                paid = find_payment(pool, profile["manaCost"],
+                                    holds(pool, held, cast=name) if name in line_members else keep,
+                                    strict=not never_held)
+                if paid is None:
                     continue
                 chosen = name
                 break
@@ -3556,9 +5693,13 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 chosen_profile = x_cast_profile(
                     chosen_profile, chosen_x,
                     0 if commander_play_turn is None else 1)
-            pool = pool.after_spending(chosen_profile["manaCost"])
+            spend(chosen_profile["manaCost"], paid=paid)
             if chosen in hand:
                 hand.remove(chosen)
+            # "Whenever you cast a spell, add ..." (Birgi): each such permanent
+            # already out adds its mana as the spell is cast (M2).
+            for permanent in permanents:
+                pool.add(tag_atoms(permanent.get("manaOnCast", ()), None, 0))  # a trigger taps nothing
 
             # Zhulodok-style cascade fires on cast, so eligibility is checked
             # before resolution; commander CZ casts are not "from hand".
@@ -3586,8 +5727,10 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                     copy_gate_uses += 1
 
             resolve_cast_effects(chosen, chosen_profile, turn, pool, library, hand,
-                                 permanents, battlefield_lands, profiles, metadata,
+                                 permanents, battlefield_lands, profiles,
                                  commander_colors)
+            imprint_on_entry(chosen, chosen_profile, turn, pool, hand, permanents, profiles, context,
+                             commander_in_play)
             if copy_engine is not None:
                 token_creatures += chosen_profile["tokenCreatures"]
 
@@ -3646,19 +5789,21 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             if cascade_fires:
                 resolve_cascade_triggers(chosen_profile, cascade, turn, pool, library,
                                          hand, permanents, battlefield_lands, profiles,
-                                         metadata, commander_colors, reserved_combo_pieces)
+                                         commander_colors, reserved_combo_pieces, context,
+                                         commander_in_play)
 
             # Copies are not cast (CR 707.10): they re-credit resolution effects
             # (draw, land-ramp, ledger tokens) but never re-trigger the engine.
             for _ in range(engine_copies):
                 resolve_cast_effects(chosen, chosen_profile, turn, pool, library, hand,
-                                     permanents, battlefield_lands, profiles, metadata,
+                                     permanents, battlefield_lands, profiles,
                                      commander_colors)
                 token_creatures += chosen_profile["tokenCreatures"]
 
         # DEC-405 — transform, then free-deploy at the beginning of combat.
-        # The activation is sorcery-speed and affordability-checked against
-        # the turn pool exactly like every other cast in this engine.
+        # The activation ({4}{U}{R}, no {T}) is sorcery-speed and paid out of
+        # the turn pool like every other cast in this engine; it is never
+        # held back, and takes a payment that keeps the gates when one does.
         deploy_combat = 0.0
         if (deploy_engine is not None and commander_in_play
                 and not commander_transformed):
@@ -3669,8 +5814,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             transform_cost = (deploy_engine["reducedTransformCost"]
                               if reducer_on_board
                               else deploy_engine["transformCost"])
-            if pool.can_cast(transform_cost):
-                pool = pool.after_spending(transform_cost)
+            if spend(transform_cost, holds(pool), strict=False):
                 commander_transformed = True
                 for permanent in permanents:
                     if permanent["name"] == commander_name:
@@ -3687,7 +5831,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 # resolution effects but never triggers cast-gated models.
                 resolve_cast_effects(deploy_name, deploy_profile, turn, pool,
                                      library, hand, permanents, battlefield_lands,
-                                     profiles, metadata, commander_colors)
+                                     profiles, commander_colors)
                 if "Equipment" in deploy_profile["typeLine"]:
                     attached_equipment.add(deploy_name)
             # Back face is 5/5 flying haste — it swings from the transform
@@ -3743,17 +5887,24 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             # own-turn capacity once an instant-speed outlet is online but do
             # not open the engine on their own (board scope, DEC-938) — Eggs
             # they would eat with no altar out are a floor.
+            refresh()
             engine_state = hatch_engine_state()
             board = engine_state["board"]
             instant_outlet = engine_state["instantOutlet"]
-            limited_outlet = engine_state["limitedOutlet"]
             outlet_online = engine_state["outletOnline"]
             engine_online = engine_state["online"]
+            commander_record = engine_state["commander"]
+            # Thornbite Staff, attached as she entered, untaps her whenever a
+            # creature dies (an Egg, to any outlet).
+            staff_attached = untapper_attached and hatch_engine["untapperName"] in board
 
-            # Own-turn commander activations: {2} each out of what the casts
-            # left. The commander taps, so one per untap — Thornbite Staff
-            # untaps her per creature death, and only with Ashnod's Altar out
+            # Own-turn commander activations: {2}, {T} each out of what the
+            # casts left, keeping the reachable gates and a held Aggravated
+            # Assault (assault_hold). Her {T} taps her, so one
+            # per untap and she does not attack after it — unless Thornbite
+            # Staff untaps her per creature death: only with Ashnod's Altar out
             # does the Egg it just ate pay ({C}{C}) for the next activation.
+            # The Eggs' deaths below untap her (staff_attached).
             if engine_online:
                 thornbite = (untapper_attached
                              and hatch_engine["untapperName"] in board
@@ -3763,11 +5914,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 for activation in range(min(untaps, hatch_engine["maxEggsPerTurn"])):
                     if activation > 0 and thornbite:
                         pass  # the Altar's {C}{C} from the last Egg pays for it
-                    elif (pool.can_cast(hatch_engine["activationCost"])
-                          and spend_keeps_gates(
-                              pool, hatch_engine["activationCost"])):
-                        pool = pool.after_spending(hatch_engine["activationCost"])
-                    else:
+                    elif not spend(hatch_engine["activationCost"], holds(pool, assault_hold(pool)),
+                                   taps=commander_record):
                         break
                     eggs_on_board += egg_multiplier
 
@@ -3782,10 +5930,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 # +1/-1 kills a 0/1 Egg; the 0/2 Dragon Eggs survive as 1/1s.
                 if hatch_engine["sorceryOutletName"] in board:
                     while (eggs_on_board > clamp_deaths
-                           and pool.can_cast(hatch_engine["sorceryOutletCost"])
-                           and spend_keeps_gates(
-                               pool, hatch_engine["sorceryOutletCost"])):
-                        pool = pool.after_spending(hatch_engine["sorceryOutletCost"])
+                           and spend(hatch_engine["sorceryOutletCost"], holds(pool, assault_hold(pool)))):
                         clamp_deaths += 1
                         for _ in range(hatch_engine["sorceryOutletDraw"]):
                             if library:
@@ -3804,7 +5949,18 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 # already eaten every Egg, so the Hatcher gets none.
                 combat_outlet_deaths = 0
                 if not instant_outlet:
-                    limited_capacity = 1 if limited_outlet else 0
+                    # High Market ({T}, Sacrifice a creature) sacrifices one
+                    # Egg while one is untapped (its mana unspent): its {T}
+                    # is paid like any cost, keeping the reachable gates and a
+                    # held Aggravated Assault
+                    # (G3), and the sacrifice counts only when it is paid.
+                    market = next((permanent for permanent in permanents
+                                   if permanent["name"] in hatch_engine["limitedOutletNames"]
+                                   and not permanent.get("tapped")), None)
+                    limited_capacity = 1 if (
+                        market is not None and free_deaths > 0
+                        and spend(combine_mana_costs([]), holds(pool, assault_hold(pool)),
+                                  taps=market)) else 0
                     combat_capacity = (
                         1 if hatch_engine["combatOutletNames"] & board else 0)
                     free_deaths = min(free_deaths,
@@ -3821,6 +5977,8 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                             turn if haste_now else None)
                 run_hatches(combat_outlet_deaths * hatches_per_egg,
                             turn if haste_now else None, combat_phase=0)
+                if staff_attached and commander_record is not None and main_deaths + combat_outlet_deaths > 0:
+                    commander_record["tapped"] = False
 
             # Attack-triggered hatches (Raph & Mikey): the creature enters
             # tapped and attacking, so it is combat-ready this turn. Annie Joins
@@ -3868,14 +6026,80 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
         if combat_modifiers is not None and celebrant_exert_turn == turn - 1:
             # An exerted creature does not untap during your next untap step.
             excluded_attackers |= combat_modifiers["exertCombatNames"]
+        # R1 — attackers are declared after the gates' reachability is
+        # checked, on the mana the cast loop held for them (the gates are read
+        # after combat, below). A creature tapped this turn (by its own {T}
+        # for mana or an ability) does not attack; a creature whose mana a
+        # reachable gate, or a held Aggravated Assault, needs is kept back (the
+        # most combat attacks first); a creature that attacked pays for nothing
+        # afterwards with mana its own {T} makes (Urza's mana taps other
+        # artifacts: it stays).
+        refresh()
+        board_now = {permanent["name"] for permanent in permanents}
+        paid_combat = (combat_modifiers is not None
+                       and combat_modifiers["paidCombatName"] in board_now)
+        # What the attackers must leave payable: the reachable gates and a
+        # held Aggravated Assault, together where they can be paid together
+        # (holds, G2).
+        combat_keep = (holds(pool, combat_modifiers["paidCombatCost"] if paid_combat else None)
+                       if (has_gates or paid_combat) else [])
+
+        def taps_to_attack(permanent: dict) -> bool:
+            """Attacking taps it and its mana needs it untapped."""
+            profile = profiles[permanent["name"]]
+            return not profile["vigilance"] and profile["manaTapsSelf"]
+
+        def after_attack(attacking: list[dict]) -> "GoldfishManaPool":
+            gone = {id(p) for p in attacking if taps_to_attack(p)}
+            return pool.without(lambda atom: atom_source_id(atom) not in gone)
+
+        def held_reach(test_pool: "GoldfishManaPool") -> tuple:
+            return tuple(any(test_pool.can_cast(cost) for cost in costs) for costs in combat_keep)
+
+        def loses_hold(baseline: tuple, attacking: list[dict]) -> bool:
+            return any(was and not now for was, now in zip(baseline, held_reach(after_attack(attacking))))
+
+        candidates_to_attack = [permanent for permanent in ready_attackers(permanents, turn)
+                                if permanent["name"] not in excluded_attackers
+                                and not permanent.get("tapped")]
+        first_attackers = candidates_to_attack
+        hold_baseline = held_reach(pool)
+        if any(hold_baseline) and loses_hold(hold_baseline, candidates_to_attack):
+            kept = {id(p) for p in candidates_to_attack}
+            for permanent in sorted(candidates_to_attack, key=lambda p: (-p["combat"], p["name"])):
+                trial = [p for p in candidates_to_attack if id(p) not in kept or p is permanent]
+                if not loses_hold(hold_baseline, trial):
+                    kept.discard(id(permanent))
+            first_attackers = [p for p in candidates_to_attack if id(p) not in kept]
+        # The gates are read after combat (below) on the mana kept for them:
+        # what was reachable before attackers were declared still is.
+        attacked: set = set()
+        any_attacker = False
         while True:
             if phase_index > 0:
                 run_combat_phase_hatches(phase_index)
             board_now = {permanent["name"] for permanent in permanents}
-            attackers = [
-                permanent for permanent in ready_attackers(permanents, turn)
-                if permanent["name"] not in excluded_attackers
-            ]
+            if phase_index == 0:
+                attackers = [p for p in first_attackers if p["name"] not in excluded_attackers]
+            else:
+                # Every extra combat follows an effect that untaps the
+                # creatures (Aggravated Assault, Aurelia, Tifa, Combat
+                # Celebrant's "all other creatures"), so creatures tapped for
+                # mana attack in it too; the mana they would make after the
+                # untap is not credited (a floor). A creature kept home whose
+                # mana is still held for a gate stays home.
+                held_home = {atom_source_id(atom) for atom in pool.sources} & {
+                    id(p) for p in candidates_to_attack if p not in first_attackers}
+                attackers = [p for p in ready_attackers(permanents, turn)
+                             if p["name"] not in excluded_attackers and id(p) not in held_home]
+            any_attacker = any_attacker or bool(attackers)
+            for permanent in attackers:
+                if not profiles[permanent["name"]]["vigilance"]:
+                    permanent["tapped"] = True
+                if taps_to_attack(permanent):
+                    attacked.add(id(permanent))
+            pool = pool.without(lambda atom: atom_source_id(atom) not in attacked)
+            refresh()
             combat_total += combat_phase_damage(
                 attackers, combat_modifiers, board_now, phase_index)
             if combat_modifiers is None:
@@ -3905,19 +6129,16 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             if trigger_extras > 0:
                 trigger_extras -= 1
             elif (combat_modifiers["paidCombatName"] in board_now
-                  and pool.can_cast(combat_modifiers["paidCombatCost"])
-                  and spend_keeps_gates(
-                      pool, combat_modifiers["paidCombatCost"])):
-                pool = pool.after_spending(combat_modifiers["paidCombatCost"])
+                  and spend(combat_modifiers["paidCombatCost"], holds(pool))):
+                pass
             else:
                 break
             phase_index += 1
         cumulative_damage += combat_total
-        # `metrics_from_board` re-sums one unmodified combat from the board, so
-        # hand it the difference the extra phases and multipliers made — exactly
-        # 0.0 for a deck with no COMBAT_MODIFIERS entry.
-        combat_modifier_bonus = combat_total - sum(
-            permanent["combat"] for permanent in ready_attackers(permanents, turn))
+        # Combat is over: no creature attacks again this turn, so its mana
+        # costs what a land's does (GoldfishManaPool.rank).
+        pool = pool.after_combat()
+        refresh()
         # TOKEN_MAKER_ENGINE attack makers: from the turn after the maker was
         # cast it attacks, its trigger makes tokens tapped and attacking, and
         # they join the ready tokens that swing below.
@@ -3980,25 +6201,51 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
                 assembly_turn[idx] = turn
         # TOKEN_MAKER_ENGINE activated makers, once per turn each in name
         # order, paid out of the mana the turn's casts left after the gates
-        # above have read the pool. A creature is tapped if any token or
-        # creature card attacked (stampede-acres' one vigilance creature,
-        # Adeline, makes tapped tokens when she attacks).
+        # above have read the pool. Each cost has the maker's own {T}: it
+        # must be untapped (a land that entered tapped is tapped) and is
+        # tapped for the ability, so a land maker's own mana cannot pay (spend
+        # ``taps``). A cost that untaps a tapped creature needs one (G7): a
+        # creature that attacked or was tapped for mana, or a token that
+        # attacked (stampede-acres' one vigilance creature, Adeline, makes
+        # tapped tokens when she attacks).
         if token_makers is not None:
-            attacked = swarm_tokens_ready > 0 or bool(ready_attackers(permanents, turn))
+            tapped_creature = swarm_tokens_ready > 0 or any(
+                permanent.get("tapped") and "Creature" in profiles[permanent["name"]]["typeWords"]
+                for permanent in permanents)
             for maker, cost in sorted(token_makers["activatedMakers"].items()):
                 record = next((permanent for permanent in permanents
                                if permanent["name"] == maker), None)
-                if record is None or (maker in token_makers["needsTappedCreature"]
-                                      and not attacked):
+                if record is None or (
+                        maker in token_makers["needsTappedCreature"] and not tapped_creature):
                     continue
-                if record["kind"] == "land" and record["manaActiveTurn"] > turn:
-                    continue
-                if pool.can_cast(cost):
-                    pool = pool.after_spending(cost)
+                if spend(cost, taps=record):
                     make_tokens(1, 0)
+                    if maker in token_makers["needsTappedCreature"]:
+                        # Its cost untaps the tapped creature (the first in
+                        # board order; a token that attacked otherwise).
+                        untapped = next((permanent for permanent in permanents if permanent.get("tapped")
+                                         and "Creature" in profiles[permanent["name"]]["typeWords"]), None)
+                        if untapped is not None:
+                            untapped["tapped"] = False
+                            refresh()
+        # End of turn, out of the lasting mana the turn left (one-shot mana not
+        # spent is kept): a spent Basalt Monolith re-arms, then the land
+        # fetches are activated, each payment settled before the next
+        # (spend_mana). The board, and availableMana (a land a fetch puts
+        # onto the battlefield untapped adds its mana), are read after these.
+        lasting_left = rearm_once_sources(permanents, pool.lasting(), battlefield_lands, profiles)
+        available_mana = activate_land_fetches(turn, lasting_left, library, hand, permanents, battlefield_lands,
+                                               profiles, commander_colors).added
+        # `metrics_from_board` re-sums one unmodified combat from the board, so
+        # hand it the difference the extra phases, the multipliers and the
+        # creatures that did not attack made — exactly 0.0 for a deck with no
+        # COMBAT_MODIFIERS entry whose ready creatures all attacked.
+        combat_modifier_bonus = combat_total - sum(
+            permanent["combat"] for permanent in ready_attackers(permanents, turn))
         by_turn[turn] = metrics_from_board(
             turn=turn,
             permanents=permanents,
+            profiles=profiles,
             commander_name=commander_name,
             commander_in_play=commander_in_play,
             cumulative_damage=cumulative_damage,
@@ -4006,6 +6253,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
             combo_ready_ever=combo_ready_ever,
             extra_combat=(swarm_combat + deploy_combat + army_combat
                           + combat_modifier_bonus),
+            available_mana=available_mana,
         )
 
     return by_turn, assembly_turn
@@ -4013,7 +6261,7 @@ def simulate_goldfish_game(decklist: list[str], metadata: dict, context: dict,
 
 def _run_goldfish_chunk(args):
     """Worker chunk for multiprocessing goldfish simulation."""
-    decklist, metadata, context, num_games, meaningful_threshold, seed = args
+    decklist, context, num_games, meaningful_threshold, seed = args
     # Seed per chunk so the whole run is reproducible regardless of how the games
     # are split across workers (fixed chunk count + fixed per-chunk seed). (DEC-363)
     random.seed(seed)
@@ -4037,7 +6285,7 @@ def _run_goldfish_chunk(args):
 
     for _ in range(num_games):
         by_turn, assembly_turn = simulate_goldfish_game(
-            decklist, metadata, context, meaningful_threshold)
+            decklist, context, meaningful_threshold)
         for turn in range(1, NUM_TURNS + 1):
             metrics = by_turn[turn]
             aggregate["lands"][turn].append(metrics["lands"])
@@ -4092,6 +6340,196 @@ def merge_goldfish_stats(chunks: list[dict]) -> dict:
     return merged
 
 
+GOLDFISH_MANA_METHODOLOGY = (
+    " Mana model (owner-approved 2026-11-19, review rounds 1 to 5 2026-11-20): a permanent gives the "
+    "mana its own text gives a pilot on a normal turn, using only itself and what the goldfish has on"
+    " its own battlefield; a wording the parser is known not to read stops the export. The face on "
+    "the battlefield is read (a modal DFC with a land back is played as its land face; a Pathway "
+    "enters as the face that adds a commander colour the lands lack), without reminder text; an "
+    "ability granted to a group the card belongs to counts for the card itself, the grant's subject "
+    "read in full (\"Other creatures you control have\" gives the card nothing); basic land types make "
+    "their colour, and a land that gives every land a type (Urborg, Tomb of Yawgmoth) or a permanent "
+    "that gives every land exactly \"{T}: Add\" one mana (Chromatic Lantern) lets every land make that "
+    "colour too (one mana a land, a land with no mana ability of its own included: Maze of Ith), from"
+    " the moment it enters. A permanent taps once a turn: its best single ability, and at one mana "
+    "the union of the colours of the abilities it could use instead; mana \"of any one color\" (Lotus "
+    "Field, Wirewood Channeler, Nykthos) is all one colour, Nykthos each colour as much as its own "
+    "devotion. Mana in an ability's cost is netted. A permanent that sacrifices itself for mana, or "
+    "does not untap, gives that mana once, kept until a turn needs it; one that sacrifices itself "
+    "leaves the battlefield as its mana is spent; one with \"{N}: Untap this\" (Basalt Monolith) is "
+    "untapped at the end of the turn it was spent or any later turn with N of the lasting mana left. "
+    "A cost that taps or sacrifices another permanent gives nothing, even \"Sacrifice an artifact\" on "
+    "an artifact (Krark-Clan Ironworks), except Urza, Lord High Artificer's \"Tap an untapped "
+    "artifact\": his Construct token's {U} is his, and each other untapped noncreature artifact with "
+    "no mana of its own taps for its own {U} (it is the permanent tapped, and then cannot pay its own"
+    " {T} cost), from the turn he enters or it does; never a combo-line or assembly-line member whose"
+    " line needs it untapped, one with an activated ability of its own with {T} in its cost (Isochron"
+    " Scepter; an Equipment such as Sword of Feast and Famine can be tapped), nor an artifact that "
+    "entered tapped (Nevinyrral's Disk) or whose own {T} ability was used (The One Ring's draw, as it"
+    " is cast and each later activation). Conditions on the goldfish's own battlefield are read as "
+    "each turn's pool is built and as a permanent enters (land types; land and artifact counts; "
+    "Elves; Swamps; Tron; devotion; colours among permanents; a legendary creature; Reflecting Pool's"
+    " colours: what the other lands could produce, the face a Pathway was played as and what each of "
+    "their mana abilities would make on this board, read before the ability's cost is netted and "
+    "whatever its condition or cost (The Mycosynth Gardens' {1}, {T} any colour; Cabal Coffers makes "
+    "black only with a Swamp out)). After every resolution (a cast, a land put onto the battlefield, "
+    "a permanent leaving, a grant or trigger source entering) the turn's unspent mana is read from "
+    "the board again: the mana already made (floating) plus what the untapped permanents not yet used"
+    " give, with the triggers and grants out at that moment. Variable amounts count what the card "
+    "alone guarantees. A creature's {T} mana (a land creature's too: Dryad Arbor enters untapped and "
+    "summoning sick) and a permanent that enters tapped (a rider after it included: Noble's Purse) "
+    "make mana from the next turn, and a creature's other {T} abilities wait too (Embodiment of "
+    "Spring's land fetch; Sakura-Tribe Elder's has no {T}); a non-land ability with mana in its cost "
+    "(a Signet) also from the next turn, a floor: using it the turn it is cast needs a spare mana the"
+    " goldfish does not plan for. Each permanent is tapped or untapped for the turn: tapped as it "
+    "enters tapped, when its own {T} makes mana that is spent (Urza taps other artifacts, not "
+    "himself; a vigilant creature is not: M9, the pilot attacks first and casts after combat, so a "
+    "vigilant mana creature both attacks and pays), when it attacks (not with vigilance) and when one"
+    " of its own {T} abilities is used (the hatch commander's Egg, until Thornbite Staff untaps her "
+    "as an Egg dies to any outlet; High Market's sacrifice, which counts only when paid; Castle "
+    "Ardenvale's token; a land fetch). Every spend (casts, X, activations, the end of the turn's "
+    "untaps and land fetches) is one exact payment, settled before the next: a payment is found "
+    "whenever the cost and what the turn holds can be paid together, never otherwise, and of the "
+    "payments that keep the holds the most preferred is taken (a one-colour activation is made as one"
+    " colour, and its other mana is that colour). The holds: each reachable gate, and the held "
+    "activation, the two kept together from the same mana where they can be paid together; a line "
+    "piece being cast keeps the rest of its line, priced with the piece on the battlefield; the hatch"
+    " engine's payments (the Egg activation, Skullclamp's equip, High Market's {T}) keep the "
+    "reachable gates and a held Aggravated Assault the pool can still pay. A hold is checked against "
+    "the pool as it stands before a source that sacrifices itself for the payment leaves (Lotus Petal"
+    " as the only artifact beside Spire of Industry), an over-credit. Spend order: mana already made "
+    "(floating) first; then lands, noncreature mana and creatures that could not attack (the "
+    "narrowest colours first; a land with a {T} ability the turn uses later, as Castle Ardenvale, "
+    "High Market and a Myriad Landscape whose fetch can net a land in this deck, last among them); "
+    "then one-shot mana (the fewest sources); then creatures that could attack and are not vigilant "
+    "(the fewest, then the least combat, then the fewest one-shot sources beside them). After combat "
+    "a creature's mana costs what a land's does. The combo and assembly gates' reachability is "
+    "checked before attackers are declared, and the gates are read after combat on the mana kept for "
+    "them: a creature whose mana a reachable gate, or a held Aggravated Assault, needs stays home; a "
+    "tapped creature does not attack, and one that attacked pays for nothing afterwards with mana its"
+    " own {T} makes. An extra combat follows an effect that untaps the creatures, so creatures tapped"
+    " for mana attack in it too; the mana they would make after that untap is not credited. \"Whenever"
+    " you cast a spell, add\" (Birgi) adds as each spell is cast and taps nothing; \"add an additional\""
+    " triggers (Crypt Ghast, Badgermole Cub, Forsaken Monument) add one per permanent tapped that "
+    "fires them, also for mana that comes online during the turn (a source entering, a Saga's last "
+    "chapter); Forsaken Monument's extra belongs to the colourless choice of an activation: a "
+    "permanent that makes {C} always gets it (one-shot {C} included: that extra is one-shot too), one"
+    " that makes {C} or a colour (Nykthos, a pain land) gets it only when it makes {C}. Halo "
+    "Fountain's token needs a tapped creature to untap (one that attacked or was tapped for mana, not"
+    " one only waiting out the turn it entered), and that creature is untapped: one that attacked can"
+    " then make its mana; one already tapped for mana is not credited again. Lands: how a land enters"
+    " is read against the lands, permanents and hand at that moment (a Snarl reveals from the hand; "
+    "\"two or more opponents\" is always met; \"your opponents control eight or more lands\" is met from "
+    "the fourth land drop, DEC-688 / DEC-929); a fetch land is cracked as it is played for the best "
+    "legal land left in the library, which enters with its own types, colours and entry rule (tapped "
+    "when the search says so, untapped by the search's own condition), and the fetch land leaves; "
+    "with nothing to find it stays and makes no mana of its own. A land that sacrifices or returns "
+    "lands as it enters waits for them, and they leave at once (the fewest mana first), so later land"
+    " counts fall: sacrificed instead of entering (Scorched Ruins) they are lost untapped, taken by "
+    "its entering trigger (Lotus Field, Simic Growth Chamber) they are tapped first and that mana, "
+    "floating, is spent first that turn, and a returned land goes back to the hand. A Saga makes its "
+    "mana for as many turns as it has chapters, is tapped as its last chapter resolves (that mana "
+    "floats) and leaves. Imprint (owner-approved): Ugin's Labyrinth exiles a colourless card of mana "
+    "value 7 or more from the hand and makes {C}{C}, else {C}; Chrome Mox exiles a coloured "
+    "nonartifact, nonland card and makes one mana of its colours, and is not cast, paid or by "
+    "cascade, while no card can be exiled for it; the card exiled is interaction the goldfish never "
+    "casts if the hand holds one, else the castable card last in its cast order, and it leaves the "
+    "hand; never exiled, in every deck: tutors and reanimation spells (by their roles), combo-line "
+    "and assembly-line members, reserved combo pieces and deploy-engine Equipment; a card with a land"
+    " face is played as its land. Land-ramp spells move the lands their text says, each destination "
+    "as written (an untapped land's mana joins the turn); a search looks at a card as it is in the "
+    "library, its front face (a modal DFC whose front is a spell is not a land card there); a land a "
+    "search puts onto the battlefield gives up the lands its entry takes, as one that is played does "
+    "(Simic Growth Chamber), and a search chooses its land as a land drop does (a land creature is "
+    "not usable that turn); land-fetching permanents (Wayfarer's Bauble, Sakura-Tribe Elder, Myriad "
+    "Landscape) are cracked at the end of the turn with mana the turn left when they net a land, a "
+    "{T} cost needing them untapped, and \"share a land type\" finds the most lands of one type. Mana "
+    "sources for the cast order, the mulligan and the holds: a permanent with mana every turn, a "
+    "land-ramp spell, a land-fetching permanent, an imprint permanent. availableMana is the mana the "
+    "pilot could have spent that turn: the turn's pool plus every mana added during the turn (cast "
+    "triggers, sources and lands that came online untapped, the end of the turn's land fetches "
+    "included, mana of lands given up or of a Saga leaving after it was tapped). The other per-turn "
+    "counts (lands, ramp, threats, pressure) are read after the end-of-turn actions. Not read (the "
+    "export stops): a nonland card with no mana cost (suspend), a card that gives up a land as it "
+    "acts or enters (Harrow, Mox Diamond, Coral Atoll, Brokers Hideout), a land that sacrifices, "
+    "returns or exiles itself in a trigger (City of Traitors), a land search whose count or filter no"
+    " rule places (\"up to X\", \"four\", \"that many\", a snow land, a qualification after \"card\": \"with "
+    "different names\", \"that each have a basic land type\", \"or Planet card\"; a list of cards; a "
+    "destination other than the battlefield, the hand, or the two split as written; a later "
+    "\"instead\") or behind a cost that keeps the permanent (Thawing Glaciers), lasting mana beside an "
+    "ability that sacrifices the permanent for more (Crystal Vein), exhaust abilities, a land whose "
+    "type or copy is chosen as it enters, a fetch land with its own entry rule, a non-land permanent "
+    "that grants or sets land types (Prismatic Omen, Realmwright's chosen type, Blood Moon beside "
+    "other colours), a grant to every land of anything but \"{T}: Add\" one mana, and triggered mana "
+    "other than the named floors below. Convention: Exotic Orchard and Fellwar Stone make the "
+    "commander's colours (opponents' lands are not modelled). Named floors (not credited): Treasure "
+    "and other mana tokens; rituals and other instants and sorceries that add mana; cost reducers and"
+    " commander cost reductions; mana from tapping or sacrificing other creatures (Heritage Druid, "
+    "Elven Chorus, Cryptolith Rite, Sliver grants to other Slivers, Ashnod's Altar, Phyrexian Tower's"
+    " second ability); Crime Novelist's mana when an artifact is sacrificed; untappers (Dramatic "
+    "Reversal, Seedborn Muse, Quirion Ranger, Wirewood Symbiote, Wirewood Lodge's untap); mana that "
+    "needs the graveyard, the hand or opponents; Three Tree City's chosen type; growth past printed "
+    "power (Marwyn, the Nurturer, Vivi Ornitier and Kami of Whispered Hopes are credited at their "
+    "printed power); Rubble Rouser; Mutable Explorer's token; Extraplanar Lens (it exiles one of the "
+    "pilot's lands and the goldfish does not cast it); Emrakul, the Exigent Doom's untap and hand "
+    "ability; Growing Rites of Itlimoc's transformation (cast as its front); Urza's Saga's chapter "
+    "III search; \"Nonbasic lands are\" a type in a deck of that type's one colour (Harbinger of the "
+    "Seas' Islands in a mono-blue deck), not applied to the goldfish's own lands; an Aura that makes "
+    "another permanent a colourless land (Imprisoned in the Moon). Dryad Arbor is a land and never "
+    "attacks. Restricted mana (\"Spend this mana only ...\") counts in full, an over-credit."
+)
+
+# card_mana_model verdicts that name a floor in this deck's own words
+# ("printed power": a variable amount counted at the card's printed power,
+# its growth not credited).
+MANA_FLOOR_VERDICTS = MANA_FLOORS + ("trigger floor", "needs another resource", "minus loyalty",
+                                     "grant floor", "printed power", "land types set, not applied")
+
+
+def goldfish_mana_methodology(context: dict, decklist: list[str]) -> str:
+    """The mana paragraph of the goldfish methodology: the fleet-wide rules
+    (GOLDFISH_MANA_METHODOLOGY), then this deck's own cards in each modelled
+    class and the ones whose mana is a named floor, read from its profiles
+    and the verdicts card_mana_model left on them. A class the deck has no
+    card in is left out."""
+    profiles = context["profiles"]
+    names = sorted(set(decklist) | {context["commanderName"]})
+
+    def having(test) -> str:
+        return ", ".join(name for name in names if test(profiles[name]))
+
+    classes = [
+        ("fetch lands, cracked as they are played", having(lambda p: p["landCrack"])),
+        ("one-shot mana", having(lambda p: p["manaOnce"])),
+        ("untapped with mana left", having(lambda p: p["onceRearm"])),
+        ("imprint", having(lambda p: p["imprint"])),
+        ("lands that take lands as they enter", having(lambda p: p["landEntryCost"])),
+        ("land-fetching permanents", having(lambda p: p["landFetch"])),
+        ("mana read on the battlefield", having(lambda p: p["manaBoard"])),
+        ("all of one activation's mana one colour", having(lambda p: p["manaOneColour"])),
+        ("colours granted to every land", having(lambda p: p["landGrant"])),
+        ("mana as spells are cast", having(lambda p: p["manaOnCast"])),
+        ("mana creatures that tap instead of attacking", having(
+            lambda p: (p["manaAtoms"] or any(t[0] != "extra" for t in p["manaBoard"]))
+            and p["manaTapsSelf"] and "Creature" in p["typeWords"] and not p["isLand"]
+            and not p["vigilance"])),
+        ("vigilant mana creatures, which attack and pay (M9)", having(
+            lambda p: (p["manaAtoms"] or any(t[0] != "extra" for t in p["manaBoard"]))
+            and p["manaTapsSelf"] and "Creature" in p["typeWords"] and not p["isLand"]
+            and p["vigilance"])),
+    ]
+    floors = []
+    for name in names:
+        verdicts = sorted({verdict for _, verdict in profiles[name]["manaVerdicts"]
+                           if verdict in MANA_FLOOR_VERDICTS})
+        if verdicts:
+            floors.append(f"{name} ({', '.join(verdicts)})")
+    parts = [f"{label}: {cards}" for label, cards in classes if cards]
+    if floors:
+        parts.append("abilities not credited: " + ", ".join(floors))
+    return GOLDFISH_MANA_METHODOLOGY + (" In this deck, " + "; ".join(parts) + "." if parts else "")
+
+
 def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dict,
                              commander_name: str, commander_colors: list[str],
                              deck_id: str = "") -> tuple[dict, dict]:
@@ -4112,7 +6550,7 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
     base, remainder = divmod(GOLDFISH_GAMES, GOLDFISH_CHUNKS)
     chunk_sizes = [base + (1 if i < remainder else 0) for i in range(GOLDFISH_CHUNKS)]
     chunk_args = [
-        (decklist, metadata, context, games, meaningful_threshold, GOLDFISH_SEED + i)
+        (decklist, context, games, meaningful_threshold, GOLDFISH_SEED + i)
         for i, games in enumerate(chunk_sizes) if games > 0
     ]
     n_workers = min(GOLDFISH_CHUNKS, os.cpu_count() or 4)
@@ -4228,7 +6666,7 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "are reserved from filler casting. v2 limitations: no literal graveyard tracking (reanim "
             "assumes piece could be in GY), no opponent interaction, no multi-turn assembly tracking, "
             "no stack-trigger ordering."
-        ),
+        ) + goldfish_mana_methodology(context, decklist),
     }
     if any(line["startPiece"] for line in combo_lines):
         section["methodology"] += (
@@ -4372,10 +6810,10 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "model. Egg supply per own turn: commander activations paid at "
             f"{hatch_engine['activationCost']['generic']} generic out of what the "
             f"turn's casts left, one per untap and at most "
-            f"{hatch_engine['maxEggsPerTurn']} before doublers (Thornbite Staff untaps "
-            "her per death, but only while Ashnod's Altar is out to pay the next "
-            "activation and only if the Staff was on the battlefield when she "
-            "entered), plus entry Eggs (Palani's Hatcher's two, doubled again by Elesh "
+            f"{hatch_engine['maxEggsPerTurn']} before doublers (Thornbite Staff, if it "
+            "was on the battlefield when she entered, untaps her as an Egg dies to any "
+            "outlet; a further activation that turn only while Ashnod's Altar is out "
+            "to pay it), plus entry Eggs (Palani's Hatcher's two, doubled again by Elesh "
             "Norn) and one per land drop from a landfall Egg maker the turn after it "
             f"lands. Each of {len(hatch_engine['tokenDoublerNames'])} token doublers "
             f"doubles every Egg; each of {len(hatch_engine['extraHatchNames'])} "
@@ -4421,7 +6859,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
              "mana the turn's casts left",
              ", ".join(f"{name} ("
                        + " + ".join(f"{amount} {key}" for key, amount in cost.items())
-                       + ("; only on a turn something attacked, so a creature is tapped"
+                       + ("; only with a tapped creature, one that attacked or was tapped "
+                          "for mana, which it untaps"
                           if name in token_makers["needsTappedCreature"] else "")
                        + ")"
                        for name, cost in sorted(token_makers["activatedMakers"].items()))),
@@ -4433,9 +6872,9 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
                 "trigger or activation. Credited: "
                 + "; ".join(f"{label}: {names}" for label, names in makers if names) + ".")
         if token_makers["activatedMakers"]:
-            text += (" A land among the activated makers must be untapped, and its own "
-                     "{T} is charged as one more mana of its colour: the pool does not "
-                     "record which land paid for what.")
+            text += (" An activated maker must be untapped and is tapped for its ability "
+                     "(its {T}, not in the costs above); a land's own mana then leaves the "
+                     "pool.")
         if token_makers["extraFoodName"]:
             text += (f" {token_makers['extraFoodName']} adds one Food to each event before "
                      "any doubler (the controller orders replacement effects, so the Food "
