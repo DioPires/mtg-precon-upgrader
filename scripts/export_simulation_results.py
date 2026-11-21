@@ -3503,6 +3503,28 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
     # and assembly-line member (imprint_from_hand).
     imprint_keep = (frozenset(extract_tutor_metadata(deck_data)) | extract_reanimation_names(deck_data)
                     | line_members)
+    # The spells a paid mulligan bottoms last (goldfish_bottom_cards): those
+    # the goldfish takes from the hand without casting them as filler. It is
+    # defined by the substitute classes each gate takes, not by matching each
+    # card to a piece: every combo-line and assembly-line member; with a combo
+    # line, every tutor and the reanimation cards (combo_line_costs); with
+    # only assembly lines, the to_hand tutors (assembly_tutor_cost's own mode
+    # test) and no reanimation; and the deploy engine's Equipment, never cast
+    # and deployed free from the hand (deploy_engine_choice). A deck with no
+    # gate and no deploy engine keeps nothing. Its limit: a tutor whose
+    # targets or mana-value cap fit no piece is still kept (stampede-acres'
+    # Enlightened Tutor, zada-hedron-grinder's Goblin Engineer). Unlike
+    # imprintKeep, which an imprint never exiles in any deck, it holds no
+    # tutor or reanimation card of a class no gate takes.
+    deploy_engine = COMMANDER_DEPLOY_ENGINE.get(deck_id)
+    if combo_lines:
+        gate_substitutes = frozenset(tutor_meta) | reanim_names
+    else:
+        gate_substitutes = frozenset(name for name, meta in tutor_meta.items()
+                                     if meta.get("mode", "to_hand") == "to_hand")
+    mulligan_keep = line_members | gate_substitutes
+    if deploy_engine is not None:
+        mulligan_keep |= frozenset(deploy_engine["equipmentPower"]) | deploy_engine["doubleStrikeNames"]
     # Permanents with a {T} ability the turn uses after its casts: an
     # activated token maker (Castle Ardenvale), a once-per-untap hatch outlet
     # (High Market), a land fetch with {T} (Myriad Landscape) whose search can
@@ -3536,6 +3558,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
     return {
         "profiles": profiles,
         "imprintKeep": imprint_keep,
+        "mulliganKeep": mulligan_keep,
         "commanderName": commander_name,
         "commanderColors": commander_colors,
         "comboLines": combo_lines,
@@ -3590,23 +3613,56 @@ def should_goldfish_mulligan(hand: list[str], profiles: dict) -> bool:
     return lands <= 1 or lands >= 6 or (lands == 2 and cheap_ramp == 0)
 
 
-def goldfish_bottom_cards(hand: list[str], count: int, profiles: dict) -> list[str]:
-    """Bottom expensive reactive cards first."""
-    candidates = sorted(
-        hand,
-        key=lambda name: (
-            profiles[name]["isLand"],
-            not profiles[name]["isInteraction"],
-            profiles[name]["cmc"],
-            name,
-        ),
-        reverse=True,
-    )
-    return candidates[:count]
+def goldfish_bottom_cards(hand: list[str], count: int, profiles: dict,
+                          commander_colors: list[str], library: list[str],
+                          keep: frozenset) -> list[str]:
+    """The ``count`` cards of the seven-card ``hand`` a paid mulligan puts on
+    the bottom, in order.
+
+    Spells go first: those outside ``keep`` before those in it, and within
+    each group interaction first (the goldfish has no targets and never casts
+    it, goldfish_never_casts), the most expensive first, then the other
+    spells, the most expensive first, keeping the cheap ones a six-card hand
+    casts early; lands last. ``keep`` is the deck's mulliganKeep
+    (build_goldfish_context): the cards the goldfish takes from the hand
+    without casting them as filler, defined by the substitute classes each
+    gate takes, not by matching each card to a piece: every combo-line and
+    assembly-line member; with a combo line, every tutor and the reanimation
+    cards; with only assembly lines, the to_hand tutors and no reanimation;
+    and the deploy engine's Equipment, deployed free from the hand. A card
+    the goldfish never casts, such as a reanimation spell that reads as
+    interaction, is not a card it never uses. Its limit: a tutor whose
+    targets or mana-value cap fit no piece is still kept. A deck with no gate
+    and no deploy engine keeps nothing.
+
+    Exception: a hand of five or more lands bottoms lands first, as a pilot
+    does not keep a flood by bottoming a spell; five lands of seven leave
+    four in six. The land bottomed is the one the land
+    drop ranks lowest on the empty opening battlefield (land_play_score:
+    one that enters tapped, then the fewest commander colours), the fetch
+    lands scored against ``library``. Ties go by name.
+    """
+    spells = sorted((name for name in hand if not profiles[name]["isLand"]),
+                    key=lambda name: (name in keep, not profiles[name]["isInteraction"],
+                                      -profiles[name]["cmc"], name))
+    lands = sorted((name for name in hand if profiles[name]["isLand"]),
+                   key=lambda name: land_play_score(name, hand, profiles, [], [],
+                                                    commander_colors, library))
+    return (lands + spells if len(lands) >= 5 else spells + lands)[:count]
 
 
-def commander_mulligan_goldfish(decklist: list[str], profiles: dict) -> tuple[list[str], list[str]]:
-    """Run Commander mulligan and return library + kept hand."""
+def commander_mulligan_goldfish(decklist: list[str], profiles: dict, commander_colors: list[str],
+                                keep: frozenset) -> tuple[list[str], list[str]]:
+    """Run the Commander mulligan and return library + kept hand.
+
+    The first mulligan is free (a new seven); the second is paid: the third
+    seven is kept and one card goes to the bottom (goldfish_bottom_cards,
+    ``keep`` the deck's mulliganKeep). Draws pop the library's end, so the
+    card goes in at index 0: ordinary draws leave it under the rest of the
+    library, but a land search can still take it and a cascade or hatch dig
+    can reach it (the goldfish does not shuffle after a search, as a real
+    game would).
+    """
     attempt = 0
     while True:
         library = list(decklist)
@@ -3618,9 +3674,9 @@ def commander_mulligan_goldfish(decklist: list[str], profiles: dict) -> tuple[li
         break
 
     if attempt >= 2:
-        for card in goldfish_bottom_cards(hand, attempt - 1, profiles):
+        for card in goldfish_bottom_cards(hand, attempt - 1, profiles, commander_colors, library, keep):
             hand.remove(card)
-            library.append(card)
+            library.insert(0, card)
     return library, hand
 
 
@@ -3662,12 +3718,10 @@ def crack_target(name: str, library: list[str], profiles: dict, commander_colors
 def choose_land_to_play(hand: list[str], profiles: dict, battlefield_lands: list[dict],
                         permanents: list[dict], commander_colors: list[str],
                         library: list[str] = ()) -> str | None:
-    """Pick best land from hand for current board.
+    """Pick the land in hand that land_play_score ranks highest on this board.
 
     A land that sacrifices or returns N lands as it enters (Scorched Ruins,
     Lotus Field, Simic Growth Chamber) is played only with N other lands out.
-    A fetch land scores as the land it would find in ``library`` (none: it
-    makes nothing).
     """
     land_names = [name for name in hand if profiles[name]["isLand"]
                   and (profiles[name]["landEntryCost"] or {"count": 0})["count"]
@@ -3675,37 +3729,42 @@ def choose_land_to_play(hand: list[str], profiles: dict, battlefield_lands: list
     if not land_names:
         return None
 
+    return max(land_names, key=lambda name: land_play_score(
+        name, hand, profiles, battlefield_lands, permanents, commander_colors, library))
+
+
+def land_play_score(name: str, hand: list[str], profiles: dict, battlefield_lands: list[dict],
+                    permanents: list[dict], commander_colors: list[str],
+                    library: list[str] = ()) -> tuple:
+    """What the goldfish gets from playing land ``name`` from ``hand`` now,
+    higher first: usable this turn, then the commander colours it adds that
+    the lands out lack, its commander colours, its colours, then its name. A
+    fetch land scores as the land it would find in ``library`` (none: it makes
+    nothing). The land drop plays the highest (choose_land_to_play); a paid
+    mulligan that bottoms a land bottoms the lowest (goldfish_bottom_cards)."""
     present_colors = set()
     for land in battlefield_lands:
         present_colors.update(land.get("colors", set()))
-
-    best_name = None
-    best_score = None
-    for name in land_names:
-        profile = profiles[name]
-        rest_of_hand = list(hand)
-        rest_of_hand.remove(name)
-        if profile["landCrack"]:
-            target, tapped = crack_target(name, list(library), profiles, commander_colors,
-                                          battlefield_lands, permanents, rest_of_hand, take=False)
-            colors = land_colors(profiles[target]) if target else set()
-        else:
-            colors = land_colors(profile)
-            tapped = land_enters_tapped(profile["landEntry"], battlefield_lands, permanents,
-                                        profiles, rest_of_hand)
-        untapped_bonus = 10 if usable_this_turn(profiles[target] if profile["landCrack"] and target
-                                                else profile, tapped) else 0
-        score = (
-            untapped_bonus,
-            len((colors & set(commander_colors)) - present_colors),
-            len(colors & set(commander_colors)),
-            len(colors),
-            name,
-        )
-        if best_score is None or score > best_score:
-            best_name = name
-            best_score = score
-    return best_name
+    profile = profiles[name]
+    rest_of_hand = list(hand)
+    rest_of_hand.remove(name)
+    if profile["landCrack"]:
+        target, tapped = crack_target(name, list(library), profiles, commander_colors,
+                                      battlefield_lands, permanents, rest_of_hand, take=False)
+        colors = land_colors(profiles[target]) if target else set()
+    else:
+        colors = land_colors(profile)
+        tapped = land_enters_tapped(profile["landEntry"], battlefield_lands, permanents,
+                                    profiles, rest_of_hand)
+    untapped_bonus = 10 if usable_this_turn(profiles[target] if profile["landCrack"] and target
+                                            else profile, tapped) else 0
+    return (
+        untapped_bonus,
+        len((colors & set(commander_colors)) - present_colors),
+        len(colors & set(commander_colors)),
+        len(colors),
+        name,
+    )
 
 
 def proactive_cast_priority(name: str, profile: dict, commander_name: str,
@@ -5137,7 +5196,7 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
     # DEC-472 activated-draw bookkeeping: activations so far per engine name.
     # The cast-turn activation is credited by immediateDraw, so it seeds at 1.
     draw_engine_activations: dict[str, int] = {}
-    library, hand = commander_mulligan_goldfish(decklist, profiles)
+    library, hand = commander_mulligan_goldfish(decklist, profiles, commander_colors, context["mulliganKeep"])
     permanents = []
     battlefield_lands = []
     commander_in_play = False

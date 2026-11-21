@@ -7093,6 +7093,258 @@ class ManaPilotHelperTests(unittest.TestCase):
             ["Forest", "Forest"] + ["Probe Nine"] * 5, profiles))
 
 
+class GoldfishMulliganTests(unittest.TestCase):
+    """The goldfish's Commander mulligan, through commander_mulligan_goldfish
+    with only the shuffle scripted: each random.shuffle call records the
+    cards it receives and deals a given seven on top of the library (draws
+    pop its end), the given cards under it, then the rest of the deck in deck
+    order. The first mulligan is free; the second is paid: the third seven is
+    kept and one card goes to the bottom. Card data from CARDS; made up:
+    "Probe Big Kill" (interaction of mana value 5), "Probe Wipe" (a board
+    wipe of mana value 7), "Probe Raise" (a reanimation spell of mana value
+    4, interaction by its "return target" text), "Probe Seek" (a tutor of
+    mana value 7), "Probe Entomb" (a tutor of mana value 1 that puts its card
+    into the graveyard), "Probe Blade" (an Equipment of mana value 4) and
+    "Probe Tapped Forest" (a land that enters tapped and makes {G}).
+
+    The deck data gives Probe Raise, Probe Seek and Probe Entomb their roles.
+    The gate decides what the mulligan keeps (mulliganKeep): "combo" is a
+    combo line of Probe Combo A and Probe Combo B (both pieces, both tutors,
+    the reanimation spell); "assembly" is the same pair as the deck's only
+    assembly line (both members and Probe Seek, the to_hand tutor); "none"
+    has no gate (nothing); "deploy" has no gate and a deploy engine whose
+    Equipment is Probe Blade (Probe Blade)."""
+
+    METADATA = dict(CARDS, **{
+        "Probe Big Kill": {"type_line": "Sorcery", "mana_cost": "{4}{B}", "cmc": 5.0,
+                           "oracle_text": "Destroy target creature.", "colors": ["B"]},
+        "Probe Wipe": {"type_line": "Sorcery", "mana_cost": "{5}{B}{B}", "cmc": 7.0,
+                       "oracle_text": "Destroy all creatures.", "colors": ["B"]},
+        "Probe Raise": {"type_line": "Sorcery", "mana_cost": "{2}{B}{B}", "cmc": 4.0,
+                        "oracle_text": "Return target creature card from your graveyard to the battlefield.",
+                        "colors": ["B"]},
+        "Probe Seek": {"type_line": "Sorcery", "mana_cost": "{6}{B}", "cmc": 7.0,
+                       "oracle_text": "Search your library for a card, put that card into your hand, then shuffle.",
+                       "colors": ["B"]},
+        "Probe Entomb": {"type_line": "Instant", "mana_cost": "{B}", "cmc": 1.0,
+                         "oracle_text": "Search your library for a card, put that card into your graveyard, "
+                                        "then shuffle.",
+                         "colors": ["B"]},
+        "Probe Blade": {"type_line": "Artifact — Equipment", "mana_cost": "{4}", "cmc": 4.0,
+                        "oracle_text": "Equipped creature gets +4/+0.\nEquip {4}", "colors": []},
+        "Probe Tapped Forest": {"type_line": "Land", "mana_cost": "", "cmc": 0.0,
+                                "oracle_text": "This land enters tapped.\n{T}: Add {G}.", "colors": []},
+    })
+    ROLES = [{"name": "Probe Raise", "primary_role": "recursion"},
+             {"name": "Probe Seek", "primary_role": "tutor"},
+             {"name": "Probe Entomb", "primary_role": "tutor", "tutor_mode": "to_graveyard"}]
+    PAIR = ["Probe Combo A", "Probe Combo B"]
+    GATES = {
+        "combo": ({"decklist": ROLES, "winConditions": [
+            {"title": "Probe line", "kind": "combo", "description": "", "pieces": PAIR, "cards": PAIR}]}, {}, {}),
+        "assembly": ({"decklist": ROLES}, {"synthetic-mulligan": [{"name": "Probe line", "pieces": PAIR}]}, {}),
+        "none": ({"decklist": ROLES}, {}, {}),
+        "deploy": ({"decklist": ROLES}, {}, {"synthetic-mulligan": {
+            "transformCost": {"generic": 4}, "reducedTransformCost": {"generic": 2}, "reducerName": "",
+            "transformedPower": 5, "equipmentPower": {"Probe Blade": 4}, "doubleStrikeNames": set()}}),
+    }
+    DECK = (["Forest"] * 29 + ["Probe Tapped Forest", "Polluted Delta"] + ["Swamp"] * 6
+            + ["Probe Slow Land"] * 2 + ["Probe Kill", "Probe Big Kill", "Probe Wipe", "Probe Seek"]
+            + ["Probe Raise"] * 2 + PAIR + ["Probe Entomb", "Probe Blade"] + ["Probe Two"] * 14
+            + ["Probe Three"] * 14 + ["Probe Five"] * 14 + ["Probe Nine"] * 8)
+    # One land: a mulligan (should_goldfish_mulligan).
+    BAD = ["Forest", "Probe Two", "Probe Three", "Probe Five", "Probe Nine", "Probe Two", "Probe Three"]
+
+    def deal(self, seven, under=()):
+        rest = list(self.DECK)
+        for card in list(seven) + list(under):
+            rest.remove(card)
+        return rest + list(reversed(under)) + list(reversed(seven))
+
+    def context(self, colors, gate="combo"):
+        deck_data, combos, deploy = self.GATES[gate]
+        with patch.dict(exporter.KEY_COMBOS, combos), patch.dict(exporter.COMMANDER_DEPLOY_ENGINE, deploy):
+            return exporter.build_goldfish_context(list(self.DECK), deck_data, self.METADATA,
+                                                   "Probe Commander", list(colors), "synthetic-mulligan")
+
+    @staticmethod
+    def scripted(orders, received):
+        orders = iter(orders)
+
+        def shuffle(library):
+            received.append(Counter(library))
+            library[:] = next(orders)
+
+        return shuffle
+
+    def mulligan(self, sevens, colors=("B", "G"), gate="combo"):
+        received = []
+        context = self.context(colors, gate)
+        with patch.object(exporter.random, "shuffle", self.scripted([self.deal(s) for s in sevens], received)):
+            library, hand = exporter.commander_mulligan_goldfish(list(self.DECK), context["profiles"],
+                                                                 list(colors), context["mulliganKeep"])
+        return library, hand, received
+
+    def test_a_bottomed_card_is_drawn_after_the_rest_of_the_library(self):
+        seven = ["Forest", "Forest", "Swamp", "Probe Big Kill", "Probe Two", "Probe Three", "Probe Five"]
+        library, hand, _ = self.mulligan([self.BAD, self.BAD, seven])
+        draws = [library.pop() for _ in range(len(library))]
+        self.assertEqual((len(hand), len(draws), draws.index("Probe Big Kill")), (6, 93, 92))
+
+    def test_the_game_draws_the_card_under_the_kept_seven_not_the_bottomed_one(self):
+        # simulate_goldfish_game, read only through its own per-turn data: a
+        # landless third seven (Probe Big Kill bottomed, interaction first)
+        # dealt over Probe Tapped Forest, the deck's only copy. The goldfish
+        # draws from turn 2, so its first draw is that land, played on turn 2:
+        # no land on turn 1, one on turn 2.
+        seven = ["Probe Two", "Probe Three", "Probe Five", "Probe Nine", "Probe Big Kill", "Probe Two",
+                 "Probe Three"]
+        orders = [self.deal(self.BAD), self.deal(self.BAD), self.deal(seven, under=["Probe Tapped Forest"])]
+        with patch.object(exporter.random, "shuffle", self.scripted(orders, [])):
+            by_turn, _ = exporter.simulate_goldfish_game(list(self.DECK), self.context(("B", "G")), 6)
+        self.assertEqual((by_turn[1]["lands"], by_turn[2]["lands"]), (0, 1))
+
+    def test_the_game_keeps_the_decks_mulligan_set(self):
+        # simulate_goldfish_game, read through its own per-turn combat: a
+        # third seven of four Forests, Probe Two, Probe Three and one dearer
+        # card, dealt over Probe Nines. A Forest a turn and a Probe Nine drawn
+        # each turn from turn 2; the commander ({5}) is not cast by turn 4.
+        # Probe Two is cast on turn 2 and attacks from turn 3, Probe Three, if
+        # kept, is cast on turn 3 and attacks from turn 4. (case, gate, dearer
+        # card, combat on turns 3 and 4)
+        cases = [
+            # Nothing kept: Probe Seek, the dearest spell, goes; 2, then 2 + 3.
+            ("no gate", "none", "Probe Seek", (2, 5)),
+            # Probe Seek kept (a tutor, the deck has a combo line): Probe
+            # Three goes. Probe Seek is never cast (reserved), and the line
+            # is not reachable (one tutor, both pieces in the library), so
+            # nothing holds Probe Two back: 2, then 2.
+            ("combo gate", "combo", "Probe Seek", (2, 2)),
+            # Probe Blade kept (the deploy engine's Equipment): Probe Three
+            # goes. Probe Blade is never cast, and is deployed only once the
+            # commander has transformed, which needs it in play: 2, then 2.
+            ("deploy engine", "deploy", "Probe Blade", (2, 2)),
+        ]
+        for case, gate, dearer, combat in cases:
+            with self.subTest(case=case):
+                seven = ["Forest"] * 4 + [dearer, "Probe Two", "Probe Three"]
+                orders = [self.deal(self.BAD), self.deal(self.BAD),
+                          self.deal(seven, under=["Probe Nine"] * 3)]
+                context = self.context(("B", "G"), gate)
+                with patch.object(exporter.random, "shuffle", self.scripted(orders, [])):
+                    by_turn, _ = exporter.simulate_goldfish_game(list(self.DECK), context, 6)
+                self.assertEqual((by_turn[3]["combat"], by_turn[4]["combat"]), combat)
+
+    def test_the_paid_mulligan_bottoms_interaction_then_the_dearest_spell_and_a_land_from_five(self):
+        # (case, kept seven, commander colours, card bottomed, six kept)
+        cases = [
+            ("interaction first, the most expensive first, before a 9-drop",
+             ["Forest", "Forest", "Swamp", "Probe Kill", "Probe Big Kill", "Probe Nine", "Probe Two"],
+             ("B", "G"), "Probe Big Kill",
+             ["Forest", "Forest", "Swamp", "Probe Kill", "Probe Nine", "Probe Two"]),
+            ("the dearer interaction even with the later name",
+             ["Forest", "Forest", "Swamp", "Probe Kill", "Probe Wipe", "Probe Two", "Probe Three"],
+             ("B", "G"), "Probe Wipe",
+             ["Forest", "Forest", "Swamp", "Probe Kill", "Probe Two", "Probe Three"]),
+            ("no interaction: the most expensive spell",
+             ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Nine", "Probe Five"],
+             ("B", "G"), "Probe Nine",
+             ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Five"]),
+            ("a kept reanimation spell stays though it reads as dearer interaction",
+             ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Kill", "Probe Nine", "Probe Two"],
+             ("B", "G"), "Probe Kill",
+             ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Nine", "Probe Two"]),
+            ("kept before interaction: the 9-drop goes, not the kept reanimation spell",
+             ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Two", "Probe Three", "Probe Nine"],
+             ("B", "G"), "Probe Nine",
+             ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Two", "Probe Three"]),
+            ("every spell kept: still a spell, interaction first",
+             ["Forest", "Forest", "Swamp", "Swamp", "Probe Raise", "Probe Seek", "Probe Raise"],
+             ("B", "G"), "Probe Raise",
+             ["Forest", "Forest", "Swamp", "Swamp", "Probe Seek", "Probe Raise"]),
+            ("four lands: still a spell",
+             ["Forest", "Forest", "Swamp", "Probe Slow Land", "Probe Two", "Probe Three", "Probe Five"],
+             ("B", "G"), "Probe Five",
+             ["Forest", "Forest", "Swamp", "Probe Slow Land", "Probe Two", "Probe Three"]),
+            ("five lands: a land, the one entering tapped on an empty battlefield",
+             ["Forest", "Forest", "Swamp", "Swamp", "Probe Slow Land", "Probe Two", "Probe Nine"],
+             ("B", "G"), "Probe Slow Land",
+             ["Forest", "Forest", "Swamp", "Swamp", "Probe Two", "Probe Nine"]),
+            ("five lands, two making only {G}: the tapped one, though Forest comes first by name",
+             ["Forest", "Forest", "Swamp", "Swamp", "Probe Tapped Forest", "Probe Two", "Probe Nine"],
+             ("B", "G"), "Probe Tapped Forest",
+             ["Forest", "Forest", "Swamp", "Swamp", "Probe Two", "Probe Nine"]),
+            ("six lands: a land too",
+             ["Forest", "Forest", "Forest", "Swamp", "Swamp", "Probe Slow Land", "Probe Two"],
+             ("B", "G"), "Probe Slow Land",
+             ["Forest", "Forest", "Forest", "Swamp", "Swamp", "Probe Two"]),
+            ("five lands: Polluted Delta scores as the untapped Swamp the library holds for it",
+             ["Polluted Delta", "Forest", "Forest", "Swamp", "Probe Slow Land", "Probe Two", "Probe Nine"],
+             ("B", "G"), "Probe Slow Land",
+             ["Polluted Delta", "Forest", "Forest", "Swamp", "Probe Two", "Probe Nine"]),
+            ("five untapped lands: the one making no commander colour",
+             ["Forest", "Forest", "Forest", "Swamp", "Forest", "Probe Two", "Probe Nine"],
+             ("G",), "Swamp",
+             ["Forest", "Forest", "Forest", "Forest", "Probe Two", "Probe Nine"]),
+            ("seven lands: the one ranked lowest, not the first in hand",
+             ["Forest", "Swamp", "Forest", "Probe Slow Land", "Swamp", "Forest", "Forest"],
+             ("B", "G"), "Probe Slow Land",
+             ["Forest", "Swamp", "Forest", "Swamp", "Forest", "Forest"]),
+        ]
+        for case, seven, colors, bottomed, kept in cases:
+            with self.subTest(case=case):
+                library, hand, received = self.mulligan([self.BAD, self.BAD, seven], colors)
+                self.assertEqual((hand, library, received),
+                                 (kept, [bottomed] + self.deal(seven)[:-7], [Counter(self.DECK)] * 3))
+
+    def test_what_the_mulligan_keeps_follows_the_decks_gates(self):
+        # (case, gate, kept seven, card bottomed, six kept)
+        cases = [
+            ("no gate: the reanimation spell is dearer interaction and goes", "none",
+             ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Kill", "Probe Nine", "Probe Two"],
+             "Probe Raise", ["Forest", "Forest", "Swamp", "Probe Kill", "Probe Nine", "Probe Two"]),
+            ("no gate: the tutor is the dearest spell and goes", "none",
+             ["Forest", "Forest", "Swamp", "Probe Seek", "Probe Two", "Probe Three", "Probe Five"],
+             "Probe Seek", ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Five"]),
+            ("assembly only: the reanimation spell is not kept", "assembly",
+             ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Seek", "Probe Two", "Probe Three"],
+             "Probe Raise", ["Forest", "Forest", "Swamp", "Probe Seek", "Probe Two", "Probe Three"]),
+            ("assembly only: the to_hand tutor and the member stay, a Probe Two goes", "assembly",
+             ["Forest", "Forest", "Swamp", "Probe Combo A", "Probe Seek", "Probe Two", "Probe Two"],
+             "Probe Two", ["Forest", "Forest", "Swamp", "Probe Combo A", "Probe Seek", "Probe Two"]),
+            ("assembly only: the to_graveyard tutor is not kept", "assembly",
+             ["Forest", "Forest", "Swamp", "Probe Entomb", "Probe Seek", "Probe Combo A", "Probe Combo B"],
+             "Probe Entomb", ["Forest", "Forest", "Swamp", "Probe Seek", "Probe Combo A", "Probe Combo B"]),
+            ("combo: both pieces and the graveyard tutor stay, the dearest kept spell goes", "combo",
+             ["Forest", "Forest", "Swamp", "Probe Entomb", "Probe Seek", "Probe Combo A", "Probe Combo B"],
+             "Probe Seek", ["Forest", "Forest", "Swamp", "Probe Entomb", "Probe Combo A", "Probe Combo B"]),
+            ("deploy engine: its Equipment stays, the dearer other spell goes", "deploy",
+             ["Forest", "Forest", "Swamp", "Probe Blade", "Probe Two", "Probe Three", "Probe Two"],
+             "Probe Three", ["Forest", "Forest", "Swamp", "Probe Blade", "Probe Two", "Probe Two"]),
+        ]
+        for case, gate, seven, bottomed, kept in cases:
+            with self.subTest(case=case):
+                library, hand, _ = self.mulligan([self.BAD, self.BAD, seven], gate=gate)
+                self.assertEqual((hand, library[0]), (kept, bottomed))
+
+    def test_the_third_seven_is_kept_whatever_it_holds(self):
+        # Two mulligans at most: a third one-land seven is kept with its
+        # most expensive spell bottomed, and no fourth seven is dealt.
+        good = ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Five", "Probe Nine"]
+        library, hand, received = self.mulligan([self.BAD, self.BAD, self.BAD, good])
+        self.assertEqual((hand, library[0], received),
+                         (["Forest", "Probe Two", "Probe Three", "Probe Five", "Probe Two", "Probe Three"],
+                          "Probe Nine", [Counter(self.DECK)] * 3))
+
+    def test_a_keep_and_a_free_mulligan_bottom_nothing(self):
+        good = ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Five", "Probe Nine"]
+        for sevens, shuffles in (([good, self.BAD, self.BAD], 1), ([self.BAD, good, self.BAD], 2)):
+            with self.subTest(shuffles=shuffles):
+                library, hand, received = self.mulligan(sevens)
+                self.assertEqual((hand, library, received),
+                                 (good, self.deal(good)[:-7], [Counter(self.DECK)] * shuffles))
+
+
 class GoldfishManaTableGuardTests(unittest.TestCase):
     """Every fleet card's goldfish mana against a reviewed table.
 
