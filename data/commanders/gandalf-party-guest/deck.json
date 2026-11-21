@@ -67,6 +67,11 @@
       "type": "ai-inferred",
       "name": "DEC-948 Trigger-2 re-assessment (board verdict card 85a6a2a9, 2026-10-07)",
       "detail": "Line A approved: five prose accuracy fixes, no card change. The One Ring is not a Mox Amber feeder (Amber reads legendary creatures and planeswalkers only); Mox Amber feeder count corrected to 19 legendary creatures in the 99 (20 with Gandalf); Eiganjo sentence 18 -> 19 legendary creatures; pip census 55U/23R/13W -> 52U/29R/17W (manabase_check.py 2026-10-07); Dovin's Veto named among the four counterspells. Line B (+Island / -Step Through, 39th land) deferred by the board. No card swap: metrics 88/93 gaps 0 unchanged vs DEC-547, sim 76.4, bar 4- holds, 4 Game Changers (uncapped). Full triage, defers and rejects in DEC-948 comment bb4fb3c3; do not re-triage. Trigger-2 swap-round counter resets at this commit."
+    },
+    {
+      "type": "other",
+      "name": "User tag-audit approval, 2026-11-21",
+      "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. Mystical Tutor: tutor_targets instant and sorcery (\"an instant or sorcery card\"). Solve the Equation: instant and sorcery (same text). Merchant Scroll: instant (\"a blue instant card\"). Step Through: creature (wizardcycling {2}: \"a Wizard card\"). Muddle the Mixture: tutor_mv_cap 2 (transmute: \"a card with the same mana value as this card\", 2), and role tutor primary, counterspell secondary -> counterspell primary, tutor secondary (docs/role-taxonomy.md: a modal card keeps its main role primary). Not expressible in the tags: Merchant Scroll's blue, so it still finds the red Fury Storm; Step Through's Wizard, so Storm-Kiln Artist (a Dwarf Shaman) stays findable; Muddle's exact mana value 2; wizardcycling {2} and transmute {1}{U}{U} (sorcery speed) are charged at the printed spell cost; Mystical Tutor puts the card on top of the library, credited as reaching the hand the same turn. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 7 16.8% -> 14.1% and at turn 8 23.5% -> 19.1%; best combo assembly at turn 8 22.4% -> 9.2%; lethalProxy at turn 8 53.0% -> 53.8%. Best win turn 7 -> 8 (typical and contested stay unreached on the comboLethal curve); simulation health 76.2 -> 75.6 (A); metrics global_health 88 unchanged."
     }
   ],
   "guideContent": {
@@ -681,17 +686,28 @@
     {
       "name": "Mystical Tutor",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "instant",
+        "sorcery"
+      ]
     },
     {
       "name": "Solve the Equation",
       "type": "Sorcery",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "instant",
+        "sorcery"
+      ]
     },
     {
       "name": "Merchant Scroll",
       "type": "Sorcery",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "instant"
+      ]
     },
     {
       "name": "Austere Command",
@@ -828,13 +844,17 @@
       "name": "Step Through",
       "type": "Sorcery",
       "primary_role": "tutor",
-      "secondary_role": "utility"
+      "secondary_role": "utility",
+      "tutor_targets": [
+        "creature"
+      ]
     },
     {
       "name": "Muddle the Mixture",
       "type": "Instant",
-      "primary_role": "tutor",
-      "secondary_role": "counterspell"
+      "primary_role": "counterspell",
+      "secondary_role": "tutor",
+      "tutor_mv_cap": 2
     },
     {
       "name": "Command Tower",

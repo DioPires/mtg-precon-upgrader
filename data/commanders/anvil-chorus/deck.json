@@ -60,6 +60,11 @@
       "type": "scryfall",
       "name": "Scryfall pool sweeps",
       "detail": "id<=W t:dwarf f:commander (53 cards) + full 15-changeling and 8-MDFC sweeps, oracle-verified 2026-09-07"
+    },
+    {
+      "type": "other",
+      "name": "User tag-audit approval, 2026-11-21",
+      "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. Enlightened Tutor: tutor_targets artifact and enchantment (it read as finding any card); its text searches for \"an artifact or enchantment card\". Not expressible in the tag: it puts the card on top of the library, and the gates still credit it as reaching the hand the same turn. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 3.7% -> 2.7%; best combo assembly at turn 8 0.6% -> 0.3%; lethalProxy at turn 7 11.8% -> 11.9%. Win turns 8/9/10, simulation health 73.6 (B) and metrics global_health 85 unchanged."
     }
   ],
   "guideContent": {
@@ -830,7 +835,11 @@
     {
       "name": "Enlightened Tutor",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "artifact",
+        "enchantment"
+      ]
     },
     {
       "name": "Sol Ring",

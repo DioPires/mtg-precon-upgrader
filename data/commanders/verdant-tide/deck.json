@@ -67,6 +67,11 @@
       "type": "ai-inferred",
       "name": "DEC-1226 Necklace of Girion swap",
       "detail": "Swap round 2 since the DEC-569 baseline (e72efb5b); proposed 2026-11-05, user approved 2026-11-10: +Necklace of Girion / -Patchwork Banner. Same 3-mana artifact slot that taps for one mana. The Necklace puts a +1/+1 counter on a creature you control whenever you cast a green spell or a Forest you control enters (59 of 65 nonland cards and the commander are green; 25 of 34 lands are Snow-Covered Forests; Nature's Lore, Three Visits, Skyshroud Claim, Cultivate, Fabled Passage and Elven Passage put Forests onto the battlefield; Verdant Kraken tentacles are Forests). Its counters stay if it leaves, grow non-Elves, and feed Marwyn (one mana per counter per tap, two per turn with Dionus), Disciple of Freyalise, Tyvar and The Great Henge. The Banner's +1/+1 was Elves-only and ended when it left, its any-color mana does nothing in mono-green, and the deck already has four Elf lords (Elvish Archdruid, Imperious Perfect, Leaf-Crowned Visionary, Dwynen). Limits: no tutor in the deck finds it (Worldly Tutor, Finale of Devastation, Nature's Rhythm and Formidable Speaker find creatures), Eladamri cannot cast it from the top of the library, and his reveal puts only creature cards onto the battlefield, it competes with the commander on turn 3, and Skullclamp targets should not receive its counters. Ownership and price: Necklace of Girion was proposed as not owned at EUR 11.53 (Scryfall, 2026-11-05); the user bought it on 2026-11-05 (Owned.csv export of 2026-11-10: 1 copy, The Hobbit Eternal foil) and confirmed the physical swap on 2026-11-10; Patchwork Banner returns to the collection (5 owned). Lines not taken: none in this deck (DEC-1226 line B is the hoard-and-bleed Dragon-Cursed Halls swap). EDHREC closing diff (DEC-402) on the 2026-11-10 rates, cards at 40 percent or more that are not in the list: Fyndhorn Elves 68.4 and Arbor Elf 53.6, defer, carried from the DEC-931 closing diff of 2026-09-29 (the Elf core already sits at the DEC-569 count; revisit at the next dork slot); Beast Whisperer 60.1, defer, carried from DEC-931 (Glimpse of Nature, Guardian Project, The Great Henge and Leaf-Crowned Visionary cover cast-draw); Emerald Medallion 40.3, defer, carried from DEC-931, which gave no reason (revisit when a noncreature ramp slot opens). Those DEC-931 verdicts live in agents/ceo/analysis/dec931-apply-report.md and had not reached these sources before this entry. Forest 97.2 is the deck's basic, run as 25 Snow-Covered Forests, so it is not an omission; Fierce Empath 43.7 was cut at DEC-287 as the most restricted of five tutors and deferred again at DEC-931 (Worldly Tutor and Eladamri's top-of-library cast cover it), both recorded verdicts. Measured after the swap (2026-11-10): metrics global_health 89 -> 88, gaps 0 -> 0; ramp count 15.5 -> 16.5 against a target of 10 (score stays capped at 120); gameplan_cohesion 42 -> 40 because the Necklace's text matches no elf-tribal playbook pattern while the Banner's anthem did. Sim deckHealthScore 71.3 -> 71.5 (manaReliability 83.2 -> 84.0): the Necklace is modeled as a 3-mana rock with a {G} pip that taps for {G}, cast last in the ramp order; the Banner was never in the sim's rock table and the counter trigger is unmodeled, so the gain is mostly a modeling change."
+    },
+    {
+      "type": "other",
+      "name": "User tag-audit approval, 2026-11-21",
+      "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. This deck has no combo gate (no winConditions combo line and no KEY_COMBOS line), so the tutor fields move no simulation number; they are recorded so that a future combo line starts right. Formidable Speaker: tutor_targets creature (its search also needs a discard). Nature's Rhythm: creature (\"a creature card with mana value X or less\"). Worldly Tutor: creature. Finale of Devastation: creature (\"a creature card with mana value X or less\", from the library and/or graveyard). Not expressible in the tags: the mana value X or less of Nature's Rhythm and Finale of Devastation, Finale's graveyard search, and the destination (battlefield for both, top of the library for Worldly Tutor). No simulation or metrics number moves."
     }
   ],
   "guideContent": {
@@ -1383,7 +1388,10 @@
       "name": "Formidable Speaker",
       "type": "Creature",
       "primary_role": "tutor",
-      "secondary_role": "engine"
+      "secondary_role": "engine",
+      "tutor_targets": [
+        "creature"
+      ]
     },
     {
       "name": "Wirewood Symbiote",
@@ -1480,12 +1488,18 @@
     {
       "name": "Nature's Rhythm",
       "type": "Sorcery",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "creature"
+      ]
     },
     {
       "name": "Worldly Tutor",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "creature"
+      ]
     },
     {
       "name": "Shigeki, Jukai Visionary",
@@ -1501,7 +1515,10 @@
     {
       "name": "Finale of Devastation",
       "type": "Sorcery",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "creature"
+      ]
     },
     {
       "name": "Cloudstone Curio",

@@ -47,6 +47,11 @@
       "type": "ai-inferred",
       "name": "DEC-373 consistency retune",
       "detail": "Board-approved 5-cut/5-add swap (2026-07-03): cut Snoop/Kiki/Tremors (sim measured 1.4% combo assembly by T7 vs the ~20% estimate above), Irregular Cohort, Universal Automaton; added Flooded Strand + Fabled Passage (37→39 lands, closes Karsten U/R shortfalls), Kindred Discovery + Esper Sentinel (card draw 6→8), Graveshifter (recursion gap). Note: the issue's suggested draw engines failed Scryfall validation — Barkform Harvester bottoms a GY card (not draw), Gladewalker Ritualist only triggers off another copy of itself (dead in singleton)."
+    },
+    {
+      "type": "other",
+      "name": "User tag-audit approval, 2026-11-21",
+      "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. This deck has no combo gate (no winConditions combo line and no KEY_COMBOS line), so the tutor fields move no simulation number; they are recorded so that a future combo line starts right. Worldly Tutor and Eladamri's Call: tutor_targets creature (\"a creature card\"). Sliver Overlord: role tutor primary, threat secondary -> engine primary, tutor secondary (\"{3}: Search your library for a Sliver card\", repeatable; the class docs/role-taxonomy.md names for repeatable engine tutors); its threat secondary role goes (no role-coverage row counts threat). Its targets are unchanged: a creature tag would lose the deck's changelings Nameless Inversion and Firdoch Core (held for a subtype field). Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): no simulation number moves; metrics global_health 93 unchanged."
     }
   ],
   "guideContent": {
@@ -849,18 +854,24 @@
     {
       "name": "Worldly Tutor",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "creature"
+      ]
     },
     {
       "name": "Eladamri's Call",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "creature"
+      ]
     },
     {
       "name": "Sliver Overlord",
       "type": "Legendary Creature — Sliver Mutant",
-      "primary_role": "tutor",
-      "secondary_role": "threat"
+      "primary_role": "engine",
+      "secondary_role": "tutor"
     },
     {
       "name": "Swords to Plowshares",

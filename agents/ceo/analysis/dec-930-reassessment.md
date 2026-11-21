@@ -17,7 +17,7 @@ Date: 2026-09-28. Assessor: CEO. Baseline: DEC-548 close (commit `9579a86`). Cur
 `refresh_card_pool.py --deck hoard-and-bleed` ran today at 14:05Z on the current 99 (DEC-929 post-swap hygiene): mirror 2026-09-28 (post-Reality Fracture), EDHREC rates fetched today (293 cards), 200 candidates, `gaps[]` empty. Reused as-is; nothing changed in the deck since.
 
 All 50 top-50 non-deck candidates fall into standing dispositions. No new printing entered the top 50 since DEC-548:
-- **DEC-543 closing-diff rejects (in `sources`)**: Smaug the Magnificent, Magda (needs a Dwarf), Alchemist's Talent, Descent into Avernus, Knuckles the Echidna, Seize the Spoils, Cavern-Hoard Dragon.
+- **DEC-543 closing-diff rejects (in `sources`)**: Smaug the Magnificent, Magda (needs a Dwarf), Alchemist's Talent, Descent into Avernus, Knuckles the Echidna, Seize the Spoils, Cavern-Hoard Dragon. [Correction 2026-11-21: Seize the Spoils was not a DEC-543 closing-diff reject: the 2026-08-20 closing diff gave it no line (38.1 percent, below the bar) and its DEC-543 round-2 cut recorded no reason. Its reasoned verdict (REJECT) is the 2026-11-21 "Seize the Spoils merit check" entry in hoard-and-bleed's `sources`.]
 - **DEC-548 rejects**: attack-gated (Postmortem Professor, Sanguine Syphoner, Typhoid Mary, General Kreat, Kardur, Send in the Pest), creature-death-gated (Zulaport Cutthroat, Bastion of Remembrance, Blood Artist, Grave Venerations, Sephiroth, Lobelia), lifegain-gated (Marauding Blight-Priest, Starscape Cleric, Leech Collector), rate/uptime (Glóin, Melancholic Poet, Dimension X Pizzasaur, Hazel's Nocturne, Sinister Monolith, Twinflame, Coin of Mastery, Impulsive Pilferer, Fall of Cair Andros, Glaring Fleshraker), consistency (Yahenni).
 - **DEC-548 defers, standing**: Soul-Shackled Zombie, Atsushi, Fable of the Mirror-Breaker.
 - **Deliberate cuts**: Revel in Riches (round 9), Idol of Oblivion (DEC-579), Infernal Grasp (round 7 for Withering Torment).
@@ -88,7 +88,7 @@ One numeric staleness found and fixed: strategyOverview and the Bolas's Citadel 
 ## 5. Deck Review Checklist items
 
 **EDHREC closing diff** (293 rated cards, fetched today 14:05Z). Misses ≥40%, every one with a standing disposition; none reopened:
-- Smaug the Magnificent 74.2%, Nadier's Nightblade 50.6%, Terminate 45.5%, Seize the Spoils 41.7% — DEC-543 closing-diff rejects (attack-gated / token-leaves-only / removal count / dead ritual).
+- Smaug the Magnificent 74.2%, Nadier's Nightblade 50.6%, Terminate 45.5%, Seize the Spoils 41.7% — DEC-543 closing-diff rejects (attack-gated / token-leaves-only / removal count / dead ritual). [Correction 2026-11-21: "dead ritual" was the closing diff's reason for Dark Ritual, not Seize the Spoils, which was not a closing-diff reject; its reasoned verdict (REJECT) is the 2026-11-21 "Seize the Spoils merit check" entry in hoard-and-bleed's `sources`.]
 - Cavern-Hoard Dragon 61.5%, Magda 53.5%, Alchemist's Talent 51.9%, Generous Plunderer 47.5%, Dragon-Cursed Halls 47.1%, Smaug the Impenetrable 42.8% — DEC-543 rejects.
 - Grim Hireling 53.7%, The Reaver Cleaver 42.5%, Ancient Copper Dragon 40.9% — DEC-543 defers (combat-gated).
 - Revel in Riches 43.1% (round-9 cut), Rakdos Signet 42.4% (DEC-687 cut), Dark Ritual 42.9% (DEC-687: no qualifying cut) — deliberate.

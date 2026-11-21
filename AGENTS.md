@@ -95,7 +95,7 @@ Each deck JSON is a flat structure with no tier/upgrade wrappers:
 - `cost` — optional price band text; no code reads it
 - `asymmetric_only` — optional deck-side discovery modifier; set `true` only when symmetric punisher/resource-denial effects are strategic traps and the deck should prefer opponent-only templates (`generate_candidate_pool.py:300`)
 - `archetypes` — discovery playbook IDs (`generate_candidate_pool.py:788`)
-- `commanderRoles` — the commander's `{primary, secondary}` roles (`compute_deck_metrics.py:502`)
+- `commanderRoles` — the commander's roles as `{primary}` with optional `secondary` (`compute_deck_metrics.py:502`)
 - `wincon_style` — the deck's dominant win plan, defined in [`docs/role-taxonomy.md`](docs/role-taxonomy.md) (`compute_deck_metrics.py:517`)
 - `guideContent.strategyOverview` — the strategy text (`normalize.ts:379`)
 - `categories`, `guideContent.deckCategories` — optional deck theme groupings as `{name, cards}`; every deck has one or both, and `normalize.ts:196-199` reads `categories` first (`validate_deck_json.py:26`, `:29`)

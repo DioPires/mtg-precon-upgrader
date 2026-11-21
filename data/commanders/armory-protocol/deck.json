@@ -33,6 +33,11 @@
       "type": "scryfall",
       "name": "Scryfall oracle verification",
       "detail": "Commander + all 99 cards verified against oracle text, 2026-07-06"
+    },
+    {
+      "type": "other",
+      "name": "User tag-audit approval, 2026-11-21",
+      "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. Fabricate: tutor_targets artifact (\"an artifact card\"). Whir of Invention: artifact (\"an artifact card with mana value X or less\"). Tribute Mage: artifact, tutor_mv_cap 2 (\"an artifact card with mana value 2\"). Trophy Mage: artifact, tutor_mv_cap 3 (\"an artifact card with mana value 3\"). Not expressible in the tags: Whir's mana value X or less (no cap is set for it); Tribute Mage's and Trophy Mage's exact mana values, read as caps, so Trophy Mage still finds Isochron Scepter (mana value 2); Whir puts the card onto the battlefield, credited as reaching the hand the same turn. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 13.2% -> 9.1%; best combo assembly 0.0% unchanged; lethalProxy moves 0.1 point at turns 6, 7 and 10. Win turns 7/8/9, simulation health 78.0 (A) and metrics global_health 79 unchanged."
     }
   ],
   "guideContent": {
@@ -587,22 +592,36 @@
     {
       "name": "Fabricate",
       "type": "Sorcery",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "artifact"
+      ]
     },
     {
       "name": "Whir of Invention",
       "type": "Instant",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "artifact"
+      ]
     },
     {
       "name": "Tribute Mage",
       "type": "Creature — Human Wizard",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "artifact"
+      ],
+      "tutor_mv_cap": 2
     },
     {
       "name": "Trophy Mage",
       "type": "Creature — Human Wizard",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "artifact"
+      ],
+      "tutor_mv_cap": 3
     },
     {
       "name": "Excalibur, Sword of Eden",

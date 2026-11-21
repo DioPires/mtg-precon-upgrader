@@ -37,6 +37,11 @@
       "type": "other",
       "name": "Board swap approval, DEC-929, 2026-09-28",
       "detail": "Interaction 5531eafc, question judgment_cut, option telekinetic. IN Kindred Judgment, OUT Telekinetic Sliver. Judgment naming Sliver is a fully one-sided wipe (37 Slivers plus Morophon's changeling survive) and closes the removal-board gap that only Cyclonic Rift covered. Descendants' Path was withdrawn as the cut: a Sliver cast free off Path is still cast, so it cascades, about a 38% hit per upkeep with 38 creature cards in the 99. Telekinetic Sliver was the slowest interaction in the list (tap effects delay a board, Judgment removes it) and sits below the listed cutoff on The First Sliver's EDHREC page. Erode was the offered alternative and stays as the cheap instant-speed answer. Rejected for Anvil Chorus: only 15 of its 30 nontoken creatures are Dwarves."
+    },
+    {
+      "type": "other",
+      "name": "User tag-audit approval, 2026-11-21",
+      "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. This deck has no combo gate (no winConditions combo line and no KEY_COMBOS line), so the tutor fields move no simulation number; they are recorded so that a future combo line starts right. Homing Sliver and Sliver Overlord: tutor_targets creature (slivercycling and \"{3}: Search your library for a Sliver card\"); in this 99 every creature card is a Sliver card (Morophon, the Boundless by changeling) and every Sliver card is a creature. Sliver Overlord: role tutor primary, engine secondary -> engine primary, tutor secondary, the class docs/role-taxonomy.md names for repeatable engine tutors. For the Ancestors: role tutor primary, card-draw secondary -> card-draw primary, no secondary; it looks at the top six cards and does not search; with 37 Sliver cards among the other 98 it averages about 2.3 cards per cast (6 x 37 / 98), and it has flashback. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): no simulation number moves; metrics global_health 89 -> 88 (tutor coverage 120 -> 75, card-draw 88 -> 94; confidence margin 2 -> 5)."
     }
   ],
   "guideContent": {
@@ -436,7 +441,10 @@
     {
       "name": "Homing Sliver",
       "type": "Creature — Sliver",
-      "primary_role": "tutor"
+      "primary_role": "tutor",
+      "tutor_targets": [
+        "creature"
+      ]
     },
     {
       "name": "Crypt Sliver",
@@ -452,8 +460,11 @@
     {
       "name": "Sliver Overlord",
       "type": "Legendary Creature — Sliver Mutant",
-      "primary_role": "tutor",
-      "secondary_role": "engine"
+      "primary_role": "engine",
+      "secondary_role": "tutor",
+      "tutor_targets": [
+        "creature"
+      ]
     },
     {
       "name": "Spiteful Sliver",
@@ -641,8 +652,7 @@
     {
       "name": "For the Ancestors",
       "type": "Instant",
-      "primary_role": "tutor",
-      "secondary_role": "card-draw"
+      "primary_role": "card-draw"
     },
     {
       "name": "Erode",

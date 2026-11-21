@@ -33,7 +33,7 @@ Roles are **deck-contextual**, not card-intrinsic. Eternal Witness in a graveyar
 
 ## Tutor classification
 
-Use `tutor` for library-search effects that find a specific card or a non-mana-development category, including hand tutors (Demonic Tutor, Worldly Tutor), graveyard tutors (Entomb, Buried Alive), and battlefield tutors (Finale of Devastation, Whir of Invention). One-shot tutors are usually `primary_role: "tutor"`.
+Use `tutor` for library-search effects that find a specific card or a non-mana-development category, including hand tutors (Demonic Tutor, Eladamri's Call), top-of-library tutors (Worldly Tutor, Mystical Tutor), graveyard tutors (Entomb, Buried Alive), and battlefield tutors (Finale of Devastation, Whir of Invention). One-shot tutors are usually `primary_role: "tutor"`.
 
 Use `secondary_role: "tutor"` when the card's primary role is structurally dominant:
 
@@ -94,7 +94,7 @@ The commander is not in `decklist`; it's in the root `commander` field. To keep 
 }
 ```
 
-Both fields use the same 15-role vocabulary. The metrics computer (P7.5, DEC-119) treats commander roles as part of the deck's role coverage.
+Both fields use the same 15-role vocabulary. `secondary` is optional, as `secondary_role` is on cards: leave it out when the commander has no meaningful second function. The metrics computer (P7.5, DEC-119) treats commander roles as part of the deck's role coverage.
 
 ## `wincon_style`
 

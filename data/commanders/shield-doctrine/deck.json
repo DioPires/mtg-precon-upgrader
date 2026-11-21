@@ -118,6 +118,11 @@
       "type": "ai-inferred",
       "name": "DEC-582 HOB+HOC sweep + draw round — board-approved 3-swap batch (interaction 39061fd2, 2026-09-02)",
       "detail": "In: The Reaver Cleaver, Kíli the Resourceful, The Reality Chip. Out: Sword of Forge and Frontier, Steelshaper's Gift, Clever Concealment. Cleaver (HOB-sweep find, EDHREC 51.7% vs 11.6%): same MV so Throw damage unchanged; Treasures equal to combat damage dealt to a player, doubled by Mjölnir; takes over the cut Sword's trample duty in the sources[10] evasion list. Kíli + Reality Chip close the draw gap (card-draw was the only below-target role, 8.0 vs 10); board chose owned Kíli over Esper Sentinel (stays deferred). Steelshaper's Gift cut for tutor-role surplus (5.0 vs target 4), not quality. Clever Concealment cut disclosed as losing the only mass phase-out vs exile wipes; protection stays above target. Full triage in DEC-582 comments dac8403b + 9b5992cd."
+    },
+    {
+      "type": "other",
+      "name": "User tag-audit approval, 2026-11-21",
+      "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. Stonehewer Giant: tutor_targets artifact (\"{1}{W}, {T}: Search your library for an Equipment card, put it onto the battlefield\"), and role tutor primary, engine secondary -> engine primary, tutor secondary, the class docs/role-taxonomy.md names for repeatable engine tutors. Sunforger: instant, tutor_mv_cap 4 (\"{R}{W}, Unattach this Equipment: Search your library for a red or white instant card with mana value 4 or less and cast that card without paying its mana cost\"). Cloud, Midgar Mercenary and Stoneforge Mystic: artifact (\"an Equipment card\"). Not expressible in the tags: Equipment (artifact admits every artifact), Sunforger's red or white, and both activated abilities' own costs and timing (the gate charges the printed cost); Stonehewer puts the Equipment onto the battlefield and Sunforger casts the instant, both credited as reaching the hand the same turn. Axgard Armory's targets are unchanged (held for a subtype field). Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 17.3% -> 15.0% (1,497 of 10,000 games, 14.97%, which rounds to the 15% best-win-turn floor, so the best win turn stays 8); best combo assembly at turn 8 17.4% -> 8.1%; lethalProxy at turn 8 11.7% -> 11.9%. Win turns 8/10/11 unchanged; simulation health 82.0 -> 81.9 (A); metrics global_health 87 unchanged (tutor coverage 100 -> 88; confidence margin 2 -> 5)."
     }
   ],
   "guideContent": {
@@ -685,8 +690,11 @@
     {
       "name": "Stonehewer Giant",
       "type": "Creature — Giant Warrior",
-      "primary_role": "tutor",
-      "secondary_role": "engine"
+      "primary_role": "engine",
+      "secondary_role": "tutor",
+      "tutor_targets": [
+        "artifact"
+      ]
     },
     {
       "name": "Colossus Hammer",
@@ -733,7 +741,11 @@
       "name": "Sunforger",
       "type": "Artifact — Equipment",
       "primary_role": "engine",
-      "secondary_role": "tutor"
+      "secondary_role": "tutor",
+      "tutor_targets": [
+        "instant"
+      ],
+      "tutor_mv_cap": 4
     },
     {
       "name": "Buster Sword",
@@ -804,7 +816,10 @@
       "name": "Cloud, Midgar Mercenary",
       "type": "Legendary Creature — Human Soldier Mercenary",
       "primary_role": "tutor",
-      "secondary_role": "engine"
+      "secondary_role": "engine",
+      "tutor_targets": [
+        "artifact"
+      ]
     },
     {
       "name": "Mana Drain",
@@ -816,7 +831,10 @@
       "name": "Stoneforge Mystic",
       "type": "Creature — Kor Artificer",
       "primary_role": "tutor",
-      "secondary_role": "engine"
+      "secondary_role": "engine",
+      "tutor_targets": [
+        "artifact"
+      ]
     },
     {
       "name": "Kíli the Resourceful",

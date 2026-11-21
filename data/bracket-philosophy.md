@@ -171,7 +171,7 @@ The proxy lives in `scripts/export_simulation_results.py`. Its v2 model substitu
 - `decklist[].tutor_free_cast_via_bargain: true` — Beseech the Mirror and similar bargain-tutor cards.
 - `decklist[].primary_role: "recursion"` (or `secondary_role`) — for reanimation spells (Reanimate, Animate Dead, etc.).
 
-Forgetting these tags will under-count comboLethal and make a real B4 deck look weaker than it is.
+A missing role tag (a tutor without its `tutor` role, a reanimation spell without `recursion`) removes a substitution the gate could use. A missing restriction lets the tutor stand in for pieces its text cannot find, along the dimension left out: with no `tutor_targets` it finds a piece of any card type, and with no `tutor_mv_cap` a piece of any mana value among its target types.
 
 ### Assembly consistency (combo bracket weight)
 
