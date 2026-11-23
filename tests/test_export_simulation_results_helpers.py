@@ -1089,6 +1089,19 @@ CARDS = {
         "colors": [],
         "power": "0",
     },
+    # data/card-metadata.json, 2026-11-21. Its ping reads as interaction, so
+    # the cast loop never casts it.
+    "Walking Ballista": {
+        "type_line": "Artifact Creature — Construct",
+        "mana_cost": "{X}{X}",
+        "cmc": 0.0,
+        "oracle_text": (
+            "This creature enters with X +1/+1 counters on it.\n"
+            "{4}: Put a +1/+1 counter on this creature.\n"
+            "Remove a +1/+1 counter from this creature: It deals 1 damage to any target."),
+        "colors": [],
+        "power": "0",
+    },
     "Hydroid Krasis": {
         "type_line": "Creature — Jellyfish Hydra Beast",
         "mana_cost": "{X}{G}{U}",
@@ -2789,6 +2802,31 @@ class XSpellGoldfishTests(unittest.TestCase):
                 self.assertNotIn("X spells modeled", self._methodology(
                     decklist, win_conditions, roles))
 
+    def test_methodology_states_a_combo_lines_min_x(self):
+        # Stonecoil Serpent is cast under the X rule; Walking Ballista, which
+        # the cast loop never casts (its ping reads as interaction), is a line
+        # piece priced at X = 2 by the line's minX.
+        decklist = ["Stonecoil Serpent", "Walking Ballista", "Mind Stone"] + ["Forest"] * 96
+        line = {"kind": "combo", "pieces": ["Walking Ballista", "Mind Stone"]}
+        min_x_sentence = (
+            " A combo line's X piece (winConditions[].minX, owner-approved 2026-11-19) is priced at the "
+            "X of the cheapest direct cast with which the line's listed pieces work: Walking Ballista at "
+            "X = 2 (each {X} in its cost is X mana). It is supplied from the hand or by a tutor the tags "
+            "read as to-hand (a bargain tutor by its paid route to the hand); a card with the recursion "
+            "role, a tutor to the graveyard and a bargain free cast do not supply it. Known limits: "
+            "recursion that returns the card to the hand is excluded with the rest (an under-read), a "
+            "tutor the tags read as to-hand whose text does not put a castable copy into the hand that turn "
+            "(it puts the card onto the battlefield, on top of the library, or cannot find it) still "
+            "supplies it (an over-read), and an X piece already on the battlefield counts whatever X it "
+            "entered with.")
+        priced = self._methodology(decklist, [dict(line, minX={"Walking Ballista": 2})])
+        plain = self._methodology(decklist, [line])
+        self.assertEqual(
+            (min_x_sentence in priced,
+             self.X_POLICY.replace("pieces at X = 0. ", "pieces at X = 0 except the X pieces above. ") in priced,
+             "A combo line's X piece" in plain, self.X_POLICY in plain),
+            (True, True, False, True))
+
 
 class ArmyReadinessGoldfishTests(unittest.TestCase):
     """DEC-533 Army readiness: an Army made by the start-of-turn opponent-cast
@@ -4366,9 +4404,15 @@ class ManaLegalityReplayTests(unittest.TestCase):
     A  the mana each source pays in a turn is within its cap, a gated or
        counted ability's condition read on the board at that payment, an
        extra trigger's bonus only while its source is on the battlefield and
-       its condition holds;
-    B  each mana's colours are colours that card can make (Reflecting Pool:
-       what the other lands' abilities could make, costs ignored);
+       its condition holds, an imprint's mana as its entry names it (Chrome
+       Mox: one);
+    B  each mana's colours are colours that card can make, a gated
+       ability's only while its condition holds on that board (Spire of
+       Industry), a counted ability's only while it counts one or more
+       (Cabal Coffers), a Pathway's those of the face it entered as, an
+       imprint's those of the card it exiled (Chrome Mox), both as the game
+       chose them (Reflecting Pool: what the other lands' abilities could
+       make, costs ignored);
     C  a source tapped before the payment, and not already used this turn,
        does not pay with mana that taps it;
     D  a non-land the table says makes mana from the next turn, a land that
@@ -4381,7 +4425,8 @@ class ManaLegalityReplayTests(unittest.TestCase):
     I  one-shot mana is used at most once per arming (its own mana, plus a
        Monument extra on the {C} while Monument is out), counted per arming;
     J  a creature whose {T} mana paid does not attack that turn, and one
-       that attacked does not then pay with it (vigilance excepted);
+       that attacked does not then pay with it (vigilance excepted, read
+       from the card's own text);
     K  whether a mana taps its source agrees with the table (a land's and
        Urza's grant to an artifact do)."""
 
@@ -4461,7 +4506,11 @@ class ManaLegalityReplayTests(unittest.TestCase):
 
     def lasting_cap(self, name, permanents, cmd):
         entry = self.table.get(name, {})
-        cap = max(len(entry.get("mana", [])), 1 if entry.get("faces") else 0, 2 if entry.get("imprint") else 0)
+        # An imprint makes the mana its table entry names: its atoms, or one
+        # mana of the exiled card's colours ("colors": Chrome Mox).
+        imprint = entry.get("imprint")
+        imprint_cap = 0 if not imprint else 1 if imprint["atoms"] == "colors" else len(imprint["atoms"])
+        cap = max(len(entry.get("mana", [])), 1 if entry.get("faces") else 0, imprint_cap)
         for term in entry.get("board", []):
             parts = term.split(":")
             if parts[0] == "gate":
@@ -4540,33 +4589,64 @@ class ManaLegalityReplayTests(unittest.TestCase):
                 colours.add(colour)
         return colours
 
+    def counted(self, parts, permanents, cmd):
+        """The mana a "count" term makes on this board before its cost (Cabal
+        Coffers: a Swamp each), 0 while its own condition fails."""
+        if parts[1] == "type":
+            if len(parts) > 5 and not self.condition(parts[5:], permanents):
+                return 0
+            return sum(1 for p in permanents if self.has_type(p, parts[2], permanents))
+        if parts[1] == "devotion":
+            return max(self.devotion(permanents, c) for c in (cmd if parts[2] == "cmd" else list(parts[2])))
+        return int(parts[2])  # idleArtifacts
+
     def allowed_colours(self, record, permanents, cmd, depth=0):
         name = record["name"]
         if name.endswith("(earthbent land)"):
             return {"G"}
         entry = self.table.get(name, {})
         colours = set()
-        for atom in entry.get("mana", []) + entry.get("once", []) + [a for face in entry.get("faces", [])
-                                                                       for a in face]:
+        # A Pathway makes the colours of the face it entered as (observed as
+        # it entered: self.observed["face"]); with no face observed (its mana
+        # matched neither face, or it was never seen entering) it makes no face
+        # colours. Every land enters through put_land_onto_battlefield.
+        faces = [face for i, face in enumerate(entry.get("faces", []))
+                 if i == self.observed["face"].get(id(record))]
+        for atom in entry.get("mana", []) + entry.get("once", []) + [a for face in faces for a in face]:
             colours |= self.expand(atom, cmd)
         imprint = entry.get("imprint")
-        if imprint:
-            colours |= (set("WUBRGC") if imprint.get("atoms") == "colors"
-                        else set().union(*(self.expand(a, cmd) for a in imprint["atoms"])))
+        if imprint and imprint.get("atoms") == "colors":
+            # One mana of the colours of the card it exiled (observed as it
+            # was exiled: self.observed["imprint"]); nothing exiled, none.
+            card = self.observed["imprint"].get(id(record))
+            colours |= set(self.meta.get(card, {}).get("colors") or []) if card else set()
+        elif imprint:
+            colours |= set().union(*(self.expand(a, cmd) for a in imprint["atoms"]))
         for term in entry.get("board", []):
             parts = term.split(":")
             if parts[0] == "count":
-                colours |= self.expand(parts[2] if parts[1] == "devotion" else parts[3], cmd)
-            elif parts[0] == "gate":
+                # Counted mana's colours only while it counts one or more
+                # (Cabal Coffers with no Swamp makes no black).
+                if self.counted(parts, permanents, cmd) >= 1:
+                    colours |= self.expand(parts[2] if parts[1] == "devotion" else parts[3], cmd)
+            elif parts[0] == "gate" and self.condition(parts[1:-1], permanents):
+                # A gated ability's colours only while its condition holds on
+                # the board at the payment (Spire of Industry: an artifact).
                 for atom in parts[-1].split(","):
                     colours |= self.expand(atom, cmd)
             elif parts[0] in ("legendColors", "vivid"):
                 colours |= set("WUBRG")
             elif parts[0] == "landColors" and depth == 0:
                 for p in permanents:
+                    other = self.table.get(p["name"], {})
                     if (p is not record and p.get("kind") == "land"
-                            and "landColors" not in self.table.get(p["name"], {}).get("board", [])):
-                        colours |= self.allowed_colours(p, permanents, cmd, 1) | self.oracle_outputs(p["name"], cmd)
+                            and "landColors" not in other.get("board", [])):
+                        colours |= self.allowed_colours(p, permanents, cmd, 1)
+                        # The text's add abilities, costs ignored, except a
+                        # Pathway's other face and counted mana, read on the
+                        # board above.
+                        if not (other.get("faces") or any(t.startswith("count") for t in other.get("board", []))):
+                            colours |= self.oracle_outputs(p["name"], cmd)
         if record.get("kind") == "land":
             for p in permanents:
                 grant = self.table.get(p["name"], {}).get("landGrant")
@@ -4597,18 +4677,30 @@ class ManaLegalityReplayTests(unittest.TestCase):
         decklist = getattr(exporter, self.DECKS[deck_id]).build_decklist(deck)
         context = exporter.build_goldfish_context(decklist, deck, self.meta, deck["commander"],
                                                   list(index[deck_id]["colors"]) or ["C"], deck_id)
-        profiles = context["profiles"]
         cmd = [c for c in context["commanderColors"] if c in "WUBRG"]
         violations = defaultdict(list)
         st = {"spent": 0}
 
         def vigilant(record):
-            profile = profiles.get(record["name"])
-            return bool(profile and profile["vigilance"] and "Creature" in profile["typeWords"])
+            """Vigilance as a keyword of the creature's own text, read from
+            the card data (not the exporter's profile)."""
+            text = re.sub(r"\([^)]*\)", "", self.meta.get(record["name"], {}).get("oracle_text", "") or "")
+            keywords = {word.strip().lower() for line in text.split("\n") for word in line.split(",")}
+            return "vigilance" in keywords and "Creature" in self.type_line(record["name"])
 
         after, add, floated = exporter.GoldfishManaPool._after, exporter.GoldfishManaPool.add, exporter.floated
         spend, combat, rearm = exporter.spend_mana, exporter.combat_phase_damage, exporter.rearm_once_sources
         metrics, put = exporter.metrics_from_board, exporter.put_land_onto_battlefield
+        imprint = exporter.imprint_from_hand
+        # What the game chose, read as it happens: the face each Pathway
+        # entered as (the table's face whose colours its mana has; None when
+        # none matches) and the card each imprint exiled (allowed_colours).
+        self.observed = {"face": {}, "imprint": {}}
+
+        def recording_imprint(record, *args, **kwargs):
+            card = imprint(record, *args, **kwargs)
+            self.observed["imprint"][id(record)] = card
+            return card
 
         def recording_after(pool, used, pinned):
             out = after(pool, used, pinned)
@@ -4625,10 +4717,16 @@ class ManaLegalityReplayTests(unittest.TestCase):
             st["floated"] += 1
             return floated(atom)
 
-        def recording_put(land_name, turn, tapped, permanents, *args):
-            record = put(land_name, turn, tapped, permanents, *args)
+        def recording_put(land_name, turn, tapped, permanents, *args, **kwargs):
+            record = put(land_name, turn, tapped, permanents, *args, **kwargs)
             st["entered"][id(record)] = (turn, bool(tapped))
             st["alive"].append(record)
+            faces = self.table.get(land_name, {}).get("faces")
+            if faces:
+                made = set().union(*record["manaAtoms"]) if record["manaAtoms"] else set()
+                self.observed["face"][id(record)] = next(
+                    (i for i, face in enumerate(faces) if set().union(*(self.expand(a, cmd) for a in face)) == made),
+                    None)
             return record
 
         def checked_spend(pool, cost, permanents, battlefield_lands, profiles_, keep=(), strict=True,
@@ -4726,7 +4824,8 @@ class ManaLegalityReplayTests(unittest.TestCase):
                 patch.object(exporter.GoldfishManaPool, "add", counting_add), \
                 patch.multiple(exporter, floated=counting_floated, spend_mana=checked_spend,
                                combat_phase_damage=checked_combat, rearm_once_sources=counting_rearm,
-                               metrics_from_board=turn_end, put_land_onto_battlefield=recording_put):
+                               metrics_from_board=turn_end, put_land_onto_battlefield=recording_put,
+                               imprint_from_hand=recording_imprint):
             for _ in range(games or self.GAMES_BY_DECK.get(deck_id, self.GAMES)):
                 st.update(turn=1, floated=0, free_in=Counter(), free_out=Counter(), lasting=Counter(),
                           once=Counter(), cap={}, names={}, attacked={}, tapped_for_mana={}, ability={},
@@ -4740,6 +4839,18 @@ class ManaLegalityReplayTests(unittest.TestCase):
                 violations, spent = self.run_deck(deck_id)
                 self.assertGreater(spent, 200)
                 self.assertEqual({kind: found[:3] for kind, found in violations.items()}, {})
+
+    def test_reflecting_pool_reads_counted_mana_on_the_payment_board(self):
+        # The seeded games never reach this board (hoard-and-bleed: 0 of
+        # 1,000 games with the break), so the check is read on it directly.
+        # Cabal Coffers makes black only with a Swamp out: Reflecting Pool
+        # beside Coffers and a Mountain cannot make black; beside Coffers and
+        # a Swamp it can.
+        self.observed = {"face": {}, "imprint": {}}
+        pool, coffers = {"name": "Reflecting Pool", "kind": "land"}, {"name": "Cabal Coffers", "kind": "land"}
+        made = {other: self.allowed_colours(pool, [pool, coffers, {"name": other, "kind": "land"}], ["B", "R"])
+                for other in ("Mountain", "Swamp")}
+        self.assertEqual(made, {"Mountain": {"R"}, "Swamp": {"B"}})
 
 
 class ManaOnOfferInvariantTests(unittest.TestCase):
@@ -4776,9 +4887,9 @@ class ManaOnOfferInvariantTests(unittest.TestCase):
         checks = []
         put_land = exporter.put_land_onto_battlefield
 
-        def record_board(land_name, turn, tapped, permanents, *args):
+        def record_board(land_name, turn, tapped, permanents, *args, **kwargs):
             board["permanents"] = permanents
-            return put_land(land_name, turn, tapped, permanents, *args)
+            return put_land(land_name, turn, tapped, permanents, *args, **kwargs)
 
         def check(pool, where):
             permanents = board["permanents"]
@@ -6372,8 +6483,9 @@ R5_PROBES = {
                                    "cards.\nEquip {1}")},
     # Made up: a rock that enters tapped with a rider, an Equipment a combo
     # line names (no {T} ability), a land creature Forest, a land that makes
-    # {W}{W}, two tutors (an instant-only and a sorcery-only one by their
-    # deck entries) and an instant and a sorcery two assembly lines name.
+    # {W}{W}, three tutors (an instant-only and two sorcery-only ones by their
+    # deck entries, one of them blue), an instant and a sorcery two assembly
+    # lines name, and a {U} sorcery with no effect.
     "Probe Purse Rock": {"type_line": "Artifact", "mana_cost": "{2}", "cmc": 2.0, "colors": [], "oracle_text": (
         "This artifact enters tapped and with a charge counter on it.\n{T}: Add {C}.")},
     "Probe Sword": {"type_line": "Artifact — Equipment", "mana_cost": "{3}", "cmc": 3.0, "colors": [],
@@ -6385,7 +6497,28 @@ R5_PROBES = {
     "Probe Tutor W": {"type_line": "Instant", "mana_cost": "{W}", "cmc": 1.0, "oracle_text": "", "colors": ["W"]},
     "Probe Tutor 1W": {"type_line": "Instant", "mana_cost": "{1}{W}", "cmc": 2.0, "oracle_text": "",
                        "colors": ["W"]},
+    "Probe Tutor 1U": {"type_line": "Instant", "mana_cost": "{1}{U}", "cmc": 2.0, "oracle_text": "",
+                       "colors": ["U"]},
     "Probe Line Sorcery": {"type_line": "Sorcery", "mana_cost": "{9}", "cmc": 9.0, "oracle_text": "", "colors": []},
+    "Probe U Drop": {"type_line": "Sorcery", "mana_cost": "{U}", "cmc": 1.0, "oracle_text": "", "colors": ["U"]},
+    # The local Scryfall mirror (2026-11-17 snapshot), read 2026-11-21.
+    "Sylvan Scrying": {"type_line": "Sorcery", "mana_cost": "{1}{G}", "cmc": 2.0, "colors": ["G"], "oracle_text": (
+        "Search your library for a land card, reveal it, put it into your hand, then shuffle.")},
+    "Tempt with Discovery": {"type_line": "Sorcery", "mana_cost": "{3}{G}", "cmc": 4.0, "colors": ["G"],
+                             "oracle_text": (
+        "Tempting offer — Search your library for a land card and put it onto the battlefield. Each opponent "
+        "may search their library for a land card and put it onto the battlefield. For each opponent who searches "
+        "a library this way, search your library for a land card and put it onto the battlefield. Then each "
+        "player who searched a library this way shuffles.")},
+    # Made up: Embodiment of Spring's fetch on a creature with vigilance.
+    "Probe Vigilant Fetcher": {"type_line": "Creature — Elemental", "mana_cost": "{U}", "cmc": 1.0, "colors": ["U"],
+                               "power": "0", "oracle_text": (
+        "Vigilance\n{1}{G}, {T}, Sacrifice this creature: Search your library for a basic land card, put it onto "
+        "the battlefield tapped, then shuffle.")},
+    # Made up: a Pathway whose front face is a Swamp, so a fetch land finds it.
+    "Probe Swamp Pathway": {"type_line": "Land — Swamp // Land", "mana_cost": "", "cmc": 0.0, "colors": [],
+                            "oracle_text": "({T}: Add {B}.)", "layout": "modal_dfc",
+                            "back_face": {"type_line": "Land", "oracle_text": "{T}: Add {W}."}},
 }
 
 
@@ -6454,24 +6587,18 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
         _, hatched = self.assault_game(["Forest", "Forest", "Aggravated Assault", "Attacker A", "Ashnod's Altar"])
         self.assertEqual(hatched[:1], [2])
 
-    def test_each_gate_is_kept_with_the_activation_by_its_own_colours(self):
-        # Item 4. Two assembly lines: Probe Tutor W ({W}, instants only) can
-        # fill the first, Probe Tutor 1W ({1}{W}, sorceries only) the second.
-        # No white until Probe Plains Pair ({W}{W}) on turn 4: five mana
-        # (three Forests and {W}{W}), the Egg activation ({2}) held: the
-        # gates are kept as {2}{W} and {3}{W}. Two Drop 0 ({2}) would leave
-        # three, which keeps the first but not the second: it waits; the Egg
-        # is made and hatched, and both lines are assembled on turn 4.
+    def _two_gate_game(self, hand: list, library: list, roles: dict) -> tuple:
+        """Two assembly lines on the hatch engine's deck: Probe Line A1 + B1
+        and Probe Line A2 + Probe Line Sorcery, the tutors in ``roles`` (name
+        -> tutor_targets) to fill them. Returns (casts by turn, hatch turns,
+        assembly turns)."""
         metadata = CastPriorityHoldTests()._hatch_metadata()
         commander = CastPriorityHoldTests.HATCH_COMMANDER
         metadata.update({name: R4_PROBES[name] for name in ("Probe Line A1", "Probe Line B1", "Probe Line A2")})
-        metadata.update({name: R5_PROBES[name] for name in ("Probe Tutor W", "Probe Tutor 1W", "Probe Plains Pair",
-                                                           "Probe Line Sorcery")})
-        hand = ["Forest"] * 3 + ["Probe Plains Pair", "Ashnod's Altar", "Two Drop 0", "Probe Line A1",
-                                 "Probe Line A2", "Probe Tutor W", "Probe Tutor 1W"]
-        library = (["Probe Line B1", "Probe Line Sorcery"] + ["Forest"] * 6 + [f"Bear {i}" for i in range(20)])
+        metadata.update({name: R5_PROBES[name] for name in ("Probe Tutor W", "Probe Tutor 1W", "Probe Tutor 1U",
+                                                           "Probe Plains Pair", "Probe Line Sorcery", "Probe U Drop")})
+        metadata["Island"] = CARDS["Island"]
         decklist = hand + library
-        roles = {"Probe Tutor W": ["instant"], "Probe Tutor 1W": ["sorcery"]}
         deck_data = {"decklist": [dict({"name": n, "primary_role": "tutor", "tutor_targets": roles[n]}
                                        if n in roles else {"name": n}) for n in decklist]}
         combos = {CastPriorityHoldTests.HATCH_DECK_ID: [
@@ -6495,7 +6622,45 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
                 patch.object(exporter, "resolve_cast_effects", recording_resolve), \
                 patch.object(exporter, "hatch_from_library", recording_hatch):
             _, assembly = exporter.simulate_goldfish_game(decklist, context, 6)
+        return casts, hatched, assembly
+
+    def test_each_gate_is_kept_with_the_activation_by_its_own_colours(self):
+        # Item 4. Two assembly lines: Probe Tutor W ({W}, instants only) can
+        # fill the first, Probe Tutor 1W ({1}{W}, sorceries only) the second.
+        # No white until Probe Plains Pair ({W}{W}) on turn 4: five mana
+        # (three Forests and {W}{W}), the Egg activation ({2}) held: the
+        # gates are kept as {2}{W} and {3}{W}. Two Drop 0 ({2}) would leave
+        # three, which keeps the first but not the second: it waits; the Egg
+        # is made and hatched, and both lines are assembled on turn 4.
+        hand = ["Forest"] * 3 + ["Probe Plains Pair", "Ashnod's Altar", "Two Drop 0", "Probe Line A1",
+                                 "Probe Line A2", "Probe Tutor W", "Probe Tutor 1W"]
+        library = (["Probe Line B1", "Probe Line Sorcery"] + ["Forest"] * 6 + [f"Bear {i}" for i in range(20)])
+        casts, hatched, assembly = self._two_gate_game(
+            hand, library, {"Probe Tutor W": ["instant"], "Probe Tutor 1W": ["sorcery"]})
         self.assertNotIn("Two Drop 0", casts[4])
+        self.assertIn(4, hatched)
+        self.assertEqual(assembly, [4, 4])
+
+    def test_each_gate_keeps_its_own_coloured_pips(self):
+        # Review round 6, item c. The first line's tutor is Probe Tutor W
+        # ({W}, instants only), the second's Probe Tutor 1U ({1}{U},
+        # sorceries only). Lands: Forest, Forest, Probe Plains Pair ({W}{W}),
+        # Island (the only blue source) on turns 1-4; Probe Tutor W is drawn
+        # on turn 4, so no gate is reachable before. Turn 4: five mana (G, G,
+        # W, W, U), the Egg activation ({2}) held: the gates are kept as
+        # {2}{W} and {3}{U}. Probe U Drop ({U}) would take the only blue: it
+        # waits (the second gate read with the first gate's pips, {3}{W},
+        # would let it be cast); the Egg is made and hatched, both lines are
+        # assembled on turn 4, and the U Drop is cast on turn 5.
+        hand = ["Forest"] * 2 + ["Probe Plains Pair", "Island", "Ashnod's Altar", "Probe U Drop", "Probe Line A1",
+                                 "Probe Line A2", "Probe Tutor 1U"]
+        # Draws and hatches take the library's top: turns 2 and 3 each draw a
+        # Bear and hatch one, so Probe Tutor W is turn 4's draw.
+        library = (["Probe Line B1", "Probe Line Sorcery"] + ["Forest"] * 6 + [f"Bear {i}" for i in range(16)]
+                   + ["Probe Tutor W", "Bear 16", "Bear 17", "Bear 18", "Bear 19"])
+        casts, hatched, assembly = self._two_gate_game(
+            hand, library, {"Probe Tutor W": ["instant"], "Probe Tutor 1U": ["sorcery"]})
+        self.assertEqual(("Probe U Drop" in casts[4], "Probe U Drop" in casts[5]), (False, True))
         self.assertIn(4, hatched)
         self.assertEqual(assembly, [4, 4])
 
@@ -6507,16 +6672,81 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
             return exporter.simulate_goldfish_game(decklist, context, 6)
 
     def test_a_creatures_own_tap_ability_waits_out_the_turn_it_enters(self):
-        # Item 6. Island, Forest, Forest on turns 1-3; turn 3 draws the
-        # creature and casts it with the Island, leaving the two Forests.
-        # Embodiment of Spring's fetch ({1}{G}, {T}) is summoning sick on turn
-        # 3 (three lands); Sakura-Tribe Elder's (no {T}) is used on turn 3
-        # (four).
-        for creature, lands in (("Embodiment of Spring", [1, 2, 3]), ("Sakura-Tribe Elder", [1, 2, 4])):
+        # Item 6 (round 5) and item d (round 6). Island, Forest, Forest on
+        # turns 1-3; turn 3 draws the creature and casts it with the Island,
+        # leaving the two Forests. Embodiment of Spring's fetch ({1}{G}, {T})
+        # is summoning sick on turn 3 (three lands); on turn 4 the three lands
+        # pay it, so it stays out of combat and fetches a Forest (four).
+        # Sakura-Tribe Elder's (no {T}) is used on turn 3 (four). No land is
+        # drawn after turn 3.
+        for creature, lands in (("Embodiment of Spring", [1, 2, 3, 4]), ("Sakura-Tribe Elder", [1, 2, 4, 4])):
             with self.subTest(creature=creature):
                 library = ["Forest"] * 3 + ["Probe Nine"] * 87 + [creature, "Probe Nine"]
                 by_turn, _ = self._run(["Island", "Forest", "Forest"] + ["Probe Nine"] * 4, library, ("G", "U"))
-                self.assertEqual(self._series(by_turn, "lands", 3), lands)
+                self.assertEqual(self._series(by_turn, "lands", 4), lands)
+
+    # A fetch creature stays home only when the end of the turn will activate
+    # its fetch (X fix round 1, item 6). Each case is (combat, lands) on turn
+    # 4 or turn 2: the creature's combat is 1 (mana value 1, no keyword).
+    def test_a_fetch_creature_whose_fetch_the_lands_cannot_pay_attacks(self):
+        # Three Islands: Embodiment of Spring is cast on turn 3; on turn 4 no
+        # green pays {1}{G}, so it attacks and nothing is fetched.
+        library = ["Forest"] * 3 + ["Probe Nine"] * 87 + ["Embodiment of Spring", "Probe Nine"]
+        by_turn, _ = self._run(["Island"] * 3 + ["Probe Nine"] * 4, library, ("G", "U"))
+        self.assertEqual((by_turn[4]["combat"], by_turn[4]["lands"]), (1, 3))
+
+    def test_one_shot_mana_does_not_keep_a_fetch_creature_home(self):
+        # Turn 1: Forest; a Lotus Petal pays Embodiment of Spring's {U}. Turn
+        # 2 draws a second Petal: Forest and Petal would pay {1}{G} now, but
+        # the end of the turn pays from lasting mana (the Forest alone), so
+        # Embodiment attacks.
+        library = ["Forest"] * 3 + ["Probe Nine"] * 87 + ["Lotus Petal"]
+        by_turn, _ = self._run(["Forest", "Lotus Petal", "Embodiment of Spring"] + ["Probe Nine"] * 4, library,
+                               ("G", "U"))
+        self.assertEqual((by_turn[2]["combat"], by_turn[2]["lands"]), (1, 1))
+
+    def test_a_vigilant_fetch_creature_attacks_and_fetches(self):
+        # Probe Vigilant Fetcher (Embodiment of Spring's fetch with
+        # vigilance), cast on turn 3 with the Island: on turn 4 it attacks
+        # untapped, then the Forests pay its fetch.
+        library = ["Forest"] * 3 + ["Probe Nine"] * 87 + ["Probe Vigilant Fetcher", "Probe Nine"]
+        by_turn, _ = self._run(["Island", "Forest", "Forest"] + ["Probe Nine"] * 4, library, ("G", "U"))
+        self.assertEqual((by_turn[4]["combat"], by_turn[4]["lands"]), (1, 4))
+
+    def test_a_fetch_creature_attacks_when_a_held_gate_needs_the_mana(self):
+        # Island, Forest, Forest; Embodiment of Spring cast on turn 3. Turn 4
+        # draws Probe Gate Instant ({2}), the one piece of a combo line: the
+        # three lands pay the gate or the {1}{G} fetch, not both, so the
+        # gate's mana is held, Embodiment attacks, and the gate fires.
+        hand = ["Island", "Forest", "Forest"] + ["Probe Nine"] * 4
+        library = ["Forest"] * 3 + ["Probe Nine"] * 86 + ["Probe Gate Instant", "Embodiment of Spring",
+                                                           "Probe Nine"]
+        decklist = hand + library
+        cards = dict(self.cards(), **{"Probe Gate Instant": {
+            "type_line": "Instant", "mana_cost": "{2}", "cmc": 2.0, "oracle_text": "", "colors": []}})
+        deck_data = {"decklist": [], "winConditions": [
+            {"title": "Probe gate", "kind": "combo", "pieces": ["Probe Gate Instant"]}]}
+        context = exporter.build_goldfish_context(decklist, deck_data, cards, "The Ur-Dragon", ["G", "U"],
+                                                  "synthetic-mana")
+        with patch.object(exporter, "commander_mulligan_goldfish", return_value=(list(library), list(hand))):
+            by_turn, _ = exporter.simulate_goldfish_game(decklist, context, 6)
+        self.assertEqual((by_turn[3]["comboLethal"], by_turn[4]["comboLethal"], by_turn[4]["combat"],
+                          by_turn[4]["lands"]), (0, 1, 1, 3))
+
+    def test_a_mana_creature_the_fetch_needs_stays_home_with_the_fetcher(self):
+        # Turn 1: Island; a Lotus Petal pays Llanowar Elves' {G}, the Island
+        # Embodiment of Spring's {U}. Turn 2, no land: the Island and the
+        # Elves pay {1}{G}, so Embodiment stays home; the Elves would take
+        # the only lasting green to combat, so they stay home too, and the
+        # fetch finds a Forest (two lands, no combat). A second Lotus Petal
+        # drawn on turn 2 changes nothing: its one-shot mana is not what the
+        # end of the turn pays the fetch with.
+        for drawn in ("Probe Nine", "Lotus Petal"):
+            with self.subTest(drawn=drawn):
+                library = ["Forest"] * 3 + ["Probe Nine"] * 87 + [drawn]
+                by_turn, _ = self._run(["Island", "Lotus Petal", "Llanowar Elves", "Embodiment of Spring"]
+                                       + ["Probe Nine"] * 3, library, ("G", "U"))
+                self.assertEqual((by_turn[2]["combat"], by_turn[2]["lands"]), (0, 2))
 
 
 class ManaRoundFiveUnitTests(unittest.TestCase):
@@ -6569,7 +6799,7 @@ class ManaRoundFiveUnitTests(unittest.TestCase):
         search = {"count": 1, "toHand": 0, "basicOnly": False, "allowedSubtypes": set(), "perType": [],
                   "sharedType": False, "entersTapped": False}
         found = exporter.select_ramp_targets(["Hagra Mauling // Hagra Broodpit", "Bojuka Bog"], profiles,
-                                             ["B", "G"], [], [], search, 1)
+                                             ["B", "G"], [], [], search, 1, to_hand=False)
         self.assertEqual(found, ["Bojuka Bog"])
 
     def test_a_searched_land_pays_its_own_entry_cost(self):
@@ -6588,13 +6818,103 @@ class ManaRoundFiveUnitTests(unittest.TestCase):
                                       ["G", "U"])
         self.assertEqual((sum(1 for p in permanents if p["kind"] == "land"), hand), (6, ["Forest"]))
 
+    # Searched lands (mana-model review round 6, X fix round 1). Tempt with
+    # Discovery puts one land card onto the battlefield untapped (the
+    # opponents' offer is not modelled); Sylvan Scrying puts one into the
+    # hand; Hour of Promise puts lands in tapped.
+    def search_game(self, names, colours, lands_out=()):
+        """(profiles, permanents, battlefield lands) with ``lands_out`` played."""
+        profiles = self.context(list(names) + ["Tempt with Discovery", "Sylvan Scrying", "Hour of Promise"],
+                                colours)["profiles"]
+        permanents, lands = [], []
+        for land in lands_out:
+            exporter.put_land_onto_battlefield(land, 1, False, permanents, lands, profiles, list(colours))
+        return profiles, permanents, lands
+
+    def test_a_land_a_search_puts_onto_the_battlefield_enters_front_face_up(self):
+        # A Plains out, commander W and B: played, Brightclimb Pathway would
+        # enter as its back face ({B}, the missing colour); Tempt with
+        # Discovery puts it onto the battlefield front face up, {W}.
+        profiles, permanents, lands = self.search_game(["Brightclimb Pathway", "Plains"], ["W", "B"], ["Plains"])
+        exporter.fetch_lands(profiles["Tempt with Discovery"]["landRamp"], 1, 2, exporter.GoldfishManaPool(turn=2),
+                             ["Brightclimb Pathway"], [], permanents, lands, profiles, ["W", "B"])
+        self.assertEqual((permanents[-1]["name"], mana_letters(permanents[-1]["manaAtoms"])),
+                         ("Brightclimb Pathway", ["W"]))
+
+    def test_a_searched_snarl_reveals_from_the_hand(self):
+        # Shineshadow Snarl enters untapped when the hand holds a Plains or
+        # Swamp card: a Swamp in hand, untapped; an Island, tapped.
+        for hand, tapped in ((["Swamp"], False), (["Island"], True)):
+            with self.subTest(hand=hand):
+                profiles, permanents, lands = self.search_game(["Shineshadow Snarl", "Swamp", "Island"], ["W", "B"])
+                exporter.fetch_lands(profiles["Tempt with Discovery"]["landRamp"], 1, 2,
+                                     exporter.GoldfishManaPool(turn=2), ["Shineshadow Snarl"], list(hand),
+                                     permanents, lands, profiles, ["W", "B"])
+                self.assertEqual((permanents[-1]["name"], permanents[-1]["tapped"]), ("Shineshadow Snarl", tapped))
+
+    def test_a_search_onto_the_battlefield_ranks_a_land_as_it_will_enter(self):
+        # Tempt with Discovery, commander W and B, a Plains out. Wastes or
+        # Shineshadow Snarl: with a Swamp in hand the Snarl enters untapped
+        # and adds B, so it is found; with nothing to reveal it would enter
+        # tapped, so the untapped Wastes is. Swamp or Brightclimb Pathway:
+        # put onto the battlefield, the Pathway is its front face {W}, which
+        # the Plains already makes, so the Swamp, which adds B, is found.
+        names = ["Wastes", "Shineshadow Snarl", "Swamp", "Brightclimb Pathway", "Plains"]
+        for library, hand, found in ((["Wastes", "Shineshadow Snarl"], ["Swamp"], "Shineshadow Snarl"),
+                                     (["Wastes", "Shineshadow Snarl"], [], "Wastes"),
+                                     (["Swamp", "Brightclimb Pathway"], [], "Swamp")):
+            with self.subTest(library=library, hand=hand):
+                profiles, permanents, lands = self.search_game(names, ["W", "B"], ["Plains"])
+                exporter.fetch_lands(profiles["Tempt with Discovery"]["landRamp"], 1, 2,
+                                     exporter.GoldfishManaPool(turn=2), list(library), list(hand), permanents,
+                                     lands, profiles, ["W", "B"])
+                self.assertEqual(permanents[-1]["name"], found)
+
+    def test_a_search_into_the_hand_ranks_a_pathway_by_either_face(self):
+        # Sylvan Scrying, commander W and B, a Plains out; Swamp or
+        # Brightclimb Pathway. The land goes to the hand and is played later,
+        # when the Pathway can enter as its {B} face: it adds B and makes both
+        # commander colours, so it is found over the Swamp.
+        profiles, permanents, lands = self.search_game(["Swamp", "Brightclimb Pathway", "Plains"], ["W", "B"],
+                                                       ["Plains"])
+        hand = []
+        exporter.resolve_cast_effects("Sylvan Scrying", profiles["Sylvan Scrying"], 2,
+                                      exporter.GoldfishManaPool(turn=2), ["Swamp", "Brightclimb Pathway"], hand,
+                                      permanents, lands, profiles, ["W", "B"])
+        self.assertEqual(hand, ["Brightclimb Pathway"])
+
+    def test_a_search_that_puts_lands_in_tapped_ranks_them_as_tapped(self):
+        # Hour of Promise (lands put in tapped), one land, commander B and G,
+        # a Forest out; Wastes (untapped by its own text) or Bojuka Bog
+        # (tapped by its own, {B}). Both enter tapped, so the Bog, which adds
+        # the missing B, is found.
+        profiles, permanents, lands = self.search_game(["Wastes", "Bojuka Bog", "Forest"], ["B", "G"], ["Forest"])
+        exporter.fetch_lands(profiles["Hour of Promise"]["landRamp"], 1, 2, exporter.GoldfishManaPool(turn=2),
+                             ["Wastes", "Bojuka Bog"], [], permanents, lands, profiles, ["B", "G"])
+        self.assertEqual((permanents[-1]["name"], permanents[-1]["tapped"]), ("Bojuka Bog", True))
+
+    def test_a_fetch_land_puts_a_pathway_onto_the_battlefield_front_face_up(self):
+        # Polluted Delta finds Probe Swamp Pathway (a Swamp // Land Pathway:
+        # {B} // {W}); commander W and B, a Swamp out. Played, it would enter
+        # as its {W} face, the missing colour; found by the crack it enters
+        # front face up, {B}, and the land drop scores the Delta by that face.
+        profiles, permanents, lands = self.search_game(["Polluted Delta", "Probe Swamp Pathway", "Swamp"],
+                                                       ["W", "B"], ["Swamp"])
+        score = exporter.land_play_score("Polluted Delta", ["Polluted Delta"], profiles, lands, permanents,
+                                         ["W", "B"], ["Probe Swamp Pathway"])
+        # (usable this turn, new commander colours, commander colours, colours)
+        self.assertEqual(score[:4], (10, 0, 1, 1))
+        record = exporter.crack_fetch_land("Polluted Delta", 1, ["Probe Swamp Pathway"], [], permanents, lands,
+                                           profiles, ["W", "B"])
+        self.assertEqual((record["name"], mana_letters(record["manaAtoms"])), ("Probe Swamp Pathway", ["B"]))
+
     def test_a_search_chooses_a_land_usable_this_turn_as_a_land_drop_does(self):
         # Item 9. Nature's Lore (a Forest card, onto the battlefield
         # untapped): a plain Forest, not Probe Treefolk Land (a land creature:
         # summoning sick), whose name would win the tie.
         profiles = self.context(["Nature's Lore", "Forest", "Probe Treefolk Land"], ["G"])["profiles"]
         found = exporter.select_ramp_targets(["Probe Treefolk Land", "Forest"], profiles, ["G"], [], [],
-                                             profiles["Nature's Lore"]["landRamp"], 1)
+                                             profiles["Nature's Lore"]["landRamp"], 1, to_hand=False)
         self.assertEqual(found, ["Forest"])
 
 
@@ -6949,12 +7269,12 @@ class ManaPilotHelperTests(unittest.TestCase):
                   "sharedType": True, "entersTapped": True}
         library = ["Forest", "Forest", "Swamp"]
         self.assertEqual(sorted(exporter.select_ramp_targets(library, profiles, ["B", "G", "W"], [], [],
-                                                             shared, 2)), ["Forest", "Forest"])
+                                                             shared, 2, to_hand=False)), ["Forest", "Forest"])
         per_type = dict(shared, sharedType=False, basicOnly=False, perType=["Forest", "Plains"])
         for count, taken in ((0, 0), (1, 1), (2, 2)):
             with self.subTest(count=count):
                 self.assertEqual(len(exporter.select_ramp_targets(
-                    ["Forest", "Plains"], profiles, ["B", "G", "W"], [], [], per_type, count)), taken)
+                    ["Forest", "Plains"], profiles, ["B", "G", "W"], [], [], per_type, count, to_hand=False)), taken)
 
     def test_an_exact_payment_is_found_and_prefers_lands(self):
         def mana(colours, name, order):
@@ -8318,6 +8638,245 @@ class ComboStartPieceTests(unittest.TestCase):
             dict(self.WINCON, startPiece="Sensei's Divining Top")]}
         with self.assertRaisesRegex(ValueError, "'Top Loop'"):
             exporter.extract_combo_lines(deck_data, profiles)
+
+
+class ComboLineMinXTests(unittest.TestCase):
+    """A combo line's ``minX`` (owner-approved 2026-11-19): the X a piece with
+    {X} in its cost is priced at, the cheapest direct cast with which the
+    line's listed pieces work.
+
+    Shaped on the-white-forge's Heliod, Sun-Crowned + Walking Ballista
+    (priced at X = 2) and eternal-harvest's Walking Ballista + Mikaeus, the
+    Unhallowed (X = 1). X Piece carries Walking Ballista's cost and text
+    ({X}{X}: X = 2 costs 4 mana, X = 1 costs 2); the text reads as
+    interaction, so the cast loop never casts it, as with Ballista. Partner
+    Piece {3}, an unrelated {1} enchantment (it makes the bargain path live),
+    a {2} to-hand tutor, a {1} to-graveyard tutor, a {2} reanimation spell
+    and a {1} bargain tutor. The piece is priced at minX in hand, through a
+    to-hand tutor and through the bargain tutor's paid route to the hand;
+    reanimation, the to-graveyard tutor and the bargain free cast do not
+    supply it. Every board is built through ``resolve_cast_effects``.
+    """
+
+    TURN = 5
+    COMMANDER = "Synthetic Commander"
+    BALLISTA_TEXT = ("This creature enters with X +1/+1 counters on it.\n{4}: Put a +1/+1 counter on "
+                     "this creature.\nRemove a +1/+1 counter from this creature: It deals 1 damage "
+                     "to any target.")
+    DECKLIST = [
+        {"name": "X Piece"},
+        {"name": "Partner Piece"},
+        {"name": "Other Enchantment"},
+        {"name": "Tutor Piece", "primary_role": "tutor"},
+        {"name": "Entomb Piece", "primary_role": "tutor", "tutor_mode": "to_graveyard"},
+        {"name": "Reanimate Piece", "primary_role": "recursion"},
+        {"name": "Beseech Piece", "primary_role": "tutor", "tutor_free_cast_via_bargain": True},
+    ]
+    MINX = {"title": "X Loop", "kind": "combo", "pieces": ["Partner Piece", "X Piece"],
+            "minX": {"X Piece": 2}}
+    MINX_1 = dict(MINX, minX={"X Piece": 1})
+    PLAIN = {"title": "X Loop", "kind": "combo", "pieces": ["Partner Piece", "X Piece"]}
+    # The X piece as the start piece: out since turn 4, its cost is paid again.
+    START = dict(MINX, startPiece="X Piece")
+
+    @classmethod
+    def _metadata(cls) -> dict:
+        def card(name, type_line, mana_cost, cmc, text=""):
+            return {"name": name, "type_line": type_line, "oracle_text": text, "mana_cost": mana_cost,
+                    "cmc": cmc, "colors": [], "color_identity": []}
+
+        return {
+            cls.COMMANDER: card(cls.COMMANDER, "Legendary Creature — Eldrazi", "{9}", 9),
+            "X Piece": card("X Piece", "Artifact Creature — Construct", "{X}{X}", 0, cls.BALLISTA_TEXT),
+            "Partner Piece": card("Partner Piece", "Artifact", "{3}", 3),
+            "Other Enchantment": card("Other Enchantment", "Enchantment", "{1}", 1),
+            "Tutor Piece": card("Tutor Piece", "Sorcery", "{2}", 2),
+            "Entomb Piece": card("Entomb Piece", "Instant", "{1}", 1),
+            "Reanimate Piece": card("Reanimate Piece", "Sorcery", "{2}", 2),
+            "Beseech Piece": card("Beseech Piece", "Sorcery", "{1}", 1),
+        }
+
+    def _context(self, wincons: list) -> dict:
+        deck_data = {"decklist": [dict(entry) for entry in self.DECKLIST],
+                     "winConditions": [dict(wincon) for wincon in wincons]}
+        return exporter.build_goldfish_context(
+            [entry["name"] for entry in self.DECKLIST], deck_data, self._metadata(), self.COMMANDER,
+            ["G"], "synthetic-min-x")
+
+    def _board(self, context: dict, entries: list) -> list[dict]:
+        permanents = []
+        for name, cast_turn in entries:
+            exporter.resolve_cast_effects(name, context["profiles"][name], cast_turn,
+                                          exporter.GoldfishManaPool([]), [], [], permanents, [],
+                                          context["profiles"], ["G"])
+        return permanents
+
+    PARTNER_OUT = [("Partner Piece", 3)]
+    BARGAIN_BOARD = [("Partner Piece", 3), ("Other Enchantment", 3)]
+    SPARE = 9
+
+    # (label, win condition, hand, battlefield [(name, cast turn)], mana in
+    #  the pool, ready). TURN is 5. Costs by hand: X Piece at X = 2 is 4 mana,
+    # at X = 1 is 2 mana, at X = 0 nothing.
+    READY_CASES = [
+        ("minX 2, X piece in hand, pool 3", MINX, ["X Piece"], PARTNER_OUT, 3, False),
+        ("minX 2, X piece in hand, pool 4", MINX, ["X Piece"], PARTNER_OUT, 4, True),
+        ("minX 1, X piece in hand, pool 1", MINX_1, ["X Piece"], PARTNER_OUT, 1, False),
+        ("minX 1, X piece in hand, pool 2", MINX_1, ["X Piece"], PARTNER_OUT, 2, True),
+        ("minX 2, both pieces in hand, pool {3} + 4 - 1", MINX, ["X Piece", "Partner Piece"], [], 6, False),
+        ("minX 2, both pieces in hand, pool {3} + 4", MINX, ["X Piece", "Partner Piece"], [], 7, True),
+        ("minX 2, to-hand tutor, pool {2} + 4 - 1", MINX, ["Tutor Piece"], PARTNER_OUT, 5, False),
+        ("minX 2, to-hand tutor, pool {2} + 4", MINX, ["Tutor Piece"], PARTNER_OUT, 6, True),
+        ("minX 2, reanimation only, spare mana", MINX, ["Reanimate Piece"], PARTNER_OUT, SPARE, False),
+        ("minX 2, to-graveyard tutor and reanimation, spare mana", MINX, ["Entomb Piece", "Reanimate Piece"],
+         PARTNER_OUT, SPARE, False),
+        # The bargain tutor's free cast (X = 0) does not supply the piece; its
+        # paid route to the hand does, bargained or not: {1} + 4.
+        ("minX 2, bargain tutor with an enchantment out, pool {1} + 4 - 1", MINX, ["Beseech Piece"],
+         BARGAIN_BOARD, 4, False),
+        ("minX 2, bargain tutor with an enchantment out, pool {1} + 4", MINX, ["Beseech Piece"],
+         BARGAIN_BOARD, 5, True),
+        ("minX 2, bargain tutor with nothing to bargain, pool {1} + 4", MINX, ["Beseech Piece"],
+         PARTNER_OUT, 5, True),
+        ("minX 2 start piece out since turn 4, pool 3", START, [], PARTNER_OUT + [("X Piece", 4)], 3, False),
+        ("minX 2 start piece out since turn 4, pool 4", START, [], PARTNER_OUT + [("X Piece", 4)], 4, True),
+        ("no minX, X piece in hand, empty pool", PLAIN, ["X Piece"], PARTNER_OUT, 0, True),
+        ("no minX, to-hand tutor, pool {2}", PLAIN, ["Tutor Piece"], PARTNER_OUT, 2, True),
+        ("no minX, reanimation, pool {2}", PLAIN, ["Reanimate Piece"], PARTNER_OUT, 2, True),
+        ("no minX, to-graveyard tutor and reanimation, pool {1} + {2}", PLAIN,
+         ["Entomb Piece", "Reanimate Piece"], PARTNER_OUT, 3, True),
+        ("no minX, bargain tutor with an enchantment out, pool {1}", PLAIN, ["Beseech Piece"], BARGAIN_BOARD,
+         1, True),
+    ]
+
+    def test_the_gate_prices_an_x_piece_at_its_lines_min_x(self):
+        for label, wincon, hand, board, mana, expected in self.READY_CASES:
+            with self.subTest(label):
+                context = self._context([wincon])
+                ready = exporter.combo_ready_this_turn(
+                    turn=self.TURN, hand=list(hand), permanents=self._board(context, board),
+                    combo_lines=context["comboLines"], profiles=context["profiles"],
+                    tutor_meta=context["tutorMeta"], reanim_names=context["reanimationNames"],
+                    commander_in_play=False, commander_play_turn=None,
+                    pool=exporter.GoldfishManaPool([frozenset({"G"})] * mana),
+                    commander_name=self.COMMANDER)
+                self.assertEqual(ready, expected)
+
+    def test_extract_combo_lines_carries_min_x_and_the_priced_cost(self):
+        line = self._context([self.MINX])["comboLines"][0]
+        self.assertEqual(line["minX"], {"X Piece": 2})
+        self.assertEqual([(cost["generic"], cost["total"]) for cost in line["costs"]], [(3, 3), (4, 4)])
+        plain = self._context([self.PLAIN])["comboLines"][0]
+        self.assertEqual((plain["minX"], [cost["total"] for cost in plain["costs"]]), ({}, [3, 0]))
+
+    # (label, the win condition's changes, accepted). The deck holds Walking
+    # Ballista ({X}{X}), Heliod, Sun-Crowned ({2}{W}), Endless One ({X}) and
+    # Agadeem's Awakening // Agadeem, the Undercrypt ({X}{B}{B}{B} front),
+    # listed by its full name; Hangarback Walker ({X}{X}) is a real card
+    # outside the deck.
+    AGADEEM = "Agadeem's Awakening // Agadeem, the Undercrypt"
+    AGREEMENT_CASES = [
+        ("pieces as a string", {"pieces": "Walking Ballista", "minX": {"Walking Ballista": 2}}, False),
+        ("pieces as a number, with a startPiece and an empty map",
+         {"pieces": 1, "startPiece": "Walking Ballista", "minX": {}}, False),
+        ("the full name of a double-faced card with {X}",
+         {"pieces": [AGADEEM, "Heliod, Sun-Crowned"], "minX": {AGADEEM: 1}}, True),
+        ("a face name of a card the deck lists by its full name",
+         {"pieces": ["Agadeem's Awakening", "Heliod, Sun-Crowned"], "minX": {"Agadeem's Awakening": 1}}, False),
+        ("a valid map", {"minX": {"Walking Ballista": 2}}, True),
+        ("an empty map", {"minX": {}}, True),
+        ("an empty list", {"minX": []}, False),
+        ("a list of names", {"minX": ["Walking Ballista"]}, False),
+        ("a number", {"minX": 2}, False),
+        ("on an entry with no kind", {"kind": None, "minX": {"Walking Ballista": 2}}, False),
+        ("an {X} card in the deck, not one of the line's pieces", {"minX": {"Endless One": 1}}, False),
+        ("a piece that is not in the deck", {"pieces": ["Walking Ballista", "Hangarback Walker"],
+                                              "minX": {"Hangarback Walker": 1}}, False),
+        ("a piece with no {X}", {"minX": {"Heliod, Sun-Crowned": 1}}, False),
+        ("zero", {"minX": {"Walking Ballista": 0}}, False),
+        ("negative", {"minX": {"Walking Ballista": -1}}, False),
+        ("a string", {"minX": {"Walking Ballista": "2"}}, False),
+        ("a boolean", {"minX": {"Walking Ballista": True}}, False),
+        ("a float", {"minX": {"Walking Ballista": 2.0}}, False),
+    ]
+
+    def test_the_validator_and_the_exporter_accept_the_same_min_x(self):
+        validator = importlib.import_module("scripts.validate_deck_json")
+        costs = {"Walking Ballista": "{X}{X}", "Heliod, Sun-Crowned": "{2}{W}", "Endless One": "{X}",
+                 "Hangarback Walker": "{X}{X}", "Synthetic Commander": "{9}"}
+        types = {"Walking Ballista": "Artifact Creature — Construct",
+                 "Heliod, Sun-Crowned": "Legendary Enchantment Creature — God",
+                 "Endless One": "Creature — Eldrazi", "Hangarback Walker": "Artifact Creature — Construct",
+                 "Synthetic Commander": "Legendary Creature — Eldrazi"}
+        agadeem = self.AGADEEM
+        index = validator.ScryfallNameIndex(
+            dict({name: name for name in costs}, **{agadeem: agadeem, "Agadeem's Awakening": agadeem}),
+            dict(costs, **{agadeem: "{X}{B}{B}{B}"}))
+        # Both readers get the same deck: the exporter's profiles are every
+        # card the deck lists, Agadeem's Awakening by its full name.
+        decklist = ["Walking Ballista", "Heliod, Sun-Crowned", "Endless One", agadeem]
+        metas = {name: {"type_line": types[name], "mana_cost": costs[name], "oracle_text": "", "colors": [],
+                        "cmc": 0} for name in decklist[:3] + [self.COMMANDER]}
+        metas[agadeem] = {"type_line": "Sorcery // Land", "mana_cost": "{X}{B}{B}{B} // ", "oracle_text": "",
+                          "colors": ["B"], "cmc": 3, "layout": "modal_dfc",
+                          "back_face": {"type_line": "Land", "oracle_text": "{T}: Add {B}."}}
+        profiles = {name: exporter.build_goldfish_profile(name, meta, set(), ["W", "B"], self.COMMANDER)
+                    for name, meta in metas.items()}
+        for label, changes, accepted in self.AGREEMENT_CASES:
+            with self.subTest(label):
+                wincon = {"title": "Loop", "kind": "combo", "cards": ["Walking Ballista", "Heliod, Sun-Crowned"],
+                          "pieces": ["Walking Ballista", "Heliod, Sun-Crowned"]}
+                wincon.update(changes)
+                deck = {"id": "test-deck", "commander": self.COMMANDER, "winConditions": [wincon],
+                        "decklist": [{"name": name} for name in decklist]}
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    deck_file = Path(tmpdir) / "deck.json"
+                    deck_file.write_text(json.dumps(deck))
+                    issues = validator.validate_deck_json([deck_file], index)
+                try:
+                    exporter.extract_combo_lines(deck, profiles)
+                    exported = True
+                except ValueError as error:
+                    self.assertIn("'Loop'", str(error))
+                    exported = False
+                self.assertEqual(([issue.issue_type for issue in issues], exported),
+                                 ([] if accepted else ["invalid_min_x"], accepted))
+
+    def test_the_cast_loop_holds_the_x_piece_cost_for_the_gate(self):
+        """Pinned game. Turn 1-2: Forests and {1} fillers (the gate needs {3}
+        + 4, out of reach). Turn 3: Partner Piece takes the three Forests; the
+        gate is the X piece at X = 2, 4 mana, not payable. Turn 4: four
+        Forests, a {1} filler in hand: casting it would leave 3, so it is held
+        and the gate fires. Turn 5: the gate has fired; the filler is cast."""
+        metadata = dict(self._metadata(), Forest=CastPriorityHoldTests._forest())
+        fillers = [f"Filler {i}" for i in range(4)]
+        bears = [f"Bear {i}" for i in range(10)]
+        for name in fillers:
+            metadata[name] = {"name": name, "type_line": "Sorcery", "oracle_text": "", "mana_cost": "{1}",
+                              "cmc": 1, "colors": [], "color_identity": []}
+        for name in bears:
+            metadata[name] = {"name": name, "type_line": "Sorcery", "oracle_text": "", "mana_cost": "{9}",
+                              "cmc": 9, "colors": [], "color_identity": []}
+        hand = ["Forest", "X Piece", "Partner Piece"] + fillers
+        library = bears + ["Forest"] * 8
+        decklist = hand + library
+        deck_data = {"decklist": [{"name": name} for name in decklist], "winConditions": [dict(self.MINX)]}
+        context = exporter.build_goldfish_context(decklist, deck_data, metadata, self.COMMANDER, ["G"],
+                                                  "synthetic-min-x")
+        self.assertTrue(context["profiles"]["X Piece"]["isInteraction"])
+        casts = defaultdict(list)
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts[turn].append(name)
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter, "commander_mulligan_goldfish", lambda *_: (list(library), list(hand))), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            by_turn, _ = exporter.simulate_goldfish_game(decklist, context, 6)
+        self.assertEqual([casts[turn] for turn in (1, 2, 3, 4, 5)],
+                         [["Filler 0"], ["Filler 1", "Filler 2"], ["Partner Piece"], [], ["Filler 3"]])
+        self.assertEqual([by_turn[turn]["comboLethal"] for turn in (3, 4)], [0, 1])
 
 
 class ControlDeckGoldfishEqualityTests(unittest.TestCase):

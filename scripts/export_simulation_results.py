@@ -700,10 +700,11 @@ CAST_TURN_ACTIVATION_DRAW = {
 # card stays in hand and the next candidate is tried. An X spell is never a
 # mana source (build_goldfish_profile). Combo-line pieces and KEY_COMBOS
 # assembly members are not under this rule: the loop casts them at X = 0, and
-# the combo gate prices its pieces at X = 0 (combine_mana_costs). A commander
-# with {X} (none in the fleet) would fall under this rule and its holds; to be
-# decided when a deck has one. Effects at the paid X, and nothing else: a
-# creature's combat and impact read mana value + X (x_cast_profile), the
+# the combo gate prices its pieces at X = 0, except a piece its line's minX
+# names, priced at that X (owner-approved 2026-11-19, extract_combo_lines). A
+# commander with {X} (none in the fleet) would fall under this rule and its
+# holds; to be decided when a deck has one. Effects at the paid X, and nothing
+# else: a creature's combat and impact read mana value + X (x_cast_profile), the
 # draws below, AMASS_ARMY_ENGINE's amassXNames and TOKEN_MAKER_ENGINE's perX
 # token spells. Other token, life-loss, damage, tutor, pump and proliferate X
 # spells are only re-timed. Floors: convoke,
@@ -2645,9 +2646,13 @@ def land_enters_tapped(rule: tuple, battlefield_lands: list[dict], permanents: l
     raise ValueError(f"unknown land entry rule {rule!r}")
 
 
-def land_colors(profile: dict) -> set[str]:
-    """Every colour a land can make: its atoms, both faces, its board terms."""
-    atoms = list(profile["manaAtoms"]) + [atom for face in profile["landFaces"] or [] for atom in face]
+def land_colors(profile: dict, played: bool = True) -> set[str]:
+    """Every colour a land can make: its atoms, its board terms and, for a
+    land played from the hand, both faces (a Pathway's face is chosen as it
+    is played); a land put onto the battlefield (a search) enters front face
+    up, so only that face counts."""
+    faces = (profile["landFaces"] or []) if played else (profile["landFaces"] or [])[:1]
+    atoms = list(profile["manaAtoms"]) + [atom for face in faces for atom in face]
     for term in profile["manaBoard"]:
         if term[0] == "gate":
             atoms += list(term[2])
@@ -2665,11 +2670,15 @@ def usable_this_turn(profile: dict, tapped: bool) -> bool:
 
 def choose_best_land_index(library: list[str], profiles: dict, commander_colors: list[str],
                            battlefield_lands: list[dict], permanents: list[dict],
-                           candidate_indices: list[int], tapped_test=None) -> int | None:
+                           candidate_indices: list[int], tapped_test=None, *,
+                           to_hand: bool) -> int | None:
     """Choose best land target from library for ramp/fetch effects.
 
     ``tapped_test(name)`` says whether the land would enter tapped; by
     default its own entry rule, with a hand that reveals and beholds nothing.
+    ``to_hand``: the search puts the land into the hand, to be played later
+    (either face of a Pathway counts); otherwise it puts it onto the
+    battlefield, front face up, and only that face counts (land_colors).
     """
     if not candidate_indices:
         return None
@@ -2682,7 +2691,7 @@ def choose_best_land_index(library: list[str], profiles: dict, commander_colors:
     best_score = None
     for idx in candidate_indices:
         profile = profiles[library[idx]]
-        colors = land_colors(profile)
+        colors = land_colors(profile, played=to_hand)
         tapped = (tapped_test(library[idx]) if tapped_test is not None
                   else land_enters_tapped(profile["landEntry"], battlefield_lands, permanents,
                                           profiles, []))
@@ -2703,14 +2712,17 @@ def choose_best_land_index(library: list[str], profiles: dict, commander_colors:
 
 def select_ramp_targets(library: list[str], profiles: dict, commander_colors: list[str],
                         battlefield_lands: list[dict], permanents: list[dict],
-                        ramp_profile: dict, count: int, tapped_test=None) -> list[str]:
+                        ramp_profile: dict, count: int, tapped_test=None, *,
+                        to_hand: bool) -> list[str]:
     """Take from the library the land cards a land search finds (M8), at
     most `count`: one per named type for "a Forest card and a Plains card";
     for "share a land type" the most lands of one basic land type (a legal
     set), the type whose best land scores best on a tie. Land types are the
     printed ones of the card's front face, what it is in the library (a card
     there has no granted type, and a modal DFC whose front is a spell is not
-    a land card)."""
+    a land card). ``to_hand``: where the search puts the lands, which decides
+    the face they are scored by (choose_best_land_index); ``tapped_test``
+    whether each would enter tapped."""
     if count <= 0:
         return []
 
@@ -2723,7 +2735,7 @@ def select_ramp_targets(library: list[str], profiles: dict, commander_colors: li
     def take(types: set) -> str | None:
         candidates = [idx for idx, name in enumerate(library) if fits(name, types)]
         best_idx = choose_best_land_index(library, profiles, commander_colors, battlefield_lands,
-                                          permanents, candidates, tapped_test)
+                                          permanents, candidates, tapped_test, to_hand=to_hand)
         return None if best_idx is None else library.pop(best_idx)
 
     if ramp_profile["sharedType"]:
@@ -2735,11 +2747,12 @@ def select_ramp_targets(library: list[str], profiles: dict, commander_colors: li
         tied = [land_type for land_type, n in sizes.items() if n == size]
         leaders = {choose_best_land_index(
             library, profiles, commander_colors, battlefield_lands, permanents,
-            [idx for idx, name in enumerate(library) if fits(name, {land_type})], tapped_test): land_type
+            [idx for idx, name in enumerate(library) if fits(name, {land_type})], tapped_test,
+            to_hand=to_hand): land_type
             for land_type in tied}
         land_type = leaders[choose_best_land_index(library, profiles, commander_colors,
                                                    battlefield_lands, permanents, sorted(leaders),
-                                                   tapped_test)]
+                                                   tapped_test, to_hand=to_hand)]
         return [take({land_type}) for _ in range(size)]
     wanted = ([{land_type} for land_type in ramp_profile["perType"]][:count]
               if ramp_profile["perType"] else [ramp_profile["allowedSubtypes"]] * count)
@@ -3312,7 +3325,8 @@ def combine_mana_costs(costs: list[dict]) -> dict:
     """Sum a list of pip-cost dicts into one combined cost.
 
     Used to build a synthetic mana cost for casting multiple combo pieces in one turn.
-    Drops the X count: combo pieces with X are priced at X = 0.
+    Drops the X count: an X piece comes in already priced (extract_combo_lines:
+    at its line's minX, else at X = 0).
     """
     combined = {
         "generic": 0, "W": 0, "U": 0, "B": 0, "R": 0, "G": 0, "C": 0, "total": 0, "X": 0,
@@ -3360,7 +3374,7 @@ def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
     """Parse winConditions[] entries with kind=='combo' into combo-line specs.
 
     Each combo line: {pieces: [name], costs: [pip_dict], permanentPieces: set[name],
-    startPiece: name | None}.
+    startPiece: name | None, minX: {name: int}}.
     Pieces not found in profiles are skipped (with the whole line dropped if any piece is missing).
 
     ``startPiece`` is the optional piece the loop starts by casting (e.g. Sensei's
@@ -3370,28 +3384,55 @@ def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
     turn before a partner, or could only come from reanimation, the line is not ready
     that turn. A ``startPiece`` that is not one of the line's ``pieces`` raises
     ``ValueError``.
+
+    ``minX`` (owner-approved 2026-11-19, built 2026-11-21) maps a piece with {X} in its
+    cost to the X it is priced at: the cheapest direct cast with which the line's listed
+    pieces work (Walking Ballista beside Heliod, Sun-Crowned: 2; beside Mikaeus, the
+    Unhallowed: 1). Its cost in ``costs`` is priced at that X (x_spell_cost: {X}{X} at
+    X = 2 is 4 mana), and ``combo_line_costs`` takes the piece only from the hand or
+    through a tutor the tags read as to-hand (combo_ready_this_turn states the paths
+    and the limits). ``minX`` must be a mapping, on a ``kind: "combo"`` entry whose
+    ``pieces`` is a list, whose keys are pieces of that line named exactly as the deck
+    lists them (a face name is not the card's name) with {X} in their mana cost, and
+    whose values are positive integers; anything else raises ``ValueError``
+    (validate_deck_json.py reports the same inputs).
     """
     lines = []
     for wincon in deck_data.get("winConditions", []) or []:
+        title = wincon.get("title")
+        if "minX" in wincon and wincon.get("kind") != "combo":
+            raise ValueError(f"winConditions[] {title!r}: minX is read only on a kind 'combo' entry")
         if wincon.get("kind") != "combo":
             continue
+        if "minX" in wincon and not isinstance(wincon.get("pieces"), list):
+            raise ValueError(f"winConditions[] combo {title!r}: minX needs pieces to be a list")
         pieces = wincon.get("pieces") or []
         start_piece = wincon.get("startPiece")
         if start_piece is not None and start_piece not in pieces:
             raise ValueError(
-                f"winConditions[] combo {wincon.get('title')!r}: startPiece "
+                f"winConditions[] combo {title!r}: startPiece "
                 f"{start_piece!r} is not one of its pieces")
+        min_x = wincon.get("minX", {})
+        if not isinstance(min_x, dict):
+            raise ValueError(f"winConditions[] combo {title!r}: minX {min_x!r} is not a mapping")
+        for piece, x in min_x.items():
+            if (piece not in pieces or piece not in profiles or type(x) is not int or x < 1
+                    or not profiles[piece]["manaCost"]["X"]):
+                raise ValueError(
+                    f"winConditions[] combo {title!r}: minX {piece!r}: {x!r} must be a positive "
+                    "integer for one of its pieces that is in the deck and has {X} in its mana cost")
         if not pieces:
             continue
         if not all(p in profiles for p in pieces):
             continue
-        costs = [profiles[p]["manaCost"] for p in pieces]
+        costs = [x_spell_cost(profiles[p]["manaCost"], min_x.get(p, 0)) for p in pieces]
         permanent_pieces = {p for p in pieces if profiles[p].get("isPermanent")}
         lines.append({
             "pieces": list(pieces),
             "costs": costs,
             "permanentPieces": permanent_pieces,
             "startPiece": start_piece,
+            "minX": dict(min_x),
         })
     return lines
 
@@ -3538,7 +3579,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
     def fetch_nets_a_land(name: str) -> bool:
         search = profiles[name]["landFetch"]
         found = len(select_ramp_targets([card for card in decklist if card != name], profiles,
-                                        commander_colors, [], [], search, search["count"]))
+                                        commander_colors, [], [], search, search["count"], to_hand=False))
         return found - (1 if profiles[name]["isLand"] else 0) >= 1
 
     reserve = ((set(token_makers["activatedMakers"]) if token_makers else set())
@@ -3709,7 +3750,7 @@ def crack_target(name: str, library: list[str], profiles: dict, commander_colors
     test = lambda target: crack_target_tapped(crack, target, battlefield_lands, permanents,  # noqa: E731
                                               profiles, hand)
     found = select_ramp_targets(search_in, profiles, commander_colors, battlefield_lands,
-                                permanents, crack, 1, tapped_test=test)
+                                permanents, crack, 1, tapped_test=test, to_hand=False)
     if not found:
         return None, True
     return found[0], test(found[0])
@@ -3751,7 +3792,7 @@ def land_play_score(name: str, hand: list[str], profiles: dict, battlefield_land
     if profile["landCrack"]:
         target, tapped = crack_target(name, list(library), profiles, commander_colors,
                                       battlefield_lands, permanents, rest_of_hand, take=False)
-        colors = land_colors(profiles[target]) if target else set()
+        colors = land_colors(profiles[target], played=False) if target else set()
     else:
         colors = land_colors(profile)
         tapped = land_enters_tapped(profile["landEntry"], battlefield_lands, permanents,
@@ -4259,6 +4300,29 @@ def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
     partner lands first and the line waits a turn. The same happens when a cascade
     hit or a later draw brings a partner after the start piece.
 
+    A piece the line's ``minX`` names (owner-approved 2026-11-19, built 2026-11-21) is
+    priced at that X, the cheapest direct cast with which the line's listed pieces
+    work. It is supplied from the hand or by a tutor the tags read as to-hand: the
+    tutor's cost plus the piece at that X, a bargain tutor (Beseech the Mirror) by its
+    paid route, as the card goes to the hand when it is not cast free. Every card with
+    the recursion role, a to-graveyard tutor and a bargain free cast do not supply it
+    (the free cast pays no X; the others are read as putting it onto the battlefield
+    with X = 0). Known limits: recursion that returns the card to the hand (Elena,
+    Turk Recruit and Eternal Witness by an enter trigger, Junk Diver, Myr Retriever
+    and Scrap Trawler on death) is excluded with the rest, an under-read; a tutor the
+    tags read as to-hand whose text does not put a castable copy into the hand that
+    turn (it puts the card onto the battlefield, on top of the library, or cannot find
+    it: Oswald Fiddlebender, Urza's Saga, Enlightened Tutor, Fiend Artisan, Birthing
+    Pod) still supplies it, an over-read; both wait for per-card destination tags. A
+    land the tags read as a tutor (Inventors' Fair) supplies it from the hand at no
+    cost, its activation and condition unpriced, as for any piece. A ``minX`` piece
+    already on the battlefield is read as any other piece, whatever X it entered with:
+    it costs nothing, except as a ``startPiece`` out since an earlier turn, which is
+    cast again at its ``minX`` price (the start-piece rule above). Walking Ballista,
+    the only such piece in the fleet, reads as interaction, so the cast loop never
+    casts it, and the free puts the goldfish models (cascade, which declines
+    interaction, hatch and deploy) are in no deck that holds it.
+
     Returns True if any combo line has all pieces resolved (via presence or substitution)
     AND the synthetic combined mana cost is payable from ``pool`` — the mana still
     unspent this turn after the main-phase casts (DEC-937), not a fresh turn pool.
@@ -4316,6 +4380,8 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
         reanim_pool = list(reanims_in_hand)
         line_ok = True
         start_piece = line["startPiece"]
+        # Pieces cast with X paid: only the hand and to-hand tutors supply them.
+        min_x = line["minX"]
         start_recast = False
         if start_piece in entry_index:
             start_idx = entry_index[start_piece]
@@ -4338,9 +4404,11 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
             piece_mv = piece_profile.get("manaCost", {}).get("total", 0)
             piece_is_permanent = piece_profile.get("isPermanent", False)
 
-            # Path 1: bargain free-cast (e.g. Beseech the Mirror) — to_hand only
+            # Path 1: bargain free-cast (e.g. Beseech the Mirror) — to_hand only;
+            # never for a minX piece (cast without paying its mana cost, X is 0):
+            # path 2 takes its paid route to the hand instead.
             bargain_idx = None
-            if bargainable:
+            if bargainable and piece not in min_x:
                 for idx, tname in enumerate(tutor_pool):
                     meta = tutor_meta[tname]
                     if not meta["free_cast_via_bargain"]:
@@ -4367,8 +4435,10 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
             chosen_reanim_idx = None  # only set for to_graveyard mode
             for idx, tname in enumerate(tutor_pool):
                 meta = tutor_meta[tname]
-                if meta["free_cast_via_bargain"]:
-                    continue  # reserved for bargain path
+                if meta["free_cast_via_bargain"] and piece not in min_x:
+                    # Reserved for the bargain path; a minX piece takes the paid
+                    # route: not cast free, the card goes to the hand.
+                    continue
                 if meta["mv_cap"] is not None and piece_mv > meta["mv_cap"]:
                     continue
                 if not piece_type_matches(piece_types, meta["targets"]):
@@ -4377,8 +4447,8 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
                     continue
                 mode = meta.get("mode", "to_hand")
                 if mode == "to_graveyard":
-                    if piece == start_piece:
-                        continue  # a start piece must be cast, not reanimated
+                    if piece == start_piece or piece in min_x:
+                        continue  # cast, not reanimated (a minX piece would return with X = 0)
                     if not piece_is_permanent:
                         continue
                     if not reanim_pool:
@@ -4401,8 +4471,10 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
                 continue
 
             # Path 3: reanimation for permanent pieces (creature/planeswalker etc.);
-            # never for a start piece, which must be cast to start the loop.
-            if piece_is_permanent and reanim_pool and piece != start_piece:
+            # never for a start piece, which must be cast to start the loop, nor
+            # for a minX piece: every recursion card is read as returning it to the
+            # battlefield, with X = 0 (a return to the hand is a known limit).
+            if piece_is_permanent and reanim_pool and piece != start_piece and piece not in min_x:
                 rname = reanim_pool.pop(0)
                 to_cast_costs.append(profiles[rname]["manaCost"])
                 # piece cast cost replaced by reanim cost (piece comes from graveyard)
@@ -4576,11 +4648,13 @@ def metrics_from_board(turn: int, permanents: list[dict], profiles: dict, comman
 
 def put_land_onto_battlefield(land_name: str, turn: int, tapped: bool, permanents: list[dict],
                               battlefield_lands: list[dict], profiles: dict,
-                              commander_colors: list[str]) -> dict:
+                              commander_colors: list[str], played: bool = True) -> dict:
     """Record a land entering the goldfish battlefield and return its record.
 
-    A card with two land faces (a Pathway) enters as the face that adds a
-    commander colour not yet among the lands, the front on a tie (M6). A
+    A card with two land faces (a Pathway) played from the hand enters as the
+    face that adds a commander colour not yet among the lands, the front on a
+    tie (M6); put onto the battlefield (``played=False``: a land search, a
+    fetch land's crack) it enters front face up. A
     Saga's mana lasts its ``manaTurns``; then it leaves (leave_battlefield).
     A land that enters tapped is tapped until the next untap step (one
     state for every own-{T} check). The record carries the land's one-shot
@@ -4588,7 +4662,9 @@ def put_land_onto_battlefield(land_name: str, turn: int, tapped: bool, permanent
     """
     profile = profiles[land_name]
     atoms = profile["manaAtoms"]
-    if profile["landFaces"]:
+    if profile["landFaces"] and not played:
+        atoms = profile["landFaces"][0]
+    elif profile["landFaces"]:
         present = set().union(*(land["colors"] for land in battlefield_lands))
         front = profile["landFaces"][0]
         atoms = max(profile["landFaces"], key=lambda face: (
@@ -4634,15 +4710,21 @@ def fetch_lands(search: dict, count: int, turn: int, pool: "GoldfishManaPool",
                 library: list[str], hand: list[str], permanents: list[dict], battlefield_lands: list[dict],
                 profiles: dict, commander_colors: list[str]) -> int:
     """Put `count` lands a land search finds onto the battlefield (M8); a land
-    enters tapped when the search or the land's own text says so, and gives
+    enters tapped when the search or the land's own text says so, read
+    against the cards in ``hand`` (a Snarl's reveal), and front face up (a
+    Pathway); the lands are chosen by that state and that face. Each gives
     up the lands its entry takes as a land that is played does (Simic Growth
     Chamber returns one to ``hand``; give_up_lands: the mana of a land tapped
     first and not yet used this turn floats). The pool is read from the
     board again (refresh_pool: an untapped land's mana joins this turn's
     pool, with the extras and grants already out). Returns how many
     entered."""
+    def enters_tapped(land_name: str) -> bool:
+        return search["entersTapped"] or land_enters_tapped(
+            profiles[land_name]["landEntry"], battlefield_lands, permanents, profiles, hand)
+
     fetched = select_ramp_targets(library, profiles, commander_colors, battlefield_lands,
-                                  permanents, search, count)
+                                  permanents, search, count, tapped_test=enters_tapped, to_hand=False)
     for land_name in fetched:
         if profiles[land_name]["landEntryCost"]:
             # Their unused mana is already in the pool (and in availableMana):
@@ -4650,10 +4732,8 @@ def fetch_lands(search: dict, count: int, turn: int, pool: "GoldfishManaPool",
             pool.sources.extend(floated(atom) for atom in give_up_lands(
                 profiles[land_name]["landEntryCost"], turn, hand, permanents, battlefield_lands, profiles)
                 if atom_source_id(atom) not in pool.tapped)
-        tapped = search["entersTapped"] or land_enters_tapped(
-            profiles[land_name]["landEntry"], battlefield_lands, permanents, profiles, [])
-        put_land_onto_battlefield(land_name, turn, tapped, permanents, battlefield_lands,
-                                  profiles, commander_colors)
+        put_land_onto_battlefield(land_name, turn, enters_tapped(land_name), permanents, battlefield_lands,
+                                  profiles, commander_colors, played=False)
     refresh_pool(pool, permanents, profiles, turn)
     return len(fetched)
 
@@ -4672,7 +4752,7 @@ def crack_fetch_land(name: str, turn: int, library: list[str], hand: list[str],
         return put_land_onto_battlefield(name, turn, False, permanents, battlefield_lands, profiles,
                                          commander_colors)
     return put_land_onto_battlefield(target, turn, tapped, permanents, battlefield_lands, profiles,
-                                     commander_colors)
+                                     commander_colors, played=False)
 
 
 def resolve_cast_effects(name: str, profile: dict, turn: int, pool: "GoldfishManaPool",
@@ -4688,8 +4768,9 @@ def resolve_cast_effects(name: str, profile: dict, turn: int, pool: "GoldfishMan
         ramp = profile["landRamp"]
         fetch_lands(ramp, ramp["count"], turn, pool, library, hand, permanents, battlefield_lands,
                     profiles, commander_colors)
+        # Lands put into the hand are played later: either face counts.
         hand.extend(select_ramp_targets(library, profiles, commander_colors, battlefield_lands,
-                                        permanents, ramp, ramp["toHand"]))
+                                        permanents, ramp, ramp["toHand"], to_hand=True))
 
     if profile["isPermanent"]:
         record = {
@@ -5135,6 +5216,28 @@ def imprint_on_entry(name: str, profile: dict, turn: int, pool: "GoldfishManaPoo
     refresh_pool(pool, permanents, profiles, turn)
 
 
+def land_fetch_payment(permanent: dict, turn: int, pool: "GoldfishManaPool", library: list[str],
+                       permanents: list[dict], battlefield_lands: list[dict], profiles: dict,
+                       commander_colors: list[str], keep=()) -> "GoldfishManaPool | None":
+    """The payment of a land-fetching permanent's activation out of ``pool``
+    (find_payment, leaving ``keep`` payable), or None when it cannot be
+    activated: a creature's own {T} ability is summoning sick the turn it
+    enters (Embodiment of Spring; a fetch without {T} is not: Sakura-Tribe
+    Elder), the search must put more lands onto the battlefield than it takes
+    away, and with {T} in the cost the permanent must be untapped and its own
+    mana cannot pay. activate_land_fetches pays it; the attack declaration
+    keeps a fetch creature home by the same test (fetches_instead)."""
+    search = profiles[permanent["name"]]["landFetch"]
+    if (search["tapsSelf"] and "Creature" in profiles[permanent["name"]]["typeWords"]
+            and permanent.get("enteredTurn") == turn):
+        return None
+    found = len(select_ramp_targets(list(library), profiles, commander_colors, battlefield_lands,
+                                    permanents, search, search["count"], to_hand=False))
+    if found - (1 if permanent["kind"] == "land" else 0) < 1:
+        return None
+    return find_payment(pool, search["cost"], keep, taps=permanent if search["tapsSelf"] else None)
+
+
 def activate_land_fetches(turn: int, pool: "GoldfishManaPool", library: list[str], hand: list[str],
                           permanents: list[dict], battlefield_lands: list[dict], profiles: dict,
                           commander_colors: list[str]) -> "GoldfishManaPool":
@@ -5150,22 +5253,13 @@ def activate_land_fetches(turn: int, pool: "GoldfishManaPool", library: list[str
         search = profiles[permanent["name"]]["landFetch"]
         if search is None or not any(p is permanent for p in permanents):
             continue
-        if (search["tapsSelf"] and "Creature" in profiles[permanent["name"]]["typeWords"]
-                and permanent.get("enteredTurn") == turn):
-            # A creature's own {T} ability is summoning sick the turn it
-            # enters (Embodiment of Spring); a fetch without {T} is not
-            # (Sakura-Tribe Elder).
-            continue
         refresh_pool(pool, permanents, profiles, turn)
-        found = len(select_ramp_targets(list(library), profiles, commander_colors,
-                                        battlefield_lands, permanents, search, search["count"]))
-        if found - (1 if permanent["kind"] == "land" else 0) < 1:
+        paid = land_fetch_payment(permanent, turn, pool, library, permanents, battlefield_lands, profiles,
+                                  commander_colors)
+        if paid is None:
             continue
-        left = spend_mana(pool, search["cost"], permanents, battlefield_lands, profiles,
-                          taps=permanent if search["tapsSelf"] else None)
-        if left is None:
-            continue
-        pool = left
+        pool = spend_mana(pool, search["cost"], permanents, battlefield_lands, profiles,
+                          taps=permanent if search["tapsSelf"] else None, paid=paid)
         leave_battlefield(permanent, permanents, battlefield_lands)
         fetch_lands(search, search["count"], turn, pool, library, hand, permanents, battlefield_lands,
                     profiles, commander_colors)
@@ -6092,7 +6186,8 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
         # reachable gate, or a held Aggravated Assault, needs is kept back (the
         # most combat attacks first); a creature that attacked pays for nothing
         # afterwards with mana its own {T} makes (Urza's mana taps other
-        # artifacts: it stays).
+        # artifacts: it stays); a creature whose {T} land fetch the turn can
+        # pay stays home to fetch (fetches_instead).
         refresh()
         board_now = {permanent["name"] for permanent in permanents}
         paid_combat = (combat_modifiers is not None
@@ -6113,14 +6208,37 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
             return pool.without(lambda atom: atom_source_id(atom) not in gone)
 
         def held_reach(test_pool: "GoldfishManaPool") -> tuple:
-            return tuple(any(test_pool.can_cast(cost) for cost in costs) for costs in combat_keep)
+            return (tuple(any(test_pool.can_cast(cost) for cost in costs) for costs in combat_keep)
+                    + tuple(test_pool.lasting().can_cast(cost) for cost in fetch_keep))
 
         def loses_hold(baseline: tuple, attacking: list[dict]) -> bool:
             return any(was and not now for was, now in zip(baseline, held_reach(after_attack(attacking))))
 
+        def fetches_instead(permanent: dict) -> bool:
+            """A creature with a {T} land fetch (Embodiment of Spring) stays
+            home when the end of the turn can activate it: by the test the
+            activation itself uses (land_fetch_payment), on the lasting mana it
+            is paid from (one-shot mana such as Lotus Petal's is not), leaving
+            the holds payable (the reachable gates and a held Aggravated
+            Assault). An attack would leave it tapped. A creature with
+            vigilance attacks and fetches."""
+            profile = profiles[permanent["name"]]
+            search = profile["landFetch"]
+            return bool(search and search["tapsSelf"] and not profile["vigilance"]
+                        and land_fetch_payment(permanent, turn, pool.lasting(), library, permanents,
+                                               battlefield_lands, profiles, commander_colors, combat_keep)
+                        is not None)
+
+        fetch_home = {id(p) for p in ready_attackers(permanents, turn) if fetches_instead(p)}
+        # The fetch of a creature kept home joins what the attackers must leave
+        # payable, as the holds do, read on the lasting mana the end of the
+        # turn pays it from (held_reach): a mana creature whose {T} mana it
+        # needs (Llanowar Elves) stays home too.
+        fetch_keep = [profiles[p["name"]]["landFetch"]["cost"]
+                      for p in ready_attackers(permanents, turn) if id(p) in fetch_home]
         candidates_to_attack = [permanent for permanent in ready_attackers(permanents, turn)
                                 if permanent["name"] not in excluded_attackers
-                                and not permanent.get("tapped")]
+                                and not permanent.get("tapped") and id(permanent) not in fetch_home]
         first_attackers = candidates_to_attack
         hold_baseline = held_reach(pool)
         if any(hold_baseline) and loses_hold(hold_baseline, candidates_to_attack):
@@ -6150,7 +6268,8 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
                 held_home = {atom_source_id(atom) for atom in pool.sources} & {
                     id(p) for p in candidates_to_attack if p not in first_attackers}
                 attackers = [p for p in ready_attackers(permanents, turn)
-                             if p["name"] not in excluded_attackers and id(p) not in held_home]
+                             if p["name"] not in excluded_attackers and id(p) not in held_home
+                             and id(p) not in fetch_home]
             any_attacker = any_attacker or bool(attackers)
             for permanent in attackers:
                 if not profiles[permanent["name"]]["vigilance"]:
@@ -6404,7 +6523,8 @@ GOLDFISH_MANA_METHODOLOGY = (
     "mana its own text gives a pilot on a normal turn, using only itself and what the goldfish has on"
     " its own battlefield; a wording the parser is known not to read stops the export. The face on "
     "the battlefield is read (a modal DFC with a land back is played as its land face; a Pathway "
-    "enters as the face that adds a commander colour the lands lack), without reminder text; an "
+    "played from the hand enters as the face that adds a commander colour the lands lack, one a "
+    "search or a fetch land puts onto the battlefield front face up), without reminder text; an "
     "ability granted to a group the card belongs to counts for the card itself, the grant's subject "
     "read in full (\"Other creatures you control have\" gives the card nothing); basic land types make "
     "their colour, and a land that gives every land a type (Urborg, Tomb of Yawgmoth) or a permanent "
@@ -6735,6 +6855,21 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "cost is paid again; if it entered this turn before a partner, or could only "
             "come from reanimation, the line is not ready that turn."
         )
+    priced_x = [f"{piece} at X = {x}" for line in combo_lines for piece, x in line["minX"].items()]
+    if priced_x:
+        section["methodology"] += (
+            " A combo line's X piece (winConditions[].minX, owner-approved 2026-11-19) is "
+            "priced at the X of the cheapest direct cast with which the line's listed pieces "
+            "work: " + ", ".join(priced_x) + " (each {X} in its cost is X mana). It is "
+            "supplied from the hand or by a tutor the tags read as to-hand (a bargain tutor "
+            "by its paid route to the hand); a card with the recursion role, a tutor to the "
+            "graveyard and a bargain free cast do not supply it. Known limits: recursion that "
+            "returns the card to the hand is excluded with the rest (an under-read), a tutor "
+            "the tags read as to-hand whose text does not put a castable copy into the hand "
+            "that turn (it puts the card onto the battlefield, on top of the library, or "
+            "cannot find it) still supplies it (an over-read), and an X piece already on the "
+            "battlefield counts whatever X it entered with."
+        )
     if x_spells:
         # Only this deck's own X_SPELL_DRAW cards, in the table's words.
         draws = ", ".join(f"{name} {X_SPELL_DRAW[name][0]}"
@@ -6748,7 +6883,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "coloured pips and the holds above, with no mana-source exemption; {X}{X} "
             f"costs two per X. Below X = {X_SPELL_MIN_X} it stays in hand and the next "
             "spell is tried. Combo-line pieces and KEY_COMBOS assembly members are still "
-            "cast at X = 0, and the combo gate prices its pieces at X = 0. "
+            "cast at X = 0, and the combo gate prices its pieces at X = 0"
+            + (" except the X pieces above" if priced_x else "") + ". "
             "Credited at the paid X: a creature's combat, and a threat creature's pressure "
             "score, read mana value + X (capped at 8, keyword bonus as before)"
             + (f"; cards drawn: {draws}" if draws else "")

@@ -2,9 +2,9 @@
 """Validate commander deck JSON card references.
 
 Checks that every card-name reference resolves against the local Scryfall
-oracle mirror, then checks that category/highlight/synergy/win-condition
-references point at cards actually present in the deck. An optional
-`candidate_pins` field must be a list of objects with a non-empty `name`.
+oracle mirror and that category/highlight/synergy/win-condition references
+point at cards in the deck; `candidate_pins` must list objects with a non-empty
+`name`, and a combo line's `minX` must map its in-deck {X}-cost pieces to integers >= 1.
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ import argparse
 import json
 import sys
 from collections.abc import Iterable, Iterator, Mapping, Sequence
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -61,9 +61,15 @@ class ValidationIssue:
 @dataclass(frozen=True)
 class ScryfallNameIndex:
     canonical_by_alias: dict[str, str]
+    # Front-face mana cost by canonical name, for the win-condition minX check.
+    mana_cost_by_canonical: dict[str, str] = field(default_factory=dict)
 
     def resolve(self, name: str) -> str | None:
         return self.canonical_by_alias.get(name)
+
+    def mana_cost(self, name: str) -> str:
+        """The front-face mana cost of the card ``name`` resolves to ("" if none)."""
+        return self.mana_cost_by_canonical.get(self.resolve(name) or "", "")
 
 
 def available_deck_paths(commanders_dir: Path = COMMANDERS_DIR) -> list[Path]:
@@ -94,17 +100,22 @@ def _index_card_name(index: dict[str, str], canonical: str, alias: str | None) -
 
 
 def load_scryfall_name_index(mirror_file: Path = MIRROR_FILE) -> ScryfallNameIndex:
-    """Load exact Scryfall card names and face names from the local mirror."""
+    """Load exact Scryfall card names and face names, and each card's front-face
+    mana cost, from the local mirror."""
     cards = json.loads(mirror_file.read_text())
     canonical_by_alias: dict[str, str] = {}
+    mana_cost_by_canonical: dict[str, str] = {}
     for card in cards:
         canonical = card.get("name")
         if not canonical:
             continue
         _index_card_name(canonical_by_alias, canonical, canonical)
-        for face in card.get("card_faces") or []:
+        faces = card.get("card_faces") or []
+        for face in faces:
             _index_card_name(canonical_by_alias, canonical, face.get("name"))
-    return ScryfallNameIndex(canonical_by_alias)
+        mana_cost = card.get("mana_cost") or (faces[0].get("mana_cost") if faces else "") or ""
+        mana_cost_by_canonical[canonical] = mana_cost.split(" // ")[0]
+    return ScryfallNameIndex(canonical_by_alias, mana_cost_by_canonical)
 
 
 def _nested_value(root: Mapping[str, object], dotted_path: str) -> object:
@@ -205,6 +216,40 @@ def iter_candidate_pin_issues(
             yield ValidationIssue("invalid_candidate_pins", reference, detail)
 
 
+def iter_min_x_issues(
+    deck: Mapping[str, object],
+    deck_file: Path,
+    scryfall_index: ScryfallNameIndex,
+    deck_names: set[str],
+) -> Iterator[ValidationIssue]:
+    """Yield issues for each win condition's optional `minX`: on a `kind: "combo"`
+    entry whose `pieces` is a list, a mapping from pieces of that line named exactly as
+    the deck lists them (`deck_names`: commander, partner, decklist; a face name does
+    not match) whose front-face mana cost has {X} to positive integers (the X each is
+    priced at; export_simulation_results.extract_combo_lines raises on the same inputs)."""
+    deck_id = str(deck.get("id") or deck_file.parent.name)
+    wincons = deck.get("winConditions")
+    if not isinstance(wincons, list):
+        return
+    for index, wincon in enumerate(wincons):
+        if not isinstance(wincon, Mapping) or "minX" not in wincon:
+            continue
+        detail = (f"Deck {deck_id}: winConditions[{index}].minX must be on a kind \"combo\" entry with a list of "
+                  "pieces and map pieces of that line, named as the deck lists them, whose mana cost has {X} to "
+                  "positive integers.")
+        min_x = wincon["minX"]
+        pieces = wincon.get("pieces")
+        if not isinstance(min_x, Mapping) or wincon.get("kind") != "combo" or not isinstance(pieces, list):
+            reference = CardReference(deck_id, deck_file, f"winConditions[{index}].minX", repr(min_x), False)
+            yield ValidationIssue("invalid_min_x", reference, detail)
+            continue
+        for piece, x in min_x.items():
+            if (piece not in pieces or piece not in deck_names
+                    or type(x) is not int or x < 1 or "{X}" not in scryfall_index.mana_cost(piece)):
+                reference = CardReference(deck_id, deck_file, f"winConditions[{index}].minX", piece, False)
+                yield ValidationIssue("invalid_min_x", reference, detail)
+
+
 def _canonical_deck_card_names(
     deck: Mapping[str, object],
     deck_file: Path,
@@ -250,6 +295,8 @@ def validate_deck_json(
                 )
 
         issues.extend(iter_candidate_pin_issues(deck, deck_file))
+        deck_names = {reference.name for reference in iter_deck_core_references(deck, deck_file)}
+        issues.extend(iter_min_x_issues(deck, deck_file, scryfall_index, deck_names))
 
     return issues
 
@@ -269,7 +316,8 @@ def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(
         description=(
             "Fail if deck.json card references are absent from the local Scryfall "
-            "mirror or point outside the decklist, or if candidate_pins is malformed."
+            "mirror or point outside the decklist, or if candidate_pins or a "
+            "win condition's minX is malformed."
         )
     )
     parser.add_argument(
