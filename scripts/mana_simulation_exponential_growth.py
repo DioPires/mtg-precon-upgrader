@@ -452,8 +452,10 @@ class GameState:
         return pool
 
     def play_turn(self, turn_number: int):
-        if turn_number > 1:
-            self.draw(1)
+        # Draw step, turn 1 included: the simulation models a four-player
+        # free-for-all Commander game, in which no player skips the draw step
+        # of their first turn (CR 103.8c).
+        self.draw(1)
 
         self.tapped_lands.clear()
         self.dorks_active = list(self.battlefield_dorks)

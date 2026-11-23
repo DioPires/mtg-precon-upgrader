@@ -2288,20 +2288,21 @@ class DrawEngineGoldfishTests(unittest.TestCase):
         return self._library_sizes(deck_id, [card] + ["Island"] * 6, ["Island"] * 92)
 
     def test_jace_draws_three_at_the_start_of_each_later_turn(self):
-        # Turns 2-4 draw 1 (draw step); Jace adds nothing on turn 4, his cast
-        # turn; turns 5-10 draw 1 + 3.
+        # Turns 1-4 draw 1 (the draw step, turn 1 included: CR 103.8c); Jace
+        # adds nothing on turn 4, his cast turn; turns 5-10 draw 1 + 3.
         for deck_id in ("tidal-legion", "gathering-shadow"):
             with self.subTest(deck=deck_id):
                 self.assertEqual(
                     self._engine_card_sizes("The Theorist, Jace Beleren", deck_id),
-                    [92, 91, 90, 89, 85, 81, 77, 73, 69, 65, 65])
+                    [91, 90, 89, 88, 84, 80, 76, 72, 68, 64, 64])
 
     def test_one_ring_sequence_is_unchanged(self):
-        # Cast on turn 4 and draws 1 then (89 -> 88); turns 5, 6, 7 draw the
-        # draw step plus activations 2, 3, 4; then the draw step alone.
+        # Turns 1-4 draw 1 (the draw step). Cast on turn 4 and draws 1 then
+        # (88 -> 87); turns 5, 6, 7 draw the draw step plus activations 2, 3,
+        # 4; then the draw step alone.
         self.assertEqual(
             self._engine_card_sizes("The One Ring", "gandalf-party-guest"),
-            [92, 91, 90, 89, 85, 81, 76, 75, 74, 73, 73])
+            [91, 90, 89, 88, 84, 80, 75, 74, 73, 72, 72])
 
     def test_jace_cards_arrive_before_the_upkeep_tempt(self):
         # gathering-shadow: Call of the Ring tempts at upkeep while the
@@ -2310,42 +2311,44 @@ class DrawEngineGoldfishTests(unittest.TestCase):
         # and four Islands; library: 40 Zero Trinkets ({0}, cast the turn they
         # are drawn, so the hand empties every turn); commander: Probe
         # Commander ({5}). Swamp turn 1, an Island each turn 2-5; Call of the
-        # Ring turn 2, Jace turn 4, the commander turn 5.
-        # Turn 5 (commander not out yet, no tempt): 37 - 3 - 1 = 33.
+        # Ring turn 2, Jace turn 4, the commander turn 5. Turns 1-4 each draw
+        # a Trinket in the draw step: 39, 38, 37, 36.
+        # Turn 5 (commander not out yet, no tempt): 36 - 3 - 1 = 32.
         # Turn 6: the hand is empty after turn 5; Jace's 3 cards make it 3, so
         # the upkeep tempt does not convert, and the draw step adds 1:
-        # 33 - 3 - 1 = 29. Were the tempt read before Jace's cards, it would
+        # 32 - 3 - 1 = 28. Were the tempt read before Jace's cards, it would
         # convert on the empty hand (draw 4), then Jace 3 and the draw step 1:
-        # 25.
+        # 24.
         sizes = self._library_sizes(
             "gathering-shadow",
             hand=["The Theorist, Jace Beleren", "Call of the Ring", "Swamp",
                   "Island", "Island", "Island", "Island"],
             library=["Zero Trinket"] * 40,
             commander="Probe Commander", colors=("U", "B"))
-        self.assertEqual(sizes[:6], [40, 39, 38, 37, 33, 29])
+        self.assertEqual(sizes[:6], [39, 38, 37, 36, 32, 28])
 
     def test_the_upkeep_tempt_reads_the_hand_before_the_draw_step(self):
         # gathering-shadow, no Jace. Hand: Call of the Ring, a Swamp and five
         # Islands; library: 39 Zero Trinkets with an Island on top;
-        # commander: Probe Commander ({5}). Swamp turn 1; turn 2 draws the
-        # Island, plays an Island and casts Call of the Ring; turns 3-5 each
-        # draw a Trinket, play an Island and cast the Trinket; turn 5's five
-        # lands cast the commander. Turn 6 upkeep: two Islands in hand, so the
-        # tempt converts (discard 2, draw 4) and then the draw step draws 1:
-        # 36 - 4 - 1 = 31, and the hand holds 4 + 1 = 5 at the land choice.
-        # Were the draw step first, the tempt would read 3 cards and not
-        # convert: 35 and a hand of 3. Were the discard-and-draw done after
-        # the draw step, the library would also read 31 but the hand 4.
-        # Hand at each land choice: 7, 7 (the Island drawn), 6, 5, 4, then 5.
+        # commander: Probe Commander ({5}). Turn 1 draws the Island and plays
+        # the Swamp; turn 2 draws a Trinket, plays an Island and casts Call of
+        # the Ring and the Trinket; turns 3-5 each draw a Trinket, play an
+        # Island and cast the Trinket; turn 5's five lands cast the
+        # commander. Turn 6 upkeep: two Islands in hand, so the tempt converts
+        # (discard 2, draw 4) and then the draw step draws 1: 35 - 4 - 1 = 30,
+        # and the hand holds 4 + 1 = 5 at the land choice. Were the draw step
+        # first, the tempt would read 3 cards and not convert: 34 and a hand
+        # of 3. Were the discard-and-draw done after the draw step, the
+        # library would also read 30 but the hand 4.
+        # Hand at each land choice: 8 (the Island drawn), 8, 6, 5, 4, then 5.
         hand_sizes = []
         sizes = self._library_sizes(
             "gathering-shadow",
             hand=["Call of the Ring", "Swamp"] + ["Island"] * 5,
             library=["Zero Trinket"] * 39 + ["Island"],
             commander="Probe Commander", colors=("U", "B"), hand_sizes=hand_sizes)
-        self.assertEqual(sizes[:6], [40, 39, 38, 37, 36, 31])
-        self.assertEqual(hand_sizes[:6], [7, 7, 6, 5, 4, 5])
+        self.assertEqual(sizes[:6], [39, 38, 37, 36, 35, 30])
+        self.assertEqual(hand_sizes[:6], [8, 8, 6, 5, 4, 5])
 
     # The draw-engine paragraphs of the goldfish methodology, whole.
     ACTIVATED_PARAGRAPH = (
@@ -2389,6 +2392,130 @@ class DrawEngineGoldfishTests(unittest.TestCase):
         self.assertIn(self.RECURRING_PARAGRAPH, methodology)
 
 
+class TurnOneDrawTests(unittest.TestCase):
+    """Turn 1 has a draw step (owner-approved 2026-11-23). The simulators
+    model a four-player free-for-all Commander game, in which no player skips
+    the draw step of their first turn (CR 103.8c). So the goldfish and every
+    mana simulation draw a card on turn 1, and the hypergeometric curves
+    count the opening seven plus one card a turn from turn 1."""
+
+    # A made-up sorcery no simulation can cast within ten turns.
+    FILLER = "Probe Filler"
+    FILLER_CARD = {"type_line": "Sorcery", "mana_cost": "{9}", "cmc": 9.0,
+                   "oracle_text": "", "colors": []}
+    BASIC = {"W": "Plains", "U": "Island", "B": "Swamp", "R": "Mountain",
+             "G": "Forest", "C": "Wastes"}
+    TAPPED_FOREST = {"type_line": "Land", "mana_cost": "", "cmc": 0.0,
+                     "oracle_text": "This land enters tapped.\n{T}: Add {G}.", "colors": []}
+
+    def test_the_goldfish_plays_the_land_its_turn_1_draw_took(self):
+        # simulate_goldfish_game with only the shuffle pinned: it deals the
+        # library as given, and draws pop its end. The seven: three Probe
+        # Tapped Forests (lands that enter tapped) and four Probe Nines, a
+        # keep (three lands). Under them, on top of the library, a Forest.
+        # The turn-1 draw takes the Forest and the land drop takes a land
+        # usable this turn over a tapped one: one land, one mana on turn 1.
+        # With a Probe Nine on top and the Forest under it (the control),
+        # the one turn-1 draw takes the Probe Nine and turn 1 plays a tapped
+        # land: one land, no mana. So would skipping the turn-1 draw or
+        # drawing after the land drop; drawing two on turn 1 would reach the
+        # Forest and read one mana.
+        cards = dict(CARDS, **{"Probe Tapped Forest": self.TAPPED_FOREST})
+        seven = ["Probe Tapped Forest"] * 3 + ["Probe Nine"] * 4
+        turn_one = {}
+        for top, under in (("Forest", "Probe Nine"), ("Probe Nine", "Forest")):
+            order = ["Probe Nine"] * 90 + [under, top] + list(reversed(seven))
+            decklist = sorted(order)
+            context = exporter.build_goldfish_context(
+                decklist, {"decklist": [{"name": name} for name in decklist]}, cards,
+                "Probe Commander", ["G"], "synthetic-draw")
+
+            def deal(library, order=order):
+                library[:] = order
+
+            with patch.object(exporter.random, "shuffle", deal):
+                by_turn, _ = exporter.simulate_goldfish_game(decklist, context, 6)
+            turn_one[top] = (by_turn[1]["lands"], by_turn[1]["availableMana"])
+        self.assertEqual(turn_one, {"Forest": (1, 1), "Probe Nine": (1, 0)})
+
+    def test_the_goldfish_methodology_states_the_turn_1_draw(self):
+        decklist = ["Island"] * 99
+        with patch.object(exporter, "GOLDFISH_GAMES", 16), \
+                patch("multiprocessing.Pool", SerialPool):
+            goldfish, _ = exporter.compute_goldfish_section(
+                decklist=decklist, deck_data={"decklist": []}, metadata=CARDS,
+                commander_name="The Ur-Dragon", commander_colors=["U"],
+                deck_id="synthetic-draw")
+        self.assertIn(
+            "16-game solitaire heuristic. Every turn draws a card, turn 1 included: the "
+            "simulation models a four-player free-for-all Commander game, in which no player "
+            "skips the draw step of their first turn (CR 103.8c). Sequencing:",
+            goldfish["methodology"])
+
+    def test_cards_seen_are_the_opening_seven_and_one_a_turn_from_turn_1(self):
+        self.assertEqual([exporter.cards_seen_by_turn(turn) for turn in range(1, 11)],
+                         [8, 9, 10, 11, 12, 13, 14, 15, 16, 17])
+        # The whole 99 is seen by turn 92, and never more than 99.
+        self.assertEqual([exporter.cards_seen_by_turn(turn) for turn in (91, 92, 93)],
+                         [98, 99, 99])
+
+    def test_one_card_is_seen_by_turn_1_eight_times_in_99(self):
+        # One copy in 99 cards is among the first n with probability n / 99;
+        # n = 7 + turn: 8/99 = 8.1%, ..., 15/99 = 15.2%, ..., 17/99 = 17.2%.
+        self.assertEqual(
+            exporter.compute_probability_curve([self.FILLER]),
+            {"1": 8.1, "2": 9.1, "3": 10.1, "4": 11.1, "5": 12.1,
+             "6": 13.1, "7": 14.1, "8": 15.2, "9": 16.2, "10": 17.2})
+
+    @staticmethod
+    def _rock_cost(rock: dict) -> int:
+        """A ROCK_DEFS entry's mana value (armory-protocol names it cast_generic)."""
+        return rock.get("cmc", rock.get("cast_generic"))
+
+    def test_every_mana_simulation_plays_the_land_its_turn_1_draw_took(self):
+        # Each deck's mana simulation through run_simulation, one game with
+        # the shuffle pinned (library order = list order; draws pop the end).
+        # Opening seven: two copies of the deck's dearest rock (two mana
+        # sources: the hand is kept) and five fillers, no land. On top of the
+        # library: the deck's first-colour basic. The turn-1 draw takes it,
+        # the land drop plays it, and a rock of mana value 2 or more cannot be
+        # cast from one land: one mana on turn 1. zada-hedron-grinder's only
+        # rock is Sol Ring ({1}): the land casts one (its rock loop tries each
+        # rock once) and that simulation counts untapped lands and rocks on
+        # the battlefield: 1 + 2 = 3. With a filler on top and the basic under
+        # it (the control), the one turn-1 draw takes the filler and turn 1
+        # has no land: 0. Skipping the turn-1 draw, drawing it after the land
+        # drop or drawing two on turn 2 would leave turn 1 at 0 too; drawing
+        # two on turn 1 would reach the basic in the control.
+        root = Path(__file__).resolve().parent.parent
+        colors = {deck["id"]: deck["colors"] for deck in json.loads(
+            (root / "data" / "index.json").read_text())["commanders"]}
+        self.assertTrue(exporter.DECKS)
+        for deck_id, _name, _export in exporter.DECKS:
+            with self.subTest(deck=deck_id):
+                module = importlib.import_module(
+                    "mana_simulation_" + deck_id.replace("-", "_"))
+                rock = max(sorted(module.ROCK_DEFS),
+                           key=lambda name: self._rock_cost(module.ROCK_DEFS[name]))
+                cost = self._rock_cost(module.ROCK_DEFS[rock])
+                land = self.BASIC[colors[deck_id][0]]
+                metadata = {land: CARDS[land], self.FILLER: self.FILLER_CARD,
+                            rock: {"type_line": "Artifact", "mana_cost": "{%d}" % cost,
+                                   "cmc": float(cost), "oracle_text": "", "colors": []}}
+                turn_one = {}
+                for top, under in ((land, self.FILLER), (self.FILLER, land)):
+                    decklist = ([self.FILLER] * 19 + [under, top] + [self.FILLER] * 5
+                                + [rock] * 2)
+                    args = (decklist, metadata)
+                    if deck_id == "hidden-legion":
+                        args += (set(), set(), set())  # no changelings, Dragons or Elves
+                    with patch("random.shuffle"):
+                        stats = module.run_simulation(*args, num_games=1)
+                    turn_one[top] = stats["mana_by_turn"][1]
+                expected = [3] if deck_id == "zada-hedron-grinder" else [1]
+                self.assertEqual(turn_one, {land: expected, self.FILLER: [0]})
+
+
 class XSpellGoldfishTests(unittest.TestCase):
     """X spells through the goldfish turn loop (owner-approved 2026-11-18).
 
@@ -2429,8 +2556,9 @@ class XSpellGoldfishTests(unittest.TestCase):
 
     @staticmethod
     def _library_with(card, turn, land):
-        """92 cards: `card` is drawn on `turn` (2-10), lands everywhere else."""
-        return [land] * (92 - (turn - 1)) + [card] + [land] * (turn - 2)
+        """92 cards: `card` is drawn on `turn` (1-10; one draw step a turn
+        from turn 1), lands everywhere else."""
+        return [land] * (92 - turn) + [card] + [land] * (turn - 1)
 
     @staticmethod
     def _damage(by_turn):
@@ -2473,50 +2601,59 @@ class XSpellGoldfishTests(unittest.TestCase):
     def test_xx_costs_two_per_x_and_mathemagics_draws_two_to_the_x(self):
         # Mathemagics ({X}{X}{U}{U}) is drawn on turn 8 with eight Islands:
         # X = (8 - 2) / 2 = 3, so it draws 2^3 = 8. Each turn's draw step
-        # takes one card from turn 2. The first of the eight is Stonecoil
+        # takes one card from turn 1. The first of the eight is Stonecoil
         # Serpent ({X}): Mathemagics paid 2 + 2 x 3 = 8, all eight Islands, so
         # the Serpent gets X = 0 and waits for turn 9, where nine Islands make
         # X = 9 (combat min(8, 9) = 8, from turn 10).
-        library = ["Island"] * 84 + ["Stonecoil Serpent", "Mathemagics"] + ["Island"] * 6
+        library = ["Island"] * 83 + ["Stonecoil Serpent", "Mathemagics"] + ["Island"] * 7
         by_turn, sizes = self._run(["Island"] * 7, library, colors=("U",))
-        self.assertEqual(sizes, [92, 91, 90, 89, 88, 87, 86, 85, 76, 75, 75])
+        self.assertEqual(sizes, [91, 90, 89, 88, 87, 86, 85, 84, 75, 74, 74])
         self.assertEqual(self._damage(by_turn), [0] * 9 + [8])
 
     # (card, turn it is drawn and cast with that many Command Towers,
-    #  commander, cards it draws). Command Tower taps for either colour.
+    #  commander, library size at each land choice and after turn 10).
+    # Command Tower taps for either colour. The library holds 92 and the draw
+    # step takes one card a turn from turn 1 (91 at turn 1, 82 at turn 10);
+    # the spell's N cards leave it after its turn's land choice, so each
+    # later reading is N lower.
     DRAW_CASES = [
-        # {X}{G}{U} with five lands: X = 3, "Draw X cards."
-        ("Mind into Matter", 5, "The Ur-Dragon", 3),
-        # {X}{U}{U}, five lands: X = 3, "Draw X cards, then discard a card."
-        ("Pull from Tomorrow", 5, "The Ur-Dragon", 3),
-        # {X}{U}{U}{U}{U}, six lands: X = 2, "Draw X cards."
-        ("Transcendent Message", 6, "The Ur-Dragon", 2),
-        # {X}{G}{U}, seven lands: X = 5, "draw half X cards. Round down".
-        ("Hydroid Krasis", 7, "The Ur-Dragon", 2),
-        # {X}{U}{U}, seven lands: X = 5, "draw half X cards, rounded down".
-        ("Wan Shi Tong, Librarian", 7, "The Ur-Dragon", 2),
+        # {X}{G}{U} with five lands: X = 3, "Draw X cards.": 3 cards.
+        ("Mind into Matter", 5, "The Ur-Dragon",
+         [91, 90, 89, 88, 87, 83, 82, 81, 80, 79, 79]),
+        # {X}{U}{U}, five lands: X = 3, "Draw X cards, then discard a card.": 3.
+        ("Pull from Tomorrow", 5, "The Ur-Dragon",
+         [91, 90, 89, 88, 87, 83, 82, 81, 80, 79, 79]),
+        # {X}{U}{U}{U}{U}, six lands: X = 2, "Draw X cards.": 2.
+        ("Transcendent Message", 6, "The Ur-Dragon",
+         [91, 90, 89, 88, 87, 86, 83, 82, 81, 80, 80]),
+        # {X}{G}{U}, seven lands: X = 5, "draw half X cards. Round down": 2.
+        ("Hydroid Krasis", 7, "The Ur-Dragon",
+         [91, 90, 89, 88, 87, 86, 85, 82, 81, 80, 80]),
+        # {X}{U}{U}, seven lands: X = 5, "draw half X cards, rounded down": 2.
+        ("Wan Shi Tong, Librarian", 7, "The Ur-Dragon",
+         [91, 90, 89, 88, 87, 86, 85, 82, 81, 80, 80]),
         # {X}{U}{U}{U}, six lands: X = 3, plus one per commander cast; The
-        # Ur-Dragon is never cast here.
-        ("Commander's Insight", 6, "The Ur-Dragon", 3),
-        # Probe Commander ({5}) is cast on turn 5, so X = 3 plus one.
-        ("Commander's Insight", 6, "Probe Commander", 4),
-        # {X}{G}, five lands: X = 4, below "If X is 5 or more, you draw".
-        ("Kinetic Ooze", 5, "The Ur-Dragon", 0),
-        # Six lands: X = 5.
-        ("Kinetic Ooze", 6, "The Ur-Dragon", 1),
+        # Ur-Dragon is never cast here: 3.
+        ("Commander's Insight", 6, "The Ur-Dragon",
+         [91, 90, 89, 88, 87, 86, 82, 81, 80, 79, 79]),
+        # Probe Commander ({5}) is cast on turn 5, so X = 3 plus one: 4.
+        ("Commander's Insight", 6, "Probe Commander",
+         [91, 90, 89, 88, 87, 86, 81, 80, 79, 78, 78]),
+        # {X}{G}, five lands: X = 4, below "If X is 5 or more, you draw": 0.
+        ("Kinetic Ooze", 5, "The Ur-Dragon",
+         [91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 82]),
+        # Six lands: X = 5: 1.
+        ("Kinetic Ooze", 6, "The Ur-Dragon",
+         [91, 90, 89, 88, 87, 86, 84, 83, 82, 81, 81]),
     ]
 
     def test_draw_spells_draw_at_the_paid_x(self):
-        for card, turn, commander, drawn in self.DRAW_CASES:
+        for card, turn, commander, expected in self.DRAW_CASES:
             with self.subTest(card=card, turn=turn, commander=commander):
                 _, sizes = self._run(
                     ["Command Tower"] * 7,
                     self._library_with(card, turn, "Command Tower"),
                     commander=commander)
-                # One card per draw step from turn 2; the spell's cards leave
-                # the library after its turn's land choice.
-                expected = [92 - (t - 1) - (drawn if t > turn else 0)
-                            for t in range(1, 11)] + [83 - drawn]
                 self.assertEqual(sizes, expected)
 
     def test_creature_combat_is_capped_at_eight_plus_the_keyword(self):
@@ -2614,14 +2751,14 @@ class XSpellGoldfishTests(unittest.TestCase):
         # untapped creature remains; local config, as no fleet deck has one).
         # Probe Commander ({5}) is cast on turn 5 with five Command Towers.
         # Mind into Matter is drawn on turn 6: X = 6 - 2 = 4, so it draws 4
-        # and its copy draws 4 more.
+        # and its copy draws 4 more. One card per draw step from turn 1.
         with patch.dict(exporter.COMMANDER_COPY_ENGINE,
                         {"synthetic-copy": {"mode": "tap_gate", "tapCost": 1}}):
             _, sizes = self._run(
                 ["Command Tower"] * 7,
                 self._library_with("Mind into Matter", 6, "Command Tower"),
                 commander="Probe Commander", deck_id="synthetic-copy")
-        self.assertEqual(sizes, [92, 91, 90, 89, 88, 87, 78, 77, 76, 75, 75])
+        self.assertEqual(sizes, [91, 90, 89, 88, 87, 86, 77, 76, 75, 74, 74])
 
     # --- the DEC-944 gate and combo-line pieces ------------------------------
 
@@ -2679,7 +2816,7 @@ class XSpellGoldfishTests(unittest.TestCase):
         by_turn, casts = self._run_line(
             ["Piece Permanent", "Piece Instant"],
             ["Forest"] * 3 + ["Piece Permanent", "Piece Instant"],
-            ["Forest"] * 16 + ["Stonecoil Serpent", "Forest"])
+            ["Forest"] * 16 + ["Stonecoil Serpent", "Forest", "Forest"])
         self.assertEqual(casts[3], ["Stonecoil Serpent"])
         self.assertEqual(by_turn[3]["comboLethal"], 1)
         self.assertEqual(by_turn[4]["combat"], 1)
@@ -2906,19 +3043,9 @@ class TokenMakerGoldfishTests(unittest.TestCase):
 
     @staticmethod
     def _library_with(card, turn, land="Command Tower"):
-        """92 cards: `card` is drawn on `turn` (2-10), lands everywhere else."""
-        return [land] * (92 - (turn - 1)) + [card] + [land] * (turn - 2)
-
-    @staticmethod
-    def _sizes_with_extra_draws(extra):
-        """Library sizes when only the draw step and `extra` {turn: cards
-        drawn before that turn's land choice} take cards."""
-        drawn = 0
-        sizes = []
-        for turn in range(1, 11):
-            drawn += (1 if turn > 1 else 0) + extra.get(turn, 0)
-            sizes.append(92 - drawn)
-        return sizes + [sizes[-1]]
+        """92 cards: `card` is drawn on `turn` (1-10; one draw step a turn
+        from turn 1), lands everywhere else."""
+        return [land] * (92 - turn) + [card] + [land] * (turn - 1)
 
     def test_a_fixed_makers_tokens_attack_from_the_next_turn_with_the_anthem(self):
         # Frontline Rush ({R}{W}) on turn 2 makes two Goblins; Warleader's
@@ -3012,10 +3139,13 @@ class TokenMakerGoldfishTests(unittest.TestCase):
         # turn 7. From turn 7 the Goblins attack and the two Food alone draw
         # nothing. Doubling before the Food (four Goblins, one Food), no Food,
         # or no doubling would each leave five tokens or fewer: one card.
+        # Library of 92, one draw step a turn from turn 1: 91 at turn 1's land
+        # choice, ..., 86 at turn 6's; turn 7 takes Baylen's 2 and its draw
+        # step: 86 - 3 = 83; then 82, 81, 80, and 80 after turn 10.
         _, sizes = self._run(
             ["Peregrin Took", "Anointed Procession"] + ["Command Tower"] * 5,
             self._library_with("Frontline Rush", 6), commander="Baylen, the Haymaker")
-        self.assertEqual(sizes, self._sizes_with_extra_draws({7: 2}))
+        self.assertEqual(sizes, [91, 90, 89, 88, 87, 86, 83, 82, 81, 80, 80])
 
     def test_food_made_with_attacking_tokens_enters_tapped(self):
         # Commander Baylen on turn 3, Adeline on turn 4 (she sorts ahead of
@@ -3031,18 +3161,23 @@ class TokenMakerGoldfishTests(unittest.TestCase):
         # 0, 1, 3, 5, 7 untapped: one card before turns 8 and 9, two before
         # turn 10. Counting one tapped Food per event would give 0, 2, 4, 6, 8:
         # one before turn 8, two before turns 9 and 10.
+        # Library sizes at each land choice and after turn 10: 92 less one
+        # draw step a turn from turn 1 (91 at turn 1) and Baylen's cards. No
+        # doubler: 91 ... 84 at turn 8; turn 9: 84 - 1 - 1 = 82; turn 10:
+        # 82 - 1 - 1 = 80. A doubler: 91 ... 85 at turn 7; turn 8: 85 - 1 - 1
+        # = 83; turn 9: 83 - 1 - 1 = 81; turn 10: 81 - 2 - 1 = 78.
         cases = {
             "no doubler": (["Adeline, Resplendent Cathar", "Peregrin Took"],
-                           {9: 1, 10: 1}),
+                           [91, 90, 89, 88, 87, 86, 85, 84, 82, 80, 80]),
             "a doubler": (["Adeline, Resplendent Cathar", "Peregrin Took",
-                           "Anointed Procession"], {8: 1, 9: 1, 10: 2}),
+                           "Anointed Procession"], [91, 90, 89, 88, 87, 86, 85, 83, 81, 78, 78]),
         }
-        for label, (spells, extra) in cases.items():
+        for label, (spells, expected) in cases.items():
             with self.subTest(label):
                 _, sizes = self._run(
                     spells + ["Command Tower"] * (7 - len(spells)),
                     ["Command Tower"] * 92, commander="Baylen, the Haymaker")
-                self.assertEqual(sizes, self._sizes_with_extra_draws(extra))
+                self.assertEqual(sizes, expected)
 
     def test_draconic_visitor_stops_new_food_and_keeps_the_old(self):
         # Commander Baylen on turn 3. New Food: Peregrin Took on turn 4,
@@ -3052,31 +3187,40 @@ class TokenMakerGoldfishTests(unittest.TestCase):
         # the Food counted). Old Food: Rosie Cotton on turn 4 makes a Food;
         # Visitor is drawn and cast on turn 5 and Rush on turn 6: the Food and
         # two Goblins are untapped at the end of turn 6, one card before turn 7.
+        # Library sizes: 92 less one draw step a turn from turn 1 (91 at turn
+        # 1, 82 at turn 10); with the old Food, turn 7 also takes Baylen's
+        # card: 86 - 1 - 1 = 84, then 83, 82, 81.
         tower = "Command Tower"
         cases = {
             "new Food": (["Peregrin Took", "Draconic Visitor"],
-                         self._library_with("Frontline Rush", 6), {}),
+                         self._library_with("Frontline Rush", 6),
+                         [91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 82]),
             "old Food": (["Rosie Cotton of South Lane"],
-                         [tower] * 87 + ["Frontline Rush", "Draconic Visitor"] + [tower] * 3,
-                         {7: 1}),
+                         [tower] * 86 + ["Frontline Rush", "Draconic Visitor"] + [tower] * 4,
+                         [91, 90, 89, 88, 87, 86, 84, 83, 82, 81, 81]),
         }
-        for label, (spells, library, extra) in cases.items():
+        for label, (spells, library, expected) in cases.items():
             with self.subTest(label):
                 _, sizes = self._run(spells + [tower] * (7 - len(spells)), library,
                                      commander="Baylen, the Haymaker")
-                self.assertEqual(sizes, self._sizes_with_extra_draws(extra))
+                self.assertEqual(sizes, expected)
 
     def test_baylen_draws_per_three_tokens_that_did_not_attack_while_he_is_out(self):
         # Secure the Wastes drawn on turn 7 with seven towers: X = 6, six
         # Warriors. With Baylen cast on turn 3 they are untapped at the end of
         # turn 7: 6 // 3 = 2 cards before turn 8; from turn 8 they attack and
         # draw nothing. With a commander that is never cast, no cards.
+        # Library sizes: 92 less one draw step a turn from turn 1 (91 at turn
+        # 1, 82 at turn 10); with Baylen, turn 8 also takes his 2: 85 - 2 - 1
+        # = 82, then 81, 80.
         library = self._library_with("Secure the Wastes", 7)
-        for commander, extra in (("Baylen, the Haymaker", {8: 2}), ("The Ur-Dragon", {})):
+        for commander, expected in (
+                ("Baylen, the Haymaker", [91, 90, 89, 88, 87, 86, 85, 82, 81, 80, 80]),
+                ("The Ur-Dragon", [91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 82])):
             with self.subTest(commander=commander):
                 _, sizes = self._run(["Command Tower"] * 7, list(library),
                                      commander=commander)
-                self.assertEqual(sizes, self._sizes_with_extra_draws(extra))
+                self.assertEqual(sizes, expected)
 
     def test_baylen_draws_in_the_turn_cycle_he_is_cast(self):
         # The towers make only red or white here, so Baylen ({R}{G}{W}) waits
@@ -3085,12 +3229,15 @@ class TokenMakerGoldfishTests(unittest.TestCase):
         # colours, the Forest none). Turn 8: Baylen, then Secure the Wastes
         # (drawn that turn) with the five mana left: X = 4, four Warriors. They
         # are untapped at the end of turn 8, so Baylen draws 4 // 3 = 1 card
-        # before turn 9. Zero Trinkets fill the library.
-        library = (["Zero Trinket"] * 85 + ["Secure the Wastes"] + ["Zero Trinket"] * 5
-                   + ["Forest"])
+        # before turn 9. Zero Trinkets fill the library; turn 1 draws one.
+        # Library sizes: 92 less one draw step a turn from turn 1 (91 at turn
+        # 1, 84 at turn 8); turn 9 also takes Baylen's card: 84 - 1 - 1 = 82,
+        # then 81.
+        library = (["Zero Trinket"] * 84 + ["Secure the Wastes"] + ["Zero Trinket"] * 5
+                   + ["Forest", "Zero Trinket"])
         _, sizes = self._run(["Command Tower"] * 7, library,
                              commander="Baylen, the Haymaker", colors=("R", "W"))
-        self.assertEqual(sizes, self._sizes_with_extra_draws({9: 1}))
+        self.assertEqual(sizes, [91, 90, 89, 88, 87, 86, 85, 84, 82, 81, 81])
 
     def test_anim_pakals_gnomes_stay_1_1_attackers_under_draconic_visitor(self):
         # Anim Pakal (combat 3) on turn 3, Draconic Visitor ({3}{R}{R}, combat
@@ -3138,7 +3285,7 @@ class TokenMakerGoldfishTests(unittest.TestCase):
     def test_castle_ardenvale_needs_three_white_sources_and_to_be_untapped(self):
         # Castle Ardenvale: "{2}{W}{W}, {T}": the Castle itself untapped and
         # {2}{W}{W} from the other lands (white needs two white sources
-        # besides the Castle). Zero Trinkets ({0}, no combat) are drawn on turns 2-3
+        # besides the Castle). Zero Trinkets ({0}, no combat) are drawn on turns 1-3
         # where a land would get in the way.
         # Two Plains: Plains turns 1-2 (the Castle loses the name tie-break),
         # the Castle turn 3, Forests after. Turn 5 has five lands, three of
@@ -3151,10 +3298,10 @@ class TokenMakerGoldfishTests(unittest.TestCase):
         # could pay on turn 6.
         cases = {
             "two Plains": (["Plains", "Plains", "Castle Ardenvale"] + ["Zero Trinket"] * 4,
-                           ["Forest"] * 90 + ["Zero Trinket"] * 2, ("W", "G"),
+                           ["Forest"] * 89 + ["Zero Trinket"] * 3, ("W", "G"),
                            [0, 0, 0, 0, 0, 1, 3, 6, 10, 15]),
             "one Plains": (["Plains", "Castle Ardenvale"] + ["Zero Trinket"] * 5,
-                           ["Forest"] * 91 + ["Zero Trinket"], ("W", "G"), [0] * 10),
+                           ["Forest"] * 90 + ["Zero Trinket"] * 2, ("W", "G"), [0] * 10),
             "enters tapped": (["Command Tower"] * 5 + ["Castle Ardenvale", "Zero Trinket"],
                               ["Zero Trinket"] * 92, ("R", "G", "W"),
                               [0, 0, 0, 0, 0, 0, 0, 1, 3, 6]),
@@ -4011,7 +4158,11 @@ class ManaModelGoldfishTests(unittest.TestCase):
     (the mulligan's shuffle replaced by a given hand and library, as in
     DrawEngineGoldfishTests); card data from CARDS. The commander is The
     Ur-Dragon, which these lands never cast, unless a case names another.
-    library.pop() draws from the end.
+    library.pop() draws from the end, and turn 1 draws too (CR 103.8c), so a
+    library whose card for turn 2 is the second from the end has, at the end,
+    a card that changes nothing in the turns the case reads (Probe Nine,
+    castable only with nine mana; Probe BB, which a deck without black never
+    casts).
     """
 
     def _run(self, hand, library, colors=("C",), commander="The Ur-Dragon", deck_id="synthetic-mana"):
@@ -4032,7 +4183,7 @@ class ManaModelGoldfishTests(unittest.TestCase):
         # Vault pay {5} (available 5), spending the Vault. Turn 3 on: Wastes
         # only. Forced onto turn 1, the Vault's mana would be gone and Probe
         # Five would wait for turn 5. Probe Five deals 5 from turn 3.
-        library = ["Probe Nine"] * 91 + ["Probe Five"]
+        library = ["Probe Nine"] * 91 + ["Probe Five", "Probe Nine"]
         by_turn = self._run(["Mana Vault"] + ["Wastes"] * 6, library)
         self.assertEqual(self._series(by_turn, "availableMana"), [4, 5, 3, 4, 5, 6])
         self.assertEqual(self._series(by_turn, "cumulativeDamage"), [0, 0, 5, 10, 15, 20])
@@ -4061,7 +4212,7 @@ class ManaModelGoldfishTests(unittest.TestCase):
         # second. Combat: Birgi 3 from turn 4, each Probe Two 2 from turn 5.
         # Turn 4's available mana counts Birgi's two {R}: 3 + 2. Birgi's
         # trigger does not tap her: she attacks.
-        library = ["Probe Nine"] * 89 + ["Probe Two", "Probe Two", "Probe Nine"]
+        library = ["Probe Nine"] * 89 + ["Probe Two", "Probe Two", "Probe Nine", "Probe Nine"]
         by_turn = self._run(["Birgi, God of Storytelling // Harnfel, Horn of Bounty"]
                             + ["Mountain"] * 3 + ["Probe Nine"] * 3, library, colors=("R",))
         self.assertEqual(self._series(by_turn, "cumulativeDamage"), [0, 0, 0, 3, 10, 17])
@@ -4078,9 +4229,9 @@ class ManaModelGoldfishTests(unittest.TestCase):
     def test_a_land_face_is_played_and_enters_tapped(self):
         # Hagra Mauling is the only land in hand: played as Hagra Broodpit,
         # which enters tapped (turn 1: 0) and makes {B} from turn 2; Swamps
-        # follow from the library.
+        # follow from the library (turn 1 draws a Probe Nine).
         by_turn = self._run(["Hagra Mauling // Hagra Broodpit"] + ["Probe Nine"] * 6,
-                            ["Swamp"] * 92, colors=("B",))
+                            ["Swamp"] * 91 + ["Probe Nine"], colors=("B",))
         self.assertEqual(self._series(by_turn, "availableMana"), [0, 2, 3, 4, 5, 6])
 
     def test_a_basic_fetch_enters_untapped_with_three_other_lands(self):
@@ -4123,7 +4274,7 @@ class ManaModelGoldfishTests(unittest.TestCase):
         # for the cast order, so the commander comes first. Sorted as ramp,
         # the Petal would go first and leave 1 + 2 mana: the commander would
         # wait for turn 6.
-        library = ["Probe Nine"] * 88 + ["Probe Petal Four"] + ["Probe Nine"] * 3
+        library = ["Probe Nine"] * 88 + ["Probe Petal Four"] + ["Probe Nine"] * 4
         by_turn = self._run(["Wastes"] * 6 + ["Probe Nine"], library, commander="Probe Commander")
         self.assertEqual(self._series(by_turn, "commanderCast"), [0, 0, 0, 0, 1, 1])
 
@@ -4191,7 +4342,7 @@ class ManaModelGoldfishTests(unittest.TestCase):
         # Probe Two that turn (2 damage from turn 4). From turn 4 Lotus Field
         # alone makes 3.
         by_turn = self._run(["Lotus Field", "Wastes", "Wastes"] + ["Probe Nine"] * 4,
-                            ["Probe Nine"] * 90 + ["Probe Two", "Probe Nine"])
+                            ["Probe Nine"] * 90 + ["Probe Two", "Probe Nine", "Probe Nine"])
         self.assertEqual(self._series(by_turn, "lands"), [1, 2, 1, 1, 1, 1])
         self.assertEqual(self._series(by_turn, "availableMana"), [1, 2, 2, 3, 3, 3])
         self.assertEqual(self._series(by_turn, "cumulativeDamage"), [0, 0, 0, 2, 4, 6])
@@ -4234,12 +4385,13 @@ class ManaModelGoldfishTests(unittest.TestCase):
         # With Probe Nine (colourless, mana value 9) in hand Ugin's Labyrinth
         # exiles it and makes {C}{C} from turn 1: Probe Two is cast on turn 1
         # and attacks from turn 2. With no such card it makes {C}: Probe Two
-        # waits for turn 2 (the Wastes drawn).
-        library = ["Wastes"] * 92
-        by_turn = self._run(["Ugin's Labyrinth", "Probe Two", "Probe Nine"] + ["Probe BB"] * 4, library)
+        # waits for turn 2 (the Wastes drawn; turn 1 draws a Probe BB, which
+        # a colourless deck never casts).
+        library = ["Wastes"] * 91 + ["Probe BB"]
+        by_turn = self._run(["Ugin's Labyrinth", "Probe Two", "Probe Nine"] + ["Probe BB"] * 4, list(library))
         self.assertEqual(self._series(by_turn, "availableMana"), [2, 3, 4, 5, 6, 7])
         self.assertEqual(self._series(by_turn, "cumulativeDamage"), [0, 2, 4, 6, 8, 10])
-        by_turn = self._run(["Ugin's Labyrinth", "Probe Two"] + ["Probe BB"] * 5, library)
+        by_turn = self._run(["Ugin's Labyrinth", "Probe Two"] + ["Probe BB"] * 5, list(library))
         self.assertEqual(self._series(by_turn, "availableMana"), [1, 2, 3, 4, 5, 6])
         self.assertEqual(self._series(by_turn, "cumulativeDamage"), [0, 0, 2, 4, 6, 8])
 
@@ -4271,7 +4423,7 @@ class ManaRoundOneGoldfishTests(unittest.TestCase):
         # Turn 2 draws Probe Two: the two Wastes pay it and Mana Vault's
         # {C}{C}{C} is kept: 3 + 3 on turn 3, until Probe Nine takes it on
         # turn 6. Spending the Vault with the lands, turn 3 would have 3.
-        library = ["Probe Nine"] * 91 + ["Probe Two"]
+        library = ["Probe Nine"] * 91 + ["Probe Two", "Probe Nine"]
         by_turn = self._run(["Mana Vault"] + ["Wastes"] * 6, library)
         self.assertEqual(self._series(by_turn, "availableMana"), [4, 5, 6, 7, 8, 9])
 
@@ -4318,7 +4470,7 @@ class ManaRoundOneGoldfishTests(unittest.TestCase):
         # Probe Five: four Forests and the Archdruid's {G} pay it, so the
         # Archdruid does not attack on turn 4 (3 from turn 5, Probe Five 5
         # from turn 5). Read as a land's mana it would attack on turn 4.
-        library = ["Probe Nine"] * 89 + ["Probe Five", "Probe Nine", "Probe Nine"]
+        library = ["Probe Nine"] * 89 + ["Probe Five", "Probe Nine", "Probe Nine", "Probe Nine"]
         by_turn = self._run(["Elvish Archdruid"] + ["Forest"] * 4 + ["Probe Nine"] * 2,
                             library, colors=("G",))
         self.assertEqual(self._series(by_turn, "cumulativeDamage"), [0, 0, 0, 0, 8, 16])
@@ -4334,7 +4486,7 @@ class ManaRoundOneGoldfishTests(unittest.TestCase):
         # Ancient Tomb ({C}{C}) turn 1, Wastes turns 2-3, Scorched Ruins turn
         # 4: it sacrifices the two Wastes and keeps the Tomb: 2 + 4 from turn
         # 4. Giving up the Tomb would leave 1 + 4.
-        library = ["Probe Nine"] * 89 + ["Scorched Ruins", "Wastes", "Wastes"]
+        library = ["Probe Nine"] * 89 + ["Scorched Ruins", "Wastes", "Wastes", "Probe Nine"]
         by_turn = self._run(["Ancient Tomb"] + ["Probe Nine"] * 6, library)
         self.assertEqual(self._series(by_turn, "availableMana"), [2, 3, 4, 6, 6, 6])
 
@@ -4366,7 +4518,7 @@ class ManaRoundOneGoldfishTests(unittest.TestCase):
         # Turn 1 Island and Zero Trinket (an artifact with no mana). Turn 4
         # four Islands cast Urza: his Construct and the Trinket pay {U}{U} at
         # once, which casts Probe Two that turn (2 from turn 5).
-        library = ["Probe Nine"] * 89 + ["Probe Two", "Island", "Island"]
+        library = ["Probe Nine"] * 89 + ["Probe Two", "Island", "Island", "Probe Nine"]
         by_turn = self._run(["Urza, Lord High Artificer", "Island", "Island", "Zero Trinket"]
                             + ["Probe Nine"] * 3, library, colors=("U",))
         self.assertEqual(self._series(by_turn, "availableMana"), [1, 2, 3, 6, 6, 6])
@@ -5487,7 +5639,7 @@ class ManaRoundTwoGoldfishTests(unittest.TestCase):
         # Turn 4 draws Chromatic Lantern: three Swamps cast it; the fourth
         # Swamp, untapped, now makes any colour, which with the Lantern's own
         # mana casts Probe GG that turn (2 from turn 5).
-        library = ["Probe Nine"] * 89 + ["Chromatic Lantern", "Swamp", "Swamp"]
+        library = ["Probe Nine"] * 89 + ["Chromatic Lantern", "Swamp", "Swamp", "Probe Nine"]
         by_turn = self._run(["Probe GG", "Swamp", "Swamp"] + ["Probe Nine"] * 4, library, colors=("B", "G"))
         self.assertEqual(self._series(by_turn, "cumulativeDamage"), [0, 0, 0, 0, 2, 4])
 
@@ -5515,7 +5667,7 @@ class ManaRoundTwoGoldfishTests(unittest.TestCase):
         # five. Counted as lasting it would untap it: turn 7 would have nine.
         # Probe CCC is drawn on turn 5 (no {C} then), Probe WWW on turn 6; the
         # other cards are Probe BB, which a white deck never casts.
-        library = ["Probe BB"] * 87 + ["Probe WWW", "Probe CCC"] + ["Probe BB"] * 3
+        library = ["Probe BB"] * 87 + ["Probe WWW", "Probe CCC"] + ["Probe BB"] * 4
         by_turn = self._run(["Basalt Monolith", "Forsaken Monument"] + ["Plains"] * 5, library,
                             colors=("W",))
         self.assertEqual(self._series(by_turn, "availableMana", 7), [1, 2, 6, 7, 5, 9, 5])
@@ -5526,7 +5678,7 @@ class ManaRoundTwoGoldfishTests(unittest.TestCase):
         # and the Landscape's {C} (before the Elves, which attack). The
         # Elves' {G}{G} is left after combat, but the Landscape is tapped: no
         # fetch on turn 3. Turn 4 it fetches the two Forests.
-        library = ["Forest", "Forest"] + ["Probe Nine"] * 88 + ["Forest", "Probe Nine"]
+        library = ["Forest", "Forest"] + ["Probe Nine"] * 88 + ["Forest", "Probe Nine", "Probe Nine"]
         by_turn = self._run(["Forest", "Myriad Landscape", "Probe Vigilant Elf", "Probe Vigilant Elf",
                              "Probe Three", "Probe Nine", "Probe Nine"], library, colors=("G",))
         self.assertEqual(self._series(by_turn, "lands", 4), [1, 2, 3, 4])
@@ -5611,7 +5763,7 @@ class ManaRoundTwoEngineTests(unittest.TestCase):
         # waits. Turn 3 two Forests pay the next one and the untapped High
         # Market sacrifices an Egg: the first hatch is on turn 3.
         by_turn, hatched = self._hatch(["High Market"], lands=("Forest",),
-                                       library_extra=("Forest", "Bear 0"))
+                                       library_extra=("Forest", "Bear 0", "Bear 1"))
         self.assertEqual(hatched[:1], [3])
 
     def test_castle_ardenvale_tapped_for_mana_makes_no_token(self):
@@ -5624,7 +5776,7 @@ class ManaRoundTwoEngineTests(unittest.TestCase):
         damage, _ = TokenMakerGoldfishTests()._run(
             ["Plains", "Castle Ardenvale", "Sol Ring", "Lotus Petal", "Lotus Petal", "Zero Trinket",
              "Zero Trinket"],
-            ["Zero Trinket"] * 91 + ["Probe WW"], colors=("W",))
+            ["Zero Trinket"] * 91 + ["Probe WW", "Zero Trinket"], colors=("W",))
         self.assertEqual(damage[:4], [0, 0, 2, 5])
 
 
@@ -5702,7 +5854,7 @@ class ManaRoundThreeGoldfishTests(unittest.TestCase):
         # left. Paying again with the preferred payment it would wait for
         # turn 3.
         hand = ["Swamp", "Forest", "Sol Ring", "Probe Combo A", "Probe Tutor B", "Probe Nine", "Probe Nine"]
-        library = ["Probe Combo B"] + ["Probe Nine"] * 89 + ["Probe One"]
+        library = ["Probe Combo B"] + ["Probe Nine"] * 89 + ["Probe One", "Probe Nine"]
         by_turn, assembly = self._run(hand, library, ("B", "G"), self.TUTOR_LINE, self.ASSEMBLY)
         self.assertEqual(assembly, [2])
         self.assertEqual(self._series(by_turn, "cumulativeDamage", 3), [0, 0, 1])
@@ -5713,7 +5865,7 @@ class ManaRoundThreeGoldfishTests(unittest.TestCase):
         # gate is read on turn 2. Taking the preferred payment regardless of
         # the gate, it would wait for turn 3.
         hand = ["Swamp", "Forest", "Sol Ring", "Probe Combo A", "Probe Tutor B", "Probe Nine", "Probe Nine"]
-        library = ["Probe Combo B"] + ["Probe Nine"] * 89 + ["Probe Rock"]
+        library = ["Probe Combo B"] + ["Probe Nine"] * 89 + ["Probe Rock", "Probe Nine"]
         _, assembly = self._run(hand, library, ("B", "G"), self.TUTOR_LINE, self.ASSEMBLY)
         self.assertEqual(assembly, [2])
 
@@ -5728,7 +5880,7 @@ class ManaRoundThreeGoldfishTests(unittest.TestCase):
             {"title": "Probe line", "kind": "combo", "pieces": ["Probe Piece", "Probe Finisher"],
              "cards": ["Probe Piece", "Probe Finisher"], "description": ""}]}
         hand = ["Swamp", "Forest", "Probe Finisher"] + ["Probe Nine"] * 4
-        library = ["Probe Nine"] * 91 + ["Probe Piece"]
+        library = ["Probe Nine"] * 91 + ["Probe Piece", "Probe Nine"]
         by_turn, _ = self._run(hand, library, ("B", "G"), deck_data)
         self.assertEqual(self._series(by_turn, "comboLethal"), [0, 1, 1, 1, 1, 1])
 
@@ -5752,7 +5904,7 @@ class ManaRoundThreeGoldfishTests(unittest.TestCase):
              "cards": ["Probe Finisher Six"], "description": ""}]}
         hand = ["Urza, Lord High Artificer", "Island", "Island", "Island", "Zero Trinket", "Probe Nine",
                 "Probe Nine"]
-        library = ["Probe Nine"] * 88 + ["Probe Finisher Six", "Probe Nine", "Probe Nine", "Island"]
+        library = ["Probe Nine"] * 88 + ["Probe Finisher Six", "Probe Nine", "Probe Nine", "Island", "Probe Nine"]
         by_turn, _ = self._run(hand, library, ("U",), deck_data)
         self.assertEqual(self._series(by_turn, "comboLethal"), [0, 0, 0, 0, 1, 1])
         self.assertEqual(self._series(by_turn, "cumulativeDamage"), [0, 0, 0, 0, 4, 8])
@@ -5769,7 +5921,7 @@ class ManaRoundThreeGoldfishTests(unittest.TestCase):
         # Five Wastes cast Forsaken Monument on turn 5. Turn 6 draws Probe
         # Basic Search ({1}): a Wastes pays it and the Wastes it finds enters
         # untapped with its {C} and the Monument's {C} for it: 10 + 2.
-        library = ["Wastes"] + ["Probe BB"] * 86 + ["Probe Basic Search"] + ["Probe BB"] * 4
+        library = ["Wastes"] + ["Probe BB"] * 86 + ["Probe Basic Search"] + ["Probe BB"] * 5
         by_turn, _ = self._run(["Forsaken Monument"] + ["Wastes"] * 5 + ["Probe BB"], library)
         self.assertEqual(self._series(by_turn, "availableMana"), [1, 2, 3, 4, 5, 12])
 
@@ -5841,7 +5993,7 @@ class ManaRoundThreeEngineTests(unittest.TestCase):
         line = dict(self.LINE, pieces=["Probe Finisher Two"], cards=["Probe Finisher Two"])
         by_turn, hatched, casts, _, _ = self._hatch(
             ["Forest"] * 4 + ["Ashnod's Altar", "Two Drop 0", "Two Drop 1"],
-            library_extra=("Probe Finisher Two", "Bear 0", "Bear 1", "Bear 2", "Bear 3"),
+            library_extra=("Probe Finisher Two", "Bear 0", "Bear 1", "Bear 2", "Bear 3", "Bear 4"),
             win_conditions=[line])
         self.assertEqual(hatched[:3], [2, 3, 4])
         self.assertNotIn("Two Drop 0", casts[4])
@@ -5856,7 +6008,7 @@ class ManaRoundThreeEngineTests(unittest.TestCase):
         line = dict(self.LINE, pieces=["Probe Finisher One"], cards=["Probe Finisher One"])
         by_turn, hatched, _, _, _ = self._hatch(
             ["Forest", "Forest", "High Market"] + ["Bear 16", "Bear 17", "Bear 18", "Bear 19"],
-            library_extra=("Probe Finisher One", "Bear 15"), win_conditions=[line])
+            library_extra=("Probe Finisher One", "Bear 15", "Bear 14"), win_conditions=[line])
         self.assertEqual(self._series(by_turn, "comboLethal", 4), [0, 0, 1, 1])
         self.assertEqual(hatched[:1], [4])
 
@@ -5885,7 +6037,7 @@ class ManaRoundThreeEngineTests(unittest.TestCase):
         # (a Plains) untaps it: a Citizen, attacking from turn 6, then one a
         # turn (Probe G attacks from turn 6). Counting only creatures that
         # attacked, the first Citizen would come on turn 6.
-        library = ["Zero Trinket"] * 89 + ["Probe G", "Zero Trinket", "Zero Trinket"]
+        library = ["Zero Trinket"] * 89 + ["Probe G", "Zero Trinket", "Zero Trinket", "Zero Trinket"]
         with patch.dict(CARDS, R3_PROBES):
             damage, _ = TokenMakerGoldfishTests()._run(
                 ["Halo Fountain", "Dryad Arbor", "Plains", "Plains"] + ["Zero Trinket"] * 3, library,
@@ -6169,7 +6321,7 @@ class ManaRoundFourGoldfishTests(unittest.TestCase):
             {"title": "Probe line", "kind": "combo", "pieces": ["Probe Piece", "Probe Finisher"],
              "cards": ["Probe Piece", "Probe Finisher"], "description": ""}]}
         by_turn, _ = self._run(["Swamp", "Probe Dual GW", "Probe Finisher"] + ["Probe Nine"] * 4,
-                               ["Probe Nine"] * 91 + ["Probe Piece"], ("B", "G", "W"), deck_data)
+                               ["Probe Nine"] * 91 + ["Probe Piece", "Probe Nine"], ("B", "G", "W"), deck_data)
         self.assertEqual(self._series(by_turn, "comboLethal"), [0, 1, 1, 1, 1, 1])
 
     def test_the_held_activation_is_joined_with_each_gate_on_its_own(self):
@@ -6183,8 +6335,8 @@ class ManaRoundFourGoldfishTests(unittest.TestCase):
         commander = CastPriorityHoldTests.HATCH_COMMANDER
         metadata.update({name: R4_PROBES[name] for name in R4_PROBES if name.startswith("Probe")})
         hand = ["Forest"] * 4 + ["Ashnod's Altar", "Two Drop 0", "Probe Line A1", "Probe Line A2"]
-        library = (["Probe Line B1", "Probe Line B2"] + ["Forest"] * 6 + [f"Bear {i}" for i in range(4, 20)]
-                   + ["Probe Tutor One", "Bear 0", "Bear 1", "Bear 2", "Bear 3"])
+        library = (["Probe Line B1", "Probe Line B2"] + ["Forest"] * 6 + [f"Bear {i}" for i in range(5, 20)]
+                   + ["Probe Tutor One", "Bear 0", "Bear 1", "Bear 2", "Bear 3", "Bear 4"])
         decklist = hand + library
         deck_data = {"decklist": [{"name": n, "primary_role": "tutor" if n == "Probe Tutor One" else "other"}
                                   for n in decklist]}
@@ -6226,7 +6378,7 @@ class ManaRoundFourGoldfishTests(unittest.TestCase):
         line = dict(ManaRoundThreeEngineTests.LINE, pieces=["Probe Finisher One"], cards=["Probe Finisher One"])
         by_turn, hatched, _, _, _ = ManaRoundThreeEngineTests()._hatch(
             ["Forest", "Forest", "High Market", "Bear 16", "Bear 17", "Bear 18", "Bear 19"],
-            library_extra=("Probe Finisher One", "Bear 15", "Forest"), win_conditions=[line])
+            library_extra=("Probe Finisher One", "Bear 15", "Forest", "Bear 14"), win_conditions=[line])
         self.assertEqual(hatched[:1], [4])
         self.assertEqual(self._series(by_turn, "comboLethal", 4), [0, 0, 0, 1])
 
@@ -6250,7 +6402,7 @@ class ManaRoundFourGoldfishTests(unittest.TestCase):
             arbor.append(next((p.get("tapped") for p in kwargs["permanents"] if p["name"] == "Dryad Arbor"), None))
             return metrics(**kwargs)
 
-        library = ["Zero Trinket"] * 89 + ["Probe G", "Zero Trinket", "Zero Trinket"]
+        library = ["Zero Trinket"] * 89 + ["Probe G", "Zero Trinket", "Zero Trinket", "Zero Trinket"]
         with patch.dict(CARDS, R3_PROBES), patch.object(exporter, "metrics_from_board", recording):
             TokenMakerGoldfishTests()._run(["Halo Fountain", "Dryad Arbor", "Plains", "Plains"]
                                            + ["Zero Trinket"] * 3, library, colors=("W", "G"))
@@ -6654,10 +6806,11 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
         # assembled on turn 4, and the U Drop is cast on turn 5.
         hand = ["Forest"] * 2 + ["Probe Plains Pair", "Island", "Ashnod's Altar", "Probe U Drop", "Probe Line A1",
                                  "Probe Line A2", "Probe Tutor 1U"]
-        # Draws and hatches take the library's top: turns 2 and 3 each draw a
-        # Bear and hatch one, so Probe Tutor W is turn 4's draw.
-        library = (["Probe Line B1", "Probe Line Sorcery"] + ["Forest"] * 6 + [f"Bear {i}" for i in range(16)]
-                   + ["Probe Tutor W", "Bear 16", "Bear 17", "Bear 18", "Bear 19"])
+        # Draws and hatches take the library's top: turn 1 draws a Bear, turns
+        # 2 and 3 each draw a Bear and hatch one, so Probe Tutor W is turn 4's
+        # draw.
+        library = (["Probe Line B1", "Probe Line Sorcery"] + ["Forest"] * 6 + [f"Bear {i}" for i in range(15)]
+                   + ["Probe Tutor W"] + [f"Bear {i}" for i in range(15, 20)])
         casts, hatched, assembly = self._two_gate_game(
             hand, library, {"Probe Tutor W": ["instant"], "Probe Tutor 1U": ["sorcery"]})
         self.assertEqual(("Probe U Drop" in casts[4], "Probe U Drop" in casts[5]), (False, True))
@@ -6681,7 +6834,7 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
         # drawn after turn 3.
         for creature, lands in (("Embodiment of Spring", [1, 2, 3, 4]), ("Sakura-Tribe Elder", [1, 2, 4, 4])):
             with self.subTest(creature=creature):
-                library = ["Forest"] * 3 + ["Probe Nine"] * 87 + [creature, "Probe Nine"]
+                library = ["Forest"] * 3 + ["Probe Nine"] * 87 + [creature, "Probe Nine", "Probe Nine"]
                 by_turn, _ = self._run(["Island", "Forest", "Forest"] + ["Probe Nine"] * 4, library, ("G", "U"))
                 self.assertEqual(self._series(by_turn, "lands", 4), lands)
 
@@ -6691,7 +6844,7 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
     def test_a_fetch_creature_whose_fetch_the_lands_cannot_pay_attacks(self):
         # Three Islands: Embodiment of Spring is cast on turn 3; on turn 4 no
         # green pays {1}{G}, so it attacks and nothing is fetched.
-        library = ["Forest"] * 3 + ["Probe Nine"] * 87 + ["Embodiment of Spring", "Probe Nine"]
+        library = ["Forest"] * 3 + ["Probe Nine"] * 87 + ["Embodiment of Spring", "Probe Nine", "Probe Nine"]
         by_turn, _ = self._run(["Island"] * 3 + ["Probe Nine"] * 4, library, ("G", "U"))
         self.assertEqual((by_turn[4]["combat"], by_turn[4]["lands"]), (1, 3))
 
@@ -6700,7 +6853,7 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
         # 2 draws a second Petal: Forest and Petal would pay {1}{G} now, but
         # the end of the turn pays from lasting mana (the Forest alone), so
         # Embodiment attacks.
-        library = ["Forest"] * 3 + ["Probe Nine"] * 87 + ["Lotus Petal"]
+        library = ["Forest"] * 3 + ["Probe Nine"] * 87 + ["Lotus Petal", "Probe Nine"]
         by_turn, _ = self._run(["Forest", "Lotus Petal", "Embodiment of Spring"] + ["Probe Nine"] * 4, library,
                                ("G", "U"))
         self.assertEqual((by_turn[2]["combat"], by_turn[2]["lands"]), (1, 1))
@@ -6709,7 +6862,7 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
         # Probe Vigilant Fetcher (Embodiment of Spring's fetch with
         # vigilance), cast on turn 3 with the Island: on turn 4 it attacks
         # untapped, then the Forests pay its fetch.
-        library = ["Forest"] * 3 + ["Probe Nine"] * 87 + ["Probe Vigilant Fetcher", "Probe Nine"]
+        library = ["Forest"] * 3 + ["Probe Nine"] * 87 + ["Probe Vigilant Fetcher", "Probe Nine", "Probe Nine"]
         by_turn, _ = self._run(["Island", "Forest", "Forest"] + ["Probe Nine"] * 4, library, ("G", "U"))
         self.assertEqual((by_turn[4]["combat"], by_turn[4]["lands"]), (1, 4))
 
@@ -6720,7 +6873,7 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
         # gate's mana is held, Embodiment attacks, and the gate fires.
         hand = ["Island", "Forest", "Forest"] + ["Probe Nine"] * 4
         library = ["Forest"] * 3 + ["Probe Nine"] * 86 + ["Probe Gate Instant", "Embodiment of Spring",
-                                                           "Probe Nine"]
+                                                           "Probe Nine", "Probe Nine"]
         decklist = hand + library
         cards = dict(self.cards(), **{"Probe Gate Instant": {
             "type_line": "Instant", "mana_cost": "{2}", "cmc": 2.0, "oracle_text": "", "colors": []}})
@@ -6743,7 +6896,7 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
         # end of the turn pays the fetch with.
         for drawn in ("Probe Nine", "Lotus Petal"):
             with self.subTest(drawn=drawn):
-                library = ["Forest"] * 3 + ["Probe Nine"] * 87 + [drawn]
+                library = ["Forest"] * 3 + ["Probe Nine"] * 87 + [drawn, "Probe Nine"]
                 by_turn, _ = self._run(["Island", "Lotus Petal", "Llanowar Elves", "Embodiment of Spring"]
                                        + ["Probe Nine"] * 3, library, ("G", "U"))
                 self.assertEqual((by_turn[2]["combat"], by_turn[2]["lands"]), (0, 2))
@@ -7515,20 +7668,22 @@ class GoldfishMulliganTests(unittest.TestCase):
         # simulate_goldfish_game, read only through its own per-turn data: a
         # landless third seven (Probe Big Kill bottomed, interaction first)
         # dealt over Probe Tapped Forest, the deck's only copy. The goldfish
-        # draws from turn 2, so its first draw is that land, played on turn 2:
-        # no land on turn 1, one on turn 2.
+        # draws from turn 1 (CR 103.8c), so its first draw is that land,
+        # played on turn 1; turn 2 draws a Probe Nine (the rest of the deck,
+        # in deck order, ends with them): one land on turns 1 and 2. Drawing
+        # the bottomed Probe Big Kill first, turn 1 would have no land.
         seven = ["Probe Two", "Probe Three", "Probe Five", "Probe Nine", "Probe Big Kill", "Probe Two",
                  "Probe Three"]
         orders = [self.deal(self.BAD), self.deal(self.BAD), self.deal(seven, under=["Probe Tapped Forest"])]
         with patch.object(exporter.random, "shuffle", self.scripted(orders, [])):
             by_turn, _ = exporter.simulate_goldfish_game(list(self.DECK), self.context(("B", "G")), 6)
-        self.assertEqual((by_turn[1]["lands"], by_turn[2]["lands"]), (0, 1))
+        self.assertEqual((by_turn[1]["lands"], by_turn[2]["lands"]), (1, 1))
 
     def test_the_game_keeps_the_decks_mulligan_set(self):
         # simulate_goldfish_game, read through its own per-turn combat: a
         # third seven of four Forests, Probe Two, Probe Three and one dearer
         # card, dealt over Probe Nines. A Forest a turn and a Probe Nine drawn
-        # each turn from turn 2; the commander ({5}) is not cast by turn 4.
+        # each turn from turn 1; the commander ({5}) is not cast by turn 4.
         # Probe Two is cast on turn 2 and attacks from turn 3, Probe Three, if
         # kept, is cast on turn 3 and attacks from turn 4. (case, gate, dearer
         # card, combat on turns 3 and 4)
@@ -8420,12 +8575,13 @@ class CastPriorityHoldTests(unittest.TestCase):
         self.assertEqual(by_turn[2]["comboLethal"], 1)
 
     def test_partner_drawn_after_the_start_piece_waits_a_turn(self):
-        # The partner is not in hand, so the start piece is cast; the cantrip
-        # then draws the partner, which is cast the same turn. The start piece
-        # entered before its partner, so the loop waits a turn although {1} is
-        # left over, and starts on turn 2 by paying the start piece again.
+        # The turn-1 draw step takes a Forest, so the partner is not in hand
+        # and the start piece is cast; the cantrip then draws the partner,
+        # which is cast the same turn. The start piece entered before its
+        # partner, so the loop waits a turn although {1} is left over, and
+        # starts on turn 2 by paying the start piece again.
         by_turn, casts = self._run_start_piece_combo(
-            ["Forest", "Triple Rock", "Start Top", "Cantrip"], ["Partner Forge"])
+            ["Forest", "Triple Rock", "Start Top", "Cantrip"], ["Forest", "Partner Forge"])
         self.assertEqual(casts[1],
                          ["Triple Rock", "Start Top", "Cantrip", "Partner Forge"])
         self.assertEqual(by_turn[1]["comboLethal"], 0)

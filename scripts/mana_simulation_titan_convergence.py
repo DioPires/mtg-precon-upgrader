@@ -258,9 +258,10 @@ class GameState:
         self.battlefield_lands.extend(self.pending_lands)
         self.pending_lands = []
 
-        # Draw (skip on turn 1's draw since we have opening hand)
-        if turn_number > 1:
-            self.draw(1)
+        # Draw step, turn 1 included: the simulation models a four-player
+        # free-for-all Commander game, in which no player skips the draw step
+        # of their first turn (CR 103.8c).
+        self.draw(1)
 
         # Mark burst rocks as no longer active
         for name in list(self.burst_rocks_active.keys()):

@@ -139,6 +139,8 @@ Re-fit note (DEC-935 / DEC-937, 2026-09-30): until DEC-937 the goldfish spent it
 
 Mana-model note (2026-11-19): the goldfish's mana model changed on 2026-11-19. Each permanent now gives the mana its own text gives a pilot on a normal turn: one ability a turn, lands by their entry rules, fetches by the lands they find, one-shot and conditional mana, mana creatures that do not attack when tapped (the goldfish methodology in each `simulation.json` states the rules). Every deck's best-of reading (the better of `comboLethal` and `lethalProxy`, the statistic both tables read) moved, so the rows of both tables in this section, and the decks they name "at re-fit", await a re-fit on the new readings. Until then the deck lists are the 2026-09-30 record, not current placements.
 
+Turn-1 draw note (2026-11-23): the goldfish and the mana simulations now draw a card on turn 1. They model a four-player free-for-all Commander game, in which no player skips the draw step of their first turn (CR 103.8c). Fitted on simulations that skipped that draw, and not re-fitted since: the rows of both tables in this section and the strategy-ceiling reads in `scripts/validate_strategy_ceiling.py` (CL@T6, CL@T7 and LP@T8 against their floors). The win-turn thresholds in `scripts/compute_deck_metrics.py` (15% best, 50% typical, the bracket drag) are fixed definitions, unchanged; they now read curves that include the turn-1 draw. No threshold or row has changed.
+
 These cutoffs apply to the proxy as a *floor* (real-game readiness is higher — see caveats below).
 
 ### B2/B3 Reality Check (sub-B4 turn bands)

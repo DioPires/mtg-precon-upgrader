@@ -54,6 +54,8 @@ Sub-scores:
 
 Computed per color from the deck's actual mana costs. If multiple thresholds apply (e.g. both a 1-CC and 3-CCC card exist), use the strictest.
 
+These thresholds are a fixed published table, not computed from the simulators' cards-seen count, so the 2026-11-23 change that made the simulators draw on turn 1 does not move them.
+
 ### 2. `role_coverage_health` (0–100)
 
 Inputs: `decklist[].primary_role` + `decklist[].secondary_role` + `commanderRoles`, `bracket`, `commander_color_identity`.

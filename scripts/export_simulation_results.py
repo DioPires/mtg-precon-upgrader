@@ -1389,8 +1389,11 @@ def paid_mulligan_pct(mulligan_attempts: Counter, total: int) -> float:
 
 
 def cards_seen_by_turn(turn: int) -> int:
-    """Cards seen by end of turn on the play in a Commander game."""
-    return min(99, 6 + turn)
+    """Cards seen by the end of `turn`: the opening seven and one draw a turn
+    from turn 1. The simulators model a four-player free-for-all Commander
+    game, in which no player skips the draw step of their first turn (CR
+    103.8c)."""
+    return min(99, 7 + turn)
 
 
 def hypergeom_at_least(deck_size: int, hits_in_deck: int, cards_seen: int,
@@ -5682,7 +5685,10 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
                         hand.append(library.pop())
 
         # Draw step: after the upkeep tempt, before the main-phase activations.
-        if turn > 1 and library:
+        # Turn 1 draws too: the goldfish models a four-player free-for-all
+        # Commander game, in which no player skips the draw step of their
+        # first turn (CR 103.8c).
+        if library:
             hand.append(library.pop())
 
         # DEC-472 activated draw engines: an engine cast on an earlier turn
@@ -6805,7 +6811,10 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             },
         },
         "methodology": (
-            f"{GOLDFISH_GAMES:,}-game solitaire heuristic. Sequencing: land drop, cheapest ramp, "
+            f"{GOLDFISH_GAMES:,}-game solitaire heuristic. Every turn draws a card, turn 1 "
+            "included: the simulation models a four-player free-for-all Commander game, in which "
+            "no player skips the draw step of their first turn (CR 103.8c). Sequencing: land "
+            "drop, cheapest ramp, "
             "commander on affordability, combo/assembly pieces, biggest affordable threat, then "
             "other proactive spells. "
             "Mana is spent once per turn: the turn's pool is built after the land drop and each "
@@ -7361,7 +7370,11 @@ def compute_colored_source_adequacy(decklist: list[str], metadata: dict,
     return {
         "overallScore": overall,
         "byColor": by_color,
-        "method": "Hypergeometric source adequacy using cards seen by spell CMC turn and source counts from lands plus low-CMC mana permanents.",
+        "method": ("Hypergeometric source adequacy using cards seen by spell CMC turn (the "
+                   "opening seven and one draw a turn from turn 1: the simulators model a "
+                   "four-player free-for-all Commander game, in which no player skips the draw "
+                   "step of their first turn, CR 103.8c) and source counts from lands plus "
+                   "low-CMC mana permanents."),
     }
 
 

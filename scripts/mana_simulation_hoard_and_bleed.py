@@ -511,8 +511,10 @@ class GameState:
     def play_turn(self, turn_number: int):
         """Simulate one turn."""
         self.current_turn = turn_number
-        if turn_number > 1:
-            self.draw(1)
+        # Draw step, turn 1 included: the simulation models a four-player
+        # free-for-all Commander game, in which no player skips the draw step
+        # of their first turn (CR 103.8c).
+        self.draw(1)
 
         self.tapped_lands.clear()
         for name in list(self.burst_rocks_active.keys()):
