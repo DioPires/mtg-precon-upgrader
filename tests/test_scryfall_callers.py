@@ -892,6 +892,16 @@ class BuildPriceIndexLayoutTests(BulkDataCase):
         self.check_stop_text_stands_on_its_own_line()
 
 
+# The Sol Ring of bulk_fake() as refresh_scryfall_mirror.py keeps it, and an older download's date.
+SOL_RING_ENTRY = {
+    "oracle_id": "oracle-sol-ring", "name": "Sol Ring", "mana_cost": "{U}", "cmc": 1.0,
+    "type_line": "Instant", "oracle_text": "Text of Sol Ring.", "colors": ["U"],
+    "legalities": {"commander": "legal"},
+}
+OLD_UPDATED_AT = "2026-09-01T09:00:00.000+00:00"
+MIRROR_NAMES = ["scryfall-oracle.json", "scryfall-oracle.meta.json"]
+
+
 class RefreshScryfallMirrorTests(BulkDataCase):
     module = refresh_mirror
     folder = "PRIV_DIR"
@@ -907,6 +917,272 @@ class RefreshScryfallMirrorTests(BulkDataCase):
 
     def test_helper_is_the_scripts_module(self):
         self.assertIs(refresh_mirror.scryfall_api, scryfall_api)
+
+    def write_old_pair(self, folder: Path) -> tuple[Path, Path]:
+        """An older download's mirror and meta file in ``folder``."""
+        folder.mkdir(parents=True)
+        mirror, meta = (folder / name for name in MIRROR_NAMES)
+        mirror.write_text(json.dumps([{"name": "Old Card"}]))
+        meta.write_text(json.dumps({"scryfall_updated_at": OLD_UPDATED_AT}))
+        return mirror, meta
+
+    def assert_new_pair(self, mirror: Path, meta: Path):
+        """``mirror`` holds the new download and ``meta`` describes it."""
+        self.assertEqual(json.loads(mirror.read_text()), [SOL_RING_ENTRY])
+        written = json.loads(meta.read_text())
+        self.assertEqual(sorted(written),
+                         ["card_count", "downloaded_at", "scryfall_updated_at", "source"])
+        self.assertEqual(written["scryfall_updated_at"], UPDATED_AT)
+        self.assertEqual(written["card_count"], 1)
+        self.assertEqual(written["source"], EXPORT_URL)
+
+    def test_regular_files_are_replaced_in_place(self):
+        """Without links, the new pair replaces the old one in priv_data, and no temporary
+        file is left."""
+        mirror, meta = self.write_old_pair(self.folder_path)
+
+        code, _ = self.run_main(bulk_fake())
+
+        self.assertEqual(code, 0)
+        self.assertFalse(mirror.is_symlink())
+        self.assertFalse(meta.is_symlink())
+        self.assert_new_pair(mirror, meta)
+        self.assertEqual(sorted(p.name for p in self.folder_path.iterdir()), MIRROR_NAMES)
+
+    def test_linked_files_are_written_at_their_targets(self):
+        """A git worktree's priv_data links both files to the main checkout's. The new pair is
+        written at the targets, the links stay links, and the worktree holds no file of its
+        own."""
+        target_mirror, target_meta = self.write_old_pair(self.root / "main" / "priv_data")
+        self.folder_path.mkdir()
+        link_mirror, link_meta = (self.folder_path / name for name in MIRROR_NAMES)
+        link_mirror.symlink_to(target_mirror)
+        link_meta.symlink_to(target_meta)
+
+        code, _ = self.run_main(bulk_fake())
+
+        self.assertEqual(code, 0)
+        self.assertTrue(link_mirror.is_symlink())
+        self.assertTrue(link_meta.is_symlink())
+        self.assertEqual(link_mirror.readlink(), target_mirror)
+        self.assertEqual(link_meta.readlink(), target_meta)
+        self.assert_new_pair(target_mirror, target_meta)
+        self.assertEqual([p.name for p in self.folder_path.iterdir() if not p.is_symlink()], [])
+        self.assertEqual(sorted(p.name for p in target_mirror.parent.iterdir()), MIRROR_NAMES)
+
+    def snapshot(self) -> dict:
+        """Each path under the temporary folder: a link's target, a file's bytes, or None for
+        a folder."""
+        return {
+            p.relative_to(self.root).as_posix():
+                p.readlink() if p.is_symlink() else p.read_bytes() if p.is_file() else None
+            for p in sorted(self.root.rglob("*"))
+        }
+
+    def check_refused(self, mirror_target: Path, meta_target: Path):
+        """The run names where each file leads, sends no request and changes no file."""
+        before = self.snapshot()
+        fake = bulk_fake()
+
+        code, out = self.run_main(fake)
+
+        self.assertEqual(code, 1)
+        self.assertEqual(out, (
+            f"{self.folder_path / MIRROR_NAMES[0]} leads to {mirror_target}\n"
+            f"{self.folder_path / MIRROR_NAMES[1]} leads to {meta_target}\n"
+            "No file written. The two must lie in one existing folder under these names: "
+            "link both files or neither.\n"
+            "After repairing the links, run once with --force in the main checkout (the "
+            "checkout the links lead to): a pair left by an older run can date an old mirror "
+            "as current.\n"))
+        self.assertEqual(self.snapshot(), before)
+        self.assertEqual(fake.sent, [])
+
+    def test_linked_meta_beside_a_regular_mirror_ends_the_run(self):
+        """Only the meta file is a link (the layout a refresh before 2026-11-23 left behind):
+        writing it would date the main checkout's old mirror as current."""
+        target_mirror, target_meta = self.write_old_pair(self.root / "main" / "priv_data")
+        self.folder_path.mkdir()
+        mirror, link_meta = (self.folder_path / name for name in MIRROR_NAMES)
+        mirror.write_text(json.dumps([{"name": "Worktree Card"}]))
+        link_meta.symlink_to(target_meta)
+
+        self.check_refused(self.root.resolve() / "out" / MIRROR_NAMES[0],
+                           self.root.resolve() / "main" / "priv_data" / MIRROR_NAMES[1])
+
+    def test_linked_mirror_beside_a_regular_meta_ends_the_run(self):
+        """Only the mirror is a link: writing the pair would leave the main checkout's new
+        mirror beside its old meta file."""
+        target_mirror, _ = self.write_old_pair(self.root / "main" / "priv_data")
+        self.folder_path.mkdir()
+        link_mirror, meta = (self.folder_path / name for name in MIRROR_NAMES)
+        link_mirror.symlink_to(target_mirror)
+        meta.write_text(json.dumps({"scryfall_updated_at": OLD_UPDATED_AT}))
+
+        self.check_refused(self.root.resolve() / "main" / "priv_data" / MIRROR_NAMES[0],
+                           self.root.resolve() / "out" / MIRROR_NAMES[1])
+
+    def test_links_into_a_missing_folder_end_the_run(self):
+        """Both files link into a folder that does not exist: the run stops before the
+        download instead of failing after it."""
+        gone = self.root / "gone" / "priv_data"
+        self.folder_path.mkdir()
+        for name in MIRROR_NAMES:
+            (self.folder_path / name).symlink_to(gone / name)
+
+        self.check_refused(self.root.resolve() / "gone" / "priv_data" / MIRROR_NAMES[0],
+                           self.root.resolve() / "gone" / "priv_data" / MIRROR_NAMES[1])
+
+    def test_meta_link_into_a_missing_folder_ends_the_run(self):
+        """The mirror links into an existing folder and the meta file into a missing one: the
+        run is refused, not stopped by an error."""
+        target_mirror, _ = self.write_old_pair(self.root / "main" / "priv_data")
+        self.folder_path.mkdir()
+        link_mirror, link_meta = (self.folder_path / name for name in MIRROR_NAMES)
+        link_mirror.symlink_to(target_mirror)
+        link_meta.symlink_to(self.root / "gone" / "priv_data" / MIRROR_NAMES[1])
+
+        self.check_refused(self.root.resolve() / "main" / "priv_data" / MIRROR_NAMES[0],
+                           self.root.resolve() / "gone" / "priv_data" / MIRROR_NAMES[1])
+
+    def test_mirror_link_into_a_missing_folder_ends_the_run(self):
+        """The meta file links into an existing folder and the mirror into a missing one: the
+        run is refused, not stopped by an error."""
+        _, target_meta = self.write_old_pair(self.root / "main" / "priv_data")
+        self.folder_path.mkdir()
+        link_mirror, link_meta = (self.folder_path / name for name in MIRROR_NAMES)
+        link_mirror.symlink_to(self.root / "gone" / "priv_data" / MIRROR_NAMES[0])
+        link_meta.symlink_to(target_meta)
+
+        self.check_refused(self.root.resolve() / "gone" / "priv_data" / MIRROR_NAMES[0],
+                           self.root.resolve() / "main" / "priv_data" / MIRROR_NAMES[1])
+
+    def test_mirror_link_to_another_file_ends_the_run(self):
+        """The mirror links to another file of the main checkout's priv_data: the refresh
+        would overwrite that file."""
+        main = self.root / "main" / "priv_data"
+        _, target_meta = self.write_old_pair(main)
+        (main / "Owned.csv").write_text("Name,Quantity\nSol Ring,1\n")
+        self.folder_path.mkdir()
+        link_mirror, link_meta = (self.folder_path / name for name in MIRROR_NAMES)
+        link_mirror.symlink_to(main / "Owned.csv")
+        link_meta.symlink_to(target_meta)
+
+        self.check_refused(self.root.resolve() / "main" / "priv_data" / "Owned.csv",
+                           self.root.resolve() / "main" / "priv_data" / MIRROR_NAMES[1])
+
+    def test_meta_link_to_another_file_ends_the_run(self):
+        """The meta file links to another file of the main checkout's priv_data: the refresh
+        would overwrite that file."""
+        main = self.root / "main" / "priv_data"
+        target_mirror, _ = self.write_old_pair(main)
+        (main / "Owned.csv").write_text("Name,Quantity\nSol Ring,1\n")
+        self.folder_path.mkdir()
+        link_mirror, link_meta = (self.folder_path / name for name in MIRROR_NAMES)
+        link_mirror.symlink_to(target_mirror)
+        link_meta.symlink_to(main / "Owned.csv")
+
+        self.check_refused(self.root.resolve() / "main" / "priv_data" / MIRROR_NAMES[0],
+                           self.root.resolve() / "main" / "priv_data" / "Owned.csv")
+
+    def test_links_that_spell_one_folder_in_another_case(self):
+        """On a case-insensitive file system (macOS by default), main/ and MAIN/ are one
+        folder: links that spell it differently are written through."""
+        target_mirror, target_meta = self.write_old_pair(self.root / "main" / "priv_data")
+        if not (self.root / "MAIN").exists():
+            self.skipTest("case-sensitive file system")
+        self.folder_path.mkdir()
+        link_mirror, link_meta = (self.folder_path / name for name in MIRROR_NAMES)
+        link_mirror.symlink_to(target_mirror)
+        link_meta.symlink_to(self.root / "MAIN" / "priv_data" / MIRROR_NAMES[1])
+
+        code, _ = self.run_main(bulk_fake())
+
+        self.assertEqual(code, 0)
+        self.assert_new_pair(target_mirror, target_meta)
+
+    def test_failed_write_leaves_the_old_pair(self):
+        """The download holds a card text with a lone surrogate, which UTF-8 cannot encode:
+        the write call fails before any byte is written. The old mirror and the old meta file
+        stay, and no temporary file is left."""
+        self.write_old_pair(self.folder_path)
+        before = self.snapshot()
+        fake = bulk_fake()
+        card = make_card("Sol Ring", legalities={"commander": "legal"}, oracle_text="\ud800")
+        fake.failures[1] = gzip.compress(json.dumps(card).encode() + b"\n")
+
+        with self.assertRaises(UnicodeEncodeError):
+            self.run_main(fake)
+
+        self.assertEqual(self.snapshot(), before)
+
+    def test_export_without_a_commander_legal_card_ends_the_run(self):
+        """An empty mirror dated current would replace a good one: the run writes nothing."""
+        self.write_old_pair(self.folder_path)
+        before = self.snapshot()
+        fake = bulk_fake()
+        card = make_card("Black Lotus", legalities={"commander": "banned"})
+        fake.failures[1] = gzip.compress(json.dumps(card).encode() + b"\n")
+
+        code, out = self.run_main(fake)
+
+        self.assertEqual(code, 1)
+        self.assertIn(f"No commander-legal card in {EXPORT_URL}. No file written.\n", out)
+        self.assertEqual(self.snapshot(), before)
+
+    def interrupted_rename(self, after: bool):
+        """os.replace raises KeyboardInterrupt for the mirror's rename: before the rename, or
+        just after it. Every other rename (the limiter's state file) goes through."""
+        real_replace = refresh_mirror.os.replace
+
+        def replace(src, dst):
+            if str(dst).endswith("scryfall-oracle.json"):
+                if after:
+                    real_replace(src, dst)
+                raise KeyboardInterrupt
+            return real_replace(src, dst)
+
+        return mock.patch.object(refresh_mirror.os, "replace", replace)
+
+    def test_interrupted_rename_leaves_the_old_pair(self):
+        """KeyboardInterrupt raised by the mirror's rename propagates, and leaves the old pair
+        and no temporary file."""
+        self.write_old_pair(self.folder_path)
+        before = self.snapshot()
+
+        with self.interrupted_rename(after=False), self.assertRaises(KeyboardInterrupt):
+            self.run_main(bulk_fake())
+
+        self.assertEqual(self.snapshot(), before)
+
+    def test_interrupt_just_after_the_rename_propagates(self):
+        """KeyboardInterrupt just after the mirror's rename propagates as itself: the cleanup
+        of the temporary file, already renamed, raises nothing of its own. The new mirror
+        stays beside the old meta file, so the next run downloads again."""
+        mirror, meta = self.write_old_pair(self.folder_path)
+
+        with self.interrupted_rename(after=True), self.assertRaises(KeyboardInterrupt):
+            self.run_main(bulk_fake())
+
+        self.assertEqual(json.loads(mirror.read_text()), [SOL_RING_ENTRY])
+        self.assertEqual(json.loads(meta.read_text()), {"scryfall_updated_at": OLD_UPDATED_AT})
+        self.assertEqual(sorted(p.name for p in self.folder_path.iterdir()), MIRROR_NAMES)
+
+    def test_another_runs_temporary_file_is_left_alone(self):
+        """Each run writes through a temporary file of its own: a scryfall-oracle.json.tmp of
+        another run (the one name every run used before) is neither published nor removed."""
+        mirror, meta = self.write_old_pair(self.folder_path)
+        other = self.folder_path / "scryfall-oracle.json.tmp"
+        other.write_bytes(b'[{"name": "Half')
+
+        code, _ = self.run_main(bulk_fake())
+
+        self.assertEqual(code, 0)
+        self.assertEqual(sorted(p.name for p in self.folder_path.iterdir()),
+                         ["scryfall-oracle.json", "scryfall-oracle.json.tmp",
+                          "scryfall-oracle.meta.json"])
+        self.assert_new_pair(mirror, meta)
+        self.assertEqual(other.read_bytes(), b'[{"name": "Half')
 
 
 class RefreshScryfallMirrorLayoutTests(BulkDataCase):

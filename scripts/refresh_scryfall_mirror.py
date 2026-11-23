@@ -19,7 +19,9 @@ DEC-90 phase 1.
 import argparse
 import gzip
 import json
+import os
 import sys
+import tempfile
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -78,6 +80,29 @@ def main(argv: list[str]) -> int:
     args = parser.parse_args(argv)
 
     PRIV_DIR.mkdir(exist_ok=True)
+
+    # A git worktree's priv_data may link these files to the main checkout's. A meta file
+    # that leads to another folder than its mirror would date the wrong mirror, a link to
+    # another file would overwrite it, and a link into a missing folder would fail only
+    # after the download.
+    mirror_file, meta_file = MIRROR_FILE.resolve(), META_FILE.resolve()
+    if not (
+        mirror_file.parent.is_dir()
+        and meta_file.parent.is_dir()
+        and os.path.samefile(mirror_file.parent, meta_file.parent)
+        and mirror_file.name == MIRROR_FILE.name
+        and meta_file.name == META_FILE.name
+    ):
+        print(
+            f"{MIRROR_FILE} leads to {mirror_file}\n{META_FILE} leads to {meta_file}\n"
+            "No file written. The two must lie in one existing folder under these names: "
+            "link both files or neither.\n"
+            "After repairing the links, run once with --force in the main checkout (the "
+            "checkout the links lead to): a pair left by an older run can date an old mirror "
+            "as current.",
+            file=sys.stderr,
+        )
+        return 1
 
     print("Querying Scryfall bulk-data API...", file=sys.stderr)
     try:
@@ -138,10 +163,20 @@ def main(argv: list[str]) -> int:
         if c.get("legalities", {}).get("commander") == "legal"
     ]
     print(f"Filtered to {len(legal):,} commander-legal cards.", file=sys.stderr)
+    if not legal:
+        print(f"No commander-legal card in {download_uri}. No file written.", file=sys.stderr)
+        return 1
 
-    tmp = MIRROR_FILE.with_suffix(".json.tmp")
-    tmp.write_text(json.dumps(legal, ensure_ascii=False))
-    tmp.replace(MIRROR_FILE)
+    # mirror_file is resolved for this rename: a rename over a link would replace the link.
+    # The temporary file is this run's own, so two runs at once cannot publish each other's.
+    fd, tmp = tempfile.mkstemp(dir=mirror_file.parent, prefix=mirror_file.name + ".",
+                               suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(json.dumps(legal, ensure_ascii=False))
+        os.replace(tmp, mirror_file)
+    finally:
+        Path(tmp).unlink(missing_ok=True)
 
     META_FILE.write_text(json.dumps({
         "scryfall_updated_at": remote_updated_at,
