@@ -12,17 +12,61 @@ Pipeline (all generation local, no Vercel build step depends on it):
      temporary file of this run's own in the gitignored priv_data/spellbook/
      cache folder and read it as the corpus (a readable gzip holding one JSON
      object, read strictly, whose "variants" list holds objects of the expected
-     shape, at least 1000 scanned and kept). Freshness follows the
+     shape, at least 1000 scanned and kept, and every string the run reads,
+     the version included, can be written as UTF-8; a lone surrogate from a
+     JSON escape such as \\ud800 cannot). Freshness follows the
      refresh_scryfall_mirror.py convention: compare the export's top-level
-     `timestamp`, wherever it sits, against the stored spellbook.meta.json. A
-     download byte-identical to the cached export (or an --offline run) with a
-     current timestamp, an existing matcher index and no --force or --deck
-     changes nothing: it is dropped, unscanned when the timestamp precedes the
-     variants list. Any other download is scanned, replaces the cache when it
-     differs from it, and rebuilds the derivatives; the meta file is removed
-     before the rebuild and written again at its end, so a rebuild that stops
-     part-way is redone by the next run. The meta file must be this checkout's own: a worktree links
-     only variants.json.gz. Schema access is defensive —
+     `timestamp`, wherever it sits, against the stored spellbook.meta.json.
+     The export's timestamp must have the form the real export uses, as in
+     2026-10-20T15:16:11.894774+00:00: YYYY-MM-DDTHH:MM:SS in ASCII digits
+     (HH 00 to 23, MM and SS 00 to 59), an optional fraction of 1 to 6 digits,
+     then Z or an offset ±HH:MM (HH 00 to 23, MM 00 to 59), naming a real date
+     and time (else a schema error).
+     Each file is trusted for the corpus it records: the meta file's
+     corpus_timestamp (the corpus of the last run that wrote it), and for the
+     derivative files the matcher index's meta.corpusVersion, its sidecar's
+     (matcher-index.meta.json) corpusVersion and each deck's
+     spellbook-combos.json meta.corpusVersion. A record is a timestamp of that
+     form read from a file that is strict JSON; a file that is missing or
+     cannot be read, or a value of any other form, records none.
+       - No run moves a derivative file to an older corpus: when a derivative
+         file records a later instant than the run's export, the run names the
+         newer files and exits 1 before the cache, the meta file or any
+         derivative file changes (with an older cached export, run without
+         --offline to download the newest).
+       - A download byte-identical to the cached export (or an --offline run),
+         with no --force or --deck, changes nothing when the meta file and
+         every derivative file record the export's corpus: it is dropped,
+         unscanned when the timestamp precedes the variants list. Any other run
+         rebuilds the derivatives (a download that differs from the cache
+         replaces it after the scan).
+       - The meta file is removed once, before the cache is replaced and the
+         rebuild starts, and written again at the rebuild's end, so after a run
+         that stops part-way the next run rebuilds every deck if it has no
+         --deck.
+       - A --deck run rebuilds the matcher index and its own decks only (a
+         --deck value must be a deck folder's name exactly; any other is warned
+         about and skipped), writes the meta file, and ends by naming every
+         other deck whose file does not record its corpus, with the commands
+         that rebuild them (printed only when a deck is named; otherwise one line
+         says every deck is on the corpus). One exception is a --deck run that
+         installed its download while the meta file named the same corpus
+         timestamp: it could not match the export it installed to the cached one
+         (missing, unreadable or other bytes), so it cannot tell which other deck
+         files were built from the one it installed. It names every deck it did
+         not rebuild ("matching timestamp, export unverified" when its file
+         records that timestamp) and writes no meta file, so the next run
+         rebuilds every deck if it has no --deck; one that rebuilt every deck
+         writes it.
+     The limit that remains: files are identified by the corpus timestamp they
+     record, so a file restored from, or an export replaced by, other bytes
+     under an unchanged timestamp outside a run of this script is not
+     detected; nor, when a --deck run starts without a meta file (a new tree,
+     or one whose last run stopped part-way or withheld the meta file), are
+     deck files built from an earlier export with the same timestamp: it
+     trusts each file's timestamp and writes the meta file. The meta file must
+     be this checkout's own: a worktree links only
+     variants.json.gz. Schema access is defensive —
      validate expected fields, fail loud with a clear message. On the export of
      2026-10-20 (30.6 MB gz, 693 M characters, 115,439 variants) a full run
      over the 21 decks takes about 16 s and peaks at about 2 GB of memory
@@ -38,6 +82,10 @@ Pipeline (all generation local, no Vercel build step depends on it):
        - data/spellbook/details/{shard}.json — optional sharded full details for
          paste mode. Off by default (--emit-details); the script always measures
          and reports the would-be size so the plan's ~150 MB gate can be applied.
+         A run with the flag removes the old shards before it writes the new
+         ones: if it stops part-way, the next run without the flag finishes the
+         rebuild but leaves the shards incomplete, and --offline --force
+         --emit-details writes them all again.
 
 Matching model (Phase 0, deterministic, identical for local precompute and the
 client): a variant is INCLUDED when the deck contains every `uses` card (by
@@ -72,6 +120,7 @@ RAW_FILE = PRIV_DIR / "variants.json.gz"
 META_FILE = PRIV_DIR / "spellbook.meta.json"
 DATA_SPELLBOOK_DIR = PROJECT_ROOT / "data" / "spellbook"
 MATCHER_INDEX_FILE = DATA_SPELLBOOK_DIR / "matcher-index.json"
+MATCHER_META_FILE = DATA_SPELLBOOK_DIR / "matcher-index.meta.json"
 DETAILS_DIR = DATA_SPELLBOOK_DIR / "details"
 COMMANDERS_DIR = PROJECT_ROOT / "data" / "commanders"
 
@@ -144,10 +193,11 @@ def download_corpus() -> Path:
     every other way out.
     """
     # The export's freshness lives inside the gz (top-level `timestamp`), and
-    # Spellbook exposes no cheap metadata endpoint, so we always fetch the 27 MB
-    # gz. The expensive work — regenerating + committing derivatives — is what the
-    # freshness compare in main() actually short-circuits once the corpus
-    # timestamp is unchanged.
+    # Spellbook exposes no cheap metadata endpoint, so we always fetch the gz
+    # (30.6 MB on 2026-10-20). The expensive work — regenerating + committing
+    # derivatives — is what the freshness check in main() skips: only when the
+    # download is byte-identical to the cached export, and the meta file, the matcher
+    # index, its sidecar and every deck's file record its timestamp.
     PRIV_DIR.mkdir(parents=True, exist_ok=True)
     print(f"Downloading {VARIANTS_URL} ...", file=sys.stderr)
     req = urllib.request.Request(VARIANTS_URL, headers={"User-Agent": USER_AGENT})
@@ -316,16 +366,18 @@ def extract_variant(v: dict) -> dict | None:
     has another type than in the real export: every field below is present on every
     variant there, null only where noted. A default would let a reshaped export
     change which combos match; a wrong type would stop the run later in a traceback
-    or put a value into the derivative files that a browser cannot read.
+    or put a value into the derivative files that a browser cannot read. A string it reads
+    that cannot be written as UTF-8 is refused too: kept, it would stop the run while it
+    writes the derivative files, after the cache was replaced.
     """
-    def check(ok: bool, problem: str) -> None:
-        if not ok:
-            raise SchemaError(f"variant {v.get('id')!r} {problem}.")
-
     def need(obj: dict, key: str, ok, problem: str):
-        """obj[key], present and accepted by ``ok``."""
-        check(key in obj and ok(obj[key]), problem)
-        return obj[key]
+        """obj[key], present and accepted by ``ok``. A value refused for holding a string that
+        cannot be written as UTF-8 is named as such."""
+        if key in obj and ok(obj[key]):
+            return obj[key]
+        if key in obj and _unwritable(obj[key]):
+            problem = f"has text that cannot be written as UTF-8 (a lone surrogate) in {key!r}"
+        raise SchemaError(f"variant {v.get('id')!r} {problem}.")
 
     status = need(v, "status", _is_str, "has no string 'status'")
     if status not in KEEP_STATUS:
@@ -344,7 +396,8 @@ def extract_variant(v: dict) -> dict | None:
         "identity", "bracketTag", "manaNeeded", "easyPrerequisites", "notablePrerequisites",
         "description", "notes")}
     mana_value = need(v, "manaValueNeeded", _is_int, "has no integer 'manaValueNeeded'")
-    prices = need(v, "prices", lambda x: _is_dict(x) and all(_is_str(p) for p in x.values()),
+    prices = need(v, "prices",
+                  lambda x: _is_dict(x) and all(_is_str(k) and _is_str(p) for k, p in x.items()),
                   "has no 'prices' object of strings")
     # Null on 36 variants of the real export.
     popularity = need(v, "popularity", lambda x: x is None or _is_int(x),
@@ -362,7 +415,7 @@ def extract_variant(v: dict) -> dict | None:
                 "mustBeCommander": need(use, "mustBeCommander", _is_bool,
                                         "has a use with no boolean 'mustBeCommander'"),
                 "quantity": need(use, "quantity", _is_int, "has a use with no whole-number 'quantity'"),
-                "zones": need(use, "zoneLocations", lambda x: _is_list_of(x, str),
+                "zones": need(use, "zoneLocations", lambda x: isinstance(x, list) and all(map(_is_str, x)),
                               "has a use with no 'zoneLocations' list of strings"),
             }
         )
@@ -405,7 +458,33 @@ def extract_variant(v: dict) -> dict | None:
 
 
 def _is_str(value: object) -> bool:
-    return isinstance(value, str)
+    """A string the run can write: ASCII (checked in constant time, the common case) or one
+    that encodes as UTF-8."""
+    return isinstance(value, str) and (value.isascii() or not _unwritable(value))
+
+
+def _unwritable(value: object) -> bool:
+    """True when ``value`` is a string, a list of strings or an object of string keys and
+    values, the shapes of the strings the run reads, and one of those strings cannot be encoded
+    as UTF-8: a lone surrogate, which a JSON escape such as \\ud800 gives. Any other value is
+    False, so need() gives its shape message; nothing nested is searched, so no depth makes
+    this check raise RecursionError."""
+    if isinstance(value, str):
+        strings = [value]
+    elif isinstance(value, list):
+        strings = value
+    elif isinstance(value, dict):
+        strings = [*value, *value.values()]
+    else:
+        return False
+    if not all(isinstance(text, str) for text in strings):
+        return False
+    for text in strings:
+        try:
+            text.encode("utf-8")
+        except UnicodeEncodeError:
+            return True
+    return False
 
 
 def _is_bool(value: object) -> bool:
@@ -599,6 +678,72 @@ def write_json(path: Path, obj: dict, compact: bool = False) -> int:
     return len(payload.encode("utf-8"))
 
 
+# ─── the fleet and the corpus each file records ───────────────────────────────
+
+def deck_folders() -> list[str]:
+    """The decks: each folder under data/commanders/ that holds a deck.json, by its name."""
+    return sorted(p.name for p in COMMANDERS_DIR.iterdir() if (p / "deck.json").exists())
+
+
+def deck_file(deck_id: str) -> Path:
+    return COMMANDERS_DIR / deck_id / "spellbook-combos.json"
+
+
+_TIMESTAMP = re.compile(
+    r"[0-9]{4}-[0-9]{2}-[0-9]{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\.[0-9]{1,6})?"
+    r"(?:Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])")
+
+
+def instant(value: object) -> datetime | None:
+    """``value`` as a point in time, or None. Only the form the real export uses counts, as in
+    ``2026-10-20T15:16:11.894774+00:00``: ``YYYY-MM-DDTHH:MM:SS`` in ASCII digits (HH 00 to 23,
+    MM and SS 00 to 59), an optional fraction of 1 to 6 digits, then ``Z`` or an offset
+    ``±HH:MM`` (HH 00 to 23, MM 00 to 59), naming a real date and time. The shape is checked
+    before datetime.fromisoformat, which alone accepts more: an offset of +00:99 (read as
+    +01:39), more than six fractional digits (cut to six, so two strings read as one instant),
+    any character between the date and the time, and on Python 3.14 hour 24 (read as the next
+    midnight)."""
+    if not isinstance(value, str) or not _TIMESTAMP.fullmatch(value):
+        return None
+    try:
+        return datetime.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def recorded_corpus(path: Path, *keys: str) -> str | None:
+    """The corpus the JSON file at ``path`` records under ``keys``: a timestamp that instant()
+    accepts, as written. None when the file is missing or cannot be read (not UTF-8, not
+    strict JSON, nested too deep) or records none (a level is not an object, or the value is
+    missing or is not such a timestamp)."""
+    try:
+        value = _DECODER.decode(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, RecursionError, SchemaError):
+        return None
+    for key in keys:
+        value = value.get(key) if isinstance(value, dict) else None
+    return value if instant(value) is not None else None
+
+
+def deck_corpus(deck_id: str) -> str | None:
+    return recorded_corpus(deck_file(deck_id), "meta", "corpusVersion")
+
+
+def derivative_corpora(fleet: list[str]):
+    """Each derivative file of this checkout with the corpus it records: every deck's file, the
+    matcher index (its own meta) and the matcher index sidecar."""
+    for deck_id in fleet:
+        yield deck_file(deck_id), deck_corpus(deck_id)
+    yield MATCHER_INDEX_FILE, recorded_corpus(MATCHER_INDEX_FILE, "meta", "corpusVersion")
+    yield MATCHER_META_FILE, recorded_corpus(MATCHER_META_FILE, "corpusVersion")
+
+
+def is_newer(recorded: str | None, corpus: str) -> bool:
+    """True when ``recorded`` (a corpus as recorded_corpus returns it) is a later instant than
+    ``corpus`` (the run's export timestamp, already checked to be one)."""
+    return recorded is not None and instant(recorded) > instant(corpus)
+
+
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Sync Commander Spellbook combo corpus")
     parser.add_argument("--force", action="store_true", help="Re-download + regenerate even if current")
@@ -612,16 +757,19 @@ def main(argv: list[str]) -> int:
     meta_location = META_FILE.resolve()
     if meta_location != META_FILE:
         print(
-            f"{META_FILE} leads to {meta_location}. The meta file records which corpus this "
-            "checkout's own derivative files (data/spellbook/, "
-            "data/commanders/*/spellbook-combos.json) were built from, so it must be this "
-            "checkout's own file (a copy of another checkout's would date this checkout's files "
-            "wrongly). To recover: priv_data/spellbook/ must be a real folder of this checkout "
+            f"{META_FILE} leads to {meta_location}. The meta file records the corpus of the last "
+            "run that wrote it, in this checkout; a run here checks it against this checkout's "
+            "cached export and derivative files (data/spellbook/, "
+            "data/commanders/*/spellbook-combos.json), so it must be this checkout's own file. "
+            "To recover: "
+            "priv_data/spellbook/ must be a real folder of this checkout "
             "(inside a real priv_data/) holding variants.json.gz (its own copy, or a link to "
             "another checkout's) and no linked meta file: remove the meta link (or replace the "
             "linked folder by such a real one), then run once with --offline --force and no "
             "--deck: that rebuilds every deck's file from that export without a download and "
-            "writes this checkout's own meta file. No file written.",
+            "writes this checkout's own meta file (if this checkout's files record a newer "
+            "corpus than that export, it refuses and changes nothing: then run with --force and "
+            "without --offline, which downloads the newest export). No file written.",
             file=sys.stderr,
         )
         return 1
@@ -637,32 +785,33 @@ def main(argv: list[str]) -> int:
             download = download_corpus()
         variants = read_corpus(download or RAW_FILE)
 
-        prev_ts = None
-        if META_FILE.exists():
-            try:
-                prev_ts = json.loads(META_FILE.read_text()).get("corpus_timestamp")
-            except (json.JSONDecodeError, OSError):
-                pass
+        prev_ts = recorded_corpus(META_FILE, "corpus_timestamp")
+        fleet = deck_folders()
 
         def is_current(timestamp: str | None) -> bool:
             # The freshness short-circuit only applies to a full-fleet default run. A
             # targeted `--deck` regen is intentional hygiene after a decklist change
             # (the deck's own combos depend on its list, not just the corpus), so it must
             # always rebuild — otherwise the deck's spellbook-combos.json is silently
-            # left stale. --force also always rebuilds.
+            # left stale. --force also always rebuilds. The meta file and every derivative file
+            # (each deck's file, the matcher index and its sidecar) must record this corpus: a
+            # deck a --deck run left on another one, or a file that is missing or records none,
+            # makes the fleet stale.
             return (
                 timestamp is not None
-                and prev_ts == timestamp
-                and MATCHER_INDEX_FILE.exists()
                 and not args.force
                 and not args.deck
+                and prev_ts == timestamp
+                and all(corpus == timestamp for _, corpus in derivative_corpora(fleet))
             )
 
-        # The run changes nothing only when it holds the cached export's own bytes (an
-        # --offline run, or a byte-identical download) and the timestamp is current. A
-        # download that differs from the cache in any byte (a missing, corrupt or unreadable
-        # cache included) is scanned, replaces the cache and rebuilds, even with the same
-        # timestamp. An export whose timestamp sits after the variants list is scanned first.
+        # The run changes nothing when it holds the cached export's own bytes (an --offline
+        # run, or a byte-identical download) and the timestamp is current. A download that
+        # differs from the cache in any byte (a missing, corrupt or unreadable cache included)
+        # is scanned, replaces the cache and rebuilds, even with the same timestamp, unless a
+        # derivative file records a newer corpus: that refusal (below) also changes nothing,
+        # and the download does not replace the cache. An export whose timestamp sits after
+        # the variants list is scanned first.
         unchanged = download is None or same_bytes(RAW_FILE, download)
         early_ts, _ = corpus_id(variants.header)
         if unchanged and is_current(early_ts):
@@ -674,22 +823,49 @@ def main(argv: list[str]) -> int:
         corpus_ts, version = corpus_id(variants.header)
         if corpus_ts is None:
             raise SchemaError("export has no 'timestamp' — cannot version the corpus.")
+        if instant(corpus_ts) is None:
+            raise SchemaError(f"export timestamp {corpus_ts!r} is not a timestamp of the export's "
+                              "form (YYYY-MM-DDTHH:MM:SS in ASCII digits, an optional fraction of 1 "
+                              "to 6 digits, then Z or an offset ±HH:MM) — cannot order the corpus.")
+        if version is not None and _unwritable(version):
+            raise SchemaError(f"export version {version!r} has text that cannot be written as UTF-8 "
+                              "(a lone surrogate).")
         version = version or "unknown"
         print(f"  corpus {corpus_ts}, spellbook v{version}", file=sys.stderr)
+
+        # Never move a derivative file to an older corpus, whatever the flags: a derivative
+        # file on a newer corpus than this run's export stops the run before the cache, the
+        # meta file or any derivative file changes (a worktree's linked export can be older
+        # than the deck files it checked out).
+        newer = [(path, corpus) for path, corpus in derivative_corpora(fleet) if is_newer(corpus, corpus_ts)]
+        if newer:
+            source = "the cached export's" if download is None else "the download's"
+            print(f"ERROR: these files record a newer corpus than {source} ({corpus_ts}):",
+                  file=sys.stderr)
+            for path, corpus in newer:
+                print(f"    {path.relative_to(PROJECT_ROOT).as_posix()}  {corpus}", file=sys.stderr)
+            advice = ("Run without --offline to download the newest export." if download is None
+                      else "Spellbook served an export older than these files: run again without "
+                           "--offline once it serves the newest.")
+            print(f"No cache, meta or derivative file changed: no run moves a derivative file to "
+                  f"an older corpus. {advice}", file=sys.stderr)
+            return 1
+
+        if unchanged and is_current(corpus_ts):
+            print(f"Corpus current ({corpus_ts}); derivatives up to date. Use --force to rebuild.", file=sys.stderr)
+            return 0
+
+        # Nothing below is current until the meta file is written again at the end. It goes
+        # before the cache is replaced and before the rebuild: a run that stops in between
+        # (Ctrl-C, a broken deck.json, a full disk) leaves no meta file, so the next run
+        # rebuilds every deck if it has no --deck, instead of calling the half-written files
+        # up to date.
+        META_FILE.unlink(missing_ok=True)
         if download and not unchanged:
             download.replace(RAW_FILE)
     finally:
         if download:
             download.unlink(missing_ok=True)
-
-    if unchanged and is_current(corpus_ts):
-        print(f"Corpus current ({corpus_ts}); derivatives up to date. Use --force to rebuild.", file=sys.stderr)
-        return 0
-
-    # Nothing below is current until the meta file is written again at the end: a rebuild
-    # that stops part-way (Ctrl-C, a broken deck.json, a full disk) leaves no meta file, so
-    # the next run rebuilds instead of calling the half-written files up to date.
-    META_FILE.unlink(missing_ok=True)
 
     # 1. Matcher index (compact, dictionaries + rows).
     card_dict: dict[str, dict] = {}
@@ -725,22 +901,24 @@ def main(argv: list[str]) -> int:
     size = write_json(MATCHER_INDEX_FILE, matcher_index, compact=True)
     # Tiny sidecar so the client can read the corpus version (DR-7 indicator +
     # ?v= cache-buster) without downloading the 12+ MB index first.
-    write_json(MATCHER_INDEX_FILE.with_name("matcher-index.meta.json"), matcher_index["meta"])
+    write_json(MATCHER_META_FILE, matcher_index["meta"])
     print(
         f"  wrote {MATCHER_INDEX_FILE.relative_to(PROJECT_ROOT)} ({size / 1e6:.1f} MB, "
         f"{len(card_dict):,} cards) + matcher-index.meta.json",
         file=sys.stderr,
     )
 
-    # 2. Per-deck spellbook-combos.json.
-    deck_ids = args.deck or sorted(p.name for p in COMMANDERS_DIR.iterdir() if (p / "deck.json").exists())
+    # 2. Per-deck spellbook-combos.json. A deck id is a folder name of the fleet, exactly.
+    deck_ids = []
+    for deck_id in dict.fromkeys(args.deck) if args.deck else fleet:
+        if deck_id in fleet:
+            deck_ids.append(deck_id)
+        else:
+            print(f"  WARN: {deck_id} is not the name of a deck folder (one holding a deck.json) "
+                  "under data/commanders/; skipping.", file=sys.stderr)
     deck_report = []
     for deck_id in deck_ids:
-        deck_path = COMMANDERS_DIR / deck_id / "deck.json"
-        if not deck_path.exists():
-            print(f"  WARN: {deck_id} has no deck.json; skipping.", file=sys.stderr)
-            continue
-        deck = json.loads(deck_path.read_text())
+        deck = json.loads((COMMANDERS_DIR / deck_id / "deck.json").read_text())
         all_keys, commander_keys = deck_card_keys(deck)
         included, near = [], []
         for x in extracted:
@@ -797,6 +975,9 @@ def main(argv: list[str]) -> int:
         file=sys.stderr,
     )
     if args.emit_details:
+        # Old shards go before the new ones are written: a stop in between leaves them
+        # incomplete, and a run without the flag does not write them; --offline --force
+        # --emit-details writes them all again.
         if DETAILS_DIR.exists():
             for old in DETAILS_DIR.glob("*.json"):
                 old.unlink()
@@ -804,20 +985,53 @@ def main(argv: list[str]) -> int:
             rows.sort(key=lambda d: d["id"])
             write_json(DETAILS_DIR / f"{key}.json", {"variants": rows})
 
-    META_FILE.write_text(
-        json.dumps(
-            {
-                "corpus_timestamp": corpus_ts,
-                "spellbook_version": version,
-                "downloaded_at": generated_at,
-                "variant_count": len(extracted),
-                "card_count": len(card_dict),
-                "details_estimated_mb": round(est_bytes / 1e6, 1),
-                "source": VARIANTS_URL,
-            },
-            indent=2,
-        )
-    )
+    # When a run installed its download while the meta file named the same corpus timestamp,
+    # it could not match the export it installed to the cached one (missing, unreadable or
+    # other bytes). If it rebuilt only some decks, it cannot tell which of the others were built
+    # from the one it installed: it writes no meta file, so the next run rebuilds every deck
+    # if it has no --deck. Every other run writes it.
+    rebuilt = set(deck_ids)
+    unverified = download is not None and not unchanged and prev_ts == corpus_ts and rebuilt != set(fleet)
+    if not unverified:
+        write_json(META_FILE, {
+            "corpus_timestamp": corpus_ts,
+            "spellbook_version": version,
+            "downloaded_at": generated_at,
+            "variant_count": len(extracted),
+            "card_count": len(card_dict),
+            "details_estimated_mb": round(est_bytes / 1e6, 1),
+            "source": VARIANTS_URL,
+        })
+    if args.deck:
+        # A --deck run rebuilt the matcher index and its own decks only: name every other deck
+        # whose file does not record this corpus (when it cannot verify the others, every other
+        # deck), and the steps of AGENTS.md ("Combo Lab artifacts") that bring the fleet onto it.
+        listed = [(deck_id, corpus) for deck_id, corpus in
+                  [(deck_id, deck_corpus(deck_id)) for deck_id in fleet if deck_id not in rebuilt]
+                  if unverified or corpus != corpus_ts]
+        if listed:
+            if unverified:
+                print(f"  this checkout's meta file named this corpus ({corpus_ts}), but this run "
+                      "could not match the export it installed to the cached one (missing, "
+                      "unreadable or other bytes), so it cannot tell which of these decks' files "
+                      "were built from the one it installed:", file=sys.stderr)
+            else:
+                print(f"  decks whose spellbook-combos.json is not on this run's corpus ({corpus_ts}):",
+                      file=sys.stderr)
+            for deck_id, corpus in listed:
+                label = ("no corpus recorded" if corpus is None
+                         else "matching timestamp, export unverified" if corpus == corpus_ts else corpus)
+                print(f"    {deck_id:32s} {label}", file=sys.stderr)
+            print("  to put every deck on it: uv run python scripts/sync_spellbook_combos.py "
+                  "--offline --force", file=sys.stderr)
+            print("  then, for each deck whose included[] set changed: "
+                  "uv run python scripts/build_tier_b_candidates.py --deck ID", file=sys.stderr)
+            if unverified:
+                print("  no meta file written: run once without --deck next; that run rebuilds every deck.",
+                      file=sys.stderr)
+        else:
+            print(f"  every deck's spellbook-combos.json is on this run's corpus ({corpus_ts}).",
+                  file=sys.stderr)
     print("Done.", file=sys.stderr)
     return 0
 

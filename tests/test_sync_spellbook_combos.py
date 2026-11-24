@@ -6,7 +6,8 @@ Each case runs a copy of the script as __main__ in a temporary project folder, s
 that the script derives from its own location (priv_data/spellbook/, data/spellbook/,
 data/commanders/) lies in that folder. urllib.request.urlopen answers with the case's bytes:
 no case sends a request. The folder holds a matcher index and two decks' spellbook-combos.json
-with old content, so a case can tell whether the run rewrote them.
+with old content, so a case can tell whether the run rewrote them; the decks' files, the matcher
+index and its sidecar record the corpus that write_cache's meta file names, as after a full run.
 """
 
 import contextlib
@@ -27,8 +28,10 @@ VARIANTS_URL = "https://json.commanderspellbook.com/variants.json.gz"
 OLD_TIMESTAMP = "2026-11-01T00:00:00Z"
 NEW_TIMESTAMP = "2026-11-20T00:00:00Z"
 CACHE_NAMES = ["spellbook.meta.json", "variants.json.gz"]
-OLD_MATCHER_INDEX = b'{"meta": {"corpusVersion": "old matcher index"}}'
-OLD_DECK_COMBOS = b'{"meta": {"corpusVersion": "old deck file"}}'
+OLD_MATCHER_INDEX = b'{"meta": {"corpusVersion": "2026-11-01T00:00:00Z"}, "note": "old matcher index"}'
+OLD_DECK_COMBOS = b'{"meta": {"corpusVersion": "2026-11-01T00:00:00Z"}, "note": "old deck file"}'
+OLD_SIDECAR = b'{"corpusVersion": "2026-11-01T00:00:00Z"}'
+OLDER_TIMESTAMP = "2026-10-01T00:00:00Z"
 NOT_GZIP = b"<html><body>502 Bad Gateway</body></html>"
 # A readable gzip with the header fields of the corpus that the meta file names, whose
 # variants list breaks off inside its first variant.
@@ -79,6 +82,14 @@ def gz(text: str) -> bytes:
     return gzip.compress(text.encode(), mtime=0)
 
 
+def changed_export() -> bytes:
+    """The export of the corpus that the meta file names, with other bytes: variant 5 now uses
+    Card 1, which both decks run, so a rebuild from it gives each deck the combo 5-6."""
+    variants = [variant(n) for n in range(1000)]
+    variants[5]["uses"][0]["card"].update(id=1, name="Card 1", oracleId="oracle-1")
+    return export(OLD_TIMESTAMP, variants)
+
+
 class SyncSpellbookCombosTests(unittest.TestCase):
     def setUp(self):
         tmp = tempfile.TemporaryDirectory()
@@ -89,6 +100,8 @@ class SyncSpellbookCombosTests(unittest.TestCase):
         self.matcher_index = self.root / "data" / "spellbook" / "matcher-index.json"
         self.matcher_index.parent.mkdir(parents=True)
         self.matcher_index.write_bytes(OLD_MATCHER_INDEX)
+        self.sidecar = self.matcher_index.with_name("matcher-index.meta.json")
+        self.sidecar.write_bytes(OLD_SIDECAR)
         self.deck_combos = {}
         for deck_id, commander in (("deck-a", "Card 0"), ("deck-b", "Card 2")):
             deck = self.root / "data" / "commanders" / deck_id
@@ -112,6 +125,14 @@ class SyncSpellbookCombosTests(unittest.TestCase):
     def write_meta(self):
         self.priv.mkdir(parents=True, exist_ok=True)
         self.meta.write_text(json.dumps({"corpus_timestamp": OLD_TIMESTAMP}))
+
+    def reset_derivatives(self):
+        """The decks' files, the matcher index and its sidecar as the fixture made them (on the
+        old corpus)."""
+        for deck_file in self.deck_combos.values():
+            deck_file.write_bytes(OLD_DECK_COMBOS)
+        self.matcher_index.write_bytes(OLD_MATCHER_INDEX)
+        self.sidecar.write_bytes(OLD_SIDECAR)
 
     def snapshot(self) -> dict:
         """Each path under the project folder but scripts/: a link's target, a file's bytes, or
@@ -251,8 +272,10 @@ class SyncSpellbookCombosTests(unittest.TestCase):
         the meta file from it."""
         self.assertTrue(out.endswith("Done.\n"))
         self.assertEqual(self.raw.read_bytes(), body)
+        self.assertNotEqual(self.matcher_index.read_bytes(), OLD_MATCHER_INDEX)
         self.assertEqual(self.corpus_of(self.matcher_index), OLD_TIMESTAMP)
         for deck_file in self.deck_combos.values():
+            self.assertNotEqual(deck_file.read_bytes(), OLD_DECK_COMBOS)
             self.assertEqual(self.corpus_of(deck_file), OLD_TIMESTAMP)
         meta = json.loads(self.meta.read_text())
         self.assertEqual((meta["corpus_timestamp"], meta["variant_count"]), (OLD_TIMESTAMP, 1000))
@@ -279,9 +302,7 @@ class SyncSpellbookCombosTests(unittest.TestCase):
         """The download keeps the cached corpus's timestamp but variant 5 now uses Card 1,
         which deck-a runs: the run rebuilds, and deck-a gains that combo."""
         self.write_cache()
-        variants = [variant(n) for n in range(1000)]
-        variants[5]["uses"][0]["card"].update(id=1, name="Card 1", oracleId="oracle-1")
-        body = export(OLD_TIMESTAMP, variants)
+        body = changed_export()
 
         code, out = self.run_script(body)
 
@@ -430,10 +451,42 @@ class SyncSpellbookCombosTests(unittest.TestCase):
         code, out = self.run_script(good(NEW_TIMESTAMP), "--deck", "deck-z")
 
         self.assertEqual(code, 0)
-        self.assertIn("  WARN: deck-z has no deck.json; skipping.\n", out)
+        self.assertIn("  WARN: deck-z is not the name of a deck folder (one holding a deck.json) "
+                      "under data/commanders/; skipping.\n", out)
         self.assertFalse((self.root / "data" / "commanders" / "deck-z").exists())
         for deck_file in self.deck_combos.values():
             self.assertEqual(deck_file.read_bytes(), OLD_DECK_COMBOS)
+
+    def test_deck_given_as_a_path(self):
+        """--deck ./deck-b names a path, not a deck folder's name: it is warned about and
+        skipped, and no deck's file changes."""
+        self.write_cache()
+
+        code, out = self.run_script(self.raw.read_bytes(), "--deck", "./deck-b")
+
+        self.assertEqual(code, 0)
+        self.assertIn("  WARN: ./deck-b is not the name of a deck folder (one holding a deck.json) "
+                      "under data/commanders/; skipping.\n", out)
+        for deck_file in self.deck_combos.values():
+            self.assertEqual(deck_file.read_bytes(), OLD_DECK_COMBOS)
+
+    def test_meta_file_that_records_no_corpus(self):
+        """A meta file holding JSON null, or one whose bytes are not UTF-8 (its timestamp
+        readable all the same), records no corpus: a default run and an --offline --force run
+        rebuild instead of stopping on it."""
+        for label, content in (("null", b"null"),
+                               ("not UTF-8", b'{"corpus_timestamp": "2026-11-01T00:00:00Z", "x": "\xff"}')):
+            for argv in ((), ("--offline", "--force")):
+                with self.subTest(label, argv=argv):
+                    self.write_cache()
+                    self.reset_derivatives()
+                    self.meta.write_bytes(content)
+                    body = self.raw.read_bytes()
+
+                    code, out = self.run_script(body, *argv)
+
+                    self.assertEqual(code, 0)
+                    self.check_rebuilt_from(body, out)
 
     def test_offline_without_a_cache(self):
         before = self.snapshot()
@@ -459,32 +512,117 @@ class SyncSpellbookCombosTests(unittest.TestCase):
         included = json.loads(self.deck_combos["deck-a"].read_text())["included"]
         self.assertEqual([c["id"] for c in included], ["0-1", "1-2"])
 
+    def stop_run(self, error: type, body: bytes, *argv: str, patch=contextlib.nullcontext()):
+        """Run the copied script under ``patch``; the download answers with ``body`` and the run
+        must stop with ``error`` (not an exit)."""
+        script = self.root / "scripts" / "sync_spellbook_combos.py"
+        with mock.patch("urllib.request.urlopen", lambda req, timeout=None: io.BytesIO(body)), \
+                mock.patch("sys.argv", [script.name, *argv]), patch, \
+                contextlib.redirect_stderr(io.StringIO()), self.assertRaises(error):
+            runpy.run_path(str(script), run_name="__main__")
+
+    def stop_on_deck(self, deck_id: str, body: bytes, *argv: str):
+        """A run that stops on the deck's broken deck.json (after the matcher index and the
+        files of the decks before it are written); the deck.json is then repaired."""
+        deck_json = self.root / "data" / "commanders" / deck_id / "deck.json"
+        good_deck = deck_json.read_text()
+        deck_json.write_text("{")
+        self.stop_run(json.JSONDecodeError, body, *argv)
+        deck_json.write_text(good_deck)
+
+    def included_ids(self, deck_id: str) -> list[str]:
+        return [c["id"] for c in json.loads(self.deck_combos[deck_id].read_text())["included"]]
+
     def test_interrupted_rebuild_is_redone(self):
         """A same-timestamp download with other bytes (variant 5 now uses Card 1) replaces the
         cache, then the rebuild stops on deck-b's broken deck.json. Once the file is fixed, a
         default run rebuilds: the meta file no longer calls the half-built files current."""
         self.write_cache()
-        variants = [variant(n) for n in range(1000)]
-        variants[5]["uses"][0]["card"].update(id=1, name="Card 1", oracleId="oracle-1")
-        body = export(OLD_TIMESTAMP, variants)
-        deck_b = self.root / "data" / "commanders" / "deck-b" / "deck.json"
-        good_deck = deck_b.read_text()
-        deck_b.write_text("{")
-        script = self.root / "scripts" / "sync_spellbook_combos.py"
-
-        with mock.patch("urllib.request.urlopen", lambda req, timeout=None: io.BytesIO(body)), \
-                mock.patch("sys.argv", [script.name]), contextlib.redirect_stderr(io.StringIO()), \
-                self.assertRaises(json.JSONDecodeError):
-            runpy.run_path(str(script), run_name="__main__")
+        body = changed_export()
+        self.stop_on_deck("deck-b", body)
         self.assertEqual(self.raw.read_bytes(), body)
-        deck_b.write_text(good_deck)
 
         code, out = self.run_script(body)
 
         self.assertEqual(code, 0)
         self.assertTrue(out.endswith("Done.\n"))
-        included = json.loads(self.deck_combos["deck-b"].read_text())["included"]
-        self.assertEqual([c["id"] for c in included], ["1-2", "2-3", "5-6"])
+        self.assertEqual(self.included_ids("deck-b"), ["1-2", "2-3", "5-6"])
+
+    def test_interrupted_offline_force_run_is_redone(self):
+        """The cached export changed under the same timestamp after the derivative files were
+        built (variant 5 now uses Card 1), and the --offline --force run that rebuilds from it
+        stops on deck-a's broken deck.json, before any deck's file. A default run (the same
+        bytes downloaded) and an --offline run each rebuild every deck: both gain the combo
+        5-6."""
+        body = changed_export()
+        for argv in ((), ("--offline",)):
+            with self.subTest(argv=argv):
+                self.write_cache(raw=body)
+                self.reset_derivatives()
+                self.stop_on_deck("deck-a", NOT_GZIP, "--offline", "--force")
+                self.assertFalse(self.meta.exists())
+                self.assertEqual(self.deck_combos["deck-a"].read_bytes(), OLD_DECK_COMBOS)
+
+                code, out = self.run_script(body, *argv)
+
+                self.assertEqual(code, 0)
+                self.assertTrue(out.endswith("Done.\n"))
+                self.assertEqual(self.included_ids("deck-a"), ["0-1", "1-2", "5-6"])
+                self.assertEqual(self.included_ids("deck-b"), ["1-2", "2-3", "5-6"])
+
+    def test_deck_run_stopped_right_after_replacing_the_cache_is_redone(self):
+        """A --deck deck-b run downloads the export with other bytes under the same timestamp
+        (variant 5 now uses Card 1) and is stopped (Ctrl-C) right after it replaced the cached
+        export, before the rebuild. The next default run (the same bytes) rebuilds every deck:
+        no meta file is left to call the old files current."""
+        self.write_cache()
+        body = changed_export()
+        real_replace = os.replace
+
+        def replace(src, dst):
+            real_replace(src, dst)
+            if Path(dst).name == "variants.json.gz":
+                raise KeyboardInterrupt
+
+        self.stop_run(KeyboardInterrupt, body, "--deck", "deck-b", patch=mock.patch("os.replace", replace))
+        self.assertEqual(self.raw.read_bytes(), body)
+        self.assertEqual(self.deck_combos["deck-b"].read_bytes(), OLD_DECK_COMBOS)
+
+        code, out = self.run_script(body)
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith("Done.\n"))
+        self.assertEqual(self.included_ids("deck-a"), ["0-1", "1-2", "5-6"])
+        self.assertEqual(self.included_ids("deck-b"), ["1-2", "2-3", "5-6"])
+
+    def test_failure_while_writing_the_matcher_index(self):
+        """An --offline --force run from a cached export that changed under the same timestamp:
+        the disk fills half-way through the matcher index. The old index is whole and no meta
+        file is left; the next default run rebuilds every deck and leaves no temporary file."""
+        body = changed_export()
+        self.write_cache(raw=body)
+        real_write_text = Path.write_text
+
+        def write_text(path, data, *args, **kwargs):
+            if path.name.startswith("matcher-index.json"):
+                real_write_text(path, data[:len(data) // 2], *args, **kwargs)
+                raise OSError(28, "No space left on device")
+            return real_write_text(path, data, *args, **kwargs)
+
+        self.stop_run(OSError, NOT_GZIP, "--offline", "--force",
+                      patch=mock.patch.object(Path, "write_text", write_text))
+        self.assertEqual(self.matcher_index.read_bytes(), OLD_MATCHER_INDEX)
+        self.assertFalse(self.meta.exists())
+
+        code, out = self.run_script(body)
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith("Done.\n"))
+        self.assertEqual(self.corpus_of(self.matcher_index), OLD_TIMESTAMP)
+        self.assertEqual(self.included_ids("deck-a"), ["0-1", "1-2", "5-6"])
+        self.assertEqual(self.included_ids("deck-b"), ["1-2", "2-3", "5-6"])
+        self.assertEqual(sorted(p.name for p in self.matcher_index.parent.iterdir()),
+                         ["matcher-index.json", "matcher-index.meta.json"])
 
     def test_1000_kept_of_1001_scanned(self):
         variants = [variant(n) for n in range(1001)]
@@ -579,34 +717,493 @@ class SyncSpellbookCombosTests(unittest.TestCase):
         self.assertEqual(meta["variant_count"], 1000)
         self.assertEqual(self.corpus_of(self.matcher_index), OLD_TIMESTAMP)
         self.assertEqual(self.corpus_of(self.deck_combos["deck-a"]), OLD_TIMESTAMP)
+        self.assertEqual(self.included_ids("deck-a"), ["0-1", "1-2"])
 
     def test_deck_run_with_a_good_newer_download(self):
         """--deck deck-b: deck-b (commander Card 2, Card 1 in its list) gets the two combos
-        of its two cards; deck-a's file is not touched."""
+        of its two cards; deck-a's file is not touched, and the run names it as left on the
+        old corpus. The meta file names the new corpus."""
         self.write_cache()
         body = good(NEW_TIMESTAMP)
 
         code, out = self.run_script(body, "--deck", "deck-b")
 
         self.assertEqual(code, 0)
-        self.assertTrue(out.endswith("Done.\n"))
+        self.assertTrue(out.endswith(
+            "  decks whose spellbook-combos.json is not on this run's corpus (2026-11-20T00:00:00Z):\n"
+            "    deck-a                           2026-11-01T00:00:00Z\n"
+            "  to put every deck on it: uv run python scripts/sync_spellbook_combos.py --offline --force\n"
+            "  then, for each deck whose included[] set changed: "
+            "uv run python scripts/build_tier_b_candidates.py --deck ID\n"
+            "Done.\n"))
         self.assertEqual(self.raw.read_bytes(), body)
         combos = json.loads(self.deck_combos["deck-b"].read_text())
         self.assertEqual(combos["meta"]["corpusVersion"], NEW_TIMESTAMP)
         self.assertEqual([combo["id"] for combo in combos["included"]], ["1-2", "2-3"])
         self.assertEqual(self.deck_combos["deck-a"].read_bytes(), OLD_DECK_COMBOS)
+        self.assertEqual(json.loads(self.meta.read_text())["corpus_timestamp"], NEW_TIMESTAMP)
 
     def test_deck_run_on_the_current_corpus(self):
         """--deck rebuilds the named deck's file even when the corpus is current; the other
-        deck's file is not touched."""
-        self.write_cache()
+        deck's file is not touched, and the run says every deck is on its corpus and prints
+        neither command. It writes the meta file again: the export's corpus and version, 1000
+        variants over 999 cards (variant 5 reuses Card 1)."""
+        self.write_cache(raw=changed_export())
 
         code, out = self.run_script(self.raw.read_bytes(), "--deck", "deck-a")
 
         self.assertEqual(code, 0)
-        self.assertTrue(out.endswith("Done.\n"))
+        self.assertTrue(out.endswith(
+            "  every deck's spellbook-combos.json is on this run's corpus (2026-11-01T00:00:00Z).\n"
+            "Done.\n"))
+        self.assertNotIn("--offline --force", out)
+        self.assertNotIn("build_tier_b_candidates", out)
+        self.assertEqual(self.included_ids("deck-a"), ["0-1", "1-2", "5-6"])
         self.assertEqual(self.corpus_of(self.deck_combos["deck-a"]), OLD_TIMESTAMP)
         self.assertEqual(self.deck_combos["deck-b"].read_bytes(), OLD_DECK_COMBOS)
+        meta = json.loads(self.meta.read_text())
+        self.assertEqual({key: meta[key] for key in (
+            "corpus_timestamp", "spellbook_version", "variant_count", "card_count", "source")}, {
+            "corpus_timestamp": OLD_TIMESTAMP, "spellbook_version": "5.0",
+            "variant_count": 1000, "card_count": 999, "source": VARIANTS_URL})
+
+    def test_same_deck_named_twice(self):
+        """--deck deck-b --deck deck-b rebuilds deck-b once: one row in the report."""
+        self.write_cache()
+
+        code, out = self.run_script(self.raw.read_bytes(), "--deck", "deck-b", "--deck", "deck-b")
+
+        self.assertEqual(code, 0)
+        self.assertEqual([line for line in out.splitlines() if line.startswith("    deck-b ")],
+                         ["    deck-b                              2 /    0 /     0"])
+
+    def test_deck_run_in_a_tree_without_a_meta_file(self):
+        """A new worktree: no meta file of its own, and every deck's file, the matcher index and
+        its sidecar record the cached export's corpus. --deck deck-b (offline, and online with the
+        cached bytes downloaded) rebuilds deck-b only, names no deck and writes the meta file;
+        the next default run is up to date."""
+        for argv in (("--offline", "--deck", "deck-b"), ("--deck", "deck-b")):
+            with self.subTest(argv=argv):
+                self.write_cache()
+                self.reset_derivatives()
+                self.meta.unlink()
+                body = self.raw.read_bytes()
+
+                code, out = self.run_script(body, *argv)
+
+                self.assertEqual(code, 0)
+                self.assertTrue(out.endswith(
+                    "  every deck's spellbook-combos.json is on this run's corpus (2026-11-01T00:00:00Z).\n"
+                    "Done.\n"))
+                self.assertEqual(json.loads(self.meta.read_text())["corpus_timestamp"], OLD_TIMESTAMP)
+                self.assertEqual(self.deck_combos["deck-a"].read_bytes(), OLD_DECK_COMBOS)
+                self.assertEqual(self.included_ids("deck-b"), ["1-2", "2-3"])
+
+                code, out = self.run_script(body)
+
+                self.assertEqual(code, 0)
+                self.assertTrue(out.endswith(
+                    f"Corpus current ({OLD_TIMESTAMP}); derivatives up to date. Use --force to rebuild.\n"))
+
+    def test_deck_run_in_a_new_tree_over_an_older_cached_export(self):
+        """A new worktree whose cached export is older than the deck files it checked out, and
+        no meta file: --deck deck-b downloads the export of the files' corpus, names no deck
+        and writes the meta file; the download is the cache now. (Adopted from the round-2
+        review.)"""
+        self.write_cache(raw=good(OLDER_TIMESTAMP))
+        self.meta.unlink()
+        body = good(OLD_TIMESTAMP)
+
+        code, out = self.run_script(body, "--deck", "deck-b")
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith(
+            "  every deck's spellbook-combos.json is on this run's corpus (2026-11-01T00:00:00Z).\n"
+            "Done.\n"), out[-300:])
+        self.assertEqual(json.loads(self.meta.read_text())["corpus_timestamp"], OLD_TIMESTAMP)
+        self.assertEqual(self.raw.read_bytes(), body)
+
+    def test_named_deck_newer_stops_the_run(self):
+        """The deck a --deck run would rebuild records a newer corpus than the cached export: the
+        run exits 1, names that deck's file and its corpus, and changes nothing. (Adopted from the
+        round-2 review.)"""
+        self.write_cache()
+        self.deck_combos["deck-b"].write_bytes(b'{"meta": {"corpusVersion": "2026-11-20T00:00:00Z"}}')
+        before = self.snapshot()
+
+        code, out = self.run_script(NOT_GZIP, "--offline", "--deck", "deck-b")
+
+        self.assertEqual(code, 1)
+        self.assertIn(
+            "ERROR: these files record a newer corpus than the cached export's (2026-11-01T00:00:00Z):\n"
+            "    data/commanders/deck-b/spellbook-combos.json  2026-11-20T00:00:00Z\n"
+            "No cache, meta", out)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_equal_instants_in_other_forms_are_not_newer(self):
+        """deck-a records the export's instant in another form (+00:00, or with zero fractions):
+        not newer, so an --offline run rebuilds it onto the export's own form. Half a second
+        later is newer: the run exits 1. (Adopted from the round-2 review.)"""
+        for recorded in ("2026-11-01T00:00:00+00:00", "2026-11-01T00:00:00.000000Z"):
+            with self.subTest(recorded):
+                self.write_cache()
+                self.reset_derivatives()
+                self.deck_combos["deck-a"].write_text(json.dumps({"meta": {"corpusVersion": recorded}}))
+                code, _ = self.run_script(NOT_GZIP, "--offline")
+                self.assertEqual(code, 0)
+                self.assertEqual(self.corpus_of(self.deck_combos["deck-a"]), OLD_TIMESTAMP)
+        self.write_cache()
+        self.reset_derivatives()
+        self.deck_combos["deck-a"].write_text(json.dumps({"meta": {"corpusVersion": "2026-11-01T00:00:00.5Z"}}))
+        self.assertEqual(self.run_script(NOT_GZIP, "--offline")[0], 1)
+
+    def test_later_instant_whose_text_sorts_earlier_is_newer(self):
+        """deck-a records 2026-10-31T23:30:00-01:00, which is 2026-11-01T00:30:00Z: half an hour
+        after the cached export's corpus although its text sorts before it. The run exits 1 and
+        names it."""
+        self.write_cache()
+        self.deck_combos["deck-a"].write_bytes(b'{"meta": {"corpusVersion": "2026-10-31T23:30:00-01:00"}}')
+        before = self.snapshot()
+
+        code, out = self.run_script(NOT_GZIP, "--offline")
+
+        self.assertEqual(code, 1)
+        self.assertIn("    data/commanders/deck-a/spellbook-combos.json  2026-10-31T23:30:00-01:00\n", out)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_every_newer_file_is_named(self):
+        """Both decks' files, the matcher index and its sidecar record a newer corpus: the
+        refusal names all four."""
+        self.write_cache()
+        for deck_file in self.deck_combos.values():
+            deck_file.write_bytes(b'{"meta": {"corpusVersion": "2026-11-20T00:00:00Z"}}')
+        self.matcher_index.write_bytes(b'{"meta": {"corpusVersion": "2026-11-21T00:00:00Z"}}')
+        self.sidecar.write_bytes(b'{"corpusVersion": "2026-11-22T00:00:00Z"}')
+
+        code, out = self.run_script(NOT_GZIP, "--offline")
+
+        self.assertEqual(code, 1)
+        self.assertIn(
+            "ERROR: these files record a newer corpus than the cached export's (2026-11-01T00:00:00Z):\n"
+            "    data/commanders/deck-a/spellbook-combos.json  2026-11-20T00:00:00Z\n"
+            "    data/commanders/deck-b/spellbook-combos.json  2026-11-20T00:00:00Z\n"
+            "    data/spellbook/matcher-index.json  2026-11-21T00:00:00Z\n"
+            "    data/spellbook/matcher-index.meta.json  2026-11-22T00:00:00Z\n", out)
+
+    def test_deck_run_that_kept_the_export_names_a_deck_on_another_corpus(self):
+        """The meta file names the cached export's corpus but deck-a's file records an older one
+        (a merge brought it in). --deck deck-b with the same bytes downloaded names deck-a and
+        writes the meta file; the next default run rebuilds deck-a."""
+        self.write_cache()
+        self.deck_combos["deck-a"].write_bytes(b'{"meta": {"corpusVersion": "2026-10-01T00:00:00Z"}}')
+
+        code, out = self.run_script(self.raw.read_bytes(), "--deck", "deck-b")
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith(
+            "  decks whose spellbook-combos.json is not on this run's corpus (2026-11-01T00:00:00Z):\n"
+            "    deck-a                           2026-10-01T00:00:00Z\n"
+            "  to put every deck on it: uv run python scripts/sync_spellbook_combos.py --offline --force\n"
+            "  then, for each deck whose included[] set changed: "
+            "uv run python scripts/build_tier_b_candidates.py --deck ID\n"
+            "Done.\n"))
+        self.assertEqual(json.loads(self.meta.read_text())["corpus_timestamp"], OLD_TIMESTAMP)
+
+        code, out = self.run_script(self.raw.read_bytes())
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith("Done.\n"))
+        self.assertEqual(self.corpus_of(self.deck_combos["deck-a"]), OLD_TIMESTAMP)
+
+    def test_deck_run_that_replaced_the_export_under_the_same_timestamp(self):
+        """--deck deck-b downloads the export with other bytes under the timestamp the meta file
+        names (variant 5 now uses Card 1): only deck-b is built from it. The run names deck-a as
+        unverified and writes no meta file. deck-b's list then gains Card 4; the next default run
+        (the same bytes) rebuilds every deck from the installed export and its current list and
+        writes the meta file; the run after it is up to date."""
+        self.write_cache()
+        body = changed_export()
+
+        code, out = self.run_script(body, "--deck", "deck-b")
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith(
+            "  this checkout's meta file named this corpus (2026-11-01T00:00:00Z), but this run could "
+            "not match the export it installed to the cached one (missing, unreadable or other "
+            "bytes), so it cannot tell which of these decks' files were built from the one it "
+            "installed:\n"
+            "    deck-a                           matching timestamp, export unverified\n"
+            "  to put every deck on it: uv run python scripts/sync_spellbook_combos.py --offline --force\n"
+            "  then, for each deck whose included[] set changed: "
+            "uv run python scripts/build_tier_b_candidates.py --deck ID\n"
+            "  no meta file written: run once without --deck next; that run rebuilds every deck.\n"
+            "Done.\n"))
+        self.assertFalse(self.meta.exists())
+        self.assertEqual(self.included_ids("deck-b"), ["1-2", "2-3", "5-6"])
+        self.assertEqual(self.deck_combos["deck-a"].read_bytes(), OLD_DECK_COMBOS)
+        deck_b = self.root / "data" / "commanders" / "deck-b" / "deck.json"
+        deck_b.write_text(json.dumps({"commander": "Card 2", "decklist": [{"name": "Card 1"}, {"name": "Card 4"}]}))
+
+        code, out = self.run_script(body)
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith("Done.\n"))
+        self.assertEqual(self.included_ids("deck-a"), ["0-1", "1-2", "5-6"])
+        self.assertEqual(self.included_ids("deck-b"), ["1-2", "2-3", "4-5", "5-6"])
+        self.assertEqual(json.loads(self.meta.read_text())["corpus_timestamp"], OLD_TIMESTAMP)
+
+        code, out = self.run_script(body)
+
+        self.assertTrue(out.endswith(
+            f"Corpus current ({OLD_TIMESTAMP}); derivatives up to date. Use --force to rebuild.\n"))
+
+    def test_reissue_through_a_deck_run_naming_every_deck(self):
+        """The same reissued export through --deck deck-a --deck deck-b: every deck is rebuilt
+        from it, so the run is a full rebuild: it writes the meta file and says every deck is on
+        its corpus."""
+        self.write_cache()
+
+        code, out = self.run_script(changed_export(), "--deck", "deck-a", "--deck", "deck-b")
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith(
+            "  every deck's spellbook-combos.json is on this run's corpus (2026-11-01T00:00:00Z).\n"
+            "Done.\n"))
+        self.assertEqual(json.loads(self.meta.read_text())["corpus_timestamp"], OLD_TIMESTAMP)
+        self.assertEqual(self.included_ids("deck-a"), ["0-1", "1-2", "5-6"])
+        self.assertEqual(self.included_ids("deck-b"), ["1-2", "2-3", "5-6"])
+
+    def test_second_deck_run_after_a_reissue_rebuilds_its_deck(self):
+        """After the --deck deck-b run on a reissued export, deck-b's list gains Card 4; a second
+        --deck deck-b run (offline) rebuilds deck-b from that list: it now includes 4-5."""
+        self.write_cache()
+        self.assertEqual(self.run_script(changed_export(), "--deck", "deck-b")[0], 0)
+        deck_b = self.root / "data" / "commanders" / "deck-b" / "deck.json"
+        deck_b.write_text(json.dumps({"commander": "Card 2", "decklist": [{"name": "Card 1"}, {"name": "Card 4"}]}))
+
+        code, out = self.run_script(NOT_GZIP, "--offline", "--deck", "deck-b")
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith("Done.\n"))
+        self.assertEqual(self.included_ids("deck-b"), ["1-2", "2-3", "4-5", "5-6"])
+
+    def test_deck_run_names_every_deck_off_its_corpus(self):
+        """After --deck deck-b on a newer corpus, the run names deck-a (old corpus), deck-c (no
+        file), deck-d (a file that is not JSON), and as no record, though each would be read as
+        later than the run's corpus: deck-e (a time without a timezone), deck-f (an offset of
+        +00:99), deck-g (seven fractional digits), deck-h (a fullwidth T between the date and the
+        time), deck-i (a lone surrogate there), deck-j (hour 24, which Python 3.14 reads as the
+        next midnight), deck-k (an offset of +00:60), deck-l (a space between the date and the
+        time), deck-m (an offset with seconds) and deck-n (a lowercase t); notes/ holds no
+        deck.json and is no deck. The command it prints then puts every deck on the new corpus
+        without a request, and a --deck run after that says every deck is on its corpus."""
+        commanders = self.root / "data" / "commanders"
+        unread = {"deck-e": "2026-11-25T00:00:00", "deck-f": "2026-11-25T00:00:00+00:99",
+                  "deck-g": "2026-11-25T00:00:00.1234567Z", "deck-h": "2026-11-25Ｔ00:00:00Z",
+                  "deck-i": "2026-11-25\ud80000:00:00Z", "deck-j": "2026-11-25T24:00:00Z",
+                  "deck-k": "2026-11-25T00:00:00+00:60", "deck-l": "2026-11-25 00:00:00Z",
+                  "deck-m": "2026-11-25T00:00:00+00:00:00", "deck-n": "2026-11-25t00:00:00Z"}
+        for deck_id in ("deck-c", "deck-d", *unread):
+            (commanders / deck_id).mkdir()
+            (commanders / deck_id / "deck.json").write_text(
+                json.dumps({"commander": "Card 7", "decklist": []}))
+        (commanders / "deck-d" / "spellbook-combos.json").write_text("{")
+        for deck_id, recorded in unread.items():
+            (commanders / deck_id / "spellbook-combos.json").write_text(
+                json.dumps({"meta": {"corpusVersion": recorded}}))
+        (commanders / "notes").mkdir()
+        self.write_cache()
+
+        code, out = self.run_script(good(NEW_TIMESTAMP), "--deck", "deck-b")
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith(
+            "  decks whose spellbook-combos.json is not on this run's corpus (2026-11-20T00:00:00Z):\n"
+            "    deck-a                           2026-11-01T00:00:00Z\n"
+            "    deck-c                           no corpus recorded\n"
+            "    deck-d                           no corpus recorded\n"
+            "    deck-e                           no corpus recorded\n"
+            "    deck-f                           no corpus recorded\n"
+            "    deck-g                           no corpus recorded\n"
+            "    deck-h                           no corpus recorded\n"
+            "    deck-i                           no corpus recorded\n"
+            "    deck-j                           no corpus recorded\n"
+            "    deck-k                           no corpus recorded\n"
+            "    deck-l                           no corpus recorded\n"
+            "    deck-m                           no corpus recorded\n"
+            "    deck-n                           no corpus recorded\n"
+            "  to put every deck on it: uv run python scripts/sync_spellbook_combos.py --offline --force\n"
+            "  then, for each deck whose included[] set changed: "
+            "uv run python scripts/build_tier_b_candidates.py --deck ID\n"
+            "Done.\n"), out[-1400:])
+
+        code, out = self.run_script(NOT_GZIP, "--offline", "--force")
+
+        self.assertEqual(code, 0)
+        self.assertEqual(self.sent, [VARIANTS_URL])
+        for deck_id in ("deck-a", "deck-b", "deck-c", "deck-d", *unread):
+            self.assertEqual(self.corpus_of(commanders / deck_id / "spellbook-combos.json"), NEW_TIMESTAMP)
+        self.assertFalse((commanders / "notes" / "spellbook-combos.json").exists())
+
+        code, out = self.run_script(NOT_GZIP, "--offline", "--deck", "deck-c")
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith(
+            "  every deck's spellbook-combos.json is on this run's corpus (2026-11-20T00:00:00Z).\n"
+            "Done.\n"))
+
+    def test_deck_off_the_corpus_makes_the_fleet_stale(self):
+        """The meta file, the cached export, the matcher index and its sidecar are current, but
+        deck-a's spellbook-combos.json records an older corpus, is missing, is not JSON, holds
+        [] or {}, is nested too deep to read, holds NaN (not strict JSON), or records a time
+        without a timezone (later, were it read as UTC) or a value that is not a time: each
+        counts as no record or another corpus, and a default run (the cached bytes downloaded)
+        and an --offline run each rebuild every deck."""
+        for label, content in (("older corpus", b'{"meta": {"corpusVersion": "2026-10-01T00:00:00Z"}}'),
+                               ("missing", None), ("not JSON", b"{"), ("[]", b"[]"), ("{}", b"{}"),
+                               ("nested too deep", b"[" * 100000 + b"]" * 100000),
+                               ("NaN", b'{"meta": {"corpusVersion": "2026-11-01T00:00:00Z"}, "x": NaN}'),
+                               ("no timezone", b'{"meta": {"corpusVersion": "2026-11-20T00:00:00"}}'),
+                               ("not a time", b'{"meta": {"corpusVersion": "old deck file"}}')):
+            for argv in ((), ("--offline",)):
+                with self.subTest(label, argv=argv):
+                    self.write_cache()
+                    self.reset_derivatives()
+                    if content is None:
+                        self.deck_combos["deck-a"].unlink()
+                    else:
+                        self.deck_combos["deck-a"].write_bytes(content)
+                    body = self.raw.read_bytes()
+
+                    code, out = self.run_script(body, *argv)
+
+                    self.assertEqual(code, 0)
+                    self.check_rebuilt_from(body, out)
+
+    def test_matcher_index_off_the_corpus_makes_the_fleet_stale(self):
+        """Everything else current, the matcher index or its sidecar records an older corpus or
+        is missing (deck files committed with the index's diff discarded): a default run and an
+        --offline run each rebuild every deck, the index and the sidecar."""
+        cases = (("sidecar older", self.sidecar, b'{"corpusVersion": "2026-10-01T00:00:00Z"}'),
+                 ("sidecar missing", self.sidecar, None),
+                 ("index older", self.matcher_index, b'{"meta": {"corpusVersion": "2026-10-01T00:00:00Z"}}'),
+                 ("index missing", self.matcher_index, None))
+        for label, path, content in cases:
+            for argv in ((), ("--offline",)):
+                with self.subTest(label, argv=argv):
+                    self.write_cache()
+                    self.reset_derivatives()
+                    if content is None:
+                        path.unlink()
+                    else:
+                        path.write_bytes(content)
+                    body = self.raw.read_bytes()
+
+                    code, out = self.run_script(body, *argv)
+
+                    self.assertEqual(code, 0)
+                    self.check_rebuilt_from(body, out)
+                    self.assertEqual(json.loads(self.sidecar.read_text())["corpusVersion"], OLD_TIMESTAMP)
+
+    def test_newer_files_stop_every_run(self):
+        """deck-a's file, the matcher index or its sidecar records a newer corpus (2026-11-20)
+        than the cached export (2026-11-01). --offline, --offline --force, --offline --deck
+        deck-b, and a default and a --deck deck-b run whose download (other bytes, also
+        2026-11-01) is older each exit 1, name the newer file, and change nothing."""
+        newer_files = (
+            ("deck file", self.deck_combos["deck-a"], b'{"meta": {"corpusVersion": "2026-11-20T00:00:00Z"}}',
+             "data/commanders/deck-a/spellbook-combos.json"),
+            ("matcher index", self.matcher_index, b'{"meta": {"corpusVersion": "2026-11-20T00:00:00Z"}}',
+             "data/spellbook/matcher-index.json"),
+            ("sidecar", self.sidecar, b'{"corpusVersion": "2026-11-20T00:00:00Z"}',
+             "data/spellbook/matcher-index.meta.json"))
+        offline_end = ("No cache, meta or derivative file changed: no run moves a derivative file to "
+                       "an older corpus. Run without --offline to download the newest export.\n")
+        online_end = ("No cache, meta or derivative file changed: no run moves a derivative file to "
+                      "an older corpus. Spellbook served an export older than these files: run again "
+                      "without --offline once it serves the newest.\n")
+        for label, path, content, name in newer_files:
+            for argv, source, end in (
+                    (("--offline",), "the cached export's", offline_end),
+                    (("--offline", "--force"), "the cached export's", offline_end),
+                    (("--offline", "--deck", "deck-b"), "the cached export's", offline_end),
+                    ((), "the download's", online_end),
+                    (("--deck", "deck-b"), "the download's", online_end)):
+                with self.subTest(label, argv=argv):
+                    self.write_cache()
+                    self.reset_derivatives()
+                    path.write_bytes(content)
+                    before = self.snapshot()
+
+                    code, out = self.run_script(good(OLD_TIMESTAMP, aliases=False), *argv)
+
+                    self.assertEqual(code, 1)
+                    self.assertTrue(out.endswith(
+                        f"ERROR: these files record a newer corpus than {source} (2026-11-01T00:00:00Z):\n"
+                        f"    {name}  2026-11-20T00:00:00Z\n" + end), out[-400:])
+                    self.assertEqual(self.snapshot(), before)
+
+    def test_export_timestamp_that_cannot_be_ordered(self):
+        """An export whose timestamp is not of the export's form is refused as a schema error
+        before anything changes: no timezone, not a timestamp, an offset of +00:99 (which
+        datetime.fromisoformat reads as +01:39), seven fractional digits (which it cuts to six),
+        a fullwidth T or a lone surrogate between the date and the time (which it accepts as a
+        separator; the surrogate cannot be written to a file), and hour 24 (which Python 3.14
+        reads as the next midnight)."""
+        for timestamp in ("2026-11-20T00:00:00", "last Tuesday", "2026-11-20T00:00:00+00:99",
+                          "2026-11-20T00:00:00.1234567Z", "2026-11-20Ｔ00:00:00Z",
+                          "2026-11-20\ud80000:00:00Z", "2026-11-20T24:00:00Z"):
+            with self.subTest(timestamp):
+                self.reset_derivatives()
+                self.check_bad_download(
+                    gz(export_text(timestamp, [variant(n) for n in range(1000)])),
+                    f"export timestamp {timestamp!r} is not a timestamp of the export's form "
+                    "(YYYY-MM-DDTHH:MM:SS in ASCII digits, an optional fraction of 1 to 6 digits, "
+                    "then Z or an offset ±HH:MM) — cannot order the corpus.")
+
+    def test_fleet_left_behind_by_a_deck_run_is_rebuilt(self):
+        """--deck deck-b on a newer corpus leaves deck-a on the old one. The next default run
+        (the same download) rebuilds deck-a instead of calling the fleet up to date; the run
+        after it is up to date."""
+        self.write_cache()
+        body = good(NEW_TIMESTAMP)
+        self.assertEqual(self.run_script(body, "--deck", "deck-b")[0], 0)
+        self.assertEqual(self.deck_combos["deck-a"].read_bytes(), OLD_DECK_COMBOS)
+
+        code, out = self.run_script(body)
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith("Done.\n"))
+        self.assertEqual(self.corpus_of(self.deck_combos["deck-a"]), NEW_TIMESTAMP)
+        self.assertEqual(self.included_ids("deck-a"), ["0-1", "1-2"])
+
+        code, out = self.run_script(body)
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith(
+            f"Corpus current ({NEW_TIMESTAMP}); derivatives up to date. Use --force to rebuild.\n"))
+
+    def test_different_download_over_a_linked_export(self):
+        """The cache links to another checkout's export and the download has other bytes (a
+        newer corpus): the link becomes this checkout's own file holding the download; the
+        other checkout's export is the same file with the same bytes and modification time."""
+        self.write_cache()
+        other = self.root / "main" / "priv_data" / "spellbook" / "variants.json.gz"
+        other.parent.mkdir(parents=True)
+        self.raw.rename(other)
+        self.raw.symlink_to(other)
+        old_bytes = other.read_bytes()
+        identity = (other.stat().st_ino, other.stat().st_mtime_ns)
+        body = good(NEW_TIMESTAMP)
+
+        code, out = self.run_script(body)
+
+        self.assertEqual(code, 0)
+        self.assertTrue(out.endswith("Done.\n"))
+        self.assertFalse(self.raw.is_symlink())
+        self.assertEqual(self.raw.read_bytes(), body)
+        self.assertEqual(other.read_bytes(), old_bytes)
+        self.assertEqual((other.stat().st_ino, other.stat().st_mtime_ns), identity)
 
     def test_identical_download_leaves_a_linked_cache_alone(self):
         """The cache links to another checkout's export: an identical download through an
@@ -649,6 +1246,15 @@ class SyncSpellbookCombosTests(unittest.TestCase):
                       "another checkout's) and no linked meta file: remove the meta link (or "
                       "replace the linked folder by such a real one), then run once with "
                       "--offline --force and no --deck", out)
+        self.assertIn("rebuilds every deck's file from that export without a download and writes "
+                      "this checkout's own meta file (if this checkout's files record a newer "
+                      "corpus than that export, it refuses and changes nothing: then run with "
+                      "--force and without --offline, which downloads the newest export). No file "
+                      "written.", out)
+        self.assertIn("The meta file records the corpus of the last run that wrote it, in this "
+                      "checkout; a run here checks it against this checkout's cached export and "
+                      "derivative files", out)
+        self.assertNotIn("vouch", out)
         self.assertNotIn("copy the linked one", out)
         self.assertNotIn("holds only a link", out)
         self.assertEqual(self.sent, [])
@@ -904,6 +1510,9 @@ class SyncSpellbookCombosTests(unittest.TestCase):
             return mutate
 
         name = "variant '500-501'"
+        deep = "1.00"  # a price nested 550 objects deep
+        for _ in range(550):
+            deep = {"x": deep}
         use, card = ("uses", 0), ("uses", 0, "card")
         template, feature = ("requires", 0, "template"), ("produces", 0, "feature")
         cases = [
@@ -956,6 +1565,7 @@ class SyncSpellbookCombosTests(unittest.TestCase):
             (("manaValueNeeded",), DROP, f"{name} has no integer 'manaValueNeeded'"),
             (("prices",), "cheap", f"{name} has no 'prices' object of strings"),
             (("prices",), {"cardkingdom": 1.5}, f"{name} has no 'prices' object of strings"),
+            (("prices",), {"tcg": deep}, f"{name} has no 'prices' object of strings"),
             (("prices",), DROP, f"{name} has no 'prices' object of strings"),
             (("popularity",), "high", f"{name} has no integer or null 'popularity'"),
             (("popularity",), True, f"{name} has no integer or null 'popularity'"),
@@ -1009,6 +1619,68 @@ class SyncSpellbookCombosTests(unittest.TestCase):
                 broken = text.replace('"popularity": 77', f'"popularity": {token}')
                 self.assertNotEqual(broken, text)
                 self.check_bad_download(gz(broken), problem)
+
+    def test_text_that_cannot_be_written(self):
+        """A string the run reads holding a lone surrogate (the JSON escape \\ud800, or the low
+        half \\udc00) cannot be written as UTF-8: the export's version, a card name, a zone and a
+        price's key are each refused in the scan of a download newer than the cache, before the
+        meta file is removed or the cache replaced; under --emit-details the detail shard already
+        written stays in place."""
+        def broken(mutate) -> bytes:
+            variants = [variant(n) for n in range(1000)]
+            mutate(variants[500])
+            return export(NEW_TIMESTAMP, variants)
+
+        shard = self.root / "data" / "spellbook" / "details" / "e8.json"
+        shard.parent.mkdir()
+        in_variant = "variant '500-501' has text that cannot be written as UTF-8 (a lone surrogate) in"
+        card_name = f"{in_variant} 'name' (position 501 in the variants list)."
+        cases = (
+            ("version", gz(export_text(NEW_TIMESTAMP, [variant(n) for n in range(1000)],
+                                       version="5.0\ud800")),
+             "export version '5.0\\ud800' has text that cannot be written as UTF-8 (a lone surrogate).", ()),
+            ("card name", broken(lambda v: v["uses"][0]["card"].update(name="Card \ud800")), card_name, ()),
+            ("card name, low surrogate", broken(lambda v: v["uses"][0]["card"].update(name="Card \udc00")),
+             card_name, ()),
+            ("card name, --emit-details", broken(lambda v: v["uses"][0]["card"].update(name="Card \ud800")),
+             card_name, ("--emit-details",)),
+            ("zone", broken(lambda v: v["uses"][0].update(zoneLocations=["B", "\ud800"])),
+             f"{in_variant} 'zoneLocations' (position 501 in the variants list).", ()),
+            ("price key", broken(lambda v: v.update(prices={"tcg\ud800": "1.00"})),
+             f"{in_variant} 'prices' (position 501 in the variants list).", ()))
+        for label, body, problem, argv in cases:
+            with self.subTest(label):
+                self.reset_derivatives()
+                shard.write_text('{"variants": [{"id": "0-1", "note": "old shard"}]}')
+                self.check_bad_download(body, problem, *argv)
+                self.assertEqual(shard.read_text(), '{"variants": [{"id": "0-1", "note": "old shard"}]}')
+
+    def test_writable_text_beyond_ascii(self):
+        """Text that is not ASCII but can be written as UTF-8 is kept: an accented card name and a
+        feature name holding an astral character, which the export writes as a surrogate-pair
+        escape (\\ud83d\\ude00). Variant joetun-1 uses Card 1, which both decks run, and Jötun Grunt:
+        a near-miss for deck-a, written to its file and to the matcher index as UTF-8."""
+        extra = variant(0)
+        extra.update(id="joetun-1", popularity=5,
+                     produces=[{"feature": {"id": 9, "name": "Infinite \U0001F600 tokens"}}])
+        extra["uses"].append({"card": {"id": 2001, "name": "Jötun Grunt", "oracleId": "oracle-2001"},
+                              "mustBeCommander": False, "quantity": 1, "zoneLocations": ["B"]})
+        extra["uses"][0]["card"].update(id=1, name="Card 1", oracleId="oracle-1")
+        text = export_text(NEW_TIMESTAMP, [variant(n) for n in range(1000)] + [extra])
+        self.assertIn("\\ud83d\\ude00", text)
+        self.write_cache()
+
+        code, out = self.run_script(gz(text))
+
+        self.assertEqual(code, 0, out[-400:])
+        index = json.loads(self.matcher_index.read_text(encoding="utf-8"))
+        self.assertEqual(index["cards"]["2001"]["n"], "Jötun Grunt")
+        self.assertEqual(index["features"]["9"], "Infinite \U0001F600 tokens")
+        self.assertIn("Infinite \U0001F600 tokens".encode(), self.matcher_index.read_bytes())
+        near = [c for c in json.loads(self.deck_combos["deck-a"].read_text(encoding="utf-8"))["nearMisses"]
+                if c["id"] == "joetun-1"]
+        self.assertEqual([(c["missing"]["cards"], c["produces"]) for c in near],
+                         [(["Jötun Grunt"], ["Infinite \U0001F600 tokens"])])
 
     def test_failed_write_of_the_download_leaves_no_file(self):
         """The disk fills while the download is written to its temporary file: the error
