@@ -8,12 +8,25 @@ client-side.
 
 Pipeline (all generation local, no Vercel build step depends on it):
 
-  1. Download https://json.commanderspellbook.com/variants.json.gz into the
-     gitignored priv_data/spellbook/ cache. Freshness follows the
+  1. Download https://json.commanderspellbook.com/variants.json.gz to a
+     temporary file of this run's own in the gitignored priv_data/spellbook/
+     cache folder and read it as the corpus (a readable gzip holding one JSON
+     object, read strictly, whose "variants" list holds objects of the expected
+     shape, at least 1000 scanned and kept). Freshness follows the
      refresh_scryfall_mirror.py convention: compare the export's top-level
-     `timestamp` against the stored spellbook.meta.json; skip the download when
-     unchanged. Atomic tmp-write-then-replace. Schema access is defensive —
-     validate expected fields, fail loud with a clear message.
+     `timestamp`, wherever it sits, against the stored spellbook.meta.json. A
+     download byte-identical to the cached export (or an --offline run) with a
+     current timestamp, an existing matcher index and no --force or --deck
+     changes nothing: it is dropped, unscanned when the timestamp precedes the
+     variants list. Any other download is scanned, replaces the cache when it
+     differs from it, and rebuilds the derivatives; the meta file is removed
+     before the rebuild and written again at its end, so a rebuild that stops
+     part-way is redone by the next run. The meta file must be this checkout's own: a worktree links
+     only variants.json.gz. Schema access is defensive —
+     validate expected fields, fail loud with a clear message. On the export of
+     2026-10-20 (30.6 MB gz, 693 M characters, 115,439 variants) a full run
+     over the 21 decks takes about 16 s and peaks at about 2 GB of memory
+     (measured 2026-11-24).
 
   2. Emit derivatives (plain .json, stable key order so git packs delta-compress
      the weekly diff efficiently):
@@ -40,12 +53,16 @@ Usage:
 """
 
 import argparse
+import filecmp
 import gzip
 import json
+import os
 import re
 import sys
+import tempfile
 import unicodedata
 import urllib.request
+import zlib
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -118,7 +135,14 @@ def name_keys(name: str) -> set[str]:
 
 # ─── download + freshness ─────────────────────────────────────────────────────
 
-def download_corpus(force: bool) -> None:
+def download_corpus() -> Path:
+    """Download the export to a temporary file of this run's own beside RAW_FILE and
+    return its path; the file is removed if the write fails.
+
+    main() reads that file as the corpus, moves it over RAW_FILE only when its
+    bytes differ from the cached export and the scan passes, and removes it on
+    every other way out.
+    """
     # The export's freshness lives inside the gz (top-level `timestamp`), and
     # Spellbook exposes no cheap metadata endpoint, so we always fetch the 27 MB
     # gz. The expensive work — regenerating + committing derivatives — is what the
@@ -129,149 +153,309 @@ def download_corpus(force: bool) -> None:
     req = urllib.request.Request(VARIANTS_URL, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=300) as resp:
         raw = resp.read()
-    tmp = RAW_FILE.with_suffix(".gz.tmp")
-    tmp.write_bytes(raw)
-    tmp.replace(RAW_FILE)
-    print(f"  cached {len(raw) / 1e6:.1f} MB gz", file=sys.stderr)
+    # A name of this run's own, so runs at once neither publish nor remove each other's.
+    fd, tmp = tempfile.mkstemp(dir=RAW_FILE.parent, prefix=RAW_FILE.name + ".", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(raw)
+        print(f"  downloaded {len(raw) / 1e6:.1f} MB gz", file=sys.stderr)
+    except BaseException:
+        os.unlink(tmp)
+        raise
+    return Path(tmp)
 
 
-def read_corpus() -> tuple[str, str, "IterVariants"]:
-    """Return (corpus_timestamp, spellbook_version, variant_iterator).
+def same_bytes(cached: Path, download: Path) -> bool:
+    """True when the cached export holds the download's bytes. A cached file that is
+    missing or cannot be read counts as different, so the download can replace it."""
+    try:
+        return filecmp.cmp(cached, download, shallow=False)
+    except OSError:
+        return False
 
-    Decompresses the cached gz into a single string, then hands out one variant
-    object at a time via a brace scanner (IterVariants) so we never build the
-    full 105 k-element parse tree — only one variant dict is live at once. The
-    decompressed text itself (~630 MB) is held for the duration; this runs on the
-    CEO's machine during the weekly sync, not on Vercel.
+
+def read_corpus(path: Path) -> "IterVariants":
+    """The export at ``path`` (the cached export, or a download not yet in its place),
+    ready to hand out its variants.
+
+    Decompresses the gz into a single string and reads it strictly as one JSON
+    object: the members before "variants" here, then (IterVariants) the variants
+    one object at a time, the members after the list and the closing brace. Only
+    one variant dict is live at once. The decompressed text itself (~690 MB) is
+    held for the duration; this runs on the owner's machine, not on Vercel.
     """
-    if not RAW_FILE.exists():
-        raise SchemaError(
-            f"{RAW_FILE.relative_to(PROJECT_ROOT)} missing — run without --offline first."
-        )
-    with gzip.open(RAW_FILE, "rt", encoding="utf-8") as fh:
-        text = fh.read()
-    header_end = text.find('"variants"')
-    if header_end == -1:
-        raise SchemaError("export has no top-level 'variants' key — API shape changed.")
-    header = text[:header_end]
-    ts_match = re.search(r'"timestamp"\s*:\s*"([^"]+)"', header)
-    ver_match = re.search(r'"version"\s*:\s*"([^"]+)"', header)
-    if not ts_match:
-        raise SchemaError("export header has no 'timestamp' — cannot version the corpus.")
-    corpus_ts = ts_match.group(1)
-    version = ver_match.group(1) if ver_match else "unknown"
-    return corpus_ts, version, IterVariants(text)
+    try:
+        with gzip.open(path, "rt", encoding="utf-8") as fh:
+            text = fh.read()
+    except (gzip.BadGzipFile, EOFError, zlib.error, UnicodeDecodeError) as exc:
+        what = RAW_FILE.name if path == RAW_FILE else "the download"
+        raise SchemaError(f"{what} is not a readable gzip export: {exc}") from exc
+    return IterVariants(text)
+
+
+def corpus_id(header: dict) -> tuple[str | None, str | None]:
+    """The export's "timestamp" and "version" among the top-level members read so far, or
+    None for one not read yet (it may sit after the variants list)."""
+    timestamp, version = header.get("timestamp"), header.get("version")
+    return (timestamp if isinstance(timestamp, str) and timestamp else None,
+            version if isinstance(version, str) and version else None)
+
+
+def _refuse_constant(name: str) -> None:
+    raise SchemaError(f"the export holds {name}, which is not a JSON number.")
+
+
+_DECODER = json.JSONDecoder(parse_constant=_refuse_constant)
+_WHITESPACE = re.compile(r"[ \t\n\r]*")
+
+
+def _skip(text: str, idx: int) -> int:
+    """The index of the first character at or after ``idx`` that is not JSON whitespace."""
+    return _WHITESPACE.match(text, idx).end()
+
+
+def _value(text: str, idx: int) -> tuple[object, int]:
+    """The JSON value that starts at ``idx`` and the index after it."""
+    try:
+        return _DECODER.raw_decode(text, idx)
+    except json.JSONDecodeError as exc:
+        if exc.pos >= len(text):
+            raise SchemaError(f"the export is cut off (character {exc.pos}).") from exc
+        raise SchemaError(f"the export is not valid JSON: {exc}") from exc
 
 
 class IterVariants:
-    """Yield each top-level object in the `variants: [...]` array via brace scan."""
+    """Read the export strictly as one JSON object. On construction: its members up to
+    "variants" (kept in ``header``) and the list's opening bracket. On iteration: each
+    variant object, then the members after the list (added to ``header``), the closing
+    brace and nothing else.
+
+    Raises SchemaError on anything else: no "variants" member, a "variants" that is not a
+    list, an entry that is not an object, invalid JSON, text cut off or text after the end.
+    """
 
     def __init__(self, text: str) -> None:
         self._text = text
+        self.header: dict = {}
+        idx = _skip(text, 0)
+        if text[idx : idx + 1] != "{":
+            raise SchemaError("the export is not a JSON object.")
+        idx = _skip(text, idx + 1)
+        more = text[idx : idx + 1] != "}"
+        while more:
+            key, idx = self._member_name(idx)
+            if key == "variants":
+                if text[idx : idx + 1] != "[":
+                    raise SchemaError("the top-level 'variants' key is not followed by a list — API shape changed.")
+                self._start = idx + 1
+                return
+            self.header[key], idx = _value(text, idx)
+            more, idx = self._after_member(idx)
+        raise SchemaError("export has no top-level 'variants' key — API shape changed.")
+
+    def _member_name(self, idx: int) -> tuple[str, int]:
+        """The member name at ``idx`` and the index of its value."""
+        key, idx = _value(self._text, idx)
+        idx = _skip(self._text, idx)
+        if not isinstance(key, str) or self._text[idx : idx + 1] != ":":
+            raise SchemaError(f"the export is not valid JSON: no member name at character {idx}.")
+        return key, _skip(self._text, idx + 1)
+
+    def _after_member(self, idx: int) -> tuple[bool, int]:
+        """After a member: (True, the next member's index) past a ``,``, or (False, the index
+        after it) past the closing ``}``."""
+        idx = _skip(self._text, idx)
+        c = self._text[idx : idx + 1]
+        if c == ",":
+            return True, _skip(self._text, idx + 1)
+        if c == "}":
+            return False, idx + 1
+        if not c:
+            raise SchemaError(f"the export is cut off (character {idx}).")
+        raise SchemaError(f"the export is not valid JSON: expected ',' or '}}' at character {idx}.")
 
     def __iter__(self):
         text = self._text
-        start = text.index("[", text.index('"variants"')) + 1
-        depth = 0
-        in_str = False
-        esc = False
-        obj_start = None
-        for j in range(start, len(text)):
-            c = text[j]
-            if in_str:
-                if esc:
-                    esc = False
-                elif c == "\\":
-                    esc = True
-                elif c == '"':
-                    in_str = False
-                continue
-            if c == '"':
-                in_str = True
-            elif c == "{":
-                if depth == 0:
-                    obj_start = j
-                depth += 1
-            elif c == "}":
-                depth -= 1
-                if depth == 0:
-                    yield json.loads(text[obj_start : j + 1])
-            elif c == "]" and depth == 0:
-                return
+        idx = _skip(text, self._start)
+        entry = 0
+        if text[idx : idx + 1] == "]":
+            idx += 1
+        else:
+            while True:
+                entry += 1
+                variant, idx = _value(text, idx)
+                if not isinstance(variant, dict):
+                    raise SchemaError(f"entry {entry} of the variants list is not an object.")
+                yield variant
+                idx = _skip(text, idx)
+                c = text[idx : idx + 1]
+                if c == "]":
+                    idx += 1
+                    break
+                if c != ",":
+                    if not c:
+                        raise SchemaError(f"the export is cut off (character {idx}).")
+                    raise SchemaError(f"the export is not valid JSON: expected ',' or ']' at character {idx}.")
+                idx = _skip(text, idx + 1)
+        more, idx = self._after_member(idx)
+        while more:
+            key, idx = self._member_name(idx)
+            self.header[key], idx = _value(text, idx)
+            more, idx = self._after_member(idx)
+        idx = _skip(text, idx)
+        if idx != len(text):
+            raise SchemaError(f"the export has text after its closing brace (character {idx}).")
 
 
 # ─── derivative extraction ────────────────────────────────────────────────────
 
 def extract_variant(v: dict) -> dict | None:
-    """Pull the fields we retain from one raw variant, or None to skip it."""
-    if v.get("status") not in KEEP_STATUS:
+    """Pull the fields we retain from one raw variant, or None to skip it.
+
+    Raises SchemaError, naming the variant, when a field this run reads is missing or
+    has another type than in the real export: every field below is present on every
+    variant there, null only where noted. A default would let a reshaped export
+    change which combos match; a wrong type would stop the run later in a traceback
+    or put a value into the derivative files that a browser cannot read.
+    """
+    def check(ok: bool, problem: str) -> None:
+        if not ok:
+            raise SchemaError(f"variant {v.get('id')!r} {problem}.")
+
+    def need(obj: dict, key: str, ok, problem: str):
+        """obj[key], present and accepted by ``ok``."""
+        check(key in obj and ok(obj[key]), problem)
+        return obj[key]
+
+    status = need(v, "status", _is_str, "has no string 'status'")
+    if status not in KEEP_STATUS:
         return None
-    if v.get("spoiler"):
+    if need(v, "spoiler", _is_bool, "has no boolean 'spoiler'"):
         return None
-    if not v.get("legalities", {}).get("commander", False):
+    legalities = need(v, "legalities", _is_dict, "has no 'legalities' object")
+    if not need(legalities, "commander", _is_bool, "has no boolean commander legality"):
         return None
 
-    uses = v.get("uses")
-    if not isinstance(uses, list) or not uses:
-        raise SchemaError(f"variant {v.get('id')!r} has no 'uses' list.")
+    variant_id = need(v, "id", lambda x: _is_str(x) and x != "", "has no string 'id'")
+    uses = need(v, "uses", lambda x: _is_list_of(x, dict) and x != [], "has no 'uses' list of objects")
+    raw_requires = need(v, "requires", lambda x: _is_list_of(x, dict), "has no 'requires' list of objects")
+    raw_produces = need(v, "produces", lambda x: _is_list_of(x, dict), "has no 'produces' list of objects")
+    texts = {key: need(v, key, _is_str, f"has no string '{key}'") for key in (
+        "identity", "bracketTag", "manaNeeded", "easyPrerequisites", "notablePrerequisites",
+        "description", "notes")}
+    mana_value = need(v, "manaValueNeeded", _is_int, "has no integer 'manaValueNeeded'")
+    prices = need(v, "prices", lambda x: _is_dict(x) and all(_is_str(p) for p in x.values()),
+                  "has no 'prices' object of strings")
+    # Null on 36 variants of the real export.
+    popularity = need(v, "popularity", lambda x: x is None or _is_int(x),
+                      "has no integer or null 'popularity'")
 
     cards = []
     for use in uses:
-        card = use.get("card") or {}
-        cid = card.get("id")
-        name = card.get("name")
-        if cid is None or not name:
-            raise SchemaError(f"variant {v.get('id')!r} use missing card id/name.")
+        card = need(use, "card", _is_dict, "has a use with no 'card' object")
         cards.append(
             {
-                "id": cid,
-                "name": name,
-                "oracleId": card.get("oracleId", ""),
-                "mustBeCommander": bool(use.get("mustBeCommander")),
-                "quantity": use.get("quantity", 1),
-                "zones": use.get("zoneLocations", []),
+                "id": need(card, "id", _is_int, "has a use whose card has no integer 'id'"),
+                "name": need(card, "name", lambda x: _is_str(x) and x != "",
+                             "has a use whose card has no 'name'"),
+                "oracleId": need(card, "oracleId", _is_str, "has a use whose card has no string 'oracleId'"),
+                "mustBeCommander": need(use, "mustBeCommander", _is_bool,
+                                        "has a use with no boolean 'mustBeCommander'"),
+                "quantity": need(use, "quantity", _is_int, "has a use with no whole-number 'quantity'"),
+                "zones": need(use, "zoneLocations", lambda x: _is_list_of(x, str),
+                              "has a use with no 'zoneLocations' list of strings"),
             }
         )
 
     templates = []
-    for req in v.get("requires", []) or []:
-        tpl = req.get("template") or {}
-        tid = tpl.get("id")
-        if tid is None:
-            continue
+    for req in raw_requires:
+        tpl = need(req, "template", _is_dict, "has a 'requires' entry with no 'template' object")
         templates.append(
             {
-                "id": tid,
-                "name": tpl.get("name", "a required card"),
-                "query": tpl.get("scryfallQuery", ""),
-                "quantity": req.get("quantity", 1),
+                "id": need(tpl, "id", _is_int, "has a template with no integer 'id'"),
+                "name": need(tpl, "name", _is_str, "has a template with no string 'name'"),
+                # Null on 1,279 templates of the real export.
+                "query": need(tpl, "scryfallQuery", lambda x: x is None or _is_str(x),
+                              "has a template with no string or null 'scryfallQuery'"),
+                "quantity": need(req, "quantity", _is_int,
+                                 "has a 'requires' entry with no whole-number 'quantity'"),
             }
         )
 
     produces = []
-    for prod in v.get("produces", []) or []:
-        feat = prod.get("feature") or {}
-        fid = feat.get("id")
-        if fid is None:
-            continue
-        produces.append({"id": fid, "name": feat.get("name", "")})
+    for prod in raw_produces:
+        feat = need(prod, "feature", _is_dict, "has a 'produces' entry with no 'feature' object")
+        produces.append(
+            {
+                "id": need(feat, "id", _is_int, "has a feature with no integer 'id'"),
+                "name": need(feat, "name", _is_str, "has a feature with no string 'name'"),
+            }
+        )
 
     return {
-        "id": v["id"],
+        "id": variant_id,
         "cards": cards,
         "templates": templates,
         "produces": produces,
-        "identity": v.get("identity", ""),
-        "bracketTag": v.get("bracketTag", ""),
-        "manaNeeded": v.get("manaNeeded", ""),
-        "manaValueNeeded": v.get("manaValueNeeded") or 0,
-        "easyPrerequisites": v.get("easyPrerequisites", ""),
-        "notablePrerequisites": v.get("notablePrerequisites", ""),
-        "description": v.get("description", ""),
-        "notes": v.get("notes", ""),
-        "prices": v.get("prices") or {},
-        "popularity": v.get("popularity") or 0,
+        **texts,
+        "manaValueNeeded": mana_value,
+        "prices": prices,
+        "popularity": popularity or 0,
     }
+
+
+def _is_str(value: object) -> bool:
+    return isinstance(value, str)
+
+
+def _is_bool(value: object) -> bool:
+    return isinstance(value, bool)
+
+
+def _is_dict(value: object) -> bool:
+    return isinstance(value, dict)
+
+
+def _is_int(value: object) -> bool:
+    """An integer, not a bool. Every number this run writes is one, so a float (1.5, or
+    1e400, which reads as infinity) is refused with the rest."""
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def _is_list_of(value: object, kind: type) -> bool:
+    return isinstance(value, list) and all(isinstance(item, kind) for item in value)
+
+
+def scan_variants(variants: "IterVariants") -> list[dict]:
+    """Extract every variant; raise SchemaError unless at least 1000 are scanned and kept."""
+    extracted: list[dict] = []
+    seen_status: dict[str, int] = {}
+    bracket_tags: dict[str, int] = {}
+    scanned = 0
+    for raw_v in variants:
+        scanned += 1
+        try:
+            x = extract_variant(raw_v)
+        except SchemaError as exc:
+            raise SchemaError(f"{str(exc).rstrip('.')} (position {scanned} in the variants list).") from None
+        seen_status[raw_v.get("status", "?")] = seen_status.get(raw_v.get("status", "?"), 0) + 1
+        if x is None:
+            continue
+        bracket_tags[x["bracketTag"] or "?"] = bracket_tags.get(x["bracketTag"] or "?", 0) + 1
+        extracted.append(x)
+
+    if scanned < 1000:
+        raise SchemaError(f"only {scanned} variants scanned — export looks truncated.")
+    if len(extracted) < 1000:
+        raise SchemaError(
+            f"only {len(extracted)} of {scanned} variants kept — the status or legality fields look changed."
+        )
+    print(
+        f"  scanned {scanned:,}; kept {len(extracted):,} (status {seen_status}); "
+        f"bracket tags {bracket_tags}",
+        file=sys.stderr,
+    )
+    return extracted
 
 
 def shard_for(variant_id: str) -> str:
@@ -423,55 +607,89 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--deck", action="append", default=[], help="Limit per-deck files to these ids (repeatable)")
     args = parser.parse_args(argv)
 
-    if not args.offline:
-        download_corpus(args.force)
-    elif not RAW_FILE.exists():
+    # PROJECT_ROOT is resolved, so META_FILE resolves elsewhere only through a link on the
+    # file or on a folder above it inside the project.
+    meta_location = META_FILE.resolve()
+    if meta_location != META_FILE:
+        print(
+            f"{META_FILE} leads to {meta_location}. The meta file records which corpus this "
+            "checkout's own derivative files (data/spellbook/, "
+            "data/commanders/*/spellbook-combos.json) were built from, so it must be this "
+            "checkout's own file (a copy of another checkout's would date this checkout's files "
+            "wrongly). To recover: priv_data/spellbook/ must be a real folder of this checkout "
+            "(inside a real priv_data/) holding variants.json.gz (its own copy, or a link to "
+            "another checkout's) and no linked meta file: remove the meta link (or replace the "
+            "linked folder by such a real one), then run once with --offline --force and no "
+            "--deck: that rebuilds every deck's file from that export without a download and "
+            "writes this checkout's own meta file. No file written.",
+            file=sys.stderr,
+        )
+        return 1
+    if args.offline and not RAW_FILE.exists():
         print(f"ERROR: {RAW_FILE} absent and --offline set.", file=sys.stderr)
         return 1
 
-    corpus_ts, version, variants = read_corpus()
+    # A download is read once, from this run's temporary file, and replaces RAW_FILE only
+    # after the scan passes. Any other way out removes it.
+    download = None
+    try:
+        if not args.offline:
+            download = download_corpus()
+        variants = read_corpus(download or RAW_FILE)
 
-    prev_ts = None
-    if META_FILE.exists():
-        try:
-            prev_ts = json.loads(META_FILE.read_text()).get("corpus_timestamp")
-        except (json.JSONDecodeError, OSError):
-            pass
-    # The freshness short-circuit only applies to a full-fleet default run. A
-    # targeted `--deck` regen is intentional hygiene after a decklist change
-    # (the deck's own combos depend on its list, not just the corpus), so it must
-    # always rebuild — otherwise the deck's spellbook-combos.json is silently
-    # left stale. --force also always rebuilds.
-    if (
-        prev_ts == corpus_ts
-        and MATCHER_INDEX_FILE.exists()
-        and not args.force
-        and not args.deck
-    ):
+        prev_ts = None
+        if META_FILE.exists():
+            try:
+                prev_ts = json.loads(META_FILE.read_text()).get("corpus_timestamp")
+            except (json.JSONDecodeError, OSError):
+                pass
+
+        def is_current(timestamp: str | None) -> bool:
+            # The freshness short-circuit only applies to a full-fleet default run. A
+            # targeted `--deck` regen is intentional hygiene after a decklist change
+            # (the deck's own combos depend on its list, not just the corpus), so it must
+            # always rebuild — otherwise the deck's spellbook-combos.json is silently
+            # left stale. --force also always rebuilds.
+            return (
+                timestamp is not None
+                and prev_ts == timestamp
+                and MATCHER_INDEX_FILE.exists()
+                and not args.force
+                and not args.deck
+            )
+
+        # The run changes nothing only when it holds the cached export's own bytes (an
+        # --offline run, or a byte-identical download) and the timestamp is current. A
+        # download that differs from the cache in any byte (a missing, corrupt or unreadable
+        # cache included) is scanned, replaces the cache and rebuilds, even with the same
+        # timestamp. An export whose timestamp sits after the variants list is scanned first.
+        unchanged = download is None or same_bytes(RAW_FILE, download)
+        early_ts, _ = corpus_id(variants.header)
+        if unchanged and is_current(early_ts):
+            print(f"Corpus current ({early_ts}); derivatives up to date. Use --force to rebuild.", file=sys.stderr)
+            return 0
+
+        print("Extracting variants ...", file=sys.stderr)
+        extracted = scan_variants(variants)
+        corpus_ts, version = corpus_id(variants.header)
+        if corpus_ts is None:
+            raise SchemaError("export has no 'timestamp' — cannot version the corpus.")
+        version = version or "unknown"
+        print(f"  corpus {corpus_ts}, spellbook v{version}", file=sys.stderr)
+        if download and not unchanged:
+            download.replace(RAW_FILE)
+    finally:
+        if download:
+            download.unlink(missing_ok=True)
+
+    if unchanged and is_current(corpus_ts):
         print(f"Corpus current ({corpus_ts}); derivatives up to date. Use --force to rebuild.", file=sys.stderr)
         return 0
 
-    print(f"Extracting variants (corpus {corpus_ts}, spellbook v{version}) ...", file=sys.stderr)
-    extracted: list[dict] = []
-    seen_status: dict[str, int] = {}
-    bracket_tags: dict[str, int] = {}
-    scanned = 0
-    for raw_v in variants:
-        scanned += 1
-        seen_status[raw_v.get("status", "?")] = seen_status.get(raw_v.get("status", "?"), 0) + 1
-        x = extract_variant(raw_v)
-        if x is None:
-            continue
-        bracket_tags[x["bracketTag"] or "?"] = bracket_tags.get(x["bracketTag"] or "?", 0) + 1
-        extracted.append(x)
-
-    if scanned < 1000:
-        raise SchemaError(f"only {scanned} variants scanned — export looks truncated.")
-    print(
-        f"  scanned {scanned:,}; kept {len(extracted):,} (status {seen_status}); "
-        f"bracket tags {bracket_tags}",
-        file=sys.stderr,
-    )
+    # Nothing below is current until the meta file is written again at the end: a rebuild
+    # that stops part-way (Ctrl-C, a broken deck.json, a full disk) leaves no meta file, so
+    # the next run rebuilds instead of calling the half-written files up to date.
+    META_FILE.unlink(missing_ok=True)
 
     # 1. Matcher index (compact, dictionaries + rows).
     card_dict: dict[str, dict] = {}
