@@ -1779,6 +1779,23 @@ CARDS = {
         "oracle_text": "Destroy target creature.",
         "colors": ["B"],
     },
+    # ManaSimPaidMulliganCountTests: eternal-harvest's other two mana sources,
+    # as data/card-metadata.json held them on 2026-11-24.
+    "Birds of Paradise": {
+        "type_line": "Creature — Bird",
+        "mana_cost": "{G}",
+        "cmc": 1.0,
+        "oracle_text": "Flying\n{T}: Add one mana of any color.",
+        "colors": ["G"],
+        "power": "0",
+    },
+    "The Soul Stone": {
+        "type_line": "Legendary Artifact — Infinity Stone",
+        "mana_cost": "{1}{B}",
+        "cmc": 2.0,
+        "oracle_text": "Indestructible\n{T}: Add {B}.\n{6}{B}, {T}, Exile a creature you control: Harness The Soul Stone. (Once harnessed, its ∞ ability is active.)\n∞ — At the beginning of your upkeep, return target creature card from your graveyard to the battlefield.",
+        "colors": ["B"],
+    },
     # Review round 1 (2026-11-20): data/card-metadata.json as it held them
     # that day. "Probe Vigilant Elf", "Probe Combo A" and "Probe Combo B" are
     # made up: a vigilant mana Elf and two instants a combo line names.
@@ -2509,6 +2526,8 @@ class TurnOneDrawTests(unittest.TestCase):
                     args = (decklist, metadata)
                     if deck_id == "hidden-legion":
                         args += (set(), set(), set())  # no changelings, Dragons or Elves
+                    if deck_id == "titan-convergence":  # run_simulation rebinds it
+                        self.addCleanup(setattr, module, "_land_set", module._land_set)
                     with patch("random.shuffle"):
                         stats = module.run_simulation(*args, num_games=1)
                     turn_one[top] = stats["mana_by_turn"][1]
@@ -2517,14 +2536,15 @@ class TurnOneDrawTests(unittest.TestCase):
 
 
 class ManaSimMulliganBottomTests(unittest.TestCase):
-    """A paid mulligan in each mana simulation puts its card on the bottom of
-    the library, so it is drawn after every other card (owner-approved
-    2026-11-23). The position is the one the goldfish has used since
-    92254668. Which card is bottomed is unchanged: each mana simulation keeps
-    its own existing selector, which differs from the goldfish's (the
-    goldfish keeps the cards its combo checks take from the hand until last,
-    prefers interaction, and bottoms a land from a seven of five or more
-    lands)."""
+    """Where the card a paid mulligan bottoms goes in each mana simulation:
+    the bottom of the library, index 0 (owner-approved 2026-11-23), the
+    position the goldfish has used since 92254668. Ordinary draws pop the
+    other end, so they reach it last if it is still in the library; a land
+    search can take a bottomed land out earlier. The choice among a module's
+    own candidates (highest mana value first) is tested here too: every card
+    in the kept seven is a candidate and the {9} sorcery goes.
+    ManaSimPaidMulliganCountTests tests what is chosen once a hand runs out
+    of the module's own candidates."""
 
     BASIC = TurnOneDrawTests.BASIC
     # Made up: a sorcery with no mana cost (mana value 0), which no mana
@@ -2568,6 +2588,8 @@ class ManaSimMulliganBottomTests(unittest.TestCase):
                 args = ([land] * 9 + [self.NINE] + [self.BLANK] * 6, metadata)
                 if deck_id == "hidden-legion":
                     args += (set(), set(), set())  # no changelings, Dragons or Elves
+                if deck_id == "titan-convergence":  # run_simulation rebinds it
+                    self.addCleanup(setattr, module, "_land_set", module._land_set)
                 with patch("random.shuffle"):
                     stats = module.run_simulation(*args, num_games=1)
                 self.assertEqual(
@@ -2576,6 +2598,286 @@ class ManaSimMulliganBottomTests(unittest.TestCase):
                      [stats["castable_spell_by_turn"][turn] for turn in range(1, 11)]),
                     ({2: 1}, [[1], [2], [3], [4], [5], [6], [7], [8], [9], [9]],
                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]))
+
+
+class ManaSimPaidMulliganCountTests(unittest.TestCase):
+    """A hand kept after a paid mulligan always puts a card on the bottom
+    (London mulligan; owner-approved 2026-11-24), also when every card in it
+    is a land or a mana source. Each module first bottoms its own candidates
+    (unchanged). When they run out, as the goldfish does: a hand of five or
+    more lands bottoms its lands first, the one the module's land drop ranks
+    lowest on an empty battlefield first, then its mana sources; any other
+    hand bottoms a mana source (highest mana value first) before a land.
+
+    Each fixture deals three sevens through a scripted shuffle (one deal per
+    GameState): two sevens of Probe Blanks, which hold no mana source and are
+    mulliganed, then the seven under test, kept on the paid mulligan."""
+
+    BASIC = TurnOneDrawTests.BASIC
+    BLANK = ManaSimMulliganBottomTests.BLANK
+    BLANK_CARD = ManaSimMulliganBottomTests.BLANK_CARD
+    SOL_RING = {"type_line": "Artifact", "mana_cost": "{1}", "cmc": 1.0,
+                "oracle_text": "{T}: Add {C}{C}.", "colors": []}
+
+    @staticmethod
+    def _deals(*sevens_over_rest):
+        """A random.shuffle stand-in dealing each (seven, under) in turn: the
+        library becomes `under` with `seven` on top (draws pop the end)."""
+        deals = iter(sevens_over_rest)
+
+        def shuffle(library):
+            try:
+                seven, under = next(deals)
+            except StopIteration:
+                raise AssertionError(
+                    f"the module asked for deal {len(sevens_over_rest) + 1}; "
+                    f"the fixture scripts {len(sevens_over_rest)}") from None
+            library[:] = list(under) + list(reversed(seven))
+
+        return shuffle
+
+    def _titan_run(self, module, decklist, metadata, deals):
+        """titan-convergence's run_simulation (its mulligan is inside it), one
+        game; the module-level _land_set it rebinds is restored afterwards."""
+        self.addCleanup(setattr, module, "_land_set", module._land_set)
+        with patch("random.shuffle", deals):
+            return module.run_simulation(decklist, metadata, num_games=1)
+
+    @staticmethod
+    def _bad(decklist, blanks):
+        """The mulliganed deal: seven Blanks over the rest of `decklist`."""
+        rest = list(decklist)
+        for card in blanks:
+            rest.remove(card)
+        return blanks, rest
+
+    def _setup(self, deck_id):
+        root = Path(__file__).resolve().parent.parent
+        colors = {deck["id"]: deck["colors"] for deck in json.loads(
+            (root / "data" / "index.json").read_text())["commanders"]}
+        module = importlib.import_module("mana_simulation_" + deck_id.replace("-", "_"))
+        land = self.BASIC[colors[deck_id][0]]
+        rock = max(sorted(module.ROCK_DEFS),
+                   key=lambda name: TurnOneDrawTests._rock_cost(module.ROCK_DEFS[name]))
+        cost = TurnOneDrawTests._rock_cost(module.ROCK_DEFS[rock])
+        metadata = {land: CARDS[land], self.BLANK: self.BLANK_CARD,
+                    rock: {"type_line": "Artifact", "mana_cost": "{%d}" % cost,
+                           "cmc": float(cost), "oracle_text": "", "colors": []}}
+        extra = (set(), set(), set()) if deck_id == "hidden-legion" else ()
+        return module, land, rock, metadata, extra
+
+    def test_every_mana_simulation_bottoms_a_land_from_a_seven_of_lands(self):
+        # run_simulation, one game. The kept seven: seven of the deck's
+        # first-colour basic, over nine Probe Blanks. One basic goes to the
+        # bottom: six lands in the kept hand, played on turns 1-6 (one mana
+        # each); turns 1-9 draw the Blanks and turn 10 draws the bottomed
+        # basic, the seventh land. Mana on turns 1-10: 1, ..., 6, 6, 6, 6, 7.
+        # Kept with seven cards the hand would hold seven lands and turn 7
+        # seven mana.
+        self.assertTrue(exporter.DECKS)
+        for deck_id, _name, _export in exporter.DECKS:
+            with self.subTest(deck=deck_id):
+                module, land, _rock, metadata, extra = self._setup(deck_id)
+                blanks = [self.BLANK] * 7
+                deals = self._deals((blanks, [land] * 7 + [self.BLANK] * 2),
+                                    (blanks, [land] * 7 + [self.BLANK] * 2),
+                                    ([land] * 7, [self.BLANK] * 9))
+                if deck_id == "titan-convergence":
+                    self.addCleanup(setattr, module, "_land_set", module._land_set)
+                with patch("random.shuffle", deals):
+                    stats = module.run_simulation([land] * 7 + [self.BLANK] * 9, metadata,
+                                                  *extra, num_games=1)
+                self.assertEqual(
+                    (dict(stats["mulligan_attempts"]), dict(stats["hand_land_counts"]),
+                     [stats["mana_by_turn"][turn] for turn in range(1, 11)]),
+                    ({2: 1}, {6: 1}, [[1], [2], [3], [4], [5], [6], [6], [6], [6], [7]]))
+
+    def test_every_mana_simulation_bottoms_from_a_seven_of_lands_and_sources(self):
+        # Four kept sevens, each over nine Probe Blanks, of the deck's first-
+        # colour basic and its dearest rock: seven rocks; one basic and six
+        # rocks; four basics and three rocks; five basics and two rocks. The
+        # first three hands hold fewer than five lands, so a rock goes to the
+        # bottom and every basic is kept; the five-land hand bottoms a basic.
+        # Seen through commander_mulligan's state: six cards in hand and the
+        # bottomed card at index 0 of the library, the end ordinary draws
+        # reach last.
+        self.assertTrue(exporter.DECKS)
+        for deck_id, _name, _export in exporter.DECKS:
+            if deck_id == "titan-convergence":
+                continue  # its mulligan is inside run_simulation: the next test
+            for label, shape, bottomed in (("sources", (0, 7), "rock"),
+                                           ("one land", (1, 6), "rock"),
+                                           ("four lands", (4, 3), "rock"),
+                                           ("five lands", (5, 2), "land")):
+                with self.subTest(deck=deck_id, seven=label):
+                    module, land, rock, metadata, extra = self._setup(deck_id)
+                    seven = [land] * shape[0] + [rock] * shape[1]
+                    decklist = seven + [self.BLANK] * 9
+                    bad = self._bad(decklist, [self.BLANK] * 7)
+                    deals = self._deals(bad, bad, (seven, [self.BLANK] * 9))
+                    with patch("random.shuffle", deals):
+                        state = module.commander_mulligan(decklist, metadata, {land}, *extra)
+                    card = rock if bottomed == "rock" else land
+                    kept = list(seven)
+                    kept.remove(card)
+                    self.assertEqual(
+                        (state.mulligan_attempt, sorted(state.hand), state.library[0],
+                         len(state.library)),
+                        (2, sorted(kept), card, 10))
+
+    def test_titan_convergence_bottoms_from_a_seven_of_lands_and_sources(self):
+        # titan-convergence mulligans inside run_simulation, so its kept
+        # hand's counts and the game's mana are the observable. Wastes (one
+        # mana) and Sol Ring ({1}: "{T}: Add {C}{C}", cast as soon as one mana
+        # is free, its mana usable at once); the rest of the deck Probe
+        # Blanks. The bottomed card is the library's last card, drawn on turn
+        # 10.
+        #  - Seven Sol Rings, a Wastes on top of eight Blanks: a Sol Ring goes
+        #    to the bottom (6 sources, no land). Turn 1 draws the Wastes and
+        #    casts the six: 1 + 6 x 2 = 13 a turn; turn 10 draws and casts the
+        #    seventh: 15.
+        #  - Six Sol Rings and a Wastes over nine Blanks: a Sol Ring goes (6
+        #    sources, 1 land). Turn 1 plays the Wastes and casts five: 11;
+        #    turn 10: 13.
+        #  - Four Wastes and three Sol Rings over nine Blanks: four lands are
+        #    fewer than five, so a Sol Ring goes (6 sources, 4 lands). Turn 1:
+        #    Wastes and both Sol Rings, 1 + 4 = 5; one more Wastes a turn to 8
+        #    on turn 4; turn 10 draws and casts the third Sol Ring: 10.
+        #  - Five Wastes and two Sol Rings over nine Blanks: a Wastes goes (6
+        #    sources, 4 lands). Turn 1: Wastes and both Sol Rings, 1 + 4 = 5;
+        #    one more Wastes a turn to 8 on turn 4; turn 10 draws the fifth: 9.
+        # On top instead, the Sol Ring would come back on turn 1 (the first
+        # case: no land, 0 mana); dropped, turn 10 would add nothing.
+        module = importlib.import_module("mana_simulation_titan_convergence")
+        metadata = {"Wastes": CARDS["Wastes"], "Sol Ring": self.SOL_RING,
+                    self.BLANK: self.BLANK_CARD}
+        cases = (
+            ("sources", ["Sol Ring"] * 7, [self.BLANK] * 8 + ["Wastes"],
+             {6: 1}, {0: 1}, [13] * 9 + [15]),
+            ("one land", ["Sol Ring"] * 6 + ["Wastes"], [self.BLANK] * 9,
+             {6: 1}, {1: 1}, [11] * 9 + [13]),
+            ("four lands", ["Wastes"] * 4 + ["Sol Ring"] * 3, [self.BLANK] * 9,
+             {6: 1}, {4: 1}, [5, 6, 7, 8, 8, 8, 8, 8, 8, 10]),
+            ("five lands", ["Wastes"] * 5 + ["Sol Ring"] * 2, [self.BLANK] * 9,
+             {6: 1}, {4: 1}, [5, 6, 7, 8, 8, 8, 8, 8, 8, 9]),
+        )
+        for label, seven, under, sources, lands, mana in cases:
+            with self.subTest(seven=label):
+                decklist = seven + under
+                bad = self._bad(decklist, [self.BLANK] * 7)
+                stats = self._titan_run(module, decklist, metadata,
+                                        self._deals(bad, bad, (seven, under)))
+                self.assertEqual(
+                    (dict(stats["mulligan_attempts"]), dict(stats["hand_source_counts"]),
+                     dict(stats["hand_land_counts"]),
+                     [stats["mana_by_turn"][turn][0] for turn in range(1, 11)]),
+                    ({2: 1}, sources, lands, mana))
+
+    # (deck, kept seven of distinct lands, the land bottomed). Every hand is
+    # seven lands, so the land the module's land drop ranks lowest on turn
+    # 1's empty battlefield goes; each fixture's comment gives that ranking.
+    LAND_SEVENS = (
+        # grave-dividends scores 20 for a fetch land, else 10 untapped or 0
+        # tapped, plus 5 for a black-and-white land or 2 for one of the two.
+        # Dakmor Salvage enters tapped and adds {B}: 0 + 2 = 2. Volrath's
+        # Stronghold (untapped, colourless) 10, Swamp and Plains 12, Caves of
+        # Koilos and Godless Shrine (scored untapped) 15, Bloodstained Mire
+        # 20.
+        ("grave-dividends",
+         ["Bloodstained Mire", "Swamp", "Plains", "Caves of Koilos", "Godless Shrine",
+          "Volrath's Stronghold", "Dakmor Salvage"], "Dakmor Salvage"),
+        # hidden-legion scores 10 untapped or 0 tapped, plus 2 a colour the
+        # land adds, 5 for a fetch land, and 3 for each of four named lands
+        # (Command Tower, Reflecting Pool, Mana Confluence, City of Brass). Two
+        # lands enter tapped: Indatha Triome (white, black, green) 0 + 6 = 6
+        # and Path of Ancestry (all five colours, not one of the four) 0 + 10 =
+        # 10, so the Triome ranks lowest on colours. Forest 12, Overgrown Tomb
+        # 14, Flooded Strand 15, Mana Confluence and Command Tower 10 + 10 + 3
+        # = 23.
+        ("hidden-legion",
+         ["Mana Confluence", "Forest", "Command Tower", "Indatha Triome", "Overgrown Tomb",
+          "Path of Ancestry", "Flooded Strand"], "Indatha Triome"),
+        # gandalf-party-guest scores 10 untapped or 0 tapped, plus 2 a colour
+        # among blue, red and white, on turn 1. Glacial Fortress enters tapped
+        # unless you control an Island or a Plains, so on turn 1's empty
+        # battlefield it scores 0 + 4 = 4; Spire of Industry (untapped, only
+        # {C} with no artifact out) 10, Island and Mountain 12, Skycloud Expanse and
+        # Steam Vents 14, Command Tower 16. Once an Island or a Plains is down
+        # the Fortress ranks above Spire of Industry; the turn-1 score stands.
+        ("gandalf-party-guest",
+         ["Island", "Command Tower", "Skycloud Expanse", "Glacial Fortress", "Steam Vents",
+          "Spire of Industry", "Mountain"], "Glacial Fortress"),
+    )
+
+    def test_a_seven_of_lands_bottoms_the_land_the_land_drop_ranks_lowest(self):
+        # Through commander_mulligan's state, over nine Probe Blanks.
+        land_card = {"type_line": "Land", "mana_cost": "", "cmc": 0.0,
+                     "oracle_text": "", "colors": []}
+        for deck_id, seven, bottomed in self.LAND_SEVENS:
+            with self.subTest(deck=deck_id):
+                module = importlib.import_module("mana_simulation_" + deck_id.replace("-", "_"))
+                metadata = dict({name: land_card for name in seven},
+                                **{self.BLANK: self.BLANK_CARD})
+                extra = (set(), set(), set()) if deck_id == "hidden-legion" else ()
+                decklist = seven + [self.BLANK] * 9
+                bad = self._bad(decklist, [self.BLANK] * 7)
+                with patch("random.shuffle", self._deals(bad, bad, (seven, [self.BLANK] * 9))):
+                    state = module.commander_mulligan(decklist, metadata, set(seven), *extra)
+                kept = list(seven)
+                kept.remove(bottomed)
+                self.assertEqual((sorted(state.hand), state.library[0]),
+                                 (sorted(kept), bottomed))
+
+    def test_the_dearest_mana_source_goes_first(self):
+        # eternal-harvest. The three mana sources come from a hand of its
+        # seeded run: Llanowar Elves ({G}, mana value 1), Birds of Paradise
+        # ({G}, 1) and The Soul Stone ({1}{B}, 2); the four lands are
+        # stand-ins from its decklist (the seeded hand's were Darkbore
+        # Pathway, Forest, Turbulent Fen and Twilight Mire). The module counts
+        # all three as mana sources (its dorks and rocks), so none is its own
+        # candidate; four lands are fewer than five, so a source goes, the
+        # highest mana value first: The Soul Stone. It sits between the other
+        # two in hand order, so taking the first or the last source in hand
+        # fails. Seen through commander_mulligan's state, over nine Blanks.
+        module = importlib.import_module("mana_simulation_eternal_harvest")
+        lands = ["Forest", "Swamp", "Command Tower", "High Market"]
+        sources = ["Llanowar Elves", "The Soul Stone", "Birds of Paradise"]
+        metadata = dict({name: CARDS[name] for name in lands + sources},
+                        **{self.BLANK: self.BLANK_CARD})
+        seven = lands + sources
+        decklist = seven + [self.BLANK] * 9
+        bad = self._bad(decklist, [self.BLANK] * 7)
+        with patch("random.shuffle", self._deals(bad, bad, (seven, [self.BLANK] * 9))):
+            state = module.commander_mulligan(decklist, metadata, set(lands))
+        self.assertEqual((sorted(state.hand), state.library[0]),
+                         (sorted(lands + ["Llanowar Elves", "Birds of Paradise"]), "The Soul Stone"))
+
+    def test_titan_convergence_bottoms_the_land_its_land_drop_ranks_lowest(self):
+        # Seven lands over ten Probe Blanks (the bottomed land is never
+        # drawn): Scorched Ruins, Eye of Ugin, Urza's Mine and four Wastes.
+        # On turn 1's empty battlefield titan-convergence's land drop scores
+        # Scorched Ruins -1 (it enters only by sacrificing two untapped
+        # lands, and none are out), Eye of Ugin 0 (it adds no mana), Urza's
+        # Mine and Wastes 3 (one mana each without Tron). Scorched Ruins goes,
+        # though it taps for four; the fallback this replaced, which ranked lands
+        # by the mana they add on an empty battlefield, bottomed Eye of Ugin
+        # (no mana) and kept Scorched Ruins, Urza's Mine and the four Wastes.
+        # Kept: four Wastes played on turns 1-4 (they beat Urza's Mine
+        # on the name tie-break), Urza's Mine on turn 5, Eye of Ugin on turn 6:
+        # 1, 2, 3, 4, 5, 5, 5, 5, 5, 5.
+        module = importlib.import_module("mana_simulation_titan_convergence")
+        land_card = {"type_line": "Land", "mana_cost": "", "cmc": 0.0,
+                     "oracle_text": "", "colors": []}
+        seven = ["Scorched Ruins", "Eye of Ugin", "Urza's Mine"] + ["Wastes"] * 4
+        metadata = dict({name: land_card for name in seven}, **{self.BLANK: self.BLANK_CARD})
+        decklist = seven + [self.BLANK] * 10
+        bad = self._bad(decklist, [self.BLANK] * 7)
+        stats = self._titan_run(module, decklist, metadata,
+                                self._deals(bad, bad, (seven, [self.BLANK] * 10)))
+        self.assertEqual(
+            (dict(stats["mulligan_attempts"]), dict(stats["hand_land_counts"]),
+             [stats["mana_by_turn"][turn][0] for turn in range(1, 11)]),
+            ({2: 1}, {6: 1}, [1, 2, 3, 4, 5, 5, 5, 5, 5, 5]))
 
 
 class XSpellGoldfishTests(unittest.TestCase):

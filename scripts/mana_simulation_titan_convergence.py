@@ -77,15 +77,25 @@ def should_mulligan(hand: list[str]) -> bool:
     return sources <= 1
 
 
-def choose_bottom_cards(hand: list[str], count: int, metadata: dict) -> list[str]:
-    """Choose cards to bottom (London mulligan). Bottom highest CMC non-land, non-rock cards."""
+def choose_bottom_cards(hand: list[str], count: int, metadata: dict,
+                        land_rank) -> list[str]:
+    """Choose the `count` cards a paid mulligan puts on the bottom (London
+    mulligan). First the cards that are neither lands nor the mana sources
+    the mulligan counts, highest mana value first. When those run out, a
+    hand of five or more lands bottoms its lands next, lowest `land_rank`
+    first, then its mana sources, highest mana value first; any other hand
+    bottoms its mana sources before its lands. `land_rank` is the land
+    drop's turn-1 ranking on an empty battlefield, as in the goldfish's
+    rule, so a land that ranks higher once other lands are down (such as
+    Scorched Ruins) is still ranked by its turn-1 score.
+    """
     candidates = [c for c in hand if c not in _land_set and c not in ROCK_DEFS and c not in LAND_FETCH_DEFS]
     candidates.sort(key=lambda c: metadata.get(c, {}).get("cmc", 0), reverse=True)
     if len(candidates) < count:
-        # Fall back to worst lands (e.g., all-source hands)
-        land_candidates = [c for c in hand if c in _land_set and c not in [x for x in candidates]]
-        land_candidates.sort(key=lambda c: land_base_mana(c, [], False, False))
-        candidates.extend(land_candidates)
+        lands = sorted((c for c in hand if c in _land_set), key=land_rank)
+        sources = [c for c in hand if c not in _land_set and c not in candidates]
+        sources.sort(key=lambda c: metadata.get(c, {}).get("cmc", 0), reverse=True)
+        candidates += (lands + sources) if len(lands) >= 5 else (sources + lands)
     return candidates[:count]
 
 
@@ -440,12 +450,15 @@ def run_simulation(decklist: list[str], metadata: dict, num_games: int = NUM_GAM
         # attempt 1 = free mulligan (7 cards, no penalty)
         # attempt 2 = paid mulligan (bottom 1 → 6 cards)
         if attempt >= 2:
-            bottom = choose_bottom_cards(state.hand, attempt - 1, metadata)
+            # land_rank: the land drop's turn-1 ranking on this empty battlefield (ties
+            # broken by name, as there), which keeps a land that ranks higher once lands
+            # are down at its turn-1 score.
+            bottom = choose_bottom_cards(state.hand, attempt - 1, metadata,
+                                         lambda name: (state._land_priority(name), name))
             for card in bottom:
                 state.hand.remove(card)
                 # Draws pop the library's end, so its bottom is index 0. The simulation
-                # does not shuffle after a search, so the card stays on the bottom for
-                # the rest of the game.
+                # does not shuffle after a search.
                 state.library.insert(0, card)
 
         mulligan_attempts[attempt] += 1

@@ -274,10 +274,24 @@ def should_mulligan(hand: list[str], land_set: set[str]) -> bool:
 
 
 def choose_bottom_cards(hand: list[str], count: int, metadata: dict,
-                        land_set: set[str]) -> list[str]:
+                        land_set: set[str], land_rank) -> list[str]:
+    """Choose the `count` cards a paid mulligan puts on the bottom (London
+    mulligan). First the cards that are neither lands nor the mana sources
+    the mulligan counts, highest mana value first. When those run out, a
+    hand of five or more lands bottoms its lands next, lowest `land_rank`
+    first, then its mana sources, highest mana value first; any other hand
+    bottoms its mana sources before its lands. `land_rank` is the land
+    drop's turn-1 ranking on an empty battlefield, as in the goldfish's
+    rule.
+    """
     ramp_cards = set(ROCK_DEFS) | set(DORK_DEFS)
     candidates = [c for c in hand if c not in land_set and c not in ramp_cards]
     candidates.sort(key=lambda c: metadata.get(c, {}).get("cmc", 0), reverse=True)
+    if len(candidates) < count:
+        lands = sorted((c for c in hand if c in land_set), key=land_rank)
+        sources = [c for c in hand if c not in land_set and c not in candidates]
+        sources.sort(key=lambda c: metadata.get(c, {}).get("cmc", 0), reverse=True)
+        candidates += (lands + sources) if len(lands) >= 5 else (sources + lands)
     return candidates[:count]
 
 
@@ -449,12 +463,14 @@ def commander_mulligan(decklist: list[str], metadata: dict,
         break
 
     if attempt >= 2:
-        bottom = choose_bottom_cards(state.hand, attempt - 1, metadata, land_set)
+        # land_rank: the land drop's turn-1 ranking on this empty battlefield (ties
+        # broken by name, as there).
+        bottom = choose_bottom_cards(state.hand, attempt - 1, metadata, land_set,
+                                     lambda name: (state._land_play_priority(name), name))
         for card in bottom:
             state.hand.remove(card)
             # Draws pop the library's end, so its bottom is index 0. The simulation
-            # does not shuffle after a search, so the card stays on the bottom for
-            # the rest of the game.
+            # does not shuffle after a search.
             state.library.insert(0, card)
 
     state.mulligan_attempt = attempt
