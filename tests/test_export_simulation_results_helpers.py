@@ -2,6 +2,7 @@ import gc
 import importlib
 import itertools
 import json
+import math
 import random
 import re
 import tempfile
@@ -2878,6 +2879,96 @@ class ManaSimPaidMulliganCountTests(unittest.TestCase):
             (dict(stats["mulligan_attempts"]), dict(stats["hand_land_counts"]),
              [stats["mana_by_turn"][turn][0] for turn in range(1, 11)]),
             ({2: 1}, {6: 1}, [1, 2, 3, 4, 5, 5, 5, 5, 5, 5]))
+
+
+class ManaSimGemstoneCavernsTests(unittest.TestCase):
+    """Gemstone Caverns in titan-convergence's mana simulation (owner-approved
+    2026-11-24). Its text: "If this card is in your opening hand and you're
+    not the starting player, you may begin the game with Gemstone Caverns on
+    the battlefield with a luck counter on it. If you do, exile a card from
+    your hand." The simulation models a four-player free-for-all game, in
+    which a player is not the starting player in three seats of four, so a
+    kept hand holding the Caverns begins with it on the battlefield when
+    random.random() is below 0.75 (the simulation always takes the "may"),
+    and the module exiles the hand's non-land of highest mana value. The roll
+    is made only for a kept hand holding the Caverns, once whatever its
+    outcome, so both thresholds draw the same random numbers and only games
+    with a roll in [0.5, 0.75) change."""
+
+    BLANK = ManaSimMulliganBottomTests.BLANK
+    BLANK_CARD = ManaSimMulliganBottomTests.BLANK_CARD
+    # As data/card-metadata.json held it on 2026-11-24.
+    GEMSTONE_CAVERNS = {
+        "type_line": "Legendary Land", "mana_cost": "", "cmc": 0.0, "colors": [],
+        "oracle_text": "If this card is in your opening hand and you're not the starting "
+                       "player, you may begin the game with Gemstone Caverns on the "
+                       "battlefield with a luck counter on it. If you do, exile a card from "
+                       "your hand.\n{T}: Add {C}. If Gemstone Caverns has a luck counter on "
+                       "it, instead add one mana of any color."}
+
+    def test_the_caverns_begin_on_the_battlefield_three_times_in_four(self):
+        # run_simulation, one game a case, the shuffle and the roll scripted.
+        # Probe Two is a {2} creature with no text (mana value 2), which the
+        # module counts as a castable spell once two mana are out; Probe
+        # Blanks have no mana cost (mana value 0) and never count. The kept
+        # seven: Gemstone Caverns, Wastes, Probe Two and four Blanks, over ten
+        # Blanks. Two lands are two mana sources, so the first seven is kept
+        # (no mulligan, nothing bottomed); the hand's counts are taken before
+        # the Caverns leave it: 2 lands, 2 sources.
+        #  - A roll below 0.75 (0.0, 0.5, 0.7 and 0.7499999999999999, the
+        #    largest float under 0.75): the Caverns begin on the battlefield
+        #    and Probe Two (mana value 2, the Blanks 0) is exiled. Turn 1
+        #    draws a Blank and plays the Wastes: two lands at one mana each
+        #    (the module counts the Caverns' mana of any colour as one), 2 a
+        #    turn on turns 1-10, the draws all Blanks. Nothing castable on any
+        #    turn: Probe Two is gone.
+        #  - A roll of 0.75 or more (0.75, 0.9): the Caverns stay in hand.
+        #    Turn 1 plays one of the two lands (1 mana), turn 2 the other (2
+        #    a turn from then on). Probe Two is castable from turn 2.
+        #  - No Caverns in the seven (it holds a second Wastes in their
+        #    place): no roll is made. The deck still holds a Caverns, at the
+        #    bottom of the library under the ten Blanks (draws pop the end),
+        #    which the ten turns' draws never reach, so a guard that read the
+        #    decklist instead of the hand would roll. The game is the one the
+        #    Caverns left in hand play: 1 mana, then 2; Probe Two castable
+        #    from turn 2.
+        # The 50% threshold this replaced (a roll below 0.5) left the Caverns
+        # in hand at 0.5, 0.7 and just under 0.75; a threshold of 0.74 at just
+        # under 0.75. Begun on the battlefield without the exile, Probe Two
+        # would be castable from turn 1; exiling a Blank instead would leave
+        # it castable too.
+        module = importlib.import_module("mana_simulation_titan_convergence")
+        self.addCleanup(setattr, module, "_land_set", module._land_set)  # run_simulation rebinds it
+        metadata = {"Gemstone Caverns": self.GEMSTONE_CAVERNS, "Wastes": CARDS["Wastes"],
+                    "Probe Two": CARDS["Probe Two"], self.BLANK: self.BLANK_CARD}
+        with_caverns = ["Gemstone Caverns", "Wastes", "Probe Two"] + [self.BLANK] * 4
+        without = ["Wastes", "Wastes", "Probe Two"] + [self.BLANK] * 4
+        blanks = [self.BLANK] * 10
+        caverns_at_bottom = ["Gemstone Caverns"] + blanks
+        begun = ([2] * 10, [0] * 10)
+        in_hand = ([1] + [2] * 9, [0] + [1] * 9)
+        cases = (("0.0", with_caverns, blanks, 0.0, begun),
+                 ("0.5", with_caverns, blanks, 0.5, begun),
+                 ("0.7", with_caverns, blanks, 0.7, begun),
+                 ("largest float under 0.75", with_caverns, blanks, math.nextafter(0.75, 0.0), begun),
+                 ("0.75", with_caverns, blanks, 0.75, in_hand),
+                 ("0.9", with_caverns, blanks, 0.9, in_hand),
+                 ("no Caverns", without, caverns_at_bottom, 0.0, in_hand))
+        for label, seven, under, value, (mana, castable) in cases:
+            with self.subTest(roll=label):
+                with patch("random.shuffle", ManaSimPaidMulliganCountTests._deals((seven, under))), \
+                        patch("random.random", return_value=value) as roll:
+                    stats = module.run_simulation(seven + under, metadata, num_games=1)
+                if "Gemstone Caverns" in seven:
+                    roll.assert_called_once_with()
+                else:
+                    roll.assert_not_called()
+                self.assertEqual(
+                    (dict(stats["mulligan_attempts"]), dict(stats["hand_land_counts"]),
+                     dict(stats["hand_source_counts"]),
+                     [stats["mana_by_turn"][turn][0] for turn in range(1, 11)],
+                     [stats["castable_spell_by_turn"][turn] for turn in range(1, 11)]),
+                    ({0: 1}, {2: 1}, {2: 1}, mana, castable))
 
 
 class XSpellGoldfishTests(unittest.TestCase):

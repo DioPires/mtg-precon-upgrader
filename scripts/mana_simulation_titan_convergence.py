@@ -468,9 +468,14 @@ def run_simulation(decklist: list[str], metadata: dict, num_games: int = NUM_GAM
         hand_land_counts[hand_stats["lands"]] += 1
         hand_source_counts[hand_stats["sources"]] += 1
 
-        # Gemstone Caverns: if in opening hand, 50% chance of luck counter
+        # Gemstone Caverns in the opening hand: a player who is not the starting
+        # player "may" begin the game with it on the battlefield with a luck
+        # counter, exiling a card from the hand. The simulation always takes
+        # that option. It models a four-player free-for-all Commander game, in
+        # which a player is not the starting player in three seats of four:
+        # probability 0.75.
         if "Gemstone Caverns" in state.hand:
-            if random.random() < 0.5:  # not going first
+            if random.random() < 0.75:  # not the starting player
                 state.hand.remove("Gemstone Caverns")
                 state.battlefield_lands.append("Gemstone Caverns")
                 # Exile worst card (highest CMC non-land)

@@ -7593,7 +7593,7 @@ def _run_seeded_chunk(args):
     # Seed at the start of each chunk, inside the worker, so a chunk's games
     # depend only on its seed and size, not on which worker runs it or what that
     # worker ran before. Every mana sim draws from the module-level `random`
-    # (library shuffle; Titan's Gemstone Caverns coin flip). (DEC-1115)
+    # (library shuffle; Titan's Gemstone Caverns roll). (DEC-1115)
     random.seed(seed)
     return run_chunk_fn((decklist, metadata, num_games))
 
