@@ -532,7 +532,10 @@ def commander_mulligan(decklist: list[str], metadata: dict, land_set: set[str]) 
         bottom = choose_bottom_cards(state.hand, attempt - 1, metadata, land_set)
         for card in bottom:
             state.hand.remove(card)
-            state.library.append(card)
+            # Draws pop the library's end, so its bottom is index 0. The simulation
+            # does not shuffle after a search, so the card stays on the bottom for
+            # the rest of the game.
+            state.library.insert(0, card)
     state.mulligan_attempt = attempt
     return state
 

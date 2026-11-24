@@ -443,7 +443,10 @@ def run_simulation(decklist: list[str], metadata: dict, num_games: int = NUM_GAM
             bottom = choose_bottom_cards(state.hand, attempt - 1, metadata)
             for card in bottom:
                 state.hand.remove(card)
-                state.library.append(card)
+                # Draws pop the library's end, so its bottom is index 0. The simulation
+                # does not shuffle after a search, so the card stays on the bottom for
+                # the rest of the game.
+                state.library.insert(0, card)
 
         mulligan_attempts[attempt] += 1
 

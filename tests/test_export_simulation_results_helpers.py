@@ -2399,7 +2399,7 @@ class TurnOneDrawTests(unittest.TestCase):
     mana simulation draw a card on turn 1, and the hypergeometric curves
     count the opening seven plus one card a turn from turn 1."""
 
-    # A made-up sorcery no simulation can cast within ten turns.
+    # A made-up {9} sorcery: no fixture in this class reaches nine mana.
     FILLER = "Probe Filler"
     FILLER_CARD = {"type_line": "Sorcery", "mana_cost": "{9}", "cmc": 9.0,
                    "oracle_text": "", "colors": []}
@@ -2514,6 +2514,68 @@ class TurnOneDrawTests(unittest.TestCase):
                     turn_one[top] = stats["mana_by_turn"][1]
                 expected = [3] if deck_id == "zada-hedron-grinder" else [1]
                 self.assertEqual(turn_one, {land: expected, self.FILLER: [0]})
+
+
+class ManaSimMulliganBottomTests(unittest.TestCase):
+    """A paid mulligan in each mana simulation puts its card on the bottom of
+    the library, so it is drawn after every other card (owner-approved
+    2026-11-23). The position is the one the goldfish has used since
+    92254668. Which card is bottomed is unchanged: each mana simulation keeps
+    its own existing selector, which differs from the goldfish's (the
+    goldfish keeps the cards its combo checks take from the hand until last,
+    prefers interaction, and bottoms a land from a seven of five or more
+    lands)."""
+
+    BASIC = TurnOneDrawTests.BASIC
+    # Made up: a sorcery with no mana cost (mana value 0), which no mana
+    # simulation counts as castable, and a {9} sorcery, castable with nine
+    # lands.
+    BLANK = "Probe Blank"
+    BLANK_CARD = {"type_line": "Sorcery", "mana_cost": "", "cmc": 0.0,
+                  "oracle_text": "", "colors": []}
+    NINE = "Probe Nine Sorcery"
+    NINE_CARD = {"type_line": "Sorcery", "mana_cost": "{9}", "cmc": 9.0,
+                 "oracle_text": "", "colors": []}
+
+    def test_every_mana_simulation_draws_the_bottomed_card_last(self):
+        # Each deck's mana simulation through run_simulation, one game with
+        # the shuffle pinned (library order = list order; draws pop the end).
+        # The deck: nine of its first-colour basic under a seven of six
+        # Probe Blanks and the {9} sorcery. The seven has no mana source, so
+        # it is mulliganed twice (the pinned shuffle deals it again each
+        # time) and kept on the paid mulligan, which bottoms the most
+        # expensive spell: the {9} sorcery, under the nine basics. The
+        # library is then ten cards and the game draws one a turn from turn
+        # 1: the basics on turns 1-9 (one land a turn, one mana each), the
+        # {9} sorcery on turn 10, the last card. Mana on turns 1-10: 1, 2,
+        # ..., 9, 9. Castable spells: none on turns 1-9 (the Blanks never
+        # count, and the sorcery is still in the library on turn 9, the
+        # first turn with nine mana), the sorcery on turn 10.
+        # On the top of the library instead it would be drawn on turn 1:
+        # mana 0, 1, ..., 9. Lost instead of bottomed, turn 10 would have
+        # nothing castable; kept in hand as well, turn 9 would.
+        root = Path(__file__).resolve().parent.parent
+        colors = {deck["id"]: deck["colors"] for deck in json.loads(
+            (root / "data" / "index.json").read_text())["commanders"]}
+        self.assertTrue(exporter.DECKS)
+        for deck_id, _name, _export in exporter.DECKS:
+            with self.subTest(deck=deck_id):
+                module = importlib.import_module(
+                    "mana_simulation_" + deck_id.replace("-", "_"))
+                land = self.BASIC[colors[deck_id][0]]
+                metadata = {land: CARDS[land], self.BLANK: self.BLANK_CARD,
+                            self.NINE: self.NINE_CARD}
+                args = ([land] * 9 + [self.NINE] + [self.BLANK] * 6, metadata)
+                if deck_id == "hidden-legion":
+                    args += (set(), set(), set())  # no changelings, Dragons or Elves
+                with patch("random.shuffle"):
+                    stats = module.run_simulation(*args, num_games=1)
+                self.assertEqual(
+                    (dict(stats["mulligan_attempts"]),
+                     [stats["mana_by_turn"][turn] for turn in range(1, 11)],
+                     [stats["castable_spell_by_turn"][turn] for turn in range(1, 11)]),
+                    ({2: 1}, [[1], [2], [3], [4], [5], [6], [7], [8], [9], [9]],
+                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]))
 
 
 class XSpellGoldfishTests(unittest.TestCase):
