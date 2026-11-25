@@ -262,5 +262,65 @@ class ComboConsistencyFloorTests(unittest.TestCase):
         self.assertGreater(health["components"]["comboConsistency"], 50.0)
 
 
+def _health_with_threats_and_interaction(value):
+    """Health score with mana 100, combo 50 (no combo), independence 100, and
+    threat deployment and interaction density both `value`. The weights give
+    100 x 0.30 + value x 0.20 + value x 0.20 + 50 x 0.15 + 100 x 0.15
+    = 52.5 + 0.4 x value."""
+    return exporter.compute_deck_health_score(
+        result={
+            "commanderTiming": {"cmc": 3, "byTurn": {"3": 100.0}},
+            "mulliganStats": {"paidMulligan": 0.0, "freeMulligan": 0.0},
+            "manaByTurn": {"4": {"mean": 4.0}},
+            "deckComposition": {"avgCmc": 4.0},
+        },
+        threat_density={"byTurn": {"4": value, "5": value, "6": value}},
+        draw_reliability={"byTurn": {}},
+        interaction_availability={"byTurn": {"2": value, "3": value, "4": value}},
+        combo_assembly={"combos": [], "bestByTurn": {}},
+        color_adequacy={"overallScore": 100.0},
+        commander_dependency={"score": 0.0},
+    )
+
+
+def _grade_for(score):
+    """The grade thresholds: A at 75, B at 65, C at 55, else D."""
+    if score >= 75:
+        return "A"
+    if score >= 65:
+        return "B"
+    if score >= 55:
+        return "C"
+    return "D"
+
+
+class HealthGradeOnExportedScoreTests(unittest.TestCase):
+    """Owner decision 26 (2026-11-25): the grade is decided on the exported
+    one-decimal score, so the score and the grade a deck shows always agree."""
+
+    CASES = [
+        # (threats and interaction, unrounded score, exported score, grade)
+        (56.175, "74.97", 75.0, "A"),
+        (56.1, "74.94", 74.9, "B"),
+        (31.175, "64.97", 65.0, "B"),
+        (31.1, "64.94", 64.9, "C"),
+        (6.175, "54.97", 55.0, "C"),
+        (6.1, "54.94", 54.9, "D"),
+    ]
+
+    def test_grade_is_decided_on_the_exported_score(self):
+        for value, unrounded, score, grade in self.CASES:
+            with self.subTest(unrounded=unrounded):
+                health = _health_with_threats_and_interaction(value)
+                self.assertEqual(health["score"], score)
+                self.assertEqual(health["grade"], grade)
+
+    def test_grade_agrees_with_the_exported_score(self):
+        for value, unrounded, _score, _grade in self.CASES:
+            with self.subTest(unrounded=unrounded):
+                health = _health_with_threats_and_interaction(value)
+                self.assertEqual(health["grade"], _grade_for(health["score"]))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -7893,17 +7893,20 @@ def compute_deck_health_score(result: dict, threat_density: dict, draw_reliabili
         (commander_independence, 0.15),
     ])
 
-    if overall >= 75:
+    # The grade is decided on the exported one-decimal score, so the score and
+    # the grade a deck shows always agree (owner decision 26, 2026-11-25).
+    score = r1(overall)
+    if score >= 75:
         grade = "A"
-    elif overall >= 65:
+    elif score >= 65:
         grade = "B"
-    elif overall >= 55:
+    elif score >= 55:
         grade = "C"
     else:
         grade = "D"
 
     return {
-        "score": r1(overall),
+        "score": score,
         "grade": grade,
         "components": {
             "manaReliability": r1(mana_reliability),
