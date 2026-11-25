@@ -609,8 +609,9 @@ COMMANDER_TOKEN_ENGINE = {
 # the battlefield free — Equipment attach directly to him. The stock goldfish
 # is blind to all of it. Model: (1) the transform is attempted each turn once
 # the commander is in play, affordability-checked against the turn pool like
-# any other cast; (2) once transformed, one artifact from hand is deployed
-# free at each combat via resolve_cast_effects (deployed creatures are
+# any other cast; (2) once transformed, one artifact from hand, never a card
+# reserved for the combo checks (reservedPieces, left in the hand), is
+# deployed free at each combat via resolve_cast_effects (deployed creatures are
 # summoning-sick; the record's combatReadyTurn handles that); (3) every
 # deployed Equipment counts as attached, adding its configured power bonus (0
 # when the table does not list it), and the commander swings each turn from
@@ -3859,7 +3860,8 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
     # proactively and stay available to the checks on the battlefield.
     hand_only_pieces = frozenset(member for member in line_members
                                  if not is_front_permanent(profiles[member]) or profiles[member]["manaCost"]["X"])
-    # Reserved from filler casting: those pieces, and the tutor and
+    # Reserved from filler casting and from the DEC-405 deploy engine's free
+    # deploy, which leaves them in the hand: those pieces, and the tutor and
     # recursion cards the checks read as substitutes (none in a deck with no
     # combo or KEY_COMBOS line: the tables are emptied above).
     reserved_pieces = hand_only_pieces | set(tutor_meta) | set(recursion_meta)
@@ -5094,6 +5096,12 @@ def deploy_engine_choice(deploy_engine: dict, hand: list[str], profiles: dict,
     cheat, then to the name later in alphabetical order. An Equipment's own
     pressure score plays no part in the choice; it applies once the
     Equipment is on the battlefield.
+
+    The caller passes the hand without the reserved cards (reservedPieces,
+    in a deck with a combo or KEY_COMBOS line: the line pieces kept in the
+    hand, a Walking Ballista, and the tutor and recursion cards), which stay
+    in the hand, where the combo checks read the ones that can supply a
+    piece (Wishclaw Talisman).
     """
     equipment_power = deploy_engine["equipmentPower"]
     ds_names = deploy_engine["doubleStrikeNames"]
@@ -6248,10 +6256,12 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
                         # zero the record so it isn't double-counted.
                         permanent["combat"] = 0
         if deploy_engine is not None and commander_transformed:
-            # A line piece kept in the hand (handOnlyPieces: a Walking
-            # Ballista) is never deployed: the combo checks read it there.
+            # Every reserved card (reservedPieces: a line piece kept in the
+            # hand, a Walking Ballista, or a tutor or recursion card) is left
+            # in the hand, where the combo checks read the ones that can
+            # supply a piece (Wishclaw Talisman).
             deploy_name = deploy_engine_choice(
-                deploy_engine, [card for card in hand if card not in context["handOnlyPieces"]], profiles,
+                deploy_engine, [card for card in hand if card not in reserved_combo_pieces], profiles,
                 attached_equipment)
             if deploy_name is not None:
                 hand.remove(deploy_name)
@@ -7194,7 +7204,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "while Nesting Dragon's 0/2 Dragon Egg survives the -1 and draws nothing; "
             "armory-protocol's deploy engine, once the "
             "commander has transformed, puts one artifact from the hand onto the battlefield free at "
-            "each combat (a put, not a cast), the one with the highest score, as that deck's own "
+            "each combat (a put, not a cast; never a reserved card, below), the one with the highest "
+            "score, as that deck's own "
             "methodology states: an Equipment it "
             "puts out counts as attached and adds its table's bonus to the commander's damage (none "
             "when the table does not list it), its own pressure score applying once it is out, and "
@@ -7210,7 +7221,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "held; a modal card with a spell front and a land back is still played as its land). "
             "Those line pieces kept in the hand are also never played as a land, counted as a land "
             "by the mulligan, deployed free or cast from a cascade. A reserved tutor or recursion "
-            "card is not cast from the hand, but one played as a land (a land, or a modal card with "
+            "card is neither cast from the hand nor deployed free (it is left in the hand), but one "
+            "played as a land (a land, or a modal card with "
             "a land back) is played and counted as a land, and a cascade can free-cast any other "
             "that is a permanent. A commander with {X} named in a combo line's pieces is "
             "cast from the command zone at X = 0; one named only in a KEY_COMBOS slot waits for a "
@@ -7340,7 +7352,9 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "affordability like any other cast. From the transform turn (haste) the "
             f"{deploy_engine['transformedPower']}-power back face attacks every turn, "
             "and one artifact from hand is put onto the battlefield free at each "
-            "combat, the one with the highest score: an Equipment by its attach bonus (0 when the "
+            "combat, never a card reserved for the combo checks (in a deck with a combo or "
+            "KEY_COMBOS line, a line piece kept in the hand and the tutor and recursion cards: it is "
+            "left in the hand), the one with the highest score: an Equipment by its attach bonus (0 when the "
             "table does not list it; one listed in the table's double-strike names, while none of "
             "those is attached, by its bonus plus the commander's whole swing; one that grants "
             "double strike but is not listed, such as Genji Glove, scores 0 and loses to The Reaver "

@@ -11278,6 +11278,64 @@ class GoldfishHoldTests(unittest.TestCase):
                           for label, casts in resolved.items()},
                          {"line piece": [], "no line": [2]})
 
+    def test_armory_protocols_deploy_leaves_a_reserved_tutor_in_the_hand(self):
+        # armory-protocol's deploy engine (transform for {4}{U}{R}, then one
+        # artifact from the hand put onto the battlefield free at each
+        # combat) in a deck with a combo line, Probe Piece A + Probe Piece B
+        # ({1} enchantments). Wishclaw Talisman (Artifact, {1}{B}: "{1}, {T},
+        # Remove a wish counter from this artifact: Search your library for a
+        # card, put it into your hand", tagged as ComboCheckSubstituteTests
+        # tags it) is a tutor the combo check reads from the hand, so it is
+        # reserved. Pinned game: kept seven two Islands, two Mountains, Probe
+        # Piece A and two Probe Huges ({20} sorceries); a Swamp, an Island
+        # and a Mountain are drawn on turns 1 to 3, then Probe Nines ({9}
+        # creatures), Wishclaw Talisman on turn 7; Probe Piece B is at the
+        # bottom of the library. Probe Deploy Commander ({1}) and Probe Piece
+        # A are cast on turns 1 and 2; the commander transforms on turn 6
+        # with six lands. On turn 7 Wishclaw Talisman is the only artifact in
+        # the hand, the one the deploy would choose; it stays in the hand,
+        # and seven lands pay the line through it: {1}{B} + {1} + Probe Piece
+        # B's {1}.
+        commander, wishclaw = "Probe Deploy Commander", "Wishclaw Talisman"
+        opening = ["Island", "Island", "Mountain", "Mountain", "Probe Piece A", "Probe Huge A", "Probe Huge B"]
+        library = (["Probe Piece B"] + ["Probe Nine"] * 3 + [wishclaw] + ["Probe Nine"] * 3
+                   + ["Mountain", "Island", "Swamp"])
+        names = list(dict.fromkeys(opening + library))
+        synthetic = {commander: {"type_line": "Legendary Creature — Human", "mana_cost": "{1}", "cmc": 1.0,
+                                 "oracle_text": "", "colors": []},
+                     **{name: {"type_line": "Enchantment", "mana_cost": "{1}", "cmc": 1.0, "oracle_text": "",
+                               "colors": []} for name in ("Probe Piece A", "Probe Piece B")},
+                     **{name: {"type_line": "Sorcery", "mana_cost": "{20}", "cmc": 20.0, "oracle_text": "",
+                               "colors": []} for name in ("Probe Huge A", "Probe Huge B")}}
+        metadata = {name: synthetic.get(name) or CARDS.get(name) or FLEET_METADATA[name]
+                    for name in names + [commander]}
+        deck_data = {"decklist": [dict({"name": name, **FIXTURE_ROLE}, **ComboCheckSubstituteTests.TAGS.get(name, {}))
+                                  for name in names],
+                     "winConditions": [{"title": "Probe line", "kind": "combo", "description": "",
+                                        "pieces": ["Probe Piece A", "Probe Piece B"],
+                                        "cards": ["Probe Piece A", "Probe Piece B"]}]}
+        decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
+        context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, ["U", "B", "R"],
+                                                  "armory-protocol")
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
+        self.assertEqual(exporter.deploy_engine_choice(context["deployEngine"],
+                                                       ["Probe Huge A", "Probe Huge B", wishclaw, "Probe Nine"],
+                                                       context["profiles"], set()),
+                         wishclaw)
+        casts = []
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts.append((turn, name))
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter.random, "shuffle", shuffle), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            by_turn, _ = exporter.simulate_goldfish_game(decklist, context, 6)
+        self.assertEqual(([turn for turn, name in casts if name == wishclaw],
+                          [by_turn[turn]["comboLethal"] for turn in (6, 7)]),
+                         ([], [0, 1]))
+
     def test_the_methodology_states_the_rule_and_the_cascade_declines(self):
         # titan-convergence's cascade config, a deck of Forests.
         with patch.object(exporter, "GOLDFISH_GAMES", 16), patch("multiprocessing.Pool", SerialPool):
