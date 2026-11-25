@@ -10,20 +10,32 @@ import {
   collectionRequest,
   COLLECTION_URL,
   createScryfallLimiter,
+  indexedDbTurns,
   LAST_START_KEY,
   STOP_KEY,
+  TURN_KEY,
   type ScryfallLimiter,
   type SendOptions,
+  type TurnStore,
 } from '../../data/scryfallLimiter';
 import {
   cardJson,
   collectionJson,
+  CountingEvents,
+  fakeIndexedDb,
   fakeLocks,
   fakeScryfall,
+  fakeTurns,
   gaps,
+  laggingStorages,
   MemoryStorage,
   peakInClosedWindow,
+  turnDb,
+  type FakeScryfall,
+  type LaggingTab,
   type Outcome,
+  type TurnDb,
+  type TurnTiming,
 } from './scryfallFakes';
 
 const T0 = Date.UTC(2026, 9, 14, 12, 0, 0);
@@ -630,5 +642,763 @@ describe('DEC-1153: bucket 1 holds its lock until the answer is stored', () => {
     expect(scry.times().map((t) => t - T0)).toEqual([0, 1_200]);
     expect((await rightOut).status).toBe(200);
     expect(storedStop()).toBeNull();
+  });
+});
+
+// The hand-over: Chrome and WebKit bring one tab's localStorage writes to
+// another tab late, after the lock has passed to it (the two-tab e2e case of
+// dec1153-card-data-followups.spec.ts, 2026-11-24). Each tab here reads its own
+// copy of storage, which gets the other tabs' writes 5 ms late, in order
+// (laggingStorages), and the tabs share one turn store (fakeTurns over one
+// turnDb), whose operations keep IndexedDB's order. The allowance of a turn is
+// 1,000 ms; bucket 1 spaces starts 1,200 ms.
+describe('the hand-over: the next holder of bucket 1 reads what the last one wrote', () => {
+  const NAMES_16 = Array.from({ length: 16 }, (_, i) => `Held ${i + 1}`);
+  const LOCK = 'grimoire-scryfall-bucket-1';
+  type Timing = { read?: TurnTiming; write?: TurnTiming; ready?: () => boolean };
+
+  /** A card cache per tab, over its own lagging storage, sharing the locks and `db`. */
+  function cacheTabs(scry: FakeScryfall, db: TurnDb, tabs: LaggingTab[], timings: Timing[] = []) {
+    const locks = fakeLocks();
+    const caches = tabs.map(({ storage: own, events }, i) =>
+      createCardCache({
+        storage: own,
+        limiter: createScryfallLimiter({ fetchImpl: scry.fetch, storage: own, locks, events, turns: fakeTurns(db, timings[i]) }),
+      }),
+    );
+    return { caches, locks };
+  }
+
+  /** One tab's limiter over `own` storage and `turns`. */
+  function oneTab(scry: FakeScryfall, turns: TurnStore, own: Storage | null = storage, monotonic?: () => number) {
+    const locks = fakeLocks();
+    const events = new CountingEvents();
+    const limiter = createScryfallLimiter({ fetchImpl: scry.fetch, storage: own, locks, events, turns, monotonic });
+    return { limiter, locks, events };
+  }
+
+  /** The time (ms after T0) at which the limiter's lock comes free for a holder that asks now. */
+  function lockFreesAt(locks: LockManager): { at: number | null } {
+    const probe: { at: number | null } = { at: null };
+    void locks.request(LOCK, async () => {
+      probe.at = Date.now() - T0;
+    });
+    return probe;
+  }
+
+  it('two tabs ask for the same 16 names: each name goes once; the second holder frees the lock 5 ms after the first, when the mark arrives, and leaves no listener or timer', async () => {
+    const scry = fakeScryfall({ delayMs: 1_500 });
+    const db = turnDb();
+    const tabs = laggingStorages(5);
+    const { caches, locks } = cacheTabs(scry, db, tabs);
+    for (const cache of caches) NAMES_16.forEach((name) => cache.enqueue(name));
+    await advance(0);
+    const probe = lockFreesAt(locks);
+    // The first turn ends at 1,500 ms with the answer; its mark reaches the other tab at 1,505.
+    await advance(1_504);
+    expect(probe.at).toBeNull();
+    await advance(1);
+    expect(probe.at).toBe(1_505);
+    await advance(10_000);
+    expect(scry.batches()).toEqual([NAMES_16]);
+    // Only the turn that sent a request wrote a token.
+    expect(db.landed).toHaveLength(1);
+    for (const cache of caches) {
+      expect(NAMES_16.map((name) => cache.get(name)?.status)).toEqual(NAMES_16.map(() => 'loaded'));
+    }
+    expect(tabs.map((tab) => tab.events.listening)).toEqual([0, 0]);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("a store whose writes take 50 ms: the first holder keeps the lock until its write commits at 1,550 ms, and the next holder's batch finds every name", async () => {
+    const scry = fakeScryfall({ delayMs: 1_500 });
+    const db = turnDb();
+    const {
+      caches: [first, second],
+      locks,
+    } = cacheTabs(scry, db, laggingStorages(5), [{ write: 50 }, { write: 50 }]);
+    NAMES_16.forEach((name) => first.enqueue(name));
+    await advance(0);
+    // Asked before the second tab asks: it comes free when the first holder frees the lock.
+    const probe = lockFreesAt(locks);
+    NAMES_16.forEach((name) => second.enqueue(name));
+    // The answer at 1,500 ms; the write commits 50 ms later.
+    await advance(1_549);
+    expect(probe.at).toBeNull();
+    await advance(1);
+    expect(probe.at).toBe(1_550);
+    await advance(10_000);
+    expect(scry.batches()).toEqual([NAMES_16]);
+    expect(db.landed).toHaveLength(1);
+  });
+
+  it('a store whose write never settles: the lock frees at the end of the allowance, the hand-over goes off, and the next turn goes without it (sends at 0 and 1,200 ms)', async () => {
+    const scry = fakeScryfall();
+    const db = turnDb();
+    const turns = fakeTurns(db, { write: 'never' });
+    const { limiter } = oneTab(scry, turns);
+    const outs = [limiter.fetch(COLLECTION_URL, post(['A'])), limiter.fetch(COLLECTION_URL, post(['B']))];
+    await advance(5_000);
+    await Promise.all(outs);
+    expect(scry.times().map((t) => t - T0)).toEqual([0, 1_200]);
+    expect({ reads: db.reads, writes: db.writes, landed: db.landed, closed: turns.closed }).toEqual({
+      reads: 1,
+      writes: 1,
+      landed: [],
+      closed: true,
+    });
+  });
+
+  it('a read that answers at 900 ms and a mark that never comes: the request goes at 1,000 ms, the wait leaves no listener, the turn writes its token without waiting, and the next turn reads it and does not wait', async () => {
+    const scry = fakeScryfall();
+    const db = turnDb('a token no tab shows');
+    const { limiter, events } = oneTab(scry, fakeTurns(db, { read: 900 }));
+    const outs = [limiter.fetch(COLLECTION_URL, post(['A'])), limiter.fetch(COLLECTION_URL, post(['B']))];
+    await advance(5_000);
+    await Promise.all(outs);
+    // The second turn: 1,200 ms after the first start, then its own 900 ms read.
+    expect(scry.times().map((t) => t - T0)).toEqual([1_000, 3_100]);
+    expect(db.reads).toBe(2);
+    expect(db.landed).toHaveLength(2);
+    expect(db.token).toBe(storage.getItem(TURN_KEY));
+    expect(events.listening).toBe(0);
+  });
+
+  it('a mark that never comes, and a clock that leaves half a millisecond of the allowance: the end write is still the one nobody waits for, and the hand-over stays on', async () => {
+    const scry = fakeScryfall();
+    const db = turnDb('a token no tab shows');
+    // The tab's clock reads 0.5 ms short once the allowance has run, as real timers can.
+    const base = performance.now();
+    const monotonic = () => {
+      const t = performance.now();
+      return t - base >= 1_000 ? t - 0.5 : t;
+    };
+    const { limiter } = oneTab(scry, fakeTurns(db, { write: 1 }), storage, monotonic);
+    const outs = [limiter.fetch(COLLECTION_URL, post(['A'])), limiter.fetch(COLLECTION_URL, post(['B']))];
+    await advance(5_000);
+    await Promise.all(outs);
+    expect(db.reads).toBe(2);
+    expect(db.landed).toHaveLength(2);
+  });
+
+  it('a read that answers at 900 ms and a write that never settles: the lock frees at 1,000 ms', async () => {
+    const scry = fakeScryfall();
+    const turns = fakeTurns(turnDb(), { read: 900, write: 'never' });
+    const { limiter, locks } = oneTab(scry, turns);
+    void limiter.fetch(COLLECTION_URL, post(['A']));
+    await advance(0);
+    const probe = lockFreesAt(locks);
+    await advance(5_000);
+    expect(scry.times().map((t) => t - T0)).toEqual([900]);
+    expect(probe.at).toBe(1_000);
+    expect(turns.closed).toBe(true);
+  });
+
+  it('a read that blocks the tab 250 ms and then answers at 900 ms more: the request goes at 1,000 ms, and the hand-over goes off', async () => {
+    const scry = fakeScryfall();
+    let reads = 0;
+    const turns: TurnStore = {
+      read: () => {
+        reads += 1;
+        vi.advanceTimersByTime(250);
+        return new Promise((resolve) => setTimeout(() => resolve('a token no tab shows'), 900));
+      },
+      write: async () => undefined,
+      ready: () => true,
+      close: () => undefined,
+    };
+    const { limiter } = oneTab(scry, turns);
+    const outs = [limiter.fetch(COLLECTION_URL, post(['A'])), limiter.fetch(COLLECTION_URL, post(['B']))];
+    await advance(5_000);
+    await Promise.all(outs);
+    expect(scry.times().map((t) => t - T0)).toEqual([1_000, 2_200]);
+    expect(reads).toBe(1);
+  });
+
+  it('a read that holds the tab past the allowance and then answers at once counts as late: the hand-over goes off', async () => {
+    const scry = fakeScryfall();
+    // A call that blocks: the tab's clock moves 1,100 ms, and no timer can fire meanwhile.
+    let blocked = 0;
+    const monotonic = () => performance.now() + blocked;
+    let reads = 0;
+    const turns: TurnStore = {
+      read: () => {
+        reads += 1;
+        blocked += 1_100;
+        return Promise.resolve('a token no tab shows');
+      },
+      write: async () => undefined,
+      ready: () => true,
+      close: () => undefined,
+    };
+    const { limiter } = oneTab(scry, turns, storage, monotonic);
+    const outs = [limiter.fetch(COLLECTION_URL, post(['A'])), limiter.fetch(COLLECTION_URL, post(['B']))];
+    await advance(5_000);
+    await Promise.all(outs);
+    expect(reads).toBe(1);
+  });
+
+  it("a local mark that blocks the tab 250 ms and a write that never settles: the lock frees at 1,000 ms, the mark's time counted", async () => {
+    class SlowMark extends MemoryStorage {
+      setItem(k: string, v: string): void {
+        if (k === TURN_KEY) vi.advanceTimersByTime(250);
+        super.setItem(k, v);
+      }
+    }
+    const scry = fakeScryfall();
+    const turns = fakeTurns(turnDb(), { write: 'never' });
+    const { limiter, locks } = oneTab(scry, turns, new SlowMark());
+    void limiter.fetch(COLLECTION_URL, post(['A']));
+    await advance(0);
+    const probe = lockFreesAt(locks);
+    await advance(5_000);
+    expect(scry.times().map((t) => t - T0)).toEqual([0]);
+    expect(probe.at).toBe(1_000);
+    expect(turns.closed).toBe(true);
+  });
+
+  it('a write that does not settle in the allowance is aborted at the deadline, before the lock frees: it never lands', async () => {
+    const scry = fakeScryfall();
+    const db = turnDb();
+    const store = fakeTurns(db, { write: 1_500 });
+    const order: string[] = [];
+    const turns: TurnStore = {
+      ...store,
+      write: (token, signal) => {
+        signal.addEventListener('abort', () => order.push(`write aborted at ${Date.now() - T0}`));
+        return store.write(token, signal);
+      },
+    };
+    const { limiter, locks } = oneTab(scry, turns);
+    void limiter.fetch(COLLECTION_URL, post(['A']));
+    await advance(0);
+    void locks.request(LOCK, async () => {
+      order.push(`lock free at ${Date.now() - T0}`);
+    });
+    await advance(5_000);
+    expect(order).toEqual(['write aborted at 1000', 'lock free at 1000']);
+    expect({ writes: db.writes, landed: db.landed }).toEqual({ writes: 1, landed: [] });
+  });
+
+  it('a mark that never comes, and the connection that the read used has closed: the turn writes no token, and the hand-over goes off', async () => {
+    const scry = fakeScryfall();
+    const db = turnDb('a token no tab shows');
+    const turns = fakeTurns(db, { ready: () => false });
+    const { limiter } = oneTab(scry, turns);
+    const outs = [limiter.fetch(COLLECTION_URL, post(['A'])), limiter.fetch(COLLECTION_URL, post(['B']))];
+    await advance(5_000);
+    await Promise.all(outs);
+    expect(scry.times().map((t) => t - T0)).toEqual([1_000, 2_200]);
+    expect({ mark: storage.getItem(TURN_KEY), reads: db.reads, writes: db.writes, closed: turns.closed }).toEqual({
+      mark: null,
+      reads: 1,
+      writes: 0,
+      closed: true,
+    });
+  });
+
+  it('a write nobody waits for, still pending when the next turn turns the hand-over off: it never lands', async () => {
+    const scry = fakeScryfall();
+    const db = turnDb('a token no tab shows');
+    // The first turn's mark never comes, so its write goes unwaited; it takes 3,000 ms,
+    // and the second turn's read waits behind it past its own allowance.
+    const turns = fakeTurns(db, { write: 3_000 });
+    const { limiter } = oneTab(scry, turns);
+    const outs = [limiter.fetch(COLLECTION_URL, post(['A'])), limiter.fetch(COLLECTION_URL, post(['B']))];
+    await advance(10_000);
+    await Promise.all(outs);
+    expect(scry.times().map((t) => t - T0)).toEqual([1_000, 3_200]);
+    expect({ writes: db.writes, landed: db.landed, closed: turns.closed }).toEqual({ writes: 1, landed: [], closed: true });
+  });
+
+  it.each([
+    ['never settles', 'never' as const, [1_000, 2_200, 3_400]],
+    ['fails', 'fail' as const, [0, 1_200, 2_400]],
+  ])('a read that %s turns the hand-over off: the later turns read no store and do not wait', async (_label, read, sends) => {
+    const scry = fakeScryfall();
+    const db = turnDb('a token no tab shows');
+    const turns = fakeTurns(db, { read });
+    const { limiter } = oneTab(scry, turns);
+    const outs = ['A', 'B', 'C'].map((name) => limiter.fetch(COLLECTION_URL, post([name])));
+    await advance(10_000);
+    await Promise.all(outs);
+    expect(scry.times().map((t) => t - T0)).toEqual(sends);
+    expect({ reads: db.reads, writes: db.writes, closed: turns.closed }).toEqual({ reads: 1, writes: 0, closed: true });
+  });
+
+  it('when localStorage refuses the mark while the store holds a token this tab does not show, the turn writes no token and the hand-over goes off: one wait, then none', async () => {
+    class RefusesTheMark extends MemoryStorage {
+      setItem(k: string, v: string): void {
+        if (k === TURN_KEY) throw new DOMException('The quota is full.', 'QuotaExceededError');
+        super.setItem(k, v);
+      }
+    }
+    const own = new RefusesTheMark();
+    // The last mark that reached this tab, and a store token that differs from it.
+    MemoryStorage.prototype.setItem.call(own, TURN_KEY, 'the mark this tab shows');
+    const scry = fakeScryfall();
+    const db = turnDb('a token no tab shows');
+    const turns = fakeTurns(db);
+    const { limiter } = oneTab(scry, turns, own);
+    const outs = ['A', 'B', 'C', 'D'].map((name) => limiter.fetch(COLLECTION_URL, post([name])));
+    await advance(20_000);
+    await Promise.all(outs);
+    // The first turn waits its allowance for the mark; the later ones go 1,200 ms apart.
+    expect(scry.times().map((t) => t - T0)).toEqual([1_000, 2_200, 3_400, 4_600]);
+    expect({ reads: db.reads, writes: db.writes, closed: turns.closed }).toEqual({ reads: 1, writes: 0, closed: true });
+  });
+
+  it('when localStorage refuses the mark after the last mark came in time, the hand-over goes off too: no wait, then none', async () => {
+    class RefusesTheMark extends MemoryStorage {
+      setItem(k: string, v: string): void {
+        if (k === TURN_KEY) throw new DOMException('The quota is full.', 'QuotaExceededError');
+        super.setItem(k, v);
+      }
+    }
+    const own = new RefusesTheMark();
+    // This tab shows the store's token: the mark came.
+    MemoryStorage.prototype.setItem.call(own, TURN_KEY, 'the last token');
+    const scry = fakeScryfall();
+    const db = turnDb('the last token');
+    const turns = fakeTurns(db);
+    const { limiter } = oneTab(scry, turns, own);
+    const outs = ['A', 'B'].map((name) => limiter.fetch(COLLECTION_URL, post([name])));
+    await advance(5_000);
+    await Promise.all(outs);
+    expect(scry.times().map((t) => t - T0)).toEqual([0, 1_200]);
+    expect({ reads: db.reads, writes: db.writes, closed: turns.closed }).toEqual({ reads: 1, writes: 0, closed: true });
+  });
+
+  it('a first access to indexedDB that blocks the tab 250 ms, then an open that never ends: the request goes at 1,000 ms, not 1,250', async () => {
+    const idb = fakeIndexedDb();
+    idb.state.holdOpens = true;
+    let blocked = false;
+    Object.defineProperty(globalThis, 'indexedDB', {
+      configurable: true,
+      get() {
+        if (!blocked) {
+          blocked = true;
+          vi.advanceTimersByTime(250);
+        }
+        return idb.factory;
+      },
+    });
+    try {
+      const scry = fakeScryfall();
+      const limiter = createScryfallLimiter({ fetchImpl: scry.fetch, storage, locks: fakeLocks(), events: new CountingEvents() });
+      const outs = [limiter.fetch(COLLECTION_URL, post(['A'])), limiter.fetch(COLLECTION_URL, post(['B']))];
+      await advance(5_000);
+      await Promise.all(outs);
+      expect(scry.times().map((t) => t - T0)).toEqual([1_000, 2_200]);
+      expect(idb.state.opens).toBe(1);
+    } finally {
+      delete (globalThis as { indexedDB?: unknown }).indexedDB;
+    }
+  });
+
+  it('localStorage that blocks the tab 250 ms when the turn ends asks for it, then a write that never settles: the lock frees at 1,000 ms, not 1,250', async () => {
+    // The page's own localStorage, through a getter that blocks once, when armed.
+    const page = window.localStorage;
+    for (const key of [LAST_START_KEY, STOP_KEY, TURN_KEY]) page.removeItem(key);
+    let armed = false;
+    Object.defineProperty(window, 'localStorage', {
+      configurable: true,
+      enumerable: true,
+      get() {
+        if (armed) {
+          armed = false;
+          vi.advanceTimersByTime(250);
+        }
+        return page;
+      },
+    });
+    try {
+      const scry = fakeScryfall();
+      const turns = fakeTurns(turnDb(), { write: 'never' });
+      const locks = fakeLocks();
+      const limiter = createScryfallLimiter({ fetchImpl: scry.fetch, locks, events: new CountingEvents(), turns });
+      // The answer is stored at 0 ms; the next access to localStorage is the turn's end.
+      void limiter.next('lookup', () => collectionRequest(['A']), {
+        settle: () => {
+          armed = true;
+        },
+      });
+      await advance(0);
+      const probe = lockFreesAt(locks);
+      await advance(5_000);
+      expect(scry.times().map((t) => t - T0)).toEqual([0]);
+      expect(probe.at).toBe(1_000);
+      expect(turns.closed).toBe(true);
+    } finally {
+      Object.defineProperty(window, 'localStorage', { configurable: true, enumerable: true, value: page });
+      for (const key of [LAST_START_KEY, STOP_KEY, TURN_KEY]) page.removeItem(key);
+    }
+  });
+
+  it('the hand-over goes off while a turn reads (the last turn\'s unwaited write fails behind it): that turn does not wait for the mark', async () => {
+    const scry = fakeScryfall();
+    // The token no tab shows; each write fails 1,500 ms after it starts, and a read waits for any write before it.
+    const db = turnDb('a token no tab shows');
+    let pendingWrite: Promise<unknown> = Promise.resolve();
+    let reads = 0;
+    const store: TurnStore = {
+      read: (signal) => {
+        reads += 1;
+        return pendingWrite.then(
+          () =>
+            new Promise<string | null>((resolve, reject) => {
+              if (signal.aborted) return reject(signal.reason);
+              resolve(db.token);
+            }),
+        );
+      },
+      write: () => {
+        const written = new Promise<void>((_resolve, reject) =>
+          setTimeout(() => reject(new DOMException('The disk is full.', 'QuotaExceededError')), 1_500),
+        );
+        pendingWrite = written.catch(() => undefined);
+        return written;
+      },
+      ready: () => true,
+      close: () => undefined,
+    };
+    const { limiter } = oneTab(scry, store);
+    const outs = ['A', 'B', 'C'].map((name) => limiter.fetch(COLLECTION_URL, post([name])));
+    await advance(10_000);
+    await Promise.all(outs);
+    // Turn 1: the mark never comes, the request at 1,000; its write fails at 2,500. Turn 2
+    // begins at 2,200, and its read answers at 2,500, after the hand-over went off.
+    expect(scry.times().map((t) => t - T0)).toEqual([1_000, 2_500, 3_700]);
+    expect(reads).toBe(2);
+  });
+
+  it("a write nobody waits for that fails turns the hand-over off: the next turn reads no store and does not wait", async () => {
+    const scry = fakeScryfall();
+    const db = turnDb('a token no tab shows');
+    const turns = fakeTurns(db, { write: 'fail' });
+    const { limiter } = oneTab(scry, turns);
+    const outs = [limiter.fetch(COLLECTION_URL, post(['A'])), limiter.fetch(COLLECTION_URL, post(['B']))];
+    await advance(5_000);
+    await Promise.all(outs);
+    expect(scry.times().map((t) => t - T0)).toEqual([1_000, 2_200]);
+    expect({ reads: db.reads, writes: db.writes, closed: turns.closed }).toEqual({ reads: 1, writes: 1, closed: true });
+  });
+
+  // A browser shows Scryfall's 429, which has no CORS header, as a rejected fetch.
+  it.each([
+    ['a 429', 429 as Outcome, 30_000],
+    ['a rejected fetch', 'reject' as Outcome, 30_000],
+    ['no answer in 20 s', 'hang' as Outcome, 20_000 + 30_000],
+  ])('%s in one tab: the other tab, waiting for the lock, sees the stop and sends nothing until it ends', async (_label, first, stopEnds) => {
+    const scry = fakeScryfall({ outcome: (n) => (n === 1 ? first : 200) });
+    const db = turnDb();
+    const locks = fakeLocks();
+    const [one, other] = laggingStorages(5).map(({ storage: own, events }) =>
+      createScryfallLimiter({ fetchImpl: scry.fetch, storage: own, locks, events, turns: fakeTurns(db) }),
+    );
+    const outOne = one.fetch(COLLECTION_URL, post(['A']));
+    await advance(0);
+    const outOther = other.fetch(COLLECTION_URL, post(['B']));
+    await advance(stopEnds + 10_000);
+    await Promise.all([outOne, outOther]);
+    const times = scry.times().map((t) => t - T0);
+    expect(times[0]).toBe(0);
+    // The second send (the other tab's, or the first tab's again) goes when the stop ends, not 5 ms after the failure.
+    expect(times[1]).toBeGreaterThanOrEqual(stopEnds);
+  });
+
+  it("a request that its caller aborts: the other tab's start comes 1,200 ms or more after it", async () => {
+    const scry = fakeScryfall({ delayMs: 100 });
+    const db = turnDb();
+    const locks = fakeLocks();
+    const [first, second] = laggingStorages(5).map(({ storage: own, events }) =>
+      createScryfallLimiter({ fetchImpl: scry.fetch, storage: own, locks, events, turns: fakeTurns(db) }),
+    );
+    const controller = new AbortController();
+    const outFirst = first.fetch(COLLECTION_URL, post(['A'], controller.signal)).catch(() => 'aborted');
+    await advance(0);
+    const outSecond = second.fetch(COLLECTION_URL, post(['B']));
+    await advance(1);
+    controller.abort();
+    await advance(5_000);
+    expect(await outFirst).toBe('aborted');
+    await outSecond;
+    const times = scry.times().map((t) => t - T0);
+    expect(times[0]).toBe(0);
+    expect(times[1]).toBeGreaterThanOrEqual(1_200);
+  });
+
+  it('when reading the mark throws, the turn has no hand-over: no store read, no wait, no token', async () => {
+    class MarkUnreadable extends MemoryStorage {
+      getItem(k: string): string | null {
+        if (k === TURN_KEY) throw new DOMException('The storage is gone.', 'SecurityError');
+        return super.getItem(k);
+      }
+    }
+    const scry = fakeScryfall();
+    const db = turnDb('a token no tab shows');
+    const own = new MarkUnreadable();
+    const { limiter } = oneTab(scry, fakeTurns(db), own);
+    const outs = [limiter.fetch(COLLECTION_URL, post(['A'])), limiter.fetch(COLLECTION_URL, post(['B']))];
+    await advance(5_000);
+    await Promise.all(outs);
+    expect(scry.times().map((t) => t - T0)).toEqual([0, 1_200]);
+    expect({ reads: db.reads, writes: db.writes }).toEqual({ reads: 0, writes: 0 });
+  });
+
+  it('without localStorage the hand-over reads no store and waits for nothing', async () => {
+    const scry = fakeScryfall();
+    const db = turnDb('a token no tab shows');
+    const { limiter } = oneTab(scry, fakeTurns(db), null);
+    const out = limiter.fetch(COLLECTION_URL, post(['A']));
+    await advance(2_000);
+    expect((await out).status).toBe(200);
+    expect(scry.times().map((t) => t - T0)).toEqual([0]);
+    expect(db.reads).toBe(0);
+  });
+
+  it('an indexedDB that the browser denies (its getter throws): no hand-over, and the lookup goes', async () => {
+    Object.defineProperty(globalThis, 'indexedDB', {
+      configurable: true,
+      get() {
+        throw new DOMException('The user denied storage.', 'SecurityError');
+      },
+    });
+    try {
+      const scry = fakeScryfall();
+      const limiter = createScryfallLimiter({ fetchImpl: scry.fetch, storage, locks: fakeLocks() });
+      const out = limiter.fetch(COLLECTION_URL, post(['A']));
+      await advance(0);
+      expect(scry.times().map((t) => t - T0)).toEqual([0]);
+      expect((await out).status).toBe(200);
+    } finally {
+      delete (globalThis as { indexedDB?: unknown }).indexedDB;
+    }
+  });
+
+  it("a write that fails, then a healthy turn: the next holder waits for that turn's own token, and its batch finds every name", async () => {
+    const scry = fakeScryfall({ delayMs: 1_500 });
+    const db = turnDb();
+    // The first tab's write fails (its hand-over goes off); the other two tabs' store is healthy.
+    const {
+      caches: [first, second, third],
+    } = cacheTabs(scry, db, laggingStorages(5, 3), [{ write: 'fail' }]);
+    first.enqueue('Alpha');
+    await advance(2_000);
+    NAMES_16.forEach((name) => second.enqueue(name));
+    await advance(0);
+    NAMES_16.forEach((name) => third.enqueue(name));
+    await advance(10_000);
+    expect(scry.batches()).toEqual([['Alpha'], NAMES_16]);
+    expect(NAMES_16.map((name) => third.get(name)?.status)).toEqual(NAMES_16.map(() => 'loaded'));
+  });
+
+  it("a mark in localStorage that the store does not hold (the store's data lost) does not turn the wait off", async () => {
+    const scry = fakeScryfall({ delayMs: 1_500 });
+    const db = turnDb();
+    const pair = laggingStorages(5);
+    pair[0].storage.setItem(TURN_KEY, 'a token the store lost');
+    await advance(10);
+    expect(pair[1].storage.getItem(TURN_KEY)).toBe('a token the store lost');
+    const { caches } = cacheTabs(scry, db, pair);
+    for (const cache of caches) NAMES_16.forEach((name) => cache.enqueue(name));
+    await advance(10_000);
+    expect(scry.batches()).toEqual([NAMES_16]);
+  });
+});
+
+// The IndexedDB side of the hand-over (indexedDbTurns), over a hand-written
+// IndexedDB (fakeIndexedDb): jsdom has none. The e2e cases of
+// dec1153-card-data-followups.spec.ts run it on the browsers' own.
+describe('indexedDbTurns: the turn store in IndexedDB', () => {
+  const never = () => new AbortController().signal;
+
+  it('a first read creates the database and its store and gives null; a write, with relaxed durability, and a read give the token', async () => {
+    const idb = fakeIndexedDb();
+    const turns = indexedDbTurns(idb.factory)!;
+    const first = turns.read(never());
+    await advance(10);
+    expect(await first).toBeNull();
+    expect([...idb.state.stores]).toEqual(['turn']);
+    const written = turns.write('t1', never());
+    await advance(10);
+    await written;
+    const read = turns.read(never());
+    await advance(10);
+    expect(await read).toBe('t1');
+    expect(idb.state.transactions.map((t) => [t.mode, t.durability])).toEqual([
+      ['readonly', undefined],
+      ['readwrite', 'relaxed'],
+      ['readonly', undefined],
+    ]);
+  });
+
+  it('on an open connection a write begins its transaction at once, before the caller frees the lock', async () => {
+    const idb = fakeIndexedDb();
+    const turns = indexedDbTurns(idb.factory)!;
+    const read = turns.read(never());
+    await advance(10);
+    await read;
+    expect(turns.ready()).toBe(true);
+    void turns.write('t1', never());
+    expect(idb.state.transactions.map((t) => t.mode)).toEqual(['readonly', 'readwrite']);
+  });
+
+  it('another tab upgrades the database to version 2: the connection closes, and the next operation, which opens version 1 again, fails with VersionError', async () => {
+    const idb = fakeIndexedDb();
+    const turns = indexedDbTurns(idb.factory)!;
+    const read = turns.read(never());
+    await advance(10);
+    await read;
+    idb.versionChange();
+    expect(idb.state.connections.map((c) => c.closed)).toEqual([true]);
+    expect(turns.ready()).toBe(false);
+    const again = turns.read(never()).catch((e: DOMException) => e.name);
+    await advance(10);
+    expect(await again).toBe('VersionError');
+    expect(idb.state.opens).toBe(2);
+  });
+
+  it('another tab upgrades the database between two turns: the next turn turns the hand-over off, and the turn after it uses no IndexedDB', async () => {
+    const idb = fakeIndexedDb();
+    const scry = fakeScryfall();
+    const adapter = indexedDbTurns(idb.factory)!;
+    // The limiter closes the store when the hand-over goes off.
+    let closed = false;
+    const turns: TurnStore = {
+      ...adapter,
+      close: () => {
+        closed = true;
+        adapter.close();
+      },
+    };
+    const limiter = createScryfallLimiter({ fetchImpl: scry.fetch, storage, locks: fakeLocks(), events: new CountingEvents(), turns });
+    const firstOut = limiter.fetch(COLLECTION_URL, post(['A']));
+    await advance(10);
+    await firstOut;
+    idb.versionChange();
+    const outs = [limiter.fetch(COLLECTION_URL, post(['B'])), limiter.fetch(COLLECTION_URL, post(['C']))];
+    await advance(5_000);
+    await Promise.all(outs);
+    // The fake's opens and transactions each take one timer tick; the third turn takes none.
+    const times = scry.times().map((t) => t - T0);
+    expect(times).toHaveLength(3);
+    expect(times[2] - times[1]).toBe(1_200);
+    // The first turn's read and write; the second turn's failed open; nothing after.
+    expect({ closed, opens: idb.state.opens, transactions: idb.state.transactions.map((t) => t.mode) }).toEqual({
+      closed: true,
+      opens: 2,
+      transactions: ['readonly', 'readwrite'],
+    });
+  });
+
+  it("the abort listener of a write goes when its transaction settles: aborting the write's signal after three writes touches none of them", async () => {
+    const idb = fakeIndexedDb();
+    const turns = indexedDbTurns(idb.factory)!;
+    // One signal for every write, as the page's signal of the writes that nobody waits for.
+    const page = new AbortController();
+    for (const token of ['t1', 't2', 't3']) {
+      const written = turns.write(token, page.signal);
+      await advance(10);
+      await written;
+    }
+    page.abort(new DOMException('The hand-over is off.', 'AbortError'));
+    expect(idb.state.transactions.map((t) => [t.state, t.aborts])).toEqual([
+      ['complete', 0],
+      ['complete', 0],
+      ['complete', 0],
+    ]);
+  });
+
+  it("the abort listener goes also when the browser aborts a transaction, and when a request fails, as soon as its error arrives: aborting the writes' signal touches neither", async () => {
+    const idb = fakeIndexedDb();
+    const turns = indexedDbTurns(idb.factory)!;
+    const opened = turns.read(never());
+    await advance(10);
+    await opened;
+    const page = new AbortController();
+    idb.state.holdTransactions = true;
+    const settled = (written: Promise<void>) => written.then(() => 'landed', () => 'rejected');
+    const aborted = settled(turns.write('t1', page.signal));
+    idb.endTransactions('abort');
+    expect(await aborted).toBe('rejected');
+    const failed = settled(turns.write('t2', page.signal));
+    idb.endTransactions('error');
+    // The request's error has reached the transaction; its abort event has not come yet.
+    page.abort(new DOMException('The hand-over is off.', 'AbortError'));
+    await advance(10);
+    expect(await failed).toBe('rejected');
+    expect(idb.state.transactions.slice(1).map((t) => [t.state, t.aborts])).toEqual([
+      ['aborted', 0],
+      ['failed', 0],
+    ]);
+  });
+
+  it('the browser closes the connection (site data cleared): the next operation opens again', async () => {
+    const idb = fakeIndexedDb();
+    const turns = indexedDbTurns(idb.factory)!;
+    const read = turns.read(never());
+    await advance(10);
+    await read;
+    idb.forceClose();
+    expect(turns.ready()).toBe(false);
+    const again = turns.write('t2', never());
+    await advance(10);
+    await again;
+    expect(idb.state.opens).toBe(2);
+    expect(idb.state.values.get('last')).toBe('t2');
+  });
+
+  it('an operation whose time ran out while the open waited is never issued', async () => {
+    const idb = fakeIndexedDb();
+    idb.state.holdOpens = true;
+    const turns = indexedDbTurns(idb.factory)!;
+    const controller = new AbortController();
+    const write = turns.write('late', controller.signal).catch((e: DOMException) => e.name);
+    await advance(10);
+    controller.abort(new DOMException('out of time', 'TimeoutError'));
+    idb.releaseOpens();
+    await advance(10);
+    expect(await write).toBe('TimeoutError');
+    expect(idb.state.transactions).toEqual([]);
+  });
+
+  it('an abort before the transaction completes stops it: the write does not land', async () => {
+    const idb = fakeIndexedDb();
+    const turns = indexedDbTurns(idb.factory)!;
+    const read = turns.read(never());
+    await advance(10);
+    await read;
+    idb.state.holdTransactions = true;
+    const controller = new AbortController();
+    const write = turns.write('aborted', controller.signal).catch(() => 'rejected');
+    controller.abort(new DOMException('out of time', 'TimeoutError'));
+    idb.releaseTransactions();
+    await advance(10);
+    expect(await write).toBe('rejected');
+    expect(idb.state.transactions.map((t) => t.state)).toEqual(['complete', 'aborted']);
+    expect(idb.state.values.has('last')).toBe(false);
+  });
+
+  it.each([
+    ['a new database: the upgrade is aborted and creates no store', false],
+    ['a database that exists: the connection is closed at once', true],
+  ])('close() while an open waits, then the open succeeds; %s', async (_label, exists) => {
+    const idb = fakeIndexedDb();
+    if (exists) {
+      idb.state.stores.add('turn');
+      idb.state.version = 1;
+    }
+    idb.state.holdOpens = true;
+    const turns = indexedDbTurns(idb.factory)!;
+    const read = turns.read(never()).catch((e: DOMException) => e.name);
+    await advance(10);
+    turns.close();
+    idb.releaseOpens();
+    await advance(10);
+    expect(await read).toBe('AbortError');
+    expect(idb.state.connections.map((c) => c.closed)).toEqual([true]);
+    expect([...idb.state.stores]).toEqual(exists ? ['turn'] : []);
+    expect(idb.state.transactions).toEqual([]);
   });
 });

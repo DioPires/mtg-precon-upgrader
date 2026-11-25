@@ -200,10 +200,65 @@ web-ci uploads it when the `e2e` job fails.
   after the last answer has arrived. Inside a tab the spacing runs on `performance.now()`, so
   a step of the wall clock does not shorten it. The tabs of one origin share the bucket
   through `navigator.locks` and the last start (wall time) in `localStorage`. A tab keeps the
-  lock until the card cache has stored the answer, and 20 s after the start at most. After a
-  200, the next tab's batch finds those names in storage. After a 400 or a 422, the card cache
-  keeps a lookup's error in that tab's memory only, so the other tab asks again. A refresh's
-  24 h mark goes to storage, so the other tab sends nothing for that name.
+  lock until the card cache has stored the answer, then ends its turn with the hand-over: it
+  frees the lock 21 s after the request's start at most (20 s for the answer, and what is
+  left of the hand-over's 1 s). These bounds, and the hand-over's 1 s, are timer deadlines: a
+  browser call that blocks the thread, or a suspended tab, stretches them. After a 200, the
+  next tab's batch finds those names in storage (the hand-over below says when). After a 400
+  or a 422, the card cache keeps a lookup's error
+  in that tab's memory only, so the other tab asks again. A refresh's 24 h mark goes to
+  storage, so the other tab sends nothing for that name.
+- **The hand-over.** Chrome and WebKit bring one tab's `localStorage` writes to another tab
+  late, in the order they were made (measured 2026-11-24; HTML does not promise it), also
+  after the lock has passed to that tab. So each turn of bucket 1 that sent a request ends
+  with a new random token, written in `localStorage` after the turn's other writes there (the
+  last start, the stop, and the card writes of a `settle` that finished), then in IndexedDB.
+  The next holder reads the token from IndexedDB and waits until its own `localStorage` shows
+  exactly that token, and only then makes its checks inside the lock: the last start and the
+  stop (which `drain()` also reads before it asks for the lock) and the names already stored.
+  - *What it promises.* While the hand-over is on in both tabs, the names that one holder's
+    batch stored before the turn wrote its mark are found by the next holder's batch when the
+    mark arrives within the allowance. A mark that does not come costs the turn that wait, and
+    the turn then reads storage as it finds it. Three paths can still send a stored name
+    again: a picture refresh that two tabs queue for one name, a batch that met a 429, a
+    rejected fetch or the request timeout and goes again with the same names after the stop,
+    and a lookup whose error this tab remembers in memory and that has expired, while another
+    tab stored the card.
+  - *The allowance.* The hand-over adds 1 s at most to a turn: its read, its wait and its
+    write together, the request not counted. The allowance runs from before the first call;
+    each call's timer is armed before the call, so time that a call spends blocked counts, and
+    a call that settles after the allowance counts as late. In normal use a turn costs a few
+    milliseconds. When the mark did not come, nobody waits for the end write: the turn issues
+    it only on the connection that the read used, which is open, so the write creates its
+    read-write transaction before the lock frees. IndexedDB's specification makes a later
+    transaction on the same store, on any connection, wait until an earlier read-write
+    transaction has finished, so the next holder's read comes after that write. Not
+    established: that the write's commit succeeds (its failure turns the hand-over off). If
+    that connection has closed (another tab upgraded or deleted the database), the turn writes
+    no token and the hand-over goes off.
+  - *Failure.* A read or open of IndexedDB, or a write that the turn waits for, that fails or
+    runs out of the allowance turns the hand-over off for the page, and the bucket then works
+    as it did without it. A write that nobody waits for turns it off only when it fails. Going
+    off aborts a write that nobody waits for, and closes the connection, also one that a
+    pending open brings later. A read already issued runs on its own signal to its own
+    deadline, and its turn then ignores its result: a turn whose read was waiting when the
+    hand-over went off does not wait for the mark. An abort stops a transaction that has not
+    begun to commit; one that has begun can still land, ahead of any transaction begun after
+    it. An IndexedDB that the browser denies, or a `localStorage` whose mark cannot be read,
+    gives a turn no hand-over. When `localStorage` refuses the mark (a full quota), whether or
+    not the last turn's mark came in time, the turn writes no token and the hand-over goes
+    off: IndexedDB keeps the last turn's token, which this tab may never show.
+  - *Limits.* If the allowance runs out during a call that blocks the thread, the turn waits
+    for that call to return, and later blocking work in the same turn can delay the lock's
+    release further. A `settle` still storing when the 20 s request timeout frees the turn
+    writes its cards after the mark: the next holder can send those names again, one
+    duplicate request. A mark that arrives in the last milliseconds of the allowance leaves
+    the end write little time: whether the page's hand-over goes off depends on how long that
+    write takes. After that switch-off IndexedDB can hold the old token, or the new one (a
+    write that committed before its late completion was noticed). When the old token remains,
+    each later turn of the other tab waits its full allowance, until a turn that sends a
+    request publishes a new token (a turn with nothing to send publishes nothing); while the
+    new mark still lags there, a turn reads storage at once and can resend that turn's names.
 - **Bucket 2** holds `/cards/autocomplete`, 120 ms apart. While a stop holds, the Atlas sends
   no autocomplete and keeps its own suggestions.
 - **The timeout.** A request with no answer after 20 s is aborted, and it counts as a rejected
