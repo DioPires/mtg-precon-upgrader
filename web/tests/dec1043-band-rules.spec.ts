@@ -113,6 +113,16 @@ type Head = { titleLines: number[]; titleOffset: number; noteWidth: number; note
 
 // The Performance heading: the width of each line of the title, the title's
 // offset from the heading's left edge, the note's width and its widest word.
+// A word is a run the browser cannot break: a no-break space joins its two
+// sides ("· 10,000" is one word), where a plain space would end a word. Only
+// U+00A0 joins. The no-break spaces that JavaScript counts as space (U+202F,
+// U+FEFF) and the boundary between two text nodes still end a word here,
+// where the browser may keep the run whole. A break chance inside a run of
+// non-space characters (after a hyphen, at U+00AD or U+200B) is not read:
+// such a run counts as one word though the browser may break it. For this
+// heading as built, whose only such run, "mana-sim", sits in a no-wrap span,
+// a word read here is never wider than a run the browser keeps whole, so the
+// check is no looser than the rule.
 async function readPerfHead(page: Page): Promise<Head> {
   return page.evaluate(() => {
     const head = document.querySelector('.gv1-perf .gv1-section-head')!;
@@ -131,7 +141,7 @@ async function readPerfHead(page: Page): Promise<Head> {
     const walker = document.createTreeWalker(note, NodeFilter.SHOW_TEXT);
     for (let n = walker.nextNode(); n; n = walker.nextNode()) {
       const text = n.textContent ?? '';
-      for (const m of text.matchAll(/\S+/g)) {
+      for (const m of text.matchAll(/(?:\S|\u00a0)+/g)) {
         const word = document.createRange();
         word.setStart(n, m.index ?? 0);
         word.setEnd(n, (m.index ?? 0) + m[0].length);

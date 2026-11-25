@@ -149,8 +149,22 @@ export interface RawDeckComposition {
   avgCmc: number;
 }
 
+/**
+ * The share of mana-simulation games, rounded to one decimal, that decided
+ * `manaAdequacy`: the games with `manaTarget` or more mana on `turn`. Turn 5's
+ * for strong and near strong, turn 4's otherwise (`derive_assessment` in
+ * `scripts/export_simulation_results.py`).
+ */
+export interface RawManaAdequacyShare {
+  turn: number;
+  manaTarget: number;
+  share: number;
+}
+
 export interface RawAssessment {
+  /** strong, near strong, adequate, near adequate or light. */
   manaAdequacy?: string;
+  manaAdequacyShare?: RawManaAdequacyShare;
   mulliganVerdict?: string;
   commanderTiming?: string;
 }
@@ -191,11 +205,16 @@ export interface RawSimCurveEfficiency {
   curveOutRate?: number;
 }
 
+/** The goldfish section; the app reads only its game count. */
+export interface RawSimGoldfish {
+  numGames?: number;
+}
+
 export interface RawSimulation {
   deckHealthScore?: RawDeckHealthScore;
   deckComposition?: RawDeckComposition;
   assessment?: RawAssessment;
-  goldfish?: unknown;
+  goldfish?: RawSimGoldfish;
   manaByTurn?: Record<string, RawSimManaTurn>;
   metadata?: RawSimMetadata;
   mulliganStats?: RawSimMulliganStats;

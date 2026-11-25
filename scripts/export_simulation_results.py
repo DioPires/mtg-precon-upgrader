@@ -7693,16 +7693,28 @@ def compute_probability_curve(card_pool: list[str]) -> dict[str, float]:
     return curve
 
 
-def compute_threat_density(threat_cards: list[str], metadata: dict, result: dict) -> dict:
-    """Deployable threat density curve using median simulated mana as CMC cutoff."""
+def compute_threat_density(threat_cards: list[str], metadata: dict,
+                           mana_counts: dict[int, Counter]) -> dict:
+    """Deployable threat density curve over the whole mana distribution
+    (owner-approved 2026-11-25). At turn t: the sum over mana totals m of (the
+    share of the mana-simulation games with m mana on turn t) x (the chance
+    that at least one threat of mana value m or less is among the 7 + t cards
+    seen of 99), rounded once. A cutoff at the median mana stepped by a whole
+    mana when the games at or below a total crossed 50%. Colours are not read,
+    and the mana and the cards seen are taken as independent.
+
+    `mana_counts` maps each turn to its games by mana total."""
+    threat_cmcs = [metadata.get(name, {}).get("cmc", 0) or 0 for name in threat_cards]
     by_turn = {}
     for turn in range(1, NUM_TURNS + 1):
-        mana_limit = result["manaByTurn"][str(turn)]["median"]
-        eligible = [
-            name for name in threat_cards
-            if (metadata.get(name, {}).get("cmc", 0) or 0) <= mana_limit
-        ]
-        by_turn[str(turn)] = r1(hypergeom_at_least(99, len(eligible), cards_seen_by_turn(turn), 1) * 100)
+        counts = mana_counts[turn]
+        games = sum(counts.values())
+        chance = sum(
+            count / games * hypergeom_at_least(
+                99, sum(1 for cmc in threat_cmcs if cmc <= mana), cards_seen_by_turn(turn), 1)
+            for mana, count in sorted(counts.items())
+        )
+        by_turn[str(turn)] = r1(chance * 100)
     return {
         "count": len(threat_cards),
         "examples": ordered_unique(threat_cards)[:8],
@@ -7891,10 +7903,12 @@ def compute_deck_health_score(result: dict, threat_density: dict, draw_reliabili
 
 
 def enrich_result(result: dict, deck_id: str, deck_data: dict, decklist: list[str],
-                  metadata: dict, commander_name: str, colors: list[str]) -> dict:
-    """Attach enhanced reliability metrics and deck health score."""
+                  metadata: dict, commander_name: str, colors: list[str],
+                  mana_counts: dict[int, Counter]) -> dict:
+    """Attach enhanced reliability metrics and deck health score.
+    `mana_counts`: the mana simulation's games by mana total, each turn."""
     functional = classify_functional_cards(decklist, deck_data, metadata)
-    threat_density = compute_threat_density(functional["threats"], metadata, result)
+    threat_density = compute_threat_density(functional["threats"], metadata, mana_counts)
     draw_reliability = compute_reliability_curve(functional["draw"], "Card draw")
     interaction_availability = compute_reliability_curve(functional["interaction"], "Interaction")
     color_adequacy = compute_colored_source_adequacy(decklist, metadata, commander_name, colors)
@@ -7941,19 +7955,40 @@ def enrich_result(result: dict, deck_id: str, deck_data: dict, decklist: list[st
     return result
 
 
-def derive_assessment(result: dict) -> dict:
-    """Derive qualitative assessments from simulation data."""
-    # Mana adequacy: compare median mana at T4-5 to avg CMC
+def derive_assessment(result: dict, mana_counts: dict[int, Counter]) -> dict:
+    """Derive qualitative assessments from simulation data.
+    `mana_counts`: the mana simulation's games by mana total, each turn."""
+    # Mana adequacy (owner-approved 2026-11-25), decided on shares of games,
+    # not on median mana, which steps by a whole mana when the games at or
+    # below a total cross 50%. Targets: the exported one-decimal average mana
+    # value on turn 4, that + 2 on turn 5, rounded up to whole mana. Each share
+    # (the games with the target or more) is rounded once to one decimal (pct)
+    # and the label read on that shown value. Turn 5 first: over 51.0 strong,
+    # 49.0 to 51.0 inclusive near strong; below that, turn 4: over 51.0
+    # adequate, 49.0 to 51.0 near adequate, below light. The share that
+    # decided the label goes out with it: turn 5's for strong and near strong,
+    # turn 4's otherwise.
     avg_cmc = result["deckComposition"]["avgCmc"]
-    t4_median = result["manaByTurn"]["4"]["median"]
-    t5_median = result["manaByTurn"]["5"]["median"]
+    shares = {}
+    for turn, target in ((4, math.ceil(avg_cmc)), (5, math.ceil(avg_cmc + 2))):
+        counts = mana_counts[turn]
+        shares[turn] = {
+            "turn": turn,
+            "manaTarget": target,
+            "share": pct(sum(count for mana, count in counts.items() if mana >= target),
+                         sum(counts.values())),
+        }
 
-    if t5_median >= avg_cmc + 2:
-        mana_adequacy = "strong"
-    elif t4_median >= avg_cmc:
-        mana_adequacy = "adequate"
+    if shares[5]["share"] > 51.0:
+        mana_adequacy, mana_share = "strong", shares[5]
+    elif shares[5]["share"] >= 49.0:
+        mana_adequacy, mana_share = "near strong", shares[5]
+    elif shares[4]["share"] > 51.0:
+        mana_adequacy, mana_share = "adequate", shares[4]
+    elif shares[4]["share"] >= 49.0:
+        mana_adequacy, mana_share = "near adequate", shares[4]
     else:
-        mana_adequacy = "light"
+        mana_adequacy, mana_share = "light", shares[4]
 
     # Mulligan verdict
     paid_pct = result["mulliganStats"]["paidMulligan"]
@@ -7985,6 +8020,7 @@ def derive_assessment(result: dict) -> dict:
 
     return {
         "manaAdequacy": mana_adequacy,
+        "manaAdequacyShare": mana_share,
         "mulliganVerdict": mulligan_verdict,
         "commanderTiming": cmd_timing,
     }
@@ -8136,7 +8172,10 @@ def export_titan(metadata: dict) -> dict:
         "specialMetrics": special_metrics,
         "assessment": {},
     }
-    result["assessment"] = derive_assessment(result)
+    # Games by mana total each turn: the mana label and threat density read
+    # the whole distribution, not the median.
+    mana_counts = {t: Counter(stats["mana_by_turn"][t]) for t in range(1, NUM_TURNS + 1)}
+    result["assessment"] = derive_assessment(result, mana_counts)
     return enrich_result(
         result=result,
         deck_id="titan-convergence",
@@ -8145,6 +8184,7 @@ def export_titan(metadata: dict) -> dict:
         metadata=metadata,
         commander_name="Zhulodok, Void Gorger",
         colors=[],
+        mana_counts=mana_counts,
     )
 
 
@@ -8268,7 +8308,10 @@ def _export_colored(sim_module, deck_id: str, deck_name: str,
         "specialMetrics": special_metrics,
         "assessment": {},
     }
-    result["assessment"] = derive_assessment(result)
+    # Games by mana total each turn: the mana label and threat density read
+    # the whole distribution, not the median.
+    mana_counts = {t: Counter(stats["mana_by_turn"][t]) for t in range(1, NUM_TURNS + 1)}
+    result["assessment"] = derive_assessment(result, mana_counts)
     return enrich_result(
         result=result,
         deck_id=deck_id,
@@ -8277,6 +8320,7 @@ def _export_colored(sim_module, deck_id: str, deck_name: str,
         metadata=metadata,
         commander_name=commander_name,
         colors=colors,
+        mana_counts=mana_counts,
     )
 
 

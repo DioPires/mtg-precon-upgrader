@@ -1230,6 +1230,9 @@ em { font-style: italic; color: var(--gv1-gold); }
 }
 
 /* Performance */
+/* The heading note's game counts: one a line, and "mana-sim" whole. */
+.gv1-perf-count { display: block; }
+.gv1-perf-count-word { white-space: nowrap; }
 .gv1-perf-grid {
   display: grid;
   /* minmax(0, …): a bare 1fr track grows to its widest block's min-content,
@@ -3155,9 +3158,11 @@ em { font-style: italic; color: var(--gv1-gold); }
   .gv1-codex-stat { flex: 1 1 0; padding-inline: 16px; }
   .gv1-codex-stat-brackets { flex-wrap: wrap; row-gap: 8px; }
   /* Performance: the note keeps its narrowest width, and the title wraps
-     only where it cannot sit beside it. Known limit: in the fallback faces
-     the note passes the viewport from 825 to 859px (option A, ruling
-     8288eed2 on DEC-1043). */
+     only where it cannot sit beside it. Known limit (option A, ruling
+     8288eed2 on DEC-1043): in faces wider than the web fonts the note passes
+     the viewport from 825px. Measured 2026-11-25 in Chrome on macOS with
+     Verdana and Menlo in place of the web fonts (dec1043-band-rules' stand-ins):
+     825 to 929px, with the game-count note and with the note before it. */
   .gv1-perf .gv1-section-head { grid-template-columns: 48px 1fr min-content; }
   .gv1-perf .gv1-section-title { white-space: normal; text-wrap: balance; }
 }

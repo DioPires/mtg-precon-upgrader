@@ -11550,3 +11550,236 @@ class FreedEngineCreditTests(unittest.TestCase):
              self.damage(["Probe Huge B"] + ["Plains"] * 3 + ["Mountain"] * 2 + ["Probe Huge"], library,
                          "The Ur-Dragon", ["R", "G", "W"], "stampede-acres")),
             ([0, 0, 0, 0, 0, 0, 4, 8, 12, 16], [0, 0, 0, 0, 0, 0, 2, 4, 6, 8]))
+
+
+class ManaShareFigureTests(unittest.TestCase):
+    """Threat density and the mana label read the whole mana distribution of
+    the mana simulation, not its median (owner-approved 2026-11-25).
+
+    Threat density at turn t: the sum over mana totals m of (share of the games
+    with m mana on turn t) x (chance that at least one classified threat of
+    mana value <= m is among the 7 + t cards seen of 99), rounded once. On turn
+    4 (11 cards seen of 99):
+      one threat affordable:  P1 = 11/99 = 0.11111
+      two threats affordable: P2 = 1 - C(97,11)/C(99,11) = 1 - (88 x 87)/(99 x 98)
+                                 = 2046/9702 = 0.21088
+
+    The mana label: shares of games with the target mana or more, each rounded
+    once to one decimal (pct). Targets: avgCmc on turn 4, avgCmc + 2 on turn 5,
+    rounded up to whole mana. Turn 5 first: over 51.0 strong, 49.0 to 51.0
+    inclusive near strong; below that, turn 4: over 51.0 adequate, in the band
+    near adequate, below it light. The deciding share is exported: turn 5's for
+    strong and near strong, turn 4's otherwise."""
+
+    THREATS = {
+        "Probe Two Drop": {"type_line": "Creature", "mana_cost": "{2}", "cmc": 2.0, "oracle_text": "", "colors": []},
+        "Probe Five Drop": {"type_line": "Creature", "mana_cost": "{5}", "cmc": 5.0, "oracle_text": "", "colors": []},
+        "Probe Six Drop": {"type_line": "Creature", "mana_cost": "{6}", "cmc": 6.0, "oracle_text": "", "colors": []},
+    }
+
+    @staticmethod
+    def every_turn(counts: dict) -> dict:
+        """The same games-by-mana counts on each simulated turn."""
+        return {turn: Counter(counts) for turn in range(1, exporter.NUM_TURNS + 1)}
+
+    def density_t4(self, threats: list[str], counts: dict) -> float:
+        return exporter.compute_threat_density(threats, self.THREATS, self.every_turn(counts))["byTurn"]["4"]
+
+    def test_threat_density_weights_each_mana_total_by_its_share_of_games(self):
+        # Threats at 2 and 5. Half the games at 3 mana (P1), half at 5 (P2):
+        # (0.11111 + 0.21088) / 2 = 0.16100 -> 16.1. The median (4) affords
+        # only the 2-drop: 11.1.
+        self.assertEqual(self.density_t4(["Probe Two Drop", "Probe Five Drop"], {3: 1, 5: 1}), 16.1)
+
+    def test_threat_density_counts_games_not_mana_totals(self):
+        # Threats at 2 and 5. Nine games at 3 mana, one at 5:
+        # 0.9 x 0.11111 + 0.1 x 0.21088 = 0.12109 -> 12.1. Equal weight on
+        # each mana total seen would read 16.1; the median (3) 11.1.
+        self.assertEqual(self.density_t4(["Probe Two Drop", "Probe Five Drop"], {3: 9, 5: 1}), 12.1)
+
+    def test_threat_density_does_not_step_where_the_median_does(self):
+        # Threats at 5 and 6. Games 50.1% at 5 mana, 49.9% at 6:
+        # 0.501 x 0.11111 + 0.499 x 0.21088 = 0.16090 -> 16.1; then 49.9% at
+        # 5, 50.1% at 6: 0.499 x 0.11111 + 0.501 x 0.21088 = 0.16110 -> 16.1.
+        # The median moves from 5 to 6 and would read 11.1, then 21.1.
+        threats = ["Probe Five Drop", "Probe Six Drop"]
+        self.assertEqual((self.density_t4(threats, {5: 501, 6: 499}), self.density_t4(threats, {5: 499, 6: 501})),
+                         (16.1, 16.1))
+
+    def test_threat_density_reads_each_turn_its_own_games_and_cards_seen(self):
+        # Threats at 2 and 5. Every game has 3 mana up to turn 4 and 5 mana
+        # from turn 5. Turn 4 (11 seen): one threat affordable, 11/99 -> 11.1.
+        # Turn 5 (12 seen): both, 1 - C(97,12)/C(99,12) = 1 - (87 x 86)/(99 x 98)
+        # = 2220/9702 = 0.22882 -> 22.9. Turn 5 read with turn 4's games:
+        # 12/99 -> 12.1; with turn 4's 11 cards seen: 21.1.
+        counts = {turn: Counter({3: 1} if turn <= 4 else {5: 1}) for turn in range(1, exporter.NUM_TURNS + 1)}
+        by_turn = exporter.compute_threat_density(["Probe Two Drop", "Probe Five Drop"], self.THREATS, counts)["byTurn"]
+        self.assertEqual((by_turn["4"], by_turn["5"]), (11.1, 22.9))
+
+    def test_threat_density_is_rounded_once(self):
+        # Threats at 2 and 5. Two games at 3 mana, 25 at 5:
+        # (2 x 0.111111 + 25 x 0.210884) / 27 = (0.222222 + 5.272109) / 27
+        # = 0.203494 -> 20.3. Each chance rounded first (11.1 and 21.1):
+        # (2 x 11.1 + 25 x 21.1) / 27 = 549.7 / 27 = 20.36 -> 20.4.
+        self.assertEqual(self.density_t4(["Probe Two Drop", "Probe Five Drop"], {3: 2, 5: 25}), 20.3)
+
+    def test_enrich_result_hands_the_mana_counts_to_threat_density(self):
+        # A 99-card deck: the 2-drop and the 5-drop, threats by their guide
+        # category, and 97 Islands; the real goldfish runs (16 games, in this
+        # process). Nine games at 3 mana and one at 5 on every turn: 12.1 on
+        # turn 4, as in test_threat_density_counts_games_not_mana_totals.
+        threats = ["Probe Two Drop", "Probe Five Drop"]
+        decklist = threats + ["Island"] * 97
+        deck_data = {
+            "guideContent": {"deckCategories": [{"name": "Beaters", "cards": threats}]},
+            "decklist": [{"name": name, **FIXTURE_ROLE} for name in threats] + [{"name": "Island", "quantity": 97}],
+        }
+        result = {
+            "deckComposition": {"avgCmc": 3.5},
+            "manaByTurn": {"4": {"median": 3.0, "p25": 3.0, "p75": 3.0, "mean": 3.2}},
+            "mulliganStats": {"paidMulligan": 0.0, "freeMulligan": 0.0},
+            "commanderTiming": {"cmc": 3, "byTurn": {"3": 50.0}},
+        }
+        with patch.object(exporter, "GOLDFISH_GAMES", 16), patch("multiprocessing.Pool", SerialPool):
+            enriched = exporter.enrich_result(
+                result=result, deck_id="synthetic-density", deck_data=deck_data, decklist=decklist,
+                metadata=dict(CARDS, **self.THREATS), commander_name="The Ur-Dragon", colors=["U"],
+                mana_counts=self.every_turn({3: 9, 5: 1}))
+        self.assertEqual(enriched["goldfish"]["numGames"], 16)
+        self.assertEqual(enriched["reliabilityMetrics"]["threatDensity"]["byTurn"]["4"], 12.1)
+
+    # --- the mana label ---
+
+    AVG = 3.2  # turn-4 target ceil(3.2) = 4; turn-5 target ceil(5.2) = 6
+
+    @staticmethod
+    def games(target: int, at_or_over: int, total: int = 1000) -> Counter:
+        """`at_or_over` games with exactly `target` mana, the rest one short."""
+        return Counter({target: at_or_over, target - 1: total - at_or_over})
+
+    def label(self, turn4: Counter, turn5: Counter, avg: float = AVG) -> tuple[str, dict]:
+        result = {
+            "deckComposition": {"avgCmc": avg},
+            "mulliganStats": {"paidMulligan": 0.0},
+            "commanderTiming": {"cmc": 3, "medianTurn": 3},
+            "colorBalance": None,
+        }
+        assessment = exporter.derive_assessment(result, {4: turn4, 5: turn5})
+        return assessment["manaAdequacy"], assessment["manaAdequacyShare"]
+
+    def test_turn_5_in_the_band_reads_near_strong_before_a_strong_turn_4(self):
+        # Turn 5: 500 of 1000 games have 6 or more (50.0, in the band); turn 4:
+        # 520 of 1000 have 4 or more (52.0, over 51.0). Turn 5 is read first:
+        # near strong, showing turn 5's share.
+        self.assertEqual(self.label(self.games(4, 520), self.games(6, 500)),
+                         ("near strong", {"turn": 5, "manaTarget": 6, "share": 50.0}))
+
+    def test_turn_5_share_at_each_edge(self):
+        # Turn 4 at 1000 of 1000 (100.0): below turn 5's band the label falls
+        # to turn 4, adequate. 48.9 below the band; 49.0, 50.0 and 51.0 in it;
+        # 51.1 over it.
+        turn4 = self.games(4, 1000)
+        expected = {
+            489: ("adequate", {"turn": 4, "manaTarget": 4, "share": 100.0}),
+            490: ("near strong", {"turn": 5, "manaTarget": 6, "share": 49.0}),
+            500: ("near strong", {"turn": 5, "manaTarget": 6, "share": 50.0}),
+            510: ("near strong", {"turn": 5, "manaTarget": 6, "share": 51.0}),
+            511: ("strong", {"turn": 5, "manaTarget": 6, "share": 51.1}),
+        }
+        self.assertEqual({n: self.label(turn4, self.games(6, n)) for n in expected}, expected)
+
+    def test_turn_4_share_at_each_edge(self):
+        # Turn 5 at 0 of 1000: the label is turn 4's. 48.9 light; 49.0, 50.0
+        # and 51.0 near adequate; 51.1 adequate. Each shows turn 4's share.
+        turn5 = self.games(6, 0)
+        expected = {
+            489: ("light", {"turn": 4, "manaTarget": 4, "share": 48.9}),
+            490: ("near adequate", {"turn": 4, "manaTarget": 4, "share": 49.0}),
+            500: ("near adequate", {"turn": 4, "manaTarget": 4, "share": 50.0}),
+            510: ("near adequate", {"turn": 4, "manaTarget": 4, "share": 51.0}),
+            511: ("adequate", {"turn": 4, "manaTarget": 4, "share": 51.1}),
+        }
+        self.assertEqual({n: self.label(self.games(4, n), turn5) for n in expected}, expected)
+
+    def test_the_label_reads_the_share_as_shown(self):
+        # 4,896 of 10,000 games on turn 4 = 48.96%, shown as 49.0: in the
+        # band, near adequate (the unrounded share would read light).
+        self.assertEqual(self.label(self.games(4, 4896, 10000), self.games(6, 0)),
+                         ("near adequate", {"turn": 4, "manaTarget": 4, "share": 49.0}))
+
+    def test_games_over_the_target_count_toward_it(self):
+        # Turn 5 (target 6): 400 games at 6, 120 at 8, 480 at 5: 520 of 1000
+        # have 6 or more, 52.0 -> strong. Turn 4: all 1000 at 4. Counting only
+        # the games at exactly 6 would read 40.0 and fall to turn 4: adequate.
+        self.assertEqual(self.label(Counter({4: 1000}), Counter({6: 400, 8: 120, 5: 480})),
+                         ("strong", {"turn": 5, "manaTarget": 6, "share": 52.0}))
+
+    def test_a_whole_number_average_is_its_own_target(self):
+        # avgCmc 3.0 (as eternal-harvest's): targets ceil(3.0) = 3 on turn 4 and
+        # ceil(5.0) = 5 on turn 5. Turn 4: 520 games at 3, 480 at 2 -> 52.0,
+        # adequate (turn 5 all at 4: 0.0). Turn 5: 520 at 5, 480 at 4 -> 52.0,
+        # strong. Targets of floor + 1 (4 and 6) would read 0.0 on each turn.
+        self.assertEqual(
+            (self.label(Counter({3: 520, 2: 480}), Counter({4: 1000}), avg=3.0),
+             self.label(Counter({3: 1000}), Counter({5: 520, 4: 480}), avg=3.0)),
+            (("adequate", {"turn": 4, "manaTarget": 3, "share": 52.0}),
+             ("strong", {"turn": 5, "manaTarget": 5, "share": 52.0})))
+
+
+class ExportManaCountsWiringTests(unittest.TestCase):
+    """The games by mana total that each exporter hands to derive_assessment
+    and compute_threat_density are the mana simulation's own games of that
+    turn. Each case runs the real export of one committed deck, with 2,000
+    seeded mana-simulation games and 16 goldfish games in this process; three
+    recorders call the original functions and keep what they returned or were
+    given. The simulation's games are counted inside the recorder, before the
+    exporter has them, so an exporter that changes them in place cannot move
+    the expected counts. Every turn is checked, and each turn's games differ
+    from the next turn's, so counts taken from a neighbouring turn fail."""
+
+    def run_export(self, export_fn):
+        returned, handed = [], {}
+        originals = {name: getattr(exporter, name)
+                     for name in ("run_parallel", "derive_assessment", "compute_threat_density")}
+
+        def run_parallel(*args, **kwargs):
+            stats = originals["run_parallel"](*args, **kwargs)
+            returned.append({t: Counter(stats["mana_by_turn"][t]) for t in range(1, exporter.NUM_TURNS + 1)})
+            return stats
+
+        def derive_assessment(result, mana_counts):
+            handed["derive_assessment"] = {t: Counter(c) for t, c in mana_counts.items()}
+            return originals["derive_assessment"](result, mana_counts)
+
+        def compute_threat_density(threat_cards, metadata, mana_counts):
+            handed["compute_threat_density"] = {t: Counter(c) for t, c in mana_counts.items()}
+            return originals["compute_threat_density"](threat_cards, metadata, mana_counts)
+
+        with patch.object(exporter, "NUM_GAMES", 2000), patch.object(exporter, "GOLDFISH_GAMES", 16), \
+                patch("multiprocessing.Pool", SerialPool), \
+                patch.object(exporter, "run_parallel", run_parallel), \
+                patch.object(exporter, "derive_assessment", derive_assessment), \
+                patch.object(exporter, "compute_threat_density", compute_threat_density), \
+                patch("builtins.print"):
+            export_fn(FLEET_METADATA)
+        return returned, handed
+
+    def check(self, export_fn):
+        returned, handed = self.run_export(export_fn)
+        self.assertEqual(len(returned), 1)
+        games = returned[0]
+        turns = range(1, exporter.NUM_TURNS + 1)
+        self.assertEqual([sum(games[t].values()) for t in turns], [2000] * exporter.NUM_TURNS)
+        self.assertTrue(all(games[t] != games[t + 1] for t in turns[:-1]))
+        for receiver in ("derive_assessment", "compute_threat_density"):
+            self.assertEqual(sorted(handed[receiver]), list(turns))
+            for turn in turns:
+                with self.subTest(turn=turn, receiver=receiver):
+                    self.assertEqual(handed[receiver][turn], games[turn])
+
+    def test_export_titan_hands_each_turn_its_own_games(self):
+        self.check(exporter.export_titan)
+
+    def test_a_coloured_export_hands_each_turn_its_own_games(self):
+        # eternal-agony, through _export_colored (one mana-simulation run).
+        self.check(exporter.export_rakdos)

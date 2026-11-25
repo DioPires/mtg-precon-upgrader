@@ -68,6 +68,8 @@ export function DeckGuide() {
         health={deck.health}
         composition={deck.composition}
         assessment={deck.assessment}
+        goldfishGames={deck.sim?.goldfish?.numGames}
+        manaSimGames={deck.sim?.metadata?.numGames}
       />
       {/* DEC-1077: each deck mounts its own Apothecary, so no filter carries over. */}
       <Apothecary key={deck.slug} apothecary={deck.apothecary} />

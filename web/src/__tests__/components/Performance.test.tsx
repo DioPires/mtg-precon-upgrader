@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { Performance } from '../../components/organisms/Performance';
-import type { DeckCurveEntry } from '../../data/types';
+import type { DeckCurveEntry, RawAssessment } from '../../data/types';
 
 // titan-convergence's eight chart columns.
 const CURVE: DeckCurveEntry[] = [
@@ -21,6 +21,131 @@ function renderChart(curve: DeckCurveEntry[]) {
   );
   return [...container.querySelectorAll<HTMLElement>('.gv1-curve-col')];
 }
+
+function renderHead(assessment: RawAssessment | null, goldfishGames?: number, manaSimGames?: number) {
+  const { container } = render(
+    <Performance
+      curve={[]}
+      func={[]}
+      sources={[]}
+      health={null}
+      composition={null}
+      assessment={assessment}
+      goldfishGames={goldfishGames}
+      manaSimGames={manaSimGames}
+    />,
+  );
+  return container;
+}
+
+// The heading note, or null when the heading has none.
+const note = (container: HTMLElement) => container.querySelector('.gv1-section-head > .gv1-mono-xs');
+
+// The heading note, which the case needs.
+function requireNote(container: HTMLElement): Element {
+  const found = note(container);
+  if (!found) throw new Error('no heading note');
+  return found;
+}
+
+// The MANA tile's lines, top to bottom.
+function manaTile(container: HTMLElement): string[] {
+  const tile = [...container.querySelectorAll('.gv1-kpi')].find((k) => k.firstElementChild?.textContent === 'MANA');
+  if (!tile) throw new Error('no MANA tile');
+  return [...tile.children].map((c) => c.textContent ?? '');
+}
+
+// A file's assessment with `share` as its manaAdequacyShare, whatever its shape:
+// the app reads simulation.json as parsed, with no check of its types.
+const withShare = (share: unknown): RawAssessment =>
+  Object.assign(JSON.parse('{"manaAdequacy": "near adequate", "mulliganVerdict": "excellent"}'), { manaAdequacyShare: share });
+
+describe('Performance header', () => {
+  // The counts are written as approved ("10,000") whatever the browser's
+  // locale. For each case a number formatted with no locale named comes out
+  // German ("10.000"), so the cases fail on a count formatted in the
+  // process's own locale, whichever locale the suite runs under.
+  beforeEach(() => {
+    const format = Number.prototype.toLocaleString;
+    vi.spyOn(Number.prototype, 'toLocaleString').mockImplementation(function (
+      this: number,
+      locales?: Intl.LocalesArgument,
+      options?: Intl.NumberFormatOptions,
+    ) {
+      return format.call(this, locales ?? 'de-DE', options);
+    });
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('names two game counts, each from its own simulation', () => {
+    const counts = [...requireNote(renderHead(null, 2500, 40000)).querySelectorAll('.gv1-perf-count')].map((c) => c.textContent);
+    // A no-break space after each separator keeps it beside its number.
+    expect(counts).toEqual(['·\u00a02,500 goldfish games', '·\u00a040,000 mana-sim games']);
+  });
+
+  it('reads as the approved text', () => {
+    expect(note(renderHead(null, 10000, 100000))).toHaveTextContent(/^· 10,000 goldfish games · 100,000 mana-sim games$/);
+  });
+
+  it('shows no count a file does not give', () => {
+    expect(note(renderHead(null, undefined, 40000))).toHaveTextContent(/^· 40,000 mana-sim games$/);
+    expect(note(renderHead(null, 2500, undefined))).toHaveTextContent(/^· 2,500 goldfish games$/);
+    expect(note(renderHead(null))).toBeNull();
+  });
+
+  it('shows a count only when it is a whole number of 1 or more', () => {
+    // A string, NaN, a negative count, zero and a fraction are each left out.
+    for (const bad of [JSON.parse('"10000"'), Number.NaN, -5, 0, 2.5]) {
+      expect(note(renderHead(null, bad, 40000)), String(bad)).toHaveTextContent(/^· 40,000 mana-sim games$/);
+      expect(note(renderHead(null, 2500, bad)), String(bad)).toHaveTextContent(/^· 2,500 goldfish games$/);
+    }
+  });
+});
+
+describe('Performance MANA tile', () => {
+  it('shows under the label the share that decided it, to one decimal', () => {
+    expect(manaTile(renderHead(withShare({ turn: 5, manaTarget: 6, share: 50 })))).toEqual([
+      'MANA',
+      'near adequate',
+      '50.0% of games have 6 or more mana on turn 5',
+      'mulligan · excellent',
+    ]);
+    expect(manaTile(renderHead(withShare({ turn: 4, manaTarget: 7, share: 37.4 })))[2]).toBe(
+      '37.4% of games have 7 or more mana on turn 4',
+    );
+    // A target of 0 is a whole number of 0 or more.
+    expect(manaTile(renderHead(withShare({ turn: 4, manaTarget: 0, share: 100 })))[2]).toBe(
+      '100.0% of games have 0 or more mana on turn 4',
+    );
+  });
+
+  it('keeps the tile to the label and the mulligan line when a file has no share', () => {
+    const container = renderHead({ manaAdequacy: 'light', mulliganVerdict: 'acceptable', commanderTiming: 'on curve' });
+    expect(manaTile(container)).toEqual(['MANA', 'light', 'mulligan · acceptable']);
+  });
+
+  it('shows the share line only for turn 4 or 5, a target of 0 or more whole mana and a share from 0 to 100', () => {
+    const bad: Record<string, unknown> = {
+      'missing share': { turn: 4, manaTarget: 6 },
+      'missing turn': { manaTarget: 6, share: 50.2 },
+      'missing target': { turn: 4, share: 50.2 },
+      'string share': { turn: 4, manaTarget: 6, share: '50.2' },
+      'NaN share': { turn: 4, manaTarget: 6, share: Number.NaN },
+      'negative share': { turn: 4, manaTarget: 6, share: -0.1 },
+      'share over 100': { turn: 4, manaTarget: 6, share: 100.1 },
+      'turn 6': { turn: 6, manaTarget: 6, share: 50.2 },
+      'string turn': { turn: '4', manaTarget: 6, share: 50.2 },
+      'fractional target': { turn: 4, manaTarget: 5.5, share: 50.2 },
+      'negative target': { turn: 4, manaTarget: -1, share: 50.2 },
+      'a number': 50.2,
+    };
+    for (const [label, share] of Object.entries(bad)) {
+      expect(manaTile(renderHead(withShare(share))), label).toEqual(['MANA', 'near adequate', 'mulligan · excellent']);
+    }
+  });
+});
 
 describe('Performance role chart', () => {
   it('renders each role with its count and its label', () => {

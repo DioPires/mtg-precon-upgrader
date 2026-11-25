@@ -6,6 +6,7 @@ import type {
   RawAssessment,
   RawDeckComposition,
   RawDeckHealthScore,
+  RawManaAdequacyShare,
 } from '../../data/types';
 import { Glyph } from '../atoms/Glyph';
 
@@ -16,16 +17,71 @@ interface PerformanceProps {
   health: RawDeckHealthScore | null;
   composition: RawDeckComposition | null;
   assessment: RawAssessment | null;
+  /** simulation.json `goldfish.numGames`. */
+  goldfishGames?: number;
+  /** simulation.json `metadata.numGames`: the mana simulation's games. */
+  manaSimGames?: number;
 }
 
-export function Performance({ curve, func, sources, health, composition, assessment }: PerformanceProps) {
+// The values below come from simulation.json as written, so each is checked
+// before it is shown, as isOwnedQuantity (data/ownedCards.ts) checks a stored
+// quantity: a value of another shape is not shown.
+
+/** A game count: a whole number of 1 or more. */
+function isGameCount(n: unknown): n is number {
+  return typeof n === 'number' && Number.isInteger(n) && n >= 1;
+}
+
+/** The deciding share as the exporter writes it: turn 4 or 5, a target of 0 or more whole mana, a share from 0 to 100. */
+function isManaShare(s: unknown): s is RawManaAdequacyShare {
+  return (
+    typeof s === 'object' &&
+    s !== null &&
+    'turn' in s &&
+    (s.turn === 4 || s.turn === 5) &&
+    'manaTarget' in s &&
+    typeof s.manaTarget === 'number' &&
+    Number.isInteger(s.manaTarget) &&
+    s.manaTarget >= 0 &&
+    'share' in s &&
+    typeof s.share === 'number' &&
+    Number.isFinite(s.share) &&
+    s.share >= 0 &&
+    s.share <= 100
+  );
+}
+
+// The approved text, in its own number format whatever the browser's locale.
+const games = (n: number) => n.toLocaleString('en-US');
+
+export function Performance({ curve, func, sources, health, composition, assessment, goldfishGames, manaSimGames }: PerformanceProps) {
   const maxCurve = Math.max(1, ...curve.map((c) => c.n));
+  const rawShare = assessment?.manaAdequacyShare;
+  const share = isManaShare(rawShare) ? rawShare : null;
+  const goldfish = isGameCount(goldfishGames) ? goldfishGames : null;
+  const manaSim = isGameCount(manaSimGames) ? manaSimGames : null;
   return (
     <section className="gv1-section gv1-perf">
       <div className="gv1-section-head">
         <span className="gv1-rune" aria-hidden="true">§ VII</span>
         <h2 className="gv1-section-title">Performance · Scrying Pool</h2>
-        <span className="gv1-mono-xs gv1-dim">· 10,000 simulated games</span>
+        {/* The section reads both simulations: the mana simulation feeds the
+            MANA and COMMANDER tiles and part of the health score, the goldfish
+            its combo term. One count a line; a no-break space holds each "·"
+            to its number, and "mana-sim" does not break at its hyphen. */}
+        {(goldfish !== null || manaSim !== null) && (
+          <span className="gv1-mono-xs gv1-dim">
+            {goldfish !== null && <span className="gv1-perf-count">{`·\u00a0${games(goldfish)} goldfish games`}</span>}
+            {goldfish !== null && manaSim !== null && ' '}
+            {manaSim !== null && (
+              <span className="gv1-perf-count">
+                {`·\u00a0${games(manaSim)} `}
+                <span className="gv1-perf-count-word">mana-sim</span>
+                {' games'}
+              </span>
+            )}
+          </span>
+        )}
       </div>
       <div className="gv1-perf-grid">
         <div className="gv1-perf-block gv1-perf-kpis">
@@ -47,6 +103,11 @@ export function Performance({ curve, func, sources, health, composition, assessm
             <div className="gv1-kpi">
               <div className="gv1-mono-xs gv1-dim">MANA</div>
               <div className="gv1-serif-xxl">{assessment.manaAdequacy}</div>
+              {share && (
+                <div className="gv1-mono-xs gv1-dim">
+                  {share.share.toFixed(1)}% of games have {share.manaTarget} or more mana on turn {share.turn}
+                </div>
+              )}
               <div className="gv1-mono-xs gv1-dim">mulligan · {assessment.mulliganVerdict}</div>
             </div>
           )}
