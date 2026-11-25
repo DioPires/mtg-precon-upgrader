@@ -140,7 +140,12 @@
     {
       "type": "other",
       "name": "User-approved X pricing for a combo line, approved 2026-11-19, built 2026-11-21",
-      "detail": "winConditions \"Heliod + Walking Ballista\": minX {\"Walking Ballista\": 2} added. Approved by the owner on 2026-11-19, built on 2026-11-21. No card entered or left the list, so this is not a swap round. minX is the X the piece is priced at: the cheapest direct cast with which the line's listed pieces work. Walking Ballista ({X}{X}) enters with X +1/+1 counters and removes a counter to deal 1 damage; with lifelink from Heliod, Sun-Crowned the life gained puts a counter back on it. At X = 1 removing its only counter leaves a 0/0 that dies before the counter can return, so the direct cast is X = 2, 4 mana (X = 1 and Ballista's {4} counter ability would be 6). The combo gate takes Ballista from the hand or through a tutor the tags read as to-hand (the tutor's cost plus Ballista at that X); every card with the recursion role, a to-graveyard tutor and a bargain free cast do not supply it. Known limits: recursion that returns the card to the hand (Elena, Turk Recruit by an enter trigger; Junk Diver, Myr Retriever and Scrap Trawler on death) is excluded with the rest, an under-read (a scratch variant that counts Elena's enter trigger measures 13.5% at turn 8 against 13.1%); tutors the tags read as to-hand whose text does not put a castable copy into the hand that turn still supply Ballista, an over-read: Oswald Fiddlebender (puts the card onto the battlefield, and finds mana value 1 or more), Urza's Saga (cannot find it: it finds a printed mana cost of {0} or {1}) and Enlightened Tutor (puts it on top of the library); in scratch variants where they do not supply Ballista the reading is 11.5% at turn 8 without Oswald and the Saga, 10.6% without all three; a Ballista already on the battlefield would count whatever X it entered with (the goldfish never casts it: its ping reads as interaction). The first two wait for the destination tags of the gate fix. Not priced: Heliod's own {1}{W} lifelink ability (no line prices activation costs), and Inventors' Fair, a land the gate reads as a free tutor from the hand, whose {4} ability and three-artifact condition are not priced (in a scratch variant where Inventors' Fair does not supply Ballista the reading is 12.5% at turn 8, 0.6 points below 13.1%; how much of that a correctly priced Fair would keep is not measured); left to the combo-line review and the gate fix. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turns 6-10 24.4/32.1/39.2/46.3/53.0% -> 4.5/8.4/13.1/18.2/24.6% (at turn 8, the X = 2 price alone gives 24.3%, the excluded X = 0 paths alone 29.4%); best-of at turn 8 39.2% -> 15.8% (lethalProxy, 1,582 of 10,000 games); win turn best/typical/contested 5/10/11 -> 8/10/11; B2/B3 table row Soft B3 -> B2 band; simulation health score 76.1 A unchanged; metrics global_health 88 unchanged."
+      "detail": "winConditions \"Heliod + Walking Ballista\": minX {\"Walking Ballista\": 2} added. Approved by the owner on 2026-11-19, built on 2026-11-21. No card entered or left the list, so this is not a swap round. minX is the X the piece is priced at: the cheapest direct cast with which the line's listed pieces work. Walking Ballista ({X}{X}) enters with X +1/+1 counters and removes a counter to deal 1 damage; with lifelink from Heliod, Sun-Crowned the life gained puts a counter back on it. At X = 1 removing its only counter leaves a 0/0 that dies before the counter can return, so the direct cast is X = 2, 4 mana (X = 1 and Ballista's {4} counter ability would be 6). The combo gate takes Ballista from the hand or through a tutor the tags read as to-hand (the tutor's cost plus Ballista at that X); every card with the recursion role, a to-graveyard tutor and a bargain free cast do not supply it. Known limits: recursion that returns the card to the hand (Elena, Turk Recruit by an enter trigger; Junk Diver, Myr Retriever and Scrap Trawler on death) is excluded with the rest, an under-read (a scratch variant that counts Elena's enter trigger measures 13.5% at turn 8 against 13.1%); tutors the tags read as to-hand whose text does not put a castable copy into the hand that turn still supply Ballista, an over-read: Oswald Fiddlebender (puts the card onto the battlefield, and finds mana value 1 or more), Urza's Saga (cannot find it: it finds a printed mana cost of {0} or {1}) and Enlightened Tutor (puts it on top of the library); in scratch variants where they do not supply Ballista the reading is 11.5% at turn 8 without Oswald and the Saga, 10.6% without all three; a Ballista already on the battlefield would count whatever X it entered with (the goldfish never casts it: its ping reads as interaction). The first two wait for the destination tags of the gate fix. Not priced: Heliod's own {1}{W} lifelink ability (no line prices activation costs), and Inventors' Fair, a land the gate reads as a free tutor from the hand, whose {4} ability and three-artifact condition are not priced (in a scratch variant where Inventors' Fair does not supply Ballista the reading is 12.5% at turn 8, 0.6 points below 13.1%; how much of that a correctly priced Fair would keep is not measured); left to the combo-line review and the gate fix. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turns 6-10 24.4/32.1/39.2/46.3/53.0% -> 4.5/8.4/13.1/18.2/24.6% (at turn 8, the X = 2 price alone gives 24.3%, the excluded X = 0 paths alone 29.4%); best-of at turn 8 39.2% -> 15.8% (lethalProxy, 1,582 of 10,000 games); win turn best/typical/contested 5/10/11 -> 8/10/11; B2/B3 table row Soft B3 -> B2 band; simulation health score 76.1 A unchanged; metrics global_health 88 unchanged. Updated 2026-11-24 by the step-1 tags of the combo-check fix (decision 5, owner-approved 2026-11-24): a card that returns Ballista to the hand now supplies it, cast and paid at X = 2 (Elena, Turk Recruit: {2}{W} plus {4}); Junk Diver, Myr Retriever and Scrap Trawler act only after a permanent dies and supply nothing in step 1. The over-reads named above are gone: Oswald Fiddlebender's search cannot act the turn it is cast and puts the card onto the battlefield, Enlightened Tutor puts it on top of the library, and Urza's Saga and Inventors' Fair, lands in hand, supply nothing until step 2. A card that puts Ballista onto the battlefield (Sun Titan, Portal to Phyrexia) or a bargained free cast still never supplies it. A Ballista a card returns is assumed to be in the graveyard, which the goldfish does not track until step 3: an over-read that now covers this piece."
+    },
+    {
+      "type": "other",
+      "name": "User tag approval, combo-check step 1, 2026-11-24",
+      "detail": "Tutor and recursion tags from the step-1 tag checklist of the combo-check fix (plan \"combo checks, step 1\"; this deck is rows 89-99 of the checklist's 113), accepted by the owner on 2026-11-24. No card entered or left the list and no role changed, so this is not a swap round. The combo checks now read what each tutor or recursion card may find or return and where it puts it (data/bracket-philosophy.md, comboLethal proxy schema). Tags: Myr Retriever: recursion_mode on_death (new); Teshar, Ancestor's Apostle: recursion_mode none (new); Oswald Fiddlebender: tutor_mode to_battlefield (new), tutor_cost {W} (new), tutor_timing later (new); Scrap Trawler: recursion_mode on_death (new); Elena, Turk Recruit: recursion_targets [any] (new), recursion_mode to_hand (new); Junk Diver: recursion_mode on_death (new); Sun Titan: recursion_targets [artifact, battle, creature, enchantment, land, planeswalker] (new), recursion_mv_cap 3 (new), recursion_mode to_battlefield (new); Nim Deathmantle: recursion_mode on_death (new); Enlightened Tutor: tutor_mode to_top (new); Portal to Phyrexia: recursion_targets [creature] (new), recursion_mode to_battlefield (new), recursion_timing later (new). Unchanged: 1 of the 11 checklist rows. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 18.3% -> 3.6%; best assembly at turn 8 13.2% -> 3.7%; best-of (comboLethal, lethalProxy) at turn 8 21.5% -> 22.1%; win turn best/typical/contested 8/10/11 unchanged; B2/B3 table row unchanged; simulation health score 78.0 A -> 77.7 A; metrics global_health 88 unchanged. The graveyard is still assumed, not tracked (step 3): not measured."
     }
   ],
   "guideContent": {
@@ -996,7 +1001,8 @@
     {
       "name": "Myr Retriever",
       "type": "Creature",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Ethersworn Canonist",
@@ -1018,7 +1024,8 @@
       "name": "Teshar, Ancestor's Apostle",
       "type": "Creature",
       "primary_role": "engine",
-      "secondary_role": "recursion"
+      "secondary_role": "recursion",
+      "recursion_mode": "none"
     },
     {
       "name": "Oswald Fiddlebender",
@@ -1028,23 +1035,32 @@
       "tutor_targets": [
         "artifact"
       ],
-      "tutor_extra_cost": "sacrifice-artifact"
+      "tutor_extra_cost": "sacrifice-artifact",
+      "tutor_mode": "to_battlefield",
+      "tutor_cost": "{W}",
+      "tutor_timing": "later"
     },
     {
       "name": "Scrap Trawler",
       "type": "Creature",
       "primary_role": "recursion",
-      "secondary_role": "engine"
+      "secondary_role": "engine",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Elena, Turk Recruit",
       "type": "Creature",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "any"
+      ],
+      "recursion_mode": "to_hand"
     },
     {
       "name": "Junk Diver",
       "type": "Creature",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Circuit Mender",
@@ -1078,7 +1094,17 @@
       "name": "Sun Titan",
       "type": "Creature",
       "primary_role": "recursion",
-      "secondary_role": "threat"
+      "secondary_role": "threat",
+      "recursion_targets": [
+        "artifact",
+        "battle",
+        "creature",
+        "enchantment",
+        "land",
+        "planeswalker"
+      ],
+      "recursion_mv_cap": 3,
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Myr Battlesphere",
@@ -1166,7 +1192,8 @@
       "name": "Nim Deathmantle",
       "type": "Artifact",
       "primary_role": "recursion",
-      "secondary_role": "protection"
+      "secondary_role": "protection",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Forsaken Monument",
@@ -1247,7 +1274,8 @@
       "tutor_targets": [
         "artifact",
         "enchantment"
-      ]
+      ],
+      "tutor_mode": "to_top"
     },
     {
       "name": "Farewell",
@@ -1417,7 +1445,12 @@
       "name": "Portal to Phyrexia",
       "type": "Artifact",
       "primary_role": "removal-board",
-      "secondary_role": "recursion"
+      "secondary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield",
+      "recursion_timing": "later"
     }
   ],
   "archetypes": [

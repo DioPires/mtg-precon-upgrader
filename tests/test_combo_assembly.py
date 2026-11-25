@@ -107,6 +107,21 @@ class ComboAssemblySpecTests(unittest.TestCase):
             lines = exporter.build_combo_assembly_lines("test-deck", ["X"], "Cmdr")
         self.assertEqual(lines, [])
 
+    def test_assembly_line_refuses_a_card_in_two_slots(self):
+        # A drawn Mind Stone would fill both slots: the table is refused.
+        with patch.dict(exporter.KEY_COMBOS, {
+            "test-deck": [{"name": "C", "slots": [["Sol Ring", "Mind Stone"], ["Mind Stone", "Arcane Signet"]]}]
+        }, clear=False):
+            with self.assertRaisesRegex(ValueError, r"'C': \['Mind Stone'\] listed in two slots"):
+                exporter.build_combo_assembly_lines("test-deck", ["Sol Ring", "Mind Stone", "Arcane Signet"], "Cmdr")
+
+    def test_every_table_line_lists_each_card_in_one_slot(self):
+        for deck_id, combos in exporter.KEY_COMBOS.items():
+            for combo in combos:
+                with self.subTest(deck=deck_id, combo=combo["name"]):
+                    listed = [member for slot in exporter.combo_slot_lists(combo) for member in slot]
+                    self.assertEqual(len(listed), len(set(listed)))
+
     def test_assembly_line_commander_slot_autofilled(self):
         with patch.dict(exporter.KEY_COMBOS, {
             "test-deck": [{"name": "C", "slots": [["Cmdr"], ["X"]], "requiresCommander": True}]
@@ -142,7 +157,6 @@ class OneTutorOneSlotTests(unittest.TestCase):
         self.ctx = build_context(decklist, combo, metadata, deck_data)
         self.line = self.ctx["assemblyLines"][0]
         self.profiles = self.ctx["profiles"]
-        self.tutor_meta = self.ctx["tutorMeta"]
         # Five untapped colorless sources -> mana never the blocker.
         self.mana = [{"name": f"L{i}", "kind": "land", "manaAtoms": [frozenset({"C"})],
                       "manaActiveTurn": 1} for i in range(5)]
@@ -150,8 +164,8 @@ class OneTutorOneSlotTests(unittest.TestCase):
     def _assembled(self, hand, library):
         return exporter.combo_assembled_this_turn(
             turn=3, hand=hand, permanents=self.mana, library=library,
-            assembly_line=self.line, profiles=self.profiles, tutor_meta=self.tutor_meta,
-            pool=exporter.GoldfishManaPool([frozenset({"C"})] * len(self.mana)))
+            assembly_line=self.line, profiles=self.profiles,
+            pool=exporter.GoldfishManaPool([frozenset({"C"})] * len(self.mana)), commander_name="Cmdr")
 
     def test_one_tutor_two_empty_slots_not_assembled(self):
         # 1 tutor, neither piece drawn -> cannot cover both slots.

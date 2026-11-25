@@ -65,6 +65,11 @@
       "type": "other",
       "name": "User tag-audit approval, 2026-11-21",
       "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. Enlightened Tutor: tutor_targets artifact and enchantment (it read as finding any card); its text searches for \"an artifact or enchantment card\". Not expressible in the tag: it puts the card on top of the library, and the gates still credit it as reaching the hand the same turn. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 3.7% -> 2.7%; best combo assembly at turn 8 0.6% -> 0.3%; lethalProxy at turn 7 11.8% -> 11.9%. Win turns 8/9/10, simulation health 73.6 (B) and metrics global_health 85 unchanged."
+    },
+    {
+      "type": "other",
+      "name": "User tag approval, combo-check step 1, 2026-11-24",
+      "detail": "Tutor and recursion tags from the step-1 tag checklist of the combo-check fix (plan \"combo checks, step 1\"; this deck is rows 1-2 of the checklist's 113), accepted by the owner on 2026-11-24. No card entered or left the list and no role changed, so this is not a swap round. The combo checks now read what each tutor or recursion card may find or return and where it puts it (data/bracket-philosophy.md, comboLethal proxy schema). Tags: Master Skald: recursion_targets [artifact, enchantment] (new), recursion_mode to_hand (new); Enlightened Tutor: tutor_mode to_top (new). Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 3.2% -> 1.7%; best assembly at turn 8 0.4% -> 0.2%; best-of (comboLethal, lethalProxy) at turn 8 50.7% -> 50.8%; win turn best/typical/contested 7/8/9 unchanged; B2/B3 table row unchanged; simulation health score 75.4 A unchanged; metrics global_health 85 unchanged. The graveyard is still assumed, not tracked (step 3): not measured."
     }
   ],
   "guideContent": {
@@ -595,7 +600,12 @@
     {
       "name": "Master Skald",
       "type": "Creature — Dwarf Warrior",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "artifact",
+        "enchantment"
+      ],
+      "recursion_mode": "to_hand"
     },
     {
       "name": "Aviary Mechanic",
@@ -839,7 +849,8 @@
       "tutor_targets": [
         "artifact",
         "enchantment"
-      ]
+      ],
+      "tutor_mode": "to_top"
     },
     {
       "name": "Sol Ring",

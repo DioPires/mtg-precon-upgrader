@@ -47,6 +47,11 @@
       "type": "other",
       "name": "User tag-audit approval, 2026-11-21",
       "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. Boonweaver Giant: tutor_targets enchantment (\"search your graveyard, hand, and/or library for an Aura card and put it onto the battlefield attached to this creature\"). Fiend Hunter, Werefox Bodyguard and Leonin Relic-Warder: secondary role recursion removed; each returns the card it exiled, not a card from a graveyard. Not expressible in the tag: an Aura that can enchant Boonweaver, so the tag still admits Bastion of Remembrance, Angelic Renewal, Necromancy and Animate Dead; it puts the Aura onto the battlefield, credited as reaching the hand the same turn. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 7.3% -> 6.5%; best combo assembly at turn 8 8.1% -> 7.8%. The goldfish no longer holds Fiend Hunter and Werefox Bodyguard back as recursion and now casts them (Leonin Relic-Warder stays uncast as interaction); lethalProxy rises at turn 8 3.8% -> 6.6%, turn 9 13.8% -> 20.6% and turn 10 28.2% -> 37.3%, and in a paired trace of the export's first 625 games, 97 of the 99 games whose lethalProxy changed first differ where the goldfish casts one of the two; the combat proxy credits each with its mana value (3), not its printed power (1 and 2). Still no win turn and below 50% at turn 10; simulation health 67.9 (B) and metrics global_health 89 unchanged (recursion count 24.0 -> 22.5, above its scoring cap)."
+    },
+    {
+      "type": "other",
+      "name": "User tag approval, combo-check step 1, 2026-11-24",
+      "detail": "Tutor and recursion tags from the step-1 tag checklist of the combo-check fix (plan \"combo checks, step 1\"; this deck is rows 41-69 of the checklist's 113), accepted by the owner on 2026-11-24. No card entered or left the list and no role changed, so this is not a swap round. The combo checks now read what each tutor or recursion card may find or return and where it puts it (data/bracket-philosophy.md, comboLethal proxy schema). Tags: Agadeem's Awakening // Agadeem, the Undercrypt: recursion_targets [creature] (new), recursion_mv_cap X (new), recursion_mode to_battlefield (new); Sun Titan: recursion_targets [artifact, battle, creature, enchantment, land, planeswalker] (new), recursion_mv_cap 3 (new), recursion_mode to_battlefield (new); Angel of Indemnity: recursion_targets [artifact, battle, creature, enchantment, land, planeswalker] (new), recursion_mv_cap 4 (new), recursion_mode to_battlefield (new); Shepherd of the Cosmos: recursion_targets [artifact, battle, creature, enchantment, land, planeswalker] (new), recursion_mv_cap 2 (new), recursion_mode to_battlefield (new); Boonweaver Giant: tutor_subtypes [Aura] (new), tutor_mode none (new), recursion_targets [enchantment] (new), recursion_subtypes [Aura] (new), recursion_mode none (new); Brotherhood Outcast: recursion_targets [artifact, enchantment] (new), recursion_subtypes [Aura, Equipment] (new), recursion_mv_cap 3 (new), recursion_mode to_battlefield (new); Danitha, Benalia's Hope: recursion_targets [artifact, enchantment] (new), recursion_subtypes [Aura, Equipment] (new), recursion_mode to_battlefield (new); Angelic Renewal: recursion_mode on_death (new); Gift of Immortality: recursion_mode on_death (new); Kaya's Ghostform: recursion_mode on_death (new); Necrogen Communion: recursion_mode on_death (new); Minion's Return: recursion_mode on_death (new); Changing Loyalty: recursion_mode on_death (new); Fungal Fortitude: recursion_mode on_death (new); Reanimate: recursion_targets [creature] (new), recursion_mode to_battlefield (new); Animate Dead: recursion_targets [creature] (new), recursion_mode to_battlefield (new); Necromancy: recursion_targets [creature] (new), recursion_mode to_battlefield (new); Victimize: recursion_targets [creature] (new), recursion_mode to_battlefield (new), recursion_extra_cost sacrifice-creature (new); Phyrexian Reclamation: recursion_targets [creature] (new), recursion_mode to_hand (new), recursion_cost {1}{B} (new); Living Death: recursion_mode none (new); Unburial Rites: recursion_targets [creature] (new), recursion_mode to_battlefield (new); Dusk // Dawn: recursion_mode none (new); Beseech the Mirror: tutor_mv_cap removed; Enlightened Tutor: tutor_mode to_top (new); Undead Butler: recursion_mode on_death (new); Reassembling Skeleton: recursion_mode self (new). Unchanged: 3 of the 29 checklist rows. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 9.3% -> 0.9%; best assembly at turn 8 10.4% -> 9.2%; best-of (comboLethal, lethalProxy) at turn 8 9.3% -> 8.8%; win turn best/typical/contested 10/none/none -> none/none/none; B2/B3 table row unchanged; simulation health score 70.2 B -> 70.1 B; metrics global_health 89 unchanged. The graveyard is still assumed, not tracked (step 3): not measured."
     }
   ],
   "guideContent": {
@@ -593,7 +598,12 @@
       "type": "Sorcery // Land",
       "primary_role": "land",
       "secondary_role": "recursion",
-      "is_mdfc_land": true
+      "is_mdfc_land": true,
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mv_cap": "X",
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Emeria's Call // Emeria, Shattered Skyclave",
@@ -654,18 +664,48 @@
       "name": "Sun Titan",
       "type": "Creature — Giant",
       "primary_role": "recursion",
-      "secondary_role": "threat"
+      "secondary_role": "threat",
+      "recursion_targets": [
+        "artifact",
+        "battle",
+        "creature",
+        "enchantment",
+        "land",
+        "planeswalker"
+      ],
+      "recursion_mv_cap": 3,
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Angel of Indemnity",
       "type": "Creature — Angel Warrior",
       "primary_role": "recursion",
-      "secondary_role": "threat"
+      "secondary_role": "threat",
+      "recursion_targets": [
+        "artifact",
+        "battle",
+        "creature",
+        "enchantment",
+        "land",
+        "planeswalker"
+      ],
+      "recursion_mv_cap": 4,
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Shepherd of the Cosmos",
       "type": "Creature — Angel Warrior",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "artifact",
+        "battle",
+        "creature",
+        "enchantment",
+        "land",
+        "planeswalker"
+      ],
+      "recursion_mv_cap": 2,
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Boonweaver Giant",
@@ -674,57 +714,94 @@
       "secondary_role": "tutor",
       "tutor_targets": [
         "enchantment"
-      ]
+      ],
+      "tutor_subtypes": [
+        "Aura"
+      ],
+      "tutor_mode": "none",
+      "recursion_targets": [
+        "enchantment"
+      ],
+      "recursion_subtypes": [
+        "Aura"
+      ],
+      "recursion_mode": "none"
     },
     {
       "name": "Brotherhood Outcast",
       "type": "Creature — Human Soldier",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "artifact",
+        "enchantment"
+      ],
+      "recursion_subtypes": [
+        "Aura",
+        "Equipment"
+      ],
+      "recursion_mv_cap": 3,
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Danitha, Benalia's Hope",
       "type": "Legendary Creature — Human Knight",
       "primary_role": "recursion",
-      "secondary_role": "threat"
+      "secondary_role": "threat",
+      "recursion_targets": [
+        "artifact",
+        "enchantment"
+      ],
+      "recursion_subtypes": [
+        "Aura",
+        "Equipment"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Angelic Renewal",
       "type": "Enchantment",
       "primary_role": "recursion",
-      "secondary_role": "protection"
+      "secondary_role": "protection",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Gift of Immortality",
       "type": "Enchantment — Aura",
       "primary_role": "recursion",
-      "secondary_role": "protection"
+      "secondary_role": "protection",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Kaya's Ghostform",
       "type": "Enchantment — Aura",
       "primary_role": "recursion",
-      "secondary_role": "protection"
+      "secondary_role": "protection",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Necrogen Communion",
       "type": "Enchantment — Aura",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Minion's Return",
       "type": "Enchantment — Aura",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Changing Loyalty",
       "type": "Enchantment — Aura",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Fungal Fortitude",
       "type": "Enchantment — Aura",
       "primary_role": "recursion",
-      "secondary_role": "protection"
+      "secondary_role": "protection",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Fiend Hunter",
@@ -777,44 +854,72 @@
     {
       "name": "Reanimate",
       "type": "Sorcery",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Animate Dead",
       "type": "Enchantment — Aura",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Necromancy",
       "type": "Enchantment",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Victimize",
       "type": "Sorcery",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield",
+      "recursion_extra_cost": "sacrifice-creature"
     },
     {
       "name": "Phyrexian Reclamation",
       "type": "Enchantment",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_hand",
+      "recursion_cost": "{1}{B}"
     },
     {
       "name": "Living Death",
       "type": "Sorcery",
       "primary_role": "recursion",
-      "secondary_role": "removal-board"
+      "secondary_role": "removal-board",
+      "recursion_mode": "none"
     },
     {
       "name": "Unburial Rites",
       "type": "Sorcery",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Dusk // Dawn",
       "type": "Sorcery // Sorcery",
       "primary_role": "removal-board",
-      "secondary_role": "recursion"
+      "secondary_role": "recursion",
+      "recursion_mode": "none"
     },
     {
       "name": "Final Parting",
@@ -838,7 +943,6 @@
       "name": "Beseech the Mirror",
       "type": "Sorcery",
       "primary_role": "tutor",
-      "tutor_mv_cap": 4,
       "tutor_free_cast_via_bargain": true
     },
     {
@@ -857,7 +961,8 @@
       "tutor_targets": [
         "artifact",
         "enchantment"
-      ]
+      ],
+      "tutor_mode": "to_top"
     },
     {
       "name": "Stitcher's Supplier",
@@ -868,13 +973,15 @@
       "name": "Undead Butler",
       "type": "Creature — Zombie",
       "primary_role": "utility",
-      "secondary_role": "recursion"
+      "secondary_role": "recursion",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Reassembling Skeleton",
       "type": "Creature — Skeleton Warrior",
       "primary_role": "recursion",
-      "secondary_role": "utility"
+      "secondary_role": "utility",
+      "recursion_mode": "self"
     },
     {
       "name": "Skullclamp",

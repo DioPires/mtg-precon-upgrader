@@ -64,6 +64,11 @@
       "type": "other",
       "name": "Board swap approval, DEC-946, 2026-10-07",
       "detail": "Board verdict card b9c08040 on DEC-946 (2026-10-07), line A approved: IN Turbulent Crater, OUT Foreboding Ruins. Crater is a Swamp Mountain that enters tapped unless opponents control eight or more lands; under the four-player model that holds from your turn 3 (last seat) or turn 4 (first seat). Ruins carried no land types and was untapped only while a Swamp or Mountain card sat in hand. Crater's Swamp type feeds Cabal Coffers, Tainted Peak, Castle Locthwain and Dragonskull Summit, and Bloodstained Mire fetches it. Karsten counts unchanged (B 31/20, R 21/18)."
+    },
+    {
+      "type": "other",
+      "name": "User tag approval, combo-check step 1, 2026-11-24",
+      "detail": "Tutor and recursion tags from the step-1 tag checklist of the combo-check fix (plan \"combo checks, step 1\"; this deck is rows 14-21 of the checklist's 113), accepted by the owner on 2026-11-24. No card entered or left the list and no role changed, so this is not a swap round. The combo checks now read what each tutor or recursion card may find or return and where it puts it (data/bracket-philosophy.md, comboLethal proxy schema). Tags: Resurrection Orb: recursion_mode on_death (new); Beseech the Mirror: tutor_free_cast_via_bargain true (new); Reanimate: recursion_targets [creature] (new), recursion_mode to_battlefield (new); Vampiric Tutor: tutor_mode to_top (new); Animate Dead: recursion_targets [creature] (new), recursion_mode to_battlefield (new). Unchanged: 3 of the 8 checklist rows. Mogis, God of Slaughter pays Diabolic Intent's sacrifice only once the devotion to black and red of the permanents on the battlefield reaches seven (below it, it is not a creature); at any devotion it can be Beseech the Mirror's bargain object (an enchantment). Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 18.5% -> 16.9%; best assembly at turn 8 39.3% -> 29.7%; best-of (comboLethal, lethalProxy) at turn 8 38.2% -> 38.6%; win turn best/typical/contested 8/9/10 unchanged; B2/B3 table row unchanged; simulation health score 70.5 B -> 70.1 B; metrics global_health 88 unchanged. The graveyard is still assumed, not tracked (step 3): not measured."
     }
   ],
   "guideContent": {
@@ -1775,7 +1780,8 @@
     {
       "name": "Resurrection Orb",
       "type": "Artifact",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_mode": "on_death"
     },
     {
       "name": "Rakdos Signet",
@@ -1987,7 +1993,8 @@
       "primary_role": "tutor",
       "tutor_targets": [
         "any"
-      ]
+      ],
+      "tutor_free_cast_via_bargain": true
     },
     {
       "name": "Heartless Hidetsugu",
@@ -2096,7 +2103,11 @@
     {
       "name": "Reanimate",
       "type": "Sorcery",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Twinflame Tyrant",
@@ -2131,7 +2142,8 @@
       "primary_role": "tutor",
       "tutor_targets": [
         "any"
-      ]
+      ],
+      "tutor_mode": "to_top"
     },
     {
       "name": "Diabolic Intent",
@@ -2158,7 +2170,11 @@
     {
       "name": "Animate Dead",
       "type": "Enchantment",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Razorkin Needlehead",

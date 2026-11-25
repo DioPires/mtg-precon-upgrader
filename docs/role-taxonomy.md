@@ -43,6 +43,10 @@ Use `secondary_role: "tutor"` when the card's primary role is structurally domin
 
 Land-search convention: basic/typed land ramp and fetchlands stay `ramp` or `land`, not `tutor`. Unrestricted land-card search that can find utility lands, such as Crop Rotation, Sylvan Scrying, or Wight of the Reliquary's land mode, counts as `tutor`; add `ramp` secondary when it also accelerates mana by putting the land onto the battlefield.
 
+### Tags the combo checks read
+
+The goldfish's combo checks read a `tutor` or `recursion` role as a card that can stand in for a missing combo piece, and the entry's `tutor_*` / `recursion_*` tags as what it may find or return and where it puts it (combo-check step 1, 2026-11-24; every field and value in the tag table of [`data/bracket-philosophy.md`](../data/bracket-philosophy.md), "comboLethal proxy schema"). Giving a card one of these roles therefore has two consequences. In a deck with a `kind: "combo"` win condition, a `recursion` entry whose front face is not a land needs `recursion_mode`: without it `validate_deck_json.py` reports the entry and the simulation export fails. A `tutor` entry with no tags reads as a tutor that finds any card and puts it into the hand: add the tags its text calls for. A tag on an entry without its role is refused the same way.
+
 ## Card-draw classification (DEC-478)
 
 `card-draw` as a primary role requires one of:
@@ -127,9 +131,12 @@ Modal spell//land DFCs like Agadeem's Awakening / Bala Ged Recovery count as par
   "name": "Bala Ged Recovery // Bala Ged Sanctuary",
   "type": "Sorcery // Land",
   "primary_role": "recursion",
+  "recursion_mode": "to_hand",
   "is_mdfc_land": true
 }
 ```
+
+(Bala Ged Recovery: "Return target card from your graveyard to your hand." `recursion_mode` is required in a deck with a combo win condition; see "Tags the combo checks read" above.)
 
 The metrics computer gives an MDFC Karsten-calibrated per-card credit (DEC-470): **0.74 land / 0.26 spell** when the back land face can enter untapped (pay-life clause), **0.38 land / 0.62 spell** when it unconditionally enters tapped — classified from the back land face's oracle text only (see `docs/deck-metrics.md`). `primary_role` still drives role coverage on the spell side at full weight.
 

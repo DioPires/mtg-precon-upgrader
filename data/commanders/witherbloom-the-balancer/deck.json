@@ -72,6 +72,11 @@
       "type": "other",
       "name": "User tag-audit approval, 2026-11-21",
       "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. Buried Alive: secondary role recursion removed; it puts up to three creature cards from the library into the graveyard and returns none. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): no simulation number moves; metrics global_health 94 unchanged (recursion count 6.5 -> 6.0, above its scoring cap)."
+    },
+    {
+      "type": "other",
+      "name": "User tag approval, combo-check step 1, 2026-11-24",
+      "detail": "Tutor and recursion tags from the step-1 tag checklist of the combo-check fix (plan \"combo checks, step 1\"; this deck is rows 104-106 of the checklist's 113), accepted by the owner on 2026-11-24. No card entered or left the list and no role changed, so this is not a swap round. The combo checks now read what each tutor or recursion card may find or return and where it puts it (data/bracket-philosophy.md, comboLethal proxy schema). Tags: Fauna Shaman: tutor_cost {G} (new), tutor_timing later (new). Unchanged: 2 of the 3 checklist rows. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): best assembly at turn 8 26.6% -> 26.2%; best-of (comboLethal, lethalProxy) at turn 8 27.1% -> 27.2%; win turn best/typical/contested 8/9/9 unchanged; B2/B3 table row unchanged; simulation health score 69.5 B unchanged; metrics global_health 94 unchanged. The graveyard is still assumed, not tracked (step 3): not measured."
     }
   ],
   "guideContent": {
@@ -1001,7 +1006,9 @@
       "tutor_targets": [
         "creature"
       ],
-      "tutor_extra_cost": "discard-creature"
+      "tutor_extra_cost": "discard-creature",
+      "tutor_cost": "{G}",
+      "tutor_timing": "later"
     },
     {
       "name": "Ophiomancer",

@@ -4,7 +4,9 @@
 Checks that every card-name reference resolves against the local Scryfall
 oracle mirror and that category/highlight/synergy/win-condition references
 point at cards in the deck; `candidate_pins` must list objects with a non-empty
-`name`, and a combo line's `minX` must map its in-deck {X}-cost pieces to integers >= 1.
+`name`, a combo line's `minX` must map its in-deck {X}-cost pieces to integers >= 1,
+and a decklist entry's tutor and recursion tags must pass gate_tags_lib.entry_errors,
+the check the simulation exporter runs.
 """
 
 from __future__ import annotations
@@ -15,6 +17,10 @@ import sys
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import gate_tags_lib
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 COMMANDERS_DIR = PROJECT_ROOT / "data" / "commanders"
@@ -61,8 +67,11 @@ class ValidationIssue:
 @dataclass(frozen=True)
 class ScryfallNameIndex:
     canonical_by_alias: dict[str, str]
-    # Front-face mana cost by canonical name, for the win-condition minX check.
+    # Front-face mana cost by canonical name, for the win-condition minX check
+    # and the tag checks.
     mana_cost_by_canonical: dict[str, str] = field(default_factory=dict)
+    # Front-face type line by canonical name, for the tag checks.
+    type_line_by_canonical: dict[str, str] = field(default_factory=dict)
 
     def resolve(self, name: str) -> str | None:
         return self.canonical_by_alias.get(name)
@@ -70,6 +79,14 @@ class ScryfallNameIndex:
     def mana_cost(self, name: str) -> str:
         """The front-face mana cost of the card ``name`` resolves to ("" if none)."""
         return self.mana_cost_by_canonical.get(self.resolve(name) or "", "")
+
+    def front(self, name: str) -> tuple[str, str] | None:
+        """The front face of the card ``name`` resolves to, as (type line, mana
+        cost), or None when the name does not resolve."""
+        canonical = self.resolve(name)
+        if canonical is None:
+            return None
+        return self.type_line_by_canonical.get(canonical, ""), self.mana_cost_by_canonical.get(canonical, "")
 
 
 def available_deck_paths(commanders_dir: Path = COMMANDERS_DIR) -> list[Path]:
@@ -101,10 +118,11 @@ def _index_card_name(index: dict[str, str], canonical: str, alias: str | None) -
 
 def load_scryfall_name_index(mirror_file: Path = MIRROR_FILE) -> ScryfallNameIndex:
     """Load exact Scryfall card names and face names, and each card's front-face
-    mana cost, from the local mirror."""
+    mana cost and type line, from the local mirror."""
     cards = json.loads(mirror_file.read_text())
     canonical_by_alias: dict[str, str] = {}
     mana_cost_by_canonical: dict[str, str] = {}
+    type_line_by_canonical: dict[str, str] = {}
     for card in cards:
         canonical = card.get("name")
         if not canonical:
@@ -115,7 +133,9 @@ def load_scryfall_name_index(mirror_file: Path = MIRROR_FILE) -> ScryfallNameInd
             _index_card_name(canonical_by_alias, canonical, face.get("name"))
         mana_cost = card.get("mana_cost") or (faces[0].get("mana_cost") if faces else "") or ""
         mana_cost_by_canonical[canonical] = mana_cost.split(" // ")[0]
-    return ScryfallNameIndex(canonical_by_alias, mana_cost_by_canonical)
+        type_line = card.get("type_line") or (faces[0].get("type_line") if faces else "") or ""
+        type_line_by_canonical[canonical] = type_line.split(" // ")[0]
+    return ScryfallNameIndex(canonical_by_alias, mana_cost_by_canonical, type_line_by_canonical)
 
 
 def _nested_value(root: Mapping[str, object], dotted_path: str) -> object:
@@ -250,6 +270,34 @@ def iter_min_x_issues(
                 yield ValidationIssue("invalid_min_x", reference, detail)
 
 
+def iter_tag_issues(
+    deck: Mapping[str, object],
+    deck_file: Path,
+    scryfall_index: ScryfallNameIndex,
+) -> Iterator[ValidationIssue]:
+    """Yield one issue per error gate_tags_lib.entry_errors finds in a decklist
+    entry's tags: a key that names a tutor or recursion field ("tutor" or
+    "recursion" in it, any case) that the vocabulary does not define, a value
+    outside its field's set, a role that is not a string, a tag without its
+    role, a missing recursion_mode
+    in a deck with a combo win condition, an "X" cap on a card that pays no
+    {X}. The exporter (substitute_tables) runs the same check and raises."""
+    deck_id = str(deck.get("id") or deck_file.parent.name)
+    decklist = deck.get("decklist")
+    if not isinstance(decklist, list):
+        return
+    wincons = deck.get("winConditions")
+    has_combo_line = isinstance(wincons, list) and any(
+        isinstance(wincon, Mapping) and wincon.get("kind") == "combo" for wincon in wincons)
+    for index, entry in enumerate(decklist):
+        if not isinstance(entry, Mapping):
+            continue
+        front = scryfall_index.front(str(entry.get("name")))
+        for error in gate_tags_lib.entry_errors(entry, has_combo_line, front):
+            reference = CardReference(deck_id, deck_file, f"decklist[{index}]", str(entry.get("name")), False)
+            yield ValidationIssue("invalid_tag", reference, f"Deck {deck_id}: {error}")
+
+
 def _canonical_deck_card_names(
     deck: Mapping[str, object],
     deck_file: Path,
@@ -297,6 +345,7 @@ def validate_deck_json(
         issues.extend(iter_candidate_pin_issues(deck, deck_file))
         deck_names = {reference.name for reference in iter_deck_core_references(deck, deck_file)}
         issues.extend(iter_min_x_issues(deck, deck_file, scryfall_index, deck_names))
+        issues.extend(iter_tag_issues(deck, deck_file, scryfall_index))
 
     return issues
 
@@ -316,8 +365,9 @@ def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(
         description=(
             "Fail if deck.json card references are absent from the local Scryfall "
-            "mirror or point outside the decklist, or if candidate_pins or a "
-            "win condition's minX is malformed."
+            "mirror or point outside the decklist, or if candidate_pins, a "
+            "win condition's minX or a decklist entry's tutor/recursion tags "
+            "are malformed."
         )
     )
     parser.add_argument(

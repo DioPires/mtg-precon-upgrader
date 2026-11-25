@@ -2,7 +2,7 @@
   "metadata": {
     "numGames": 100000,
     "numTurns": 10,
-    "generatedAt": "2026-11-24"
+    "generatedAt": "2026-11-25"
   },
   "deckComposition": {
     "totalCards": 99,
@@ -427,35 +427,35 @@
           "requiresCommander": true,
           "description": "After at least one Gandalf cast, Fury Storm copies itself per commander cast; each copy triggers Storm-Kiln Artist's magecraft for Treasure-positive storm turns.",
           "byTurn": {
-            "1": 0.7,
-            "2": 1.4,
-            "3": 2.2,
-            "4": 2.9,
-            "5": 4.4,
-            "6": 6.4,
-            "7": 8.8,
-            "8": 11.3,
-            "9": 13.8,
-            "10": 16.4
+            "1": 0.4,
+            "2": 0.6,
+            "3": 1.2,
+            "4": 1.4,
+            "5": 1.9,
+            "6": 2.5,
+            "7": 3.2,
+            "8": 4.1,
+            "9": 5.0,
+            "10": 5.8
           },
           "medianAssemblyTurn": null
         }
       ],
       "bestByTurn": {
-        "1": 0.7,
-        "2": 1.4,
-        "3": 2.2,
-        "4": 2.9,
-        "5": 4.4,
-        "6": 6.4,
-        "7": 8.8,
-        "8": 11.3,
-        "9": 13.8,
-        "10": 16.4
+        "1": 0.4,
+        "2": 0.6,
+        "3": 1.2,
+        "4": 1.4,
+        "5": 1.9,
+        "6": 2.5,
+        "7": 3.2,
+        "8": 4.1,
+        "9": 5.0,
+        "10": 5.8
       },
       "fastestCombo": "Fury Storm Magecraft",
       "medianAssemblyTurn": null,
-      "methodology": "Tutor/redundancy-aware Monte-Carlo assembly (DEC-363): share of 10,000 seeded goldfish games in which every combo slot is filled by the given turn. A slot is filled by a drawn member (hand or battlefield) or by assigning one not-yet-used generic to-hand tutor (drawn + mana payable + a legal library target left), with one-tutor-one-slot bipartite matching so a single tutor can never fill two open slots. The commander slot is auto-filled from the command zone. Graveyard tutors and reanimation are excluded as non-finders."
+      "methodology": "Tutor/redundancy-aware Monte-Carlo assembly (DEC-363): share of 10,000 seeded goldfish games in which every combo slot is filled by the given turn. A slot is filled by a drawn member (hand or battlefield) or by a tutor in hand whose tags (combo-check step 1, owner-approved 2026-11-24) allow a member still in the library: one that puts the card into the hand (Final Parting's hand half; Beseech the Mirror by its route to the hand) or onto the battlefield (a permanent member). Each tutor and each member fills one slot (no card is listed in two slots of a line), every assignment is tried, and the tutors' cost must be payable: the tutor's use (its cast, plus a separate search cost when it is a permanent; that cost alone when it is used another way, such as cycling) and X = the member's mana value, never the member itself. Each extra cost takes its own object (never the commander or a permanent whose mana comes from sacrificing it; a land or a token is never sacrificed or bargained, but a land creature card in hand can be discarded; a Theros god is a creature to sacrifice only once its devotion, read as the check starts, is met: a cast that would add devotion that turn is not counted, which reads too little, nor a sacrifice that would remove it, which reads too much; below it, it is the bargain object as an enchantment), and every filled slot keeps one drawn member that pays nothing: a member may be sacrificed, discarded or bargained, or cast as an instant or sorcery tutor, only if another drawn member of its slot is left; a member that is a permanent tutor stays when cast and pays its cast. The commander slot is auto-filled from the command zone. Recursion cards fill no slot, and neither do tutors that put the card on top of the library or into the graveyard, abilities that cannot act the turn the card is cast, lands in hand and no-credit cards."
     },
     "coloredSourceAdequacy": {
       "overallScore": 90.2,
@@ -601,13 +601,13 @@
     }
   },
   "deckHealthScore": {
-    "score": 77.6,
+    "score": 77.3,
     "grade": "A",
     "components": {
       "manaReliability": 81.1,
       "threatDeployment": 98.8,
       "interactionDensity": 89.1,
-      "comboConsistency": 52.8,
+      "comboConsistency": 51.1,
       "commanderIndependence": 51.4
     },
     "methodology": "Weighted composite: mana 30%, threats 20%, interaction 20%, combo 15%, commander independence 15%. Combo term scaled by wincon_style confidence (DEC-365)."
@@ -708,7 +708,7 @@
           "mean": 0.0
         },
         "commanderCast": 1.9,
-        "firstThreat": 29.6,
+        "firstThreat": 29.7,
         "meaningfulBoard": 0.8,
         "lethalProxy": 0.0,
         "comboLethal": 0.0
@@ -730,7 +730,7 @@
           "median": 1.0,
           "p25": 1.0,
           "p75": 1.0,
-          "mean": 0.9
+          "mean": 1.0
         },
         "availableMana": {
           "median": 3.0,
@@ -757,8 +757,8 @@
           "mean": 0.7
         },
         "commanderCast": 30.2,
-        "firstThreat": 75.7,
-        "meaningfulBoard": 21.0,
+        "firstThreat": 75.8,
+        "meaningfulBoard": 21.1,
         "lethalProxy": 0.0,
         "comboLethal": 0.0
       },
@@ -803,13 +803,13 @@
           "median": 4.0,
           "p25": 0.0,
           "p75": 4.0,
-          "mean": 3.5
+          "mean": 3.6
         },
         "commanderCast": 84.2,
         "firstThreat": 96.0,
-        "meaningfulBoard": 73.2,
+        "meaningfulBoard": 73.5,
         "lethalProxy": 0.0,
-        "comboLethal": 0.8
+        "comboLethal": 0.5
       },
       "5": {
         "lands": {
@@ -856,9 +856,9 @@
         },
         "commanderCast": 91.2,
         "firstThreat": 98.4,
-        "meaningfulBoard": 92.0,
+        "meaningfulBoard": 92.2,
         "lethalProxy": 0.0,
-        "comboLethal": 4.8
+        "comboLethal": 3.2
       },
       "6": {
         "lands": {
@@ -889,7 +889,7 @@
           "median": 13.0,
           "p25": 10.0,
           "p75": 16.0,
-          "mean": 13.1
+          "mean": 13.2
         },
         "combatPressure": {
           "median": 9.0,
@@ -901,13 +901,13 @@
           "median": 20.0,
           "p25": 13.0,
           "p75": 24.0,
-          "mean": 19.1
+          "mean": 19.2
         },
         "commanderCast": 94.3,
         "firstThreat": 99.1,
-        "meaningfulBoard": 96.2,
-        "lethalProxy": 1.1,
-        "comboLethal": 12.5
+        "meaningfulBoard": 96.3,
+        "lethalProxy": 1.2,
+        "comboLethal": 8.6
       },
       "7": {
         "lands": {
@@ -935,28 +935,28 @@
           "mean": 6.8
         },
         "pressureScore": {
-          "median": 15.0,
+          "median": 16.0,
           "p25": 12.0,
           "p75": 19.0,
-          "mean": 15.3
+          "mean": 15.4
         },
         "combatPressure": {
           "median": 12.0,
           "p25": 9.0,
-          "p75": 14.0,
-          "mean": 11.5
+          "p75": 15.0,
+          "mean": 11.6
         },
         "cumulativeDamageProxy": {
           "median": 31.0,
           "p25": 23.0,
           "p75": 38.0,
-          "mean": 30.7
+          "mean": 30.8
         },
         "commanderCast": 96.0,
         "firstThreat": 99.4,
         "meaningfulBoard": 97.8,
-        "lethalProxy": 20.5,
-        "comboLethal": 18.0
+        "lethalProxy": 21.0,
+        "comboLethal": 12.8
       },
       "8": {
         "lands": {
@@ -975,7 +975,7 @@
           "median": 4.0,
           "p25": 3.0,
           "p75": 5.0,
-          "mean": 4.4
+          "mean": 4.5
         },
         "availableMana": {
           "median": 8.0,
@@ -987,25 +987,25 @@
           "median": 17.0,
           "p25": 13.0,
           "p75": 21.0,
-          "mean": 17.2
+          "mean": 17.3
         },
         "combatPressure": {
-          "median": 13.0,
+          "median": 14.0,
           "p25": 10.0,
           "p75": 17.0,
-          "mean": 13.4
+          "mean": 13.5
         },
         "cumulativeDamageProxy": {
           "median": 45.0,
           "p25": 34.0,
-          "p75": 54.0,
-          "mean": 44.0
+          "p75": 55.0,
+          "mean": 44.3
         },
         "commanderCast": 97.5,
         "firstThreat": 99.7,
         "meaningfulBoard": 98.5,
-        "lethalProxy": 63.4,
-        "comboLethal": 23.1
+        "lethalProxy": 64.2,
+        "comboLethal": 17.3
       },
       "9": {
         "lands": {
@@ -1042,19 +1042,19 @@
           "median": 15.0,
           "p25": 11.0,
           "p75": 18.0,
-          "mean": 14.9
+          "mean": 15.0
         },
         "cumulativeDamageProxy": {
           "median": 60.0,
-          "p25": 46.0,
-          "p75": 72.0,
-          "mean": 58.9
+          "p25": 47.0,
+          "p75": 72.8,
+          "mean": 59.2
         },
         "commanderCast": 98.3,
         "firstThreat": 99.8,
         "meaningfulBoard": 99.0,
-        "lethalProxy": 84.6,
-        "comboLethal": 28.3
+        "lethalProxy": 84.9,
+        "comboLethal": 22.3
       },
       "10": {
         "lands": {
@@ -1085,7 +1085,7 @@
           "median": 20.0,
           "p25": 15.0,
           "p75": 25.0,
-          "mean": 20.3
+          "mean": 20.4
         },
         "combatPressure": {
           "median": 16.0,
@@ -1094,16 +1094,16 @@
           "mean": 16.3
         },
         "cumulativeDamageProxy": {
-          "median": 76.0,
+          "median": 77.0,
           "p25": 60.0,
-          "p75": 91.0,
-          "mean": 75.2
+          "p75": 92.0,
+          "mean": 75.6
         },
         "commanderCast": 98.9,
         "firstThreat": 99.8,
         "meaningfulBoard": 99.4,
-        "lethalProxy": 93.5,
-        "comboLethal": 33.4
+        "lethalProxy": 93.6,
+        "comboLethal": 27.3
       }
     },
     "comboLines": [
@@ -1151,8 +1151,8 @@
       "firstThreat": {
         "byTurn": {
           "1": 0.0,
-          "2": 29.6,
-          "3": 75.7,
+          "2": 29.7,
+          "3": 75.8,
           "4": 96.0,
           "5": 98.4,
           "6": 99.1,
@@ -1167,10 +1167,10 @@
         "byTurn": {
           "1": 0.0,
           "2": 0.8,
-          "3": 21.0,
-          "4": 73.2,
-          "5": 92.0,
-          "6": 96.2,
+          "3": 21.1,
+          "4": 73.5,
+          "5": 92.2,
+          "6": 96.3,
           "7": 97.8,
           "8": 98.5,
           "9": 99.0,
@@ -1185,11 +1185,11 @@
           "3": 0.0,
           "4": 0.0,
           "5": 0.0,
-          "6": 1.1,
-          "7": 20.5,
-          "8": 63.4,
-          "9": 84.6,
-          "10": 93.5
+          "6": 1.2,
+          "7": 21.0,
+          "8": 64.2,
+          "9": 84.9,
+          "10": 93.6
         },
         "medianTurn": 8
       },
@@ -1198,17 +1198,17 @@
           "1": 0.0,
           "2": 0.0,
           "3": 0.0,
-          "4": 0.8,
-          "5": 4.8,
-          "6": 12.5,
-          "7": 18.0,
-          "8": 23.1,
-          "9": 28.3,
-          "10": 33.4
+          "4": 0.5,
+          "5": 3.2,
+          "6": 8.6,
+          "7": 12.8,
+          "8": 17.3,
+          "9": 22.3,
+          "10": 27.3
         },
         "medianTurn": null
       }
     },
-    "methodology": "10,000-game solitaire heuristic. Every turn draws a card, turn 1 included: the simulation models a four-player free-for-all Commander game, in which no player skips the draw step of their first turn (CR 103.8c). Sequencing: land drop, cheapest ramp, commander on affordability, combo/assembly pieces, biggest affordable threat, then other proactive spells. Mana is spent once per turn: the turn's pool is built after the land drop and each cast removes the sources it paid with, so the whole turn's casts (plus the combo and engine-activation gates, which are checked against what is left) never exceed the available mana (DEC-937). Sources that come online untapped mid-turn join the pool. Cast priority holds mana for the line instead of emptying the pool into filler (DEC-944). The commander, mana sources and the cards named by the deck's combo gate or KEY_COMBOS assembly slots are cast freely \u2014 mana sources are mana-positive across the turn and a piece cast advances a line rather than spending it. Every other cast is filler, and filler is skipped when the pool it would leave behind no longer pays for (a) a combo or assembly line that was reachable this turn before the cast, or (b) the deck's configured paid activations: one commander Egg activation while the hatch engine is online (DEC-938) and one Aggravated Assault combat while the enchantment is out with an attacker (DEC-940). The gate outranks the activations: an Egg activation, a Skullclamp equip or an extra combat is itself skipped when paying for it would lose a reachable gate. A hold the pool cannot afford at all is dropped rather than left blocking development. One activation of each kind is held, not an open-ended budget. Decks with no combo win condition, no KEY_COMBOS entry and no configured engine have no holds and sequence exactly as before. Meaningful board = pressure score >= 6 or 2+ threats. Lethal proxy = cumulative combat-pressure proxy >= 40; combat pressure uses mana-value-based creature scoring (min(8, MV) plus one for a listed combat keyword) so the curve stays comparable across the fleet \u2014 printed power/toughness is in the card metadata since DEC-940 but is deliberately not used for the damage sum, only for the combat modifiers' power gates. Combo lethal = at least one winConditions[] entry tagged kind:'combo' has all pieces present (hand, battlefield, or substitutable) and combined mana cost payable. Substitution priority for missing pieces: (1) bargain free-cast tutor (e.g. Beseech the Mirror) when a non-rock enchantment is on battlefield OR commander has been in play for 1+ turn (approximates Sauron-style amass token from real-game opponent casts); (2) type-matched regular tutor whose tutor_targets includes piece's card type and tutor_mv_cap permits piece's MV; (3) reanimation spell (decklist[].primary_role/secondary_role == 'recursion') for permanent pieces only \u2014 cost replaces piece's cast cost (treats piece as if in graveyard). Each substitute is consumed once per combo line. Tutors, non-permanent combo pieces, and reanimation spells are reserved from filler casting. v2 limitations: no literal graveyard tracking (reanim assumes piece could be in GY), no opponent interaction, no multi-turn assembly tracking, no stack-trigger ordering. Mana model (owner-approved 2026-11-19, review rounds 1 to 5 2026-11-20): a permanent gives the mana its own text gives a pilot on a normal turn, using only itself and what the goldfish has on its own battlefield; a wording the parser is known not to read stops the export. The face on the battlefield is read (a modal DFC with a land back is played as its land face; a Pathway played from the hand enters as the face that adds a commander colour the lands lack, one a search or a fetch land puts onto the battlefield front face up), without reminder text; an ability granted to a group the card belongs to counts for the card itself, the grant's subject read in full (\"Other creatures you control have\" gives the card nothing); basic land types make their colour, and a land that gives every land a type (Urborg, Tomb of Yawgmoth) or a permanent that gives every land exactly \"{T}: Add\" one mana (Chromatic Lantern) lets every land make that colour too (one mana a land, a land with no mana ability of its own included: Maze of Ith), from the moment it enters. A permanent taps once a turn: its best single ability, and at one mana the union of the colours of the abilities it could use instead; mana \"of any one color\" (Lotus Field, Wirewood Channeler, Nykthos) is all one colour, Nykthos each colour as much as its own devotion. Mana in an ability's cost is netted. A permanent that sacrifices itself for mana, or does not untap, gives that mana once, kept until a turn needs it; one that sacrifices itself leaves the battlefield as its mana is spent; one with \"{N}: Untap this\" (Basalt Monolith) is untapped at the end of the turn it was spent or any later turn with N of the lasting mana left. A cost that taps or sacrifices another permanent gives nothing, even \"Sacrifice an artifact\" on an artifact (Krark-Clan Ironworks), except Urza, Lord High Artificer's \"Tap an untapped artifact\": his Construct token's {U} is his, and each other untapped noncreature artifact with no mana of its own taps for its own {U} (it is the permanent tapped, and then cannot pay its own {T} cost), from the turn he enters or it does; never a combo-line or assembly-line member whose line needs it untapped, one with an activated ability of its own with {T} in its cost (Isochron Scepter; an Equipment such as Sword of Feast and Famine can be tapped), nor an artifact that entered tapped (Nevinyrral's Disk) or whose own {T} ability was used (The One Ring's draw, as it is cast and each later activation). Conditions on the goldfish's own battlefield are read as each turn's pool is built and as a permanent enters (land types; land and artifact counts; Elves; Swamps; Tron; devotion; colours among permanents; a legendary creature; Reflecting Pool's colours: what the other lands could produce, the face a Pathway was played as and what each of their mana abilities would make on this board, read before the ability's cost is netted and whatever its condition or cost (The Mycosynth Gardens' {1}, {T} any colour; Cabal Coffers makes black only with a Swamp out)). After every resolution (a cast, a land put onto the battlefield, a permanent leaving, a grant or trigger source entering) the turn's unspent mana is read from the board again: the mana already made (floating) plus what the untapped permanents not yet used give, with the triggers and grants out at that moment. Variable amounts count what the card alone guarantees. A creature's {T} mana (a land creature's too: Dryad Arbor enters untapped and summoning sick) and a permanent that enters tapped (a rider after it included: Noble's Purse) make mana from the next turn, and a creature's other {T} abilities wait too (Embodiment of Spring's land fetch; Sakura-Tribe Elder's has no {T}); a non-land ability with mana in its cost (a Signet) also from the next turn, a floor: using it the turn it is cast needs a spare mana the goldfish does not plan for. Each permanent is tapped or untapped for the turn: tapped as it enters tapped, when its own {T} makes mana that is spent (Urza taps other artifacts, not himself; a vigilant creature is not: M9, the pilot attacks first and casts after combat, so a vigilant mana creature both attacks and pays), when it attacks (not with vigilance) and when one of its own {T} abilities is used (the hatch commander's Egg, until Thornbite Staff untaps her as an Egg dies to any outlet; High Market's sacrifice, which counts only when paid; Castle Ardenvale's token; a land fetch). Every spend (casts, X, activations, the end of the turn's untaps and land fetches) is one exact payment, settled before the next: a payment is found whenever the cost and what the turn holds can be paid together, never otherwise, and of the payments that keep the holds the most preferred is taken (a one-colour activation is made as one colour, and its other mana is that colour). The holds: each reachable gate, and the held activation, the two kept together from the same mana where they can be paid together; a line piece being cast keeps the rest of its line, priced with the piece on the battlefield; the hatch engine's payments (the Egg activation, Skullclamp's equip, High Market's {T}) keep the reachable gates and a held Aggravated Assault the pool can still pay. A hold is checked against the pool as it stands before a source that sacrifices itself for the payment leaves (Lotus Petal as the only artifact beside Spire of Industry), an over-credit. Spend order: mana already made (floating) first; then lands, noncreature mana and creatures that could not attack (the narrowest colours first; a land with a {T} ability the turn uses later, as Castle Ardenvale, High Market and a Myriad Landscape whose fetch can net a land in this deck, last among them); then one-shot mana (the fewest sources); then creatures that could attack and are not vigilant (the fewest, then the least combat, then the fewest one-shot sources beside them). After combat a creature's mana costs what a land's does. The combo and assembly gates' reachability is checked before attackers are declared, and the gates are read after combat on the mana kept for them: a creature whose mana a reachable gate, or a held Aggravated Assault, needs stays home; a tapped creature does not attack, and one that attacked pays for nothing afterwards with mana its own {T} makes. An extra combat follows an effect that untaps the creatures, so creatures tapped for mana attack in it too; the mana they would make after that untap is not credited. \"Whenever you cast a spell, add\" (Birgi) adds as each spell is cast and taps nothing; \"add an additional\" triggers (Crypt Ghast, Badgermole Cub, Forsaken Monument) add one per permanent tapped that fires them, also for mana that comes online during the turn (a source entering, a Saga's last chapter); Forsaken Monument's extra belongs to the colourless choice of an activation: a permanent that makes {C} always gets it (one-shot {C} included: that extra is one-shot too), one that makes {C} or a colour (Nykthos, a pain land) gets it only when it makes {C}. Halo Fountain's token needs a tapped creature to untap (one that attacked or was tapped for mana, not one only waiting out the turn it entered), and that creature is untapped: one that attacked can then make its mana; one already tapped for mana is not credited again. Lands: how a land enters is read against the lands, permanents and hand at that moment (a Snarl reveals from the hand; \"two or more opponents\" is always met; \"your opponents control eight or more lands\" is met from the fourth land drop, DEC-688 / DEC-929); a fetch land is cracked as it is played for the best legal land left in the library, which enters with its own types, colours and entry rule (tapped when the search says so, untapped by the search's own condition), and the fetch land leaves; with nothing to find it stays and makes no mana of its own. A land that sacrifices or returns lands as it enters waits for them, and they leave at once (the fewest mana first), so later land counts fall: sacrificed instead of entering (Scorched Ruins) they are lost untapped, taken by its entering trigger (Lotus Field, Simic Growth Chamber) they are tapped first and that mana, floating, is spent first that turn, and a returned land goes back to the hand. A Saga makes its mana for as many turns as it has chapters, is tapped as its last chapter resolves (that mana floats) and leaves. Imprint (owner-approved): Ugin's Labyrinth exiles a colourless card of mana value 7 or more from the hand and makes {C}{C}, else {C}; Chrome Mox exiles a coloured nonartifact, nonland card and makes one mana of its colours, and is not cast, paid or by cascade, while no card can be exiled for it; the card exiled is interaction the goldfish never casts if the hand holds one, else the castable card last in its cast order, and it leaves the hand; never exiled, in every deck: tutors and reanimation spells (by their roles), combo-line and assembly-line members, reserved combo pieces and deploy-engine Equipment; a card with a land face is played as its land. Land-ramp spells move the lands their text says, each destination as written (an untapped land's mana joins the turn); a search looks at a card as it is in the library, its front face (a modal DFC whose front is a spell is not a land card there); a land a search puts onto the battlefield gives up the lands its entry takes, as one that is played does (Simic Growth Chamber), and a search chooses its land as a land drop does (a land creature is not usable that turn); land-fetching permanents (Wayfarer's Bauble, Sakura-Tribe Elder, Myriad Landscape) are cracked at the end of the turn with mana the turn left when they net a land, a {T} cost needing them untapped, and \"share a land type\" finds the most lands of one type. Mana sources for the cast order, the mulligan and the holds: a permanent with mana every turn, a land-ramp spell, a land-fetching permanent, an imprint permanent. availableMana is the mana the pilot could have spent that turn: the turn's pool plus every mana added during the turn (cast triggers, sources and lands that came online untapped, the end of the turn's land fetches included, mana of lands given up or of a Saga leaving after it was tapped). The other per-turn counts (lands, ramp, threats, pressure) are read after the end-of-turn actions. Not read (the export stops): a nonland card with no mana cost (suspend), a card that gives up a land as it acts or enters (Harrow, Mox Diamond, Coral Atoll, Brokers Hideout), a land that sacrifices, returns or exiles itself in a trigger (City of Traitors), a land search whose count or filter no rule places (\"up to X\", \"four\", \"that many\", a snow land, a qualification after \"card\": \"with different names\", \"that each have a basic land type\", \"or Planet card\"; a list of cards; a destination other than the battlefield, the hand, or the two split as written; a later \"instead\") or behind a cost that keeps the permanent (Thawing Glaciers), lasting mana beside an ability that sacrifices the permanent for more (Crystal Vein), exhaust abilities, a land whose type or copy is chosen as it enters, a fetch land with its own entry rule, a non-land permanent that grants or sets land types (Prismatic Omen, Realmwright's chosen type, Blood Moon beside other colours), a grant to every land of anything but \"{T}: Add\" one mana, and triggered mana other than the named floors below. Convention: Exotic Orchard and Fellwar Stone make the commander's colours (opponents' lands are not modelled). Named floors (not credited): Treasure and other mana tokens; rituals and other instants and sorceries that add mana; cost reducers and commander cost reductions; mana from tapping or sacrificing other creatures (Heritage Druid, Elven Chorus, Cryptolith Rite, Sliver grants to other Slivers, Ashnod's Altar, Phyrexian Tower's second ability); Crime Novelist's mana when an artifact is sacrificed; untappers (Dramatic Reversal, Seedborn Muse, Quirion Ranger, Wirewood Symbiote, Wirewood Lodge's untap); mana that needs the graveyard, the hand or opponents; Three Tree City's chosen type; growth past printed power (Marwyn, the Nurturer, Vivi Ornitier and Kami of Whispered Hopes are credited at their printed power); Rubble Rouser; Mutable Explorer's token; Extraplanar Lens (it exiles one of the pilot's lands and the goldfish does not cast it); Emrakul, the Exigent Doom's untap and hand ability; Growing Rites of Itlimoc's transformation (cast as its front); Urza's Saga's chapter III search; \"Nonbasic lands are\" a type in a deck of that type's one colour (Harbinger of the Seas' Islands in a mono-blue deck), not applied to the goldfish's own lands; an Aura that makes another permanent a colourless land (Imprisoned in the Moon). Dryad Arbor is a land and never attacks. Restricted mana (\"Spend this mana only ...\") counts in full, an over-credit. In this deck, mana read on the battlefield: Mox Amber, Plaza of Heroes, Reflecting Pool, Spire of Industry; abilities not credited: Kykar, Wind's Fury (needs another resource), Vivi Ornitier (printed power). Activated draw engines modeled (DEC-472): The One Ring (max 4 activations). Each turn on the battlefield the engine activates once \u2014 its counter total grows by one and that many cards are drawn (the cast-turn draw stays on the immediateDraw path). maxActivations is the stopping rule standing in for The One Ring's upkeep life loss, which the goldfish does not track. Floors: the on-cast protection turn and opponent-dependent draw taxes (Rhystic Study / Mystic Remora class) are not modeled."
+    "methodology": "10,000-game solitaire heuristic. Every turn draws a card, turn 1 included: the simulation models a four-player free-for-all Commander game, in which no player skips the draw step of their first turn (CR 103.8c). Sequencing: land drop, cheapest ramp, commander on affordability, combo/assembly pieces, biggest affordable threat, then other proactive spells. Mana is spent once per turn: the turn's pool is built after the land drop and each cast removes the sources it paid with, so the whole turn's casts (plus the combo and engine-activation gates, which are checked against what is left) never exceed the available mana (DEC-937). Sources that come online untapped mid-turn join the pool. Cast priority holds mana for the line instead of emptying the pool into filler (DEC-944). The commander, mana sources and the cards named by the deck's combo gate or KEY_COMBOS assembly slots are cast freely \u2014 mana sources are mana-positive across the turn and a piece cast advances a line rather than spending it. Every other cast is filler, and filler is skipped when the pool it would leave behind no longer pays for (a) a combo or assembly line that was reachable this turn before the cast, or (b) the deck's configured paid activations: one commander Egg activation while the hatch engine is online (DEC-938) and one Aggravated Assault combat while the enchantment is out with an attacker (DEC-940). The gate outranks the activations: an Egg activation, a Skullclamp equip or an extra combat is itself skipped when paying for it would lose a reachable gate. A hold the pool cannot afford at all is dropped rather than left blocking development. One activation of each kind is held, not an open-ended budget. Decks with no combo win condition, no KEY_COMBOS entry and no configured engine have no holds and sequence exactly as before. Meaningful board = pressure score >= 6 or 2+ threats. Lethal proxy = cumulative combat-pressure proxy >= 40; combat pressure uses mana-value-based creature scoring (min(8, MV) plus one for a listed combat keyword) so the curve stays comparable across the fleet \u2014 printed power/toughness is in the card metadata since DEC-940 but is deliberately not used for the damage sum, only for the combat modifiers' power gates. Combo lethal = at least one winConditions[] entry tagged kind:'combo' has all pieces present (hand, battlefield, or supplied by a substitute) and the combined mana cost payable. A substitute is a tutor or recursion card in hand (decklist[] role tutor or recursion), read by its tags (combo-check step 1, owner-approved 2026-11-24): the card types, subtypes, colours and mana value it may find or return, read on the piece's front face and printed mana value, and where it puts the card. Into the hand (a tutor; Final Parting's hand half), back to the hand or castable from the graveyard (a recursion card): the card and the piece are paid. Onto the battlefield (a tutor or a recursion card): the card is paid, not the piece, and it never supplies a piece the line's minX lists or its start piece. Beseech the Mirror, bargained, casts a piece of mana value 4 or less that the line's minX does not list free, sacrificing an artifact or enchantment; otherwise the piece goes to the hand. A card with {X} in its cost pays X = the piece's mana value. A card with a separate search or return cost (tutor_cost, recursion_cost) pays its cast and that cost if its front face is a permanent, that cost alone otherwise (cycling, transmute). Each extra cost (a creature, a green creature or an artifact sacrificed, a creature card discarded, the bargain object) takes its own object: never the commander, a piece of the line, a card the assignment uses or a permanent whose mana comes from sacrificing it (Lotus Petal); a land or a token is never sacrificed or bargained, but a land creature card in hand (Dryad Arbor) can be discarded. A Theros god is a creature to sacrifice only once its devotion (the colours and number its text names, counted as for Nykthos over the mana costs of the non-land permanents as the check starts, its own included; a Room counts only its first door, the door the goldfish casts, as it never unlocks the other, which reads too little) is met: a cast that would add devotion that turn is not counted (reads too little), nor a sacrifice that would remove it (reads too much; no deck holds two gods whose creature status depends on devotion); below it, it is still the bargain object as an enchantment and, in the hand, a creature card to discard. Each card supplies one piece; a permanent piece cast from the hand may also supply one other piece with its own ability (Sun Titan returning Kaya's Ghostform), paying only that ability's cost. Every assignment of the missing pieces to different cards is tried. Supplying nothing until the goldfish casts tutors and recursion cards, uses abilities and lands (step 2) and tracks the graveyard (step 3): a card that puts the found card on top of the library or into the graveyard, an ability that cannot act the turn the card is cast (tutor_timing / recursion_timing 'later'), a land in hand, a card that returns only itself or acts only after a permanent dies, and a no-credit card (tutor_mode or recursion_mode 'none': a restriction the tags cannot state, where crediting it would mostly be wrong). Other restrictions the tags cannot state are credited, the gap a known limit: a condition not tested (Victimize, Unfinished Business, Gamble, Underworld Breach), several cards counted as one (Agadeem's Awakening, Victimize), a restriction read wider than the text (Elena, Turk Recruit's historic card). Not tracked: the graveyard (a piece a recursion card could return is assumed to be in it, an over-read) and a tutor's target in the library. Not counted: life paid, cards exiled from the graveyard, a random discard, equip, improvise; a card that finds or returns several counts one, and a piece put onto the battlefield does not then supply another piece with its own ability. A split card is read by its first half's type. In a cost, hybrid and Phyrexian mana symbols are read as free (devotion counts them). Tutors, non-permanent combo pieces and recursion cards are reserved from filler casting. A paid mulligan bottoms last the line pieces and the tutor and recursion cards whose tags can supply one of the deck's line pieces from the hand. Other limitations: lines that do not win with the pieces they list still count, no opponent interaction, no multi-turn assembly tracking, no stack-trigger ordering. Mana model (owner-approved 2026-11-19, review rounds 1 to 5 2026-11-20): a permanent gives the mana its own text gives a pilot on a normal turn, using only itself and what the goldfish has on its own battlefield; a wording the parser is known not to read stops the export. The face on the battlefield is read (a modal DFC with a land back is played as its land face; a Pathway played from the hand enters as the face that adds a commander colour the lands lack, one a search or a fetch land puts onto the battlefield front face up), without reminder text; an ability granted to a group the card belongs to counts for the card itself, the grant's subject read in full (\"Other creatures you control have\" gives the card nothing); basic land types make their colour, and a land that gives every land a type (Urborg, Tomb of Yawgmoth) or a permanent that gives every land exactly \"{T}: Add\" one mana (Chromatic Lantern) lets every land make that colour too (one mana a land, a land with no mana ability of its own included: Maze of Ith), from the moment it enters. A permanent taps once a turn: its best single ability, and at one mana the union of the colours of the abilities it could use instead; mana \"of any one color\" (Lotus Field, Wirewood Channeler, Nykthos) is all one colour, Nykthos each colour as much as its own devotion. Mana in an ability's cost is netted. A permanent that sacrifices itself for mana, or does not untap, gives that mana once, kept until a turn needs it; one that sacrifices itself leaves the battlefield as its mana is spent; one with \"{N}: Untap this\" (Basalt Monolith) is untapped at the end of the turn it was spent or any later turn with N of the lasting mana left. A cost that taps or sacrifices another permanent gives nothing, even \"Sacrifice an artifact\" on an artifact (Krark-Clan Ironworks), except Urza, Lord High Artificer's \"Tap an untapped artifact\": his Construct token's {U} is his, and each other untapped noncreature artifact with no mana of its own taps for its own {U} (it is the permanent tapped, and then cannot pay its own {T} cost), from the turn he enters or it does; never a combo-line or assembly-line member whose line needs it untapped, one with an activated ability of its own with {T} in its cost (Isochron Scepter; an Equipment such as Sword of Feast and Famine can be tapped), nor an artifact that entered tapped (Nevinyrral's Disk) or whose own {T} ability was used (The One Ring's draw, as it is cast and each later activation). Conditions on the goldfish's own battlefield are read as each turn's pool is built and as a permanent enters (land types; land and artifact counts; Elves; Swamps; Tron; devotion; colours among permanents; a legendary creature; Reflecting Pool's colours: what the other lands could produce, the face a Pathway was played as and what each of their mana abilities would make on this board, read before the ability's cost is netted and whatever its condition or cost (The Mycosynth Gardens' {1}, {T} any colour; Cabal Coffers makes black only with a Swamp out)). After every resolution (a cast, a land put onto the battlefield, a permanent leaving, a grant or trigger source entering) the turn's unspent mana is read from the board again: the mana already made (floating) plus what the untapped permanents not yet used give, with the triggers and grants out at that moment. Variable amounts count what the card alone guarantees. A creature's {T} mana (a land creature's too: Dryad Arbor enters untapped and summoning sick) and a permanent that enters tapped (a rider after it included: Noble's Purse) make mana from the next turn, and a creature's other {T} abilities wait too (Embodiment of Spring's land fetch; Sakura-Tribe Elder's has no {T}); a non-land ability with mana in its cost (a Signet) also from the next turn, a floor: using it the turn it is cast needs a spare mana the goldfish does not plan for. Each permanent is tapped or untapped for the turn: tapped as it enters tapped, when its own {T} makes mana that is spent (Urza taps other artifacts, not himself; a vigilant creature is not: M9, the pilot attacks first and casts after combat, so a vigilant mana creature both attacks and pays), when it attacks (not with vigilance) and when one of its own {T} abilities is used (the hatch commander's Egg, until Thornbite Staff untaps her as an Egg dies to any outlet; High Market's sacrifice, which counts only when paid; Castle Ardenvale's token; a land fetch). Every spend (casts, X, activations, the end of the turn's untaps and land fetches) is one exact payment, settled before the next: a payment is found whenever the cost and what the turn holds can be paid together, never otherwise, and of the payments that keep the holds the most preferred is taken (a one-colour activation is made as one colour, and its other mana is that colour). The holds: each reachable gate, and the held activation, the two kept together from the same mana where they can be paid together; a line piece being cast keeps the rest of its line, priced with the piece on the battlefield; the hatch engine's payments (the Egg activation, Skullclamp's equip, High Market's {T}) keep the reachable gates and a held Aggravated Assault the pool can still pay. A hold is checked against the pool as it stands before a source that sacrifices itself for the payment leaves (Lotus Petal as the only artifact beside Spire of Industry), an over-credit. Spend order: mana already made (floating) first; then lands, noncreature mana and creatures that could not attack (the narrowest colours first; a land with a {T} ability the turn uses later, as Castle Ardenvale, High Market and a Myriad Landscape whose fetch can net a land in this deck, last among them); then one-shot mana (the fewest sources); then creatures that could attack and are not vigilant (the fewest, then the least combat, then the fewest one-shot sources beside them). After combat a creature's mana costs what a land's does. The combo and assembly gates' reachability is checked before attackers are declared, and the gates are read after combat on the mana kept for them: a creature whose mana a reachable gate, or a held Aggravated Assault, needs stays home; a tapped creature does not attack, and one that attacked pays for nothing afterwards with mana its own {T} makes. An extra combat follows an effect that untaps the creatures, so creatures tapped for mana attack in it too; the mana they would make after that untap is not credited. \"Whenever you cast a spell, add\" (Birgi) adds as each spell is cast and taps nothing; \"add an additional\" triggers (Crypt Ghast, Badgermole Cub, Forsaken Monument) add one per permanent tapped that fires them, also for mana that comes online during the turn (a source entering, a Saga's last chapter); Forsaken Monument's extra belongs to the colourless choice of an activation: a permanent that makes {C} always gets it (one-shot {C} included: that extra is one-shot too), one that makes {C} or a colour (Nykthos, a pain land) gets it only when it makes {C}. Halo Fountain's token needs a tapped creature to untap (one that attacked or was tapped for mana, not one only waiting out the turn it entered), and that creature is untapped: one that attacked can then make its mana; one already tapped for mana is not credited again. Lands: how a land enters is read against the lands, permanents and hand at that moment (a Snarl reveals from the hand; \"two or more opponents\" is always met; \"your opponents control eight or more lands\" is met from the fourth land drop, DEC-688 / DEC-929); a fetch land is cracked as it is played for the best legal land left in the library, which enters with its own types, colours and entry rule (tapped when the search says so, untapped by the search's own condition), and the fetch land leaves; with nothing to find it stays and makes no mana of its own. A land that sacrifices or returns lands as it enters waits for them, and they leave at once (the fewest mana first), so later land counts fall: sacrificed instead of entering (Scorched Ruins) they are lost untapped, taken by its entering trigger (Lotus Field, Simic Growth Chamber) they are tapped first and that mana, floating, is spent first that turn, and a returned land goes back to the hand. A Saga makes its mana for as many turns as it has chapters, is tapped as its last chapter resolves (that mana floats) and leaves. Imprint (owner-approved): Ugin's Labyrinth exiles a colourless card of mana value 7 or more from the hand and makes {C}{C}, else {C}; Chrome Mox exiles a coloured nonartifact, nonland card and makes one mana of its colours, and is not cast, paid or by cascade, while no card can be exiled for it; the card exiled is interaction the goldfish never casts if the hand holds one, else the castable card last in its cast order, and it leaves the hand; never exiled, in every deck: tutors and reanimation spells (by their roles), combo-line and assembly-line members, reserved combo pieces and deploy-engine Equipment; a card with a land face is played as its land. Land-ramp spells move the lands their text says, each destination as written (an untapped land's mana joins the turn); a search looks at a card as it is in the library, its front face (a modal DFC whose front is a spell is not a land card there); a land a search puts onto the battlefield gives up the lands its entry takes, as one that is played does (Simic Growth Chamber), and a search chooses its land as a land drop does (a land creature is not usable that turn); land-fetching permanents (Wayfarer's Bauble, Sakura-Tribe Elder, Myriad Landscape) are cracked at the end of the turn with mana the turn left when they net a land, a {T} cost needing them untapped, and \"share a land type\" finds the most lands of one type. Mana sources for the cast order, the mulligan and the holds: a permanent with mana every turn, a land-ramp spell, a land-fetching permanent, an imprint permanent. availableMana is the mana the pilot could have spent that turn: the turn's pool plus every mana added during the turn (cast triggers, sources and lands that came online untapped, the end of the turn's land fetches included, mana of lands given up or of a Saga leaving after it was tapped). The other per-turn counts (lands, ramp, threats, pressure) are read after the end-of-turn actions. Not read (the export stops): a nonland card with no mana cost (suspend), a card that gives up a land as it acts or enters (Harrow, Mox Diamond, Coral Atoll, Brokers Hideout), a land that sacrifices, returns or exiles itself in a trigger (City of Traitors), a land search whose count or filter no rule places (\"up to X\", \"four\", \"that many\", a snow land, a qualification after \"card\": \"with different names\", \"that each have a basic land type\", \"or Planet card\"; a list of cards; a destination other than the battlefield, the hand, or the two split as written; a later \"instead\") or behind a cost that keeps the permanent (Thawing Glaciers), lasting mana beside an ability that sacrifices the permanent for more (Crystal Vein), exhaust abilities, a land whose type or copy is chosen as it enters, a fetch land with its own entry rule, a non-land permanent that grants or sets land types (Prismatic Omen, Realmwright's chosen type, Blood Moon beside other colours), a grant to every land of anything but \"{T}: Add\" one mana, and triggered mana other than the named floors below. Convention: Exotic Orchard and Fellwar Stone make the commander's colours (opponents' lands are not modelled). Named floors (not credited): Treasure and other mana tokens; rituals and other instants and sorceries that add mana; cost reducers and commander cost reductions; mana from tapping or sacrificing other creatures (Heritage Druid, Elven Chorus, Cryptolith Rite, Sliver grants to other Slivers, Ashnod's Altar, Phyrexian Tower's second ability); Crime Novelist's mana when an artifact is sacrificed; untappers (Dramatic Reversal, Seedborn Muse, Quirion Ranger, Wirewood Symbiote, Wirewood Lodge's untap); mana that needs the graveyard, the hand or opponents; Three Tree City's chosen type; growth past printed power (Marwyn, the Nurturer, Vivi Ornitier and Kami of Whispered Hopes are credited at their printed power); Rubble Rouser; Mutable Explorer's token; Extraplanar Lens (it exiles one of the pilot's lands and the goldfish does not cast it); Emrakul, the Exigent Doom's untap and hand ability; Growing Rites of Itlimoc's transformation (cast as its front); Urza's Saga's chapter III search; \"Nonbasic lands are\" a type in a deck of that type's one colour (Harbinger of the Seas' Islands in a mono-blue deck), not applied to the goldfish's own lands; an Aura that makes another permanent a colourless land (Imprisoned in the Moon). Dryad Arbor is a land and never attacks. Restricted mana (\"Spend this mana only ...\") counts in full, an over-credit. In this deck, mana read on the battlefield: Mox Amber, Plaza of Heroes, Reflecting Pool, Spire of Industry; abilities not credited: Kykar, Wind's Fury (needs another resource), Vivi Ornitier (printed power). Activated draw engines modeled (DEC-472): The One Ring (max 4 activations). Each turn on the battlefield the engine activates once \u2014 its counter total grows by one and that many cards are drawn (the cast-turn draw stays on the immediateDraw path). maxActivations is the stopping rule standing in for The One Ring's upkeep life loss, which the goldfish does not track. Floors: the on-cast protection turn and opponent-dependent draw taxes (Rhystic Study / Mystic Remora class) are not modeled."
   }
 }

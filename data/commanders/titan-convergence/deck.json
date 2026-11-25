@@ -48,6 +48,11 @@
       "name": "EDHREC Zhulodok Optimized",
       "url": "https://edhrec.com/commanders/zhulodok-void-gorger/optimized",
       "detail": "High-synergy card cross-reference for Bracket 4 optimization"
+    },
+    {
+      "type": "other",
+      "name": "User tag approval, combo-check step 1, 2026-11-24",
+      "detail": "Tutor and recursion tags from the step-1 tag checklist of the combo-check fix (plan \"combo checks, step 1\"; this deck is rows 100-103 of the checklist's 113), accepted by the owner on 2026-11-24. No card entered or left the list and no role changed, so this is not a swap round. The combo checks now read what each tutor or recursion card may find or return and where it puts it (data/bracket-philosophy.md, comboLethal proxy schema). Tags: Desecrate Reality: recursion_targets [artifact, battle, creature, enchantment, land, planeswalker] (new), recursion_mv_odd true (new), recursion_mode to_battlefield (new), recursion_cost {4}{C}{C}{C} (new); Ugin, Eye of the Storms: tutor_targets [artifact, battle, creature, enchantment, instant, planeswalker, sorcery] (new), tutor_colors [C] (new), tutor_timing later (new); Conduit of Ruin: tutor_colors [C] (new), tutor_mode to_top (new); Portal to Phyrexia: recursion_targets [creature] (new), recursion_mode to_battlefield (new), recursion_timing later (new). Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 2.3% -> 1.0%; best assembly at turn 8 11.6% -> 5.7%; best-of (comboLethal, lethalProxy) at turn 8 25.6% -> 25.9%; win turn best/typical/contested 8/9/10 unchanged; B2/B3 table row unchanged; simulation health score 76.6 A unchanged; metrics global_health 65 unchanged. The graveyard is still assumed, not tracked (step 3): not measured."
     }
   ],
   "guideContent": {
@@ -1675,7 +1680,18 @@
     {
       "name": "Desecrate Reality",
       "type": "Instant",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "artifact",
+        "battle",
+        "creature",
+        "enchantment",
+        "land",
+        "planeswalker"
+      ],
+      "recursion_mv_odd": true,
+      "recursion_mode": "to_battlefield",
+      "recursion_cost": "{4}{C}{C}{C}"
     },
     {
       "name": "Rise of the Eldrazi",
@@ -1901,7 +1917,20 @@
       "name": "Ugin, Eye of the Storms",
       "type": "Planeswalker",
       "primary_role": "engine",
-      "secondary_role": "tutor"
+      "secondary_role": "tutor",
+      "tutor_targets": [
+        "artifact",
+        "battle",
+        "creature",
+        "enchantment",
+        "instant",
+        "planeswalker",
+        "sorcery"
+      ],
+      "tutor_colors": [
+        "C"
+      ],
+      "tutor_timing": "later"
     },
     {
       "name": "Ugin, the Spirit Dragon",
@@ -1980,7 +2009,11 @@
       "secondary_role": "ramp",
       "tutor_targets": [
         "creature"
-      ]
+      ],
+      "tutor_colors": [
+        "C"
+      ],
+      "tutor_mode": "to_top"
     },
     {
       "name": "Scour from Existence",
@@ -2066,7 +2099,12 @@
     {
       "name": "Portal to Phyrexia",
       "type": "Artifact",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield",
+      "recursion_timing": "later"
     },
     {
       "name": "Thespian's Stage",

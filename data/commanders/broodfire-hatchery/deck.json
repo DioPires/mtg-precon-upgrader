@@ -98,6 +98,11 @@
       "type": "other",
       "name": "User tag-audit approval, 2026-11-21",
       "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. Worldly Tutor: tutor_targets creature (\"a creature card\"). Enlightened Tutor: artifact and enchantment (\"an artifact or enchantment card\"). Natural Order: creature, tutor_extra_cost sacrifice-creature (\"As an additional cost to cast this spell, sacrifice a green creature. Search your library for a green creature card\"). commanderRoles: secondary role tutor removed from Atla Palani, who reveals cards from the top of the library until a creature card and does not search. Not expressible in the tags: both of Natural Order's creatures must be green; Worldly and Enlightened Tutor put the card on top of the library and Natural Order puts it onto the battlefield, all credited as reaching the hand the same turn. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 7.8% -> 4.1%; best combo assembly at turn 8 20.6% -> 10.2%; lethalProxy at turn 8 56.5% -> 57.5%: with the narrower targets the tutors reach fewer combo gates, which releases mana the goldfish held for those gates to other casts and Atla's Egg activations (in a paired trace of the export's first 625 games, each of the 17 games whose lethalProxy changed first differs where a payment refused while a gate was held is made with fewer gates held: 13 casts and 4 Egg activations). Win turns 7/8/9 unchanged; simulation health 65.2 -> 65.1 (B); metrics global_health 80 -> 79 (tutor coverage 88 -> 75, from the commander role)."
+    },
+    {
+      "type": "other",
+      "name": "User tag approval, combo-check step 1, 2026-11-24",
+      "detail": "Tutor and recursion tags from the step-1 tag checklist of the combo-check fix (plan \"combo checks, step 1\"; this deck is rows 9-11 of the checklist's 113), accepted by the owner on 2026-11-24. No card entered or left the list and no role changed, so this is not a swap round. The combo checks now read what each tutor or recursion card may find or return and where it puts it (data/bracket-philosophy.md, comboLethal proxy schema). Tags: Worldly Tutor: tutor_mode to_top (new); Enlightened Tutor: tutor_mode to_top (new); Natural Order: tutor_extra_cost sacrifice-creature -> sacrifice-green-creature, tutor_colors [G] (new), tutor_mode to_battlefield (new). Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 5.0% -> 2.0%; best assembly at turn 8 11.8% -> 5.7%; best-of (comboLethal, lethalProxy) at turn 8 66.6% -> 67.0%; win turn best/typical/contested 6/8/9 unchanged; B2/B3 table row unchanged; simulation health score 67.5 B unchanged; metrics global_health 79 unchanged. The graveyard is still assumed, not tracked (step 3): not measured."
     }
   ],
   "guideContent": {
@@ -1026,7 +1031,8 @@
       "primary_role": "tutor",
       "tutor_targets": [
         "creature"
-      ]
+      ],
+      "tutor_mode": "to_top"
     },
     {
       "name": "Enlightened Tutor",
@@ -1035,7 +1041,8 @@
       "tutor_targets": [
         "artifact",
         "enchantment"
-      ]
+      ],
+      "tutor_mode": "to_top"
     },
     {
       "name": "Winds of Abandon",
@@ -1049,7 +1056,11 @@
       "tutor_targets": [
         "creature"
       ],
-      "tutor_extra_cost": "sacrifice-creature"
+      "tutor_extra_cost": "sacrifice-green-creature",
+      "tutor_colors": [
+        "G"
+      ],
+      "tutor_mode": "to_battlefield"
     },
     {
       "name": "Flawless Maneuver",

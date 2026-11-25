@@ -3384,10 +3384,13 @@ class XSpellGoldfishTests(unittest.TestCase):
                 ["Whir of Invention", "Zero Trinket", "Mind Stone"] + ["Forest"] * 96,
                 self.PLAIN_COMBO,
                 {"Whir of Invention": {"primary_role": "tutor"}}),
-            "a reserved X reanimation spell": (
+            # "Return up to X target instant and/or sorcery cards from your
+            # graveyard to your hand."
+            "a reserved X recursion spell": (
                 ["Divergent Equation", "Zero Trinket", "Mind Stone"] + ["Forest"] * 96,
                 self.PLAIN_COMBO,
-                {"Divergent Equation": {"primary_role": "recursion"}}),
+                {"Divergent Equation": {"primary_role": "recursion", "recursion_targets": ["instant", "sorcery"],
+                                        "recursion_mode": "to_hand"}}),
         }
         for label, (decklist, win_conditions, roles) in cases.items():
             with self.subTest(label):
@@ -3403,14 +3406,12 @@ class XSpellGoldfishTests(unittest.TestCase):
         min_x_sentence = (
             " A combo line's X piece (winConditions[].minX, owner-approved 2026-11-19) is priced at the "
             "X of the cheapest direct cast with which the line's listed pieces work: Walking Ballista at "
-            "X = 2 (each {X} in its cost is X mana). It is supplied from the hand or by a tutor the tags "
-            "read as to-hand (a bargain tutor by its paid route to the hand); a card with the recursion "
-            "role, a tutor to the graveyard and a bargain free cast do not supply it. Known limits: "
-            "recursion that returns the card to the hand is excluded with the rest (an under-read), a "
-            "tutor the tags read as to-hand whose text does not put a castable copy into the hand that turn "
-            "(it puts the card onto the battlefield, on top of the library, or cannot find it) still "
-            "supplies it (an over-read), and an X piece already on the battlefield counts whatever X it "
-            "entered with.")
+            "X = 2 (each {X} in its cost is X mana). It is supplied from the hand, by a tutor that puts it "
+            "into the hand (a bargain tutor by its paid route to the hand) or by a card that returns it to "
+            "the hand or lets it be cast from the graveyard, cast at that X; a card that puts it onto the "
+            "battlefield and a bargained free cast do not supply it. Known limits: an X piece a card returns "
+            "is assumed to be in the graveyard, which is not tracked (an over-read), and an X piece already "
+            "on the battlefield counts whatever X it entered with.")
         priced = self._methodology(decklist, [dict(line, minX={"Walking Ballista": 2})])
         plain = self._methodology(decklist, [line])
         self.assertEqual(
@@ -4469,6 +4470,10 @@ class ManaBoardTests(unittest.TestCase):
         "Cabal Coffers": ("Land", "{2}, {T}: Add {B} for each Swamp you control.", ()),
         "Bloom Tender": ("Creature — Elf Druid", "Vivid — {T}: For each color among permanents you control, add one mana of that color.", ("G",)),
         "Probe BB": ("Creature — Test", "", ("B",)),
+        "Fiend Artisan": ("Creature — Nightmare", (
+            "This creature gets +1/+1 for each creature card in your graveyard.\n{X}{B/G}, {T}, Sacrifice another "
+            "creature: Search your library for a creature card with mana value X or less, put it onto the "
+            "battlefield, then shuffle. Activate only as a sorcery."), ("B", "G")),
         "Mox Amber": ("Legendary Artifact", "{T}: Add one mana of any color among legendary creatures and planeswalkers you control.", ()),
         "Legend": ("Legendary Creature — Human", "", ("U", "R")),
         "Crypt Ghast": ("Creature — Spirit", "Extort\nWhenever you tap a Swamp for mana, add an additional {B}.", ("B",)),
@@ -4493,7 +4498,7 @@ class ManaBoardTests(unittest.TestCase):
         "type_line": "Land",
         "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {G}."}}
     COSTS = {"Llanowar Tribe": "{G}{G}{G}", "Elvish Archdruid": "{1}{G}{G}", "Llanowar Elves": "{G}",
-             "Bloom Tender": "{1}{G}", "Probe BB": "{B}{B}",
+             "Bloom Tender": "{1}{G}", "Probe BB": "{B}{B}", "Fiend Artisan": "{B/G}{B/G}",
              "Disciple of Freyalise // Garden of Freyalise": "{3}{G}{G}{G}"}
 
     def board(self, names, colours=("B", "G"), read_turn=3):
@@ -4561,6 +4566,10 @@ class ManaBoardTests(unittest.TestCase):
             (["Nykthos, Shrine to Nyx", "Llanowar Tribe", "Elvish Archdruid"], ["G"] * 8),
             # Devotion 3 nets one: one mana, {C} or {G}.
             (["Nykthos, Shrine to Nyx", "Llanowar Tribe"], ["G", "G", "G", "GC"]),
+            # A hybrid symbol counts toward each of its colours (CR 700.5),
+            # green second too: Fiend Artisan ({B/G}{B/G}) makes devotion
+            # 3 + 2 = 5, less {2}: three, beside Llanowar Tribe's three.
+            (["Nykthos, Shrine to Nyx", "Llanowar Tribe", "Fiend Artisan"], ["G"] * 6),
             # An MDFC played as its land face has no mana cost: no devotion.
             (["Nykthos, Shrine to Nyx", "Llanowar Tribe", "Disciple of Freyalise // Garden of Freyalise"],
              ["G", "G", "G", "G", "GC"]),
@@ -5942,15 +5951,16 @@ class ManaRoundTwoPaymentTests(unittest.TestCase):
 
     def test_nykthos_makes_each_colour_its_own_devotion(self):
         # Devotion: green 6 (three {G}{G} permanents), white 0. Nykthos
-        # ({2}, {T}) makes four green, never white.
-        profiles = {"Probe GG": {"manaCost": {"W": 0, "U": 0, "B": 0, "R": 0, "G": 2, "C": 0}},
-                    "Nykthos": {"manaCost": {"W": 0, "U": 0, "B": 0, "R": 0, "G": 0, "C": 0}}}
+        # ({2}, {T}) makes four green, never white. A profile's
+        # devotionSymbols are its cost's coloured symbols (devotion_symbols).
+        profiles = {"Probe GG": {"devotionSymbols": (frozenset("G"), frozenset("G"))},
+                    "Nykthos": {"devotionSymbols": ()}}
         permanents = [{"name": "Probe GG", "kind": "spell"}] * 3
         term = ("count", ("devotion",), frozenset("GW"), 2, None)
         atoms = exporter.board_term_atoms(term, [frozenset("C")], permanents, profiles, 3)
         self.assertEqual(mana_letters(atoms), ["G"] * 4)
         # Four green and two white: the activation is one colour.
-        profiles["Probe WW"] = {"manaCost": {"W": 2, "U": 0, "B": 0, "R": 0, "G": 0, "C": 0}}
+        profiles["Probe WW"] = {"devotionSymbols": (frozenset("W"), frozenset("W"))}
         permanents = permanents + [{"name": "Probe WW", "kind": "spell"}] * 2
         nykthos = {"name": "Nykthos"}
         atoms = exporter.tag_atoms(exporter.board_term_atoms(term, [frozenset("C")], permanents, profiles, 3),
@@ -8029,19 +8039,25 @@ class GoldfishMulliganTests(unittest.TestCase):
     order. The first mulligan is free; the second is paid: the third seven is
     kept and one card goes to the bottom. Card data from CARDS; made up:
     "Probe Big Kill" (interaction of mana value 5), "Probe Wipe" (a board
-    wipe of mana value 7), "Probe Raise" (a reanimation spell of mana value
-    4, interaction by its "return target" text), "Probe Seek" (a tutor of
-    mana value 7), "Probe Entomb" (a tutor of mana value 1 that puts its card
-    into the graveyard), "Probe Blade" (an Equipment of mana value 4) and
-    "Probe Tapped Forest" (a land that enters tapped and makes {G}).
+    wipe of mana value 7), "Probe Raise" (a recursion spell of mana value 4
+    that returns an instant to the hand, interaction by its "return target"
+    text), "Probe Revive" (a recursion spell of mana value 4 that returns a
+    creature to the battlefield, interaction by the same text), "Probe Seek"
+    (a tutor of mana value 7), "Probe Entomb" (a tutor of mana value 1 that
+    puts its card into the graveyard), "Probe Blade" (an Equipment of mana
+    value 4) and "Probe Tapped Forest" (a land that enters tapped and makes
+    {G}).
 
-    The deck data gives Probe Raise, Probe Seek and Probe Entomb their roles.
-    The gate decides what the mulligan keeps (mulliganKeep): "combo" is a
-    combo line of Probe Combo A and Probe Combo B (both pieces, both tutors,
-    the reanimation spell); "assembly" is the same pair as the deck's only
-    assembly line (both members and Probe Seek, the to_hand tutor); "none"
-    has no gate (nothing); "deploy" has no gate and a deploy engine whose
-    Equipment is Probe Blade (Probe Blade)."""
+    The deck data gives Probe Raise, Probe Revive, Probe Seek and Probe
+    Entomb their roles and tags. The gate decides what the mulligan keeps
+    (mulliganKeep): the line members and the tutor and recursion cards whose
+    tags can supply one of them from the hand (decision 6). "combo" is a
+    combo line of Probe Combo A and Probe Combo B, two instants (both pieces,
+    Probe Seek and Probe Raise; not Probe Revive, which matches no piece, nor
+    Probe Entomb, a to-graveyard tutor); "assembly" is the same pair as the
+    deck's only assembly line (both members and Probe Seek: assembly reads no
+    recursion card); "none" has no gate (nothing); "deploy" has no gate and a
+    deploy engine whose Equipment is Probe Blade (Probe Blade)."""
 
     METADATA = dict(CARDS, **{
         "Probe Big Kill": {"type_line": "Sorcery", "mana_cost": "{4}{B}", "cmc": 5.0,
@@ -8049,8 +8065,11 @@ class GoldfishMulliganTests(unittest.TestCase):
         "Probe Wipe": {"type_line": "Sorcery", "mana_cost": "{5}{B}{B}", "cmc": 7.0,
                        "oracle_text": "Destroy all creatures.", "colors": ["B"]},
         "Probe Raise": {"type_line": "Sorcery", "mana_cost": "{2}{B}{B}", "cmc": 4.0,
-                        "oracle_text": "Return target creature card from your graveyard to the battlefield.",
+                        "oracle_text": "Return target instant card from your graveyard to your hand.",
                         "colors": ["B"]},
+        "Probe Revive": {"type_line": "Sorcery", "mana_cost": "{2}{B}{B}", "cmc": 4.0,
+                         "oracle_text": "Return target creature card from your graveyard to the battlefield.",
+                         "colors": ["B"]},
         "Probe Seek": {"type_line": "Sorcery", "mana_cost": "{6}{B}", "cmc": 7.0,
                        "oracle_text": "Search your library for a card, put that card into your hand, then shuffle.",
                        "colors": ["B"]},
@@ -8063,7 +8082,10 @@ class GoldfishMulliganTests(unittest.TestCase):
         "Probe Tapped Forest": {"type_line": "Land", "mana_cost": "", "cmc": 0.0,
                                 "oracle_text": "This land enters tapped.\n{T}: Add {G}.", "colors": []},
     })
-    ROLES = [{"name": "Probe Raise", "primary_role": "recursion"},
+    ROLES = [{"name": "Probe Raise", "primary_role": "recursion", "recursion_targets": ["instant"],
+              "recursion_mode": "to_hand"},
+             {"name": "Probe Revive", "primary_role": "recursion", "recursion_targets": ["creature"],
+              "recursion_mode": "to_battlefield"},
              {"name": "Probe Seek", "primary_role": "tutor"},
              {"name": "Probe Entomb", "primary_role": "tutor", "tutor_mode": "to_graveyard"}]
     PAIR = ["Probe Combo A", "Probe Combo B"]
@@ -8078,8 +8100,8 @@ class GoldfishMulliganTests(unittest.TestCase):
     }
     DECK = (["Forest"] * 29 + ["Probe Tapped Forest", "Polluted Delta"] + ["Swamp"] * 6
             + ["Probe Slow Land"] * 2 + ["Probe Kill", "Probe Big Kill", "Probe Wipe", "Probe Seek"]
-            + ["Probe Raise"] * 2 + PAIR + ["Probe Entomb", "Probe Blade"] + ["Probe Two"] * 14
-            + ["Probe Three"] * 14 + ["Probe Five"] * 14 + ["Probe Nine"] * 8)
+            + ["Probe Raise"] * 2 + ["Probe Revive"] + PAIR + ["Probe Entomb", "Probe Blade"] + ["Probe Two"] * 14
+            + ["Probe Three"] * 14 + ["Probe Five"] * 14 + ["Probe Nine"] * 7)
     # One land: a mulligan (should_goldfish_mulligan).
     BAD = ["Forest", "Probe Two", "Probe Three", "Probe Five", "Probe Nine", "Probe Two", "Probe Three"]
 
@@ -8180,11 +8202,11 @@ class GoldfishMulliganTests(unittest.TestCase):
              ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Nine", "Probe Five"],
              ("B", "G"), "Probe Nine",
              ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Five"]),
-            ("a kept reanimation spell stays though it reads as dearer interaction",
+            ("a kept recursion spell stays though it reads as dearer interaction",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Kill", "Probe Nine", "Probe Two"],
              ("B", "G"), "Probe Kill",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Nine", "Probe Two"]),
-            ("kept before interaction: the 9-drop goes, not the kept reanimation spell",
+            ("kept before interaction: the 9-drop goes, not the kept recursion spell",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Two", "Probe Three", "Probe Nine"],
              ("B", "G"), "Probe Nine",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Two", "Probe Three"]),
@@ -8230,13 +8252,13 @@ class GoldfishMulliganTests(unittest.TestCase):
     def test_what_the_mulligan_keeps_follows_the_decks_gates(self):
         # (case, gate, kept seven, card bottomed, six kept)
         cases = [
-            ("no gate: the reanimation spell is dearer interaction and goes", "none",
+            ("no gate: the recursion spell is dearer interaction and goes", "none",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Kill", "Probe Nine", "Probe Two"],
              "Probe Raise", ["Forest", "Forest", "Swamp", "Probe Kill", "Probe Nine", "Probe Two"]),
             ("no gate: the tutor is the dearest spell and goes", "none",
              ["Forest", "Forest", "Swamp", "Probe Seek", "Probe Two", "Probe Three", "Probe Five"],
              "Probe Seek", ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Five"]),
-            ("assembly only: the reanimation spell is not kept", "assembly",
+            ("assembly only: the recursion spell is not kept", "assembly",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Seek", "Probe Two", "Probe Three"],
              "Probe Raise", ["Forest", "Forest", "Swamp", "Probe Seek", "Probe Two", "Probe Three"]),
             ("assembly only: the to_hand tutor and the member stay, a Probe Two goes", "assembly",
@@ -8245,9 +8267,22 @@ class GoldfishMulliganTests(unittest.TestCase):
             ("assembly only: the to_graveyard tutor is not kept", "assembly",
              ["Forest", "Forest", "Swamp", "Probe Entomb", "Probe Seek", "Probe Combo A", "Probe Combo B"],
              "Probe Entomb", ["Forest", "Forest", "Swamp", "Probe Seek", "Probe Combo A", "Probe Combo B"]),
-            ("combo: both pieces and the graveyard tutor stay, the dearest kept spell goes", "combo",
+            # Decision 6: a to-graveyard tutor supplies nothing, so it is not
+            # kept; the pieces and the to-hand tutor stay.
+            ("combo: the graveyard tutor is not kept and goes", "combo",
              ["Forest", "Forest", "Swamp", "Probe Entomb", "Probe Seek", "Probe Combo A", "Probe Combo B"],
-             "Probe Seek", ["Forest", "Forest", "Swamp", "Probe Entomb", "Probe Combo A", "Probe Combo B"]),
+             "Probe Entomb", ["Forest", "Forest", "Swamp", "Probe Seek", "Probe Combo A", "Probe Combo B"]),
+            # Decision 6: a recursion spell whose tags match no piece (a
+            # creature to the battlefield; both pieces are instants) is not
+            # kept: as interaction, it goes before Probe Two...
+            ("combo: a recursion spell that matches no piece is not kept and goes", "combo",
+             ["Forest", "Forest", "Swamp", "Probe Revive", "Probe Two", "Probe Combo A", "Probe Combo B"],
+             "Probe Revive", ["Forest", "Forest", "Swamp", "Probe Two", "Probe Combo A", "Probe Combo B"]),
+            # ...and one whose tags match a piece (an instant to the hand) is
+            # kept: the spell outside the keep goes, not the interaction.
+            ("combo: a recursion spell that matches a piece is kept", "combo",
+             ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Two", "Probe Combo A", "Probe Combo B"],
+             "Probe Two", ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Combo A", "Probe Combo B"]),
             ("deploy engine: its Equipment stays, the dearer other spell goes", "deploy",
              ["Forest", "Forest", "Swamp", "Probe Blade", "Probe Two", "Probe Three", "Probe Two"],
              "Probe Three", ["Forest", "Forest", "Swamp", "Probe Blade", "Probe Two", "Probe Two"]),
@@ -9053,12 +9088,13 @@ class ComboStartPieceTests(unittest.TestCase):
     battlefield is free only when it was the last of the line's pieces to enter
     and it entered this turn; one out since an earlier turn pays its cost
     again; one that entered this turn before a partner cannot restart the loop
-    that turn, and neither can a Top that only reanimation could deliver.
-    Synthetic pieces: {1} start piece, {4} and {2} partners, a {3} unrelated
-    artifact, a {2} reanimation spell, a {1} to-graveyard tutor and a {2}
-    to-hand tutor. Every board is built through ``resolve_cast_effects``, the
-    path the goldfish uses to put a cast permanent on the battlefield, in the
-    order listed.
+    that turn, and neither can a Top that only a return to the battlefield
+    could deliver. Synthetic pieces: {1} start piece, {4} and {2} partners, a
+    {3} unrelated artifact, a {2} recursion spell that returns a card to the
+    battlefield, a {1} to-graveyard tutor (it supplies nothing while the
+    graveyard is assumed) and a {2} to-hand tutor. Every board is built
+    through ``resolve_cast_effects``, the path the goldfish uses to put a cast
+    permanent on the battlefield, in the order listed.
     """
 
     TURN = 5
@@ -9068,7 +9104,7 @@ class ComboStartPieceTests(unittest.TestCase):
         {"name": "Forge Piece"},
         {"name": "Raker Piece"},
         {"name": "Other Artifact"},
-        {"name": "Reanimate Piece", "primary_role": "recursion"},
+        {"name": "Reanimate Piece", "primary_role": "recursion", "recursion_mode": "to_battlefield"},
         {"name": "Entomb Piece", "primary_role": "tutor",
          "tutor_mode": "to_graveyard"},
         {"name": "Tutor Piece", "primary_role": "tutor"},
@@ -9213,8 +9249,14 @@ class ComboStartPieceTests(unittest.TestCase):
          [PLAIN], [], TOP_BEFORE_PARTNER, 0, True),
         ("no startPiece, partner reanimated, pool holds exactly its {2}",
          [PLAIN], ["Reanimate Piece"], RAKER_MISSING, 2, True),
-        ("no startPiece, partner entombed and reanimated, pool exactly {1} + {2}",
-         [PLAIN], ["Entomb Piece", "Reanimate Piece"], RAKER_MISSING, 3, True),
+        ("no startPiece, partner reanimated, pool {1} short",
+         [PLAIN], ["Reanimate Piece"], RAKER_MISSING, 1, False),
+        # The to-graveyard tutor supplies nothing, and does not stand in the
+        # way of the recursion spell alone, which pays {2}.
+        ("no startPiece, to-graveyard tutor and recursion spell, pool exactly {2}",
+         [PLAIN], ["Entomb Piece", "Reanimate Piece"], RAKER_MISSING, 2, True),
+        ("no startPiece, to-graveyard tutor alone, spare mana",
+         [PLAIN], ["Entomb Piece"], RAKER_MISSING, SPARE, False),
     ]
 
     def test_combo_ready_charges_a_start_piece_already_on_the_battlefield(self):
@@ -9226,9 +9268,6 @@ class ComboStartPieceTests(unittest.TestCase):
                     permanents=self._board(context, board),
                     combo_lines=context["comboLines"],
                     profiles=context["profiles"],
-                    tutor_meta=context["tutorMeta"],
-                    reanim_names=context["reanimationNames"],
-                    commander_in_play=False, commander_play_turn=None,
                     pool=exporter.GoldfishManaPool([frozenset({"G"})] * mana),
                     commander_name=self.COMMANDER)
                 self.assertEqual(ready, expected)
@@ -9261,12 +9300,13 @@ class ComboLineMinXTests(unittest.TestCase):
     Unhallowed (X = 1). X Piece carries Walking Ballista's cost and text
     ({X}{X}: X = 2 costs 4 mana, X = 1 costs 2); the text reads as
     interaction, so the cast loop never casts it, as with Ballista. Partner
-    Piece {3}, an unrelated {1} enchantment (it makes the bargain path live),
-    a {2} to-hand tutor, a {1} to-graveyard tutor, a {2} reanimation spell
-    and a {1} bargain tutor. The piece is priced at minX in hand, through a
-    to-hand tutor and through the bargain tutor's paid route to the hand;
-    reanimation, the to-graveyard tutor and the bargain free cast do not
-    supply it. Every board is built through ``resolve_cast_effects``.
+    Piece {3}, an unrelated {1} enchantment (the bargain object), a {2}
+    to-hand tutor, a {1} to-graveyard tutor, a {2} recursion spell that
+    returns a card to the battlefield and a {1} bargain tutor. The piece is
+    priced at minX in hand, through a to-hand tutor and through the bargain
+    tutor's paid route to the hand; a return to the battlefield, the
+    to-graveyard tutor and the bargain free cast do not supply it. Every
+    board is built through ``resolve_cast_effects``.
     """
 
     TURN = 5
@@ -9280,7 +9320,7 @@ class ComboLineMinXTests(unittest.TestCase):
         {"name": "Other Enchantment"},
         {"name": "Tutor Piece", "primary_role": "tutor"},
         {"name": "Entomb Piece", "primary_role": "tutor", "tutor_mode": "to_graveyard"},
-        {"name": "Reanimate Piece", "primary_role": "recursion"},
+        {"name": "Reanimate Piece", "primary_role": "recursion", "recursion_mode": "to_battlefield"},
         {"name": "Beseech Piece", "primary_role": "tutor", "tutor_free_cast_via_bargain": True},
     ]
     MINX = {"title": "X Loop", "kind": "combo", "pieces": ["Partner Piece", "X Piece"],
@@ -9354,10 +9394,22 @@ class ComboLineMinXTests(unittest.TestCase):
         ("no minX, X piece in hand, empty pool", PLAIN, ["X Piece"], PARTNER_OUT, 0, True),
         ("no minX, to-hand tutor, pool {2}", PLAIN, ["Tutor Piece"], PARTNER_OUT, 2, True),
         ("no minX, reanimation, pool {2}", PLAIN, ["Reanimate Piece"], PARTNER_OUT, 2, True),
-        ("no minX, to-graveyard tutor and reanimation, pool {1} + {2}", PLAIN,
-         ["Entomb Piece", "Reanimate Piece"], PARTNER_OUT, 3, True),
-        ("no minX, bargain tutor with an enchantment out, pool {1}", PLAIN, ["Beseech Piece"], BARGAIN_BOARD,
-         1, True),
+        ("no minX, reanimation, pool {1}", PLAIN, ["Reanimate Piece"], PARTNER_OUT, 1, False),
+        # The to-graveyard tutor supplies nothing; the recursion spell alone pays {2}.
+        ("no minX, to-graveyard tutor and reanimation, pool {2}", PLAIN,
+         ["Entomb Piece", "Reanimate Piece"], PARTNER_OUT, 2, True),
+        ("no minX, to-graveyard tutor and reanimation, pool {1}", PLAIN,
+         ["Entomb Piece", "Reanimate Piece"], PARTNER_OUT, 1, False),
+        # The missing piece is Partner Piece ({3}, mana value 3): bargained, the
+        # bargain tutor casts it free with the enchantment as its object
+        # (pool {1}); with no object it goes to the hand: {1} + {3}. The X
+        # piece on the battlefield is a line piece, never the object.
+        ("no minX, bargain tutor with an enchantment out, pool {1}", PLAIN, ["Beseech Piece"],
+         [("X Piece", 3), ("Other Enchantment", 3)], 1, True),
+        ("no minX, bargain tutor with nothing to bargain, pool {1}", PLAIN, ["Beseech Piece"],
+         [("X Piece", 3)], 1, False),
+        ("no minX, bargain tutor with nothing to bargain, pool {1} + {3}", PLAIN, ["Beseech Piece"],
+         [("X Piece", 3)], 4, True),
     ]
 
     def test_the_gate_prices_an_x_piece_at_its_lines_min_x(self):
@@ -9367,8 +9419,6 @@ class ComboLineMinXTests(unittest.TestCase):
                 ready = exporter.combo_ready_this_turn(
                     turn=self.TURN, hand=list(hand), permanents=self._board(context, board),
                     combo_lines=context["comboLines"], profiles=context["profiles"],
-                    tutor_meta=context["tutorMeta"], reanim_names=context["reanimationNames"],
-                    commander_in_play=False, commander_play_turn=None,
                     pool=exporter.GoldfishManaPool([frozenset({"G"})] * mana),
                     commander_name=self.COMMANDER)
                 self.assertEqual(ready, expected)
@@ -9488,6 +9538,1048 @@ class ComboLineMinXTests(unittest.TestCase):
         self.assertEqual([casts[turn] for turn in (1, 2, 3, 4, 5)],
                          [["Filler 0"], ["Filler 1", "Filler 2"], ["Partner Piece"], [], ["Filler 3"]])
         self.assertEqual([by_turn[turn]["comboLethal"] for turn in (3, 4)], [0, 1])
+
+
+FLEET_METADATA = json.loads((Path(__file__).resolve().parent.parent / "data" / "card-metadata.json").read_text())
+PERM = ["artifact", "battle", "creature", "enchantment", "land", "planeswalker"]
+
+
+class ComboCheckSubstituteTests(unittest.TestCase):
+    """The combo checks' tutor and recursion rules (owner-approved plan
+    "combo checks, step 1", 2026-11-24, rules B1-B9), through
+    combo_ready_this_turn and combo_assembled_this_turn.
+
+    Real cards: data/card-metadata.json (the text, mana cost, mana value and
+    colours each expected value is read from), tagged as the accepted step-1
+    checklist tags them (TAGS). Made up: "Probe Rule Commander" (a creature
+    commander of no use here) and "Probe Twofold" (a {1} sorcery that either
+    finds a card or returns one to the hand). Every board is put on the
+    battlefield on turn 3 through resolve_cast_effects; the check is on turn
+    5. A pool is written one letter per mana: W, U, B, R, G or C."""
+
+    TURN = 5
+    COMMANDER = "Probe Rule Commander"
+    SYNTHETIC = {
+        "Probe Rule Commander": {"type_line": "Legendary Creature — Human", "mana_cost": "{9}", "cmc": 9.0,
+                                 "oracle_text": "", "colors": []},
+        "Probe Twofold": {"type_line": "Sorcery", "mana_cost": "{1}", "cmc": 1.0, "colors": [],
+                          "oracle_text": ("Choose one —\n• Search your library for a card, put that card into your "
+                                          "hand, then shuffle.\n• Return target card from your graveyard to your "
+                                          "hand.")},
+        "Probe Artifact Tutor": {"type_line": "Sorcery", "mana_cost": "{1}", "cmc": 1.0, "colors": [],
+                                 "oracle_text": ("As an additional cost to cast this spell, sacrifice an artifact.\n"
+                                                 "Search your library for a card, put that card into your hand, "
+                                                 "then shuffle.")},
+        "Probe Discard Tutor": {"type_line": "Sorcery", "mana_cost": "{1}", "cmc": 1.0, "colors": [],
+                                "oracle_text": ("As an additional cost to cast this spell, discard a creature card.\n"
+                                                "Search your library for a card, put that card into your hand, "
+                                                "then shuffle.")},
+        "Probe Put Tutor": {"type_line": "Sorcery", "mana_cost": "{1}", "cmc": 1.0, "colors": [],
+                            "oracle_text": "Search your library for a card, put it onto the battlefield, then shuffle."},
+        "Probe Put Back": {"type_line": "Sorcery", "mana_cost": "{1}", "cmc": 1.0, "colors": [],
+                           "oracle_text": "Put target card from your graveyard onto the battlefield."},
+        "Probe Colorless Seek": {"type_line": "Sorcery", "mana_cost": "{1}", "cmc": 1.0, "colors": [],
+                                 "oracle_text": ("Search your library for a colorless card, put it into your hand, "
+                                                 "then shuffle.")},
+        "Probe Aura Seek": {"type_line": "Sorcery", "mana_cost": "{1}", "cmc": 1.0, "colors": [],
+                            "oracle_text": "Search your library for an Aura card, put it into your hand, then shuffle."},
+    }
+    TAGS = {
+        "Trophy Mage": {"primary_role": "tutor", "tutor_targets": ["artifact"], "tutor_mv_exact": 3},
+        "Stoneforge Mystic": {"primary_role": "tutor", "tutor_targets": ["artifact"],
+                              "tutor_subtypes": ["Equipment"]},
+        "Forge Anew": {"primary_role": "recursion", "recursion_targets": ["artifact"],
+                       "recursion_subtypes": ["Equipment"], "recursion_mode": "to_battlefield"},
+        "Goblin Matron": {"primary_role": "tutor", "tutor_targets": ["any"], "tutor_subtypes": ["Goblin"]},
+        "Desecrate Reality": {"primary_role": "recursion", "recursion_targets": PERM, "recursion_mv_odd": True,
+                              "recursion_mode": "to_battlefield", "recursion_cost": "{4}{C}{C}{C}"},
+        "Natural Order": {"primary_role": "tutor", "tutor_targets": ["creature"], "tutor_colors": ["G"],
+                          "tutor_extra_cost": "sacrifice-green-creature", "tutor_mode": "to_battlefield"},
+        "Agadeem's Awakening // Agadeem, the Undercrypt": {
+            "primary_role": "recursion", "recursion_targets": ["creature"], "recursion_mv_cap": "X",
+            "recursion_mode": "to_battlefield"},
+        "Inventors' Fair": {"primary_role": "land", "secondary_role": "tutor", "tutor_targets": ["artifact"]},
+        "Fabricate": {"primary_role": "tutor", "tutor_targets": ["artifact"]},
+        "Whir of Invention": {"primary_role": "tutor", "tutor_targets": ["artifact"], "tutor_mv_cap": "X",
+                              "tutor_mode": "to_battlefield"},
+        "Step Through": {"primary_role": "tutor", "tutor_targets": ["any"], "tutor_subtypes": ["Wizard"],
+                         "tutor_cost": "{2}"},
+        "Wishclaw Talisman": {"primary_role": "tutor", "tutor_cost": "{1}"},
+        "Diabolic Intent": {"primary_role": "tutor", "tutor_targets": ["any"],
+                            "tutor_extra_cost": "sacrifice-creature"},
+        "Beseech the Mirror": {"primary_role": "tutor", "tutor_targets": ["any"],
+                               "tutor_free_cast_via_bargain": True},
+        "Vampiric Tutor": {"primary_role": "tutor", "tutor_targets": ["any"], "tutor_mode": "to_top"},
+        "Elena, Turk Recruit": {"primary_role": "recursion", "recursion_targets": ["any"],
+                                "recursion_mode": "to_hand"},
+        "Eternal Witness": {"primary_role": "recursion", "recursion_targets": ["any"], "recursion_mode": "to_hand"},
+        "Pinnacle Monk // Mystic Peak": {"primary_role": "recursion", "recursion_targets": ["instant", "sorcery"],
+                                         "recursion_mode": "to_hand"},
+        "Flashback": {"primary_role": "recursion", "recursion_targets": ["instant", "sorcery"],
+                      "recursion_mode": "cast_from_graveyard"},
+        "Sun Titan": {"primary_role": "recursion", "secondary_role": "threat", "recursion_targets": PERM,
+                      "recursion_mv_cap": 3, "recursion_mode": "to_battlefield"},
+        "Kaya's Ghostform": {"primary_role": "recursion", "recursion_mode": "on_death"},
+        "Demonic Tutor": {"primary_role": "tutor", "tutor_targets": ["any"]},
+        "Grim Tutor": {"primary_role": "tutor"},
+        "Eladamri's Call": {"primary_role": "tutor", "tutor_targets": ["creature"]},
+        "Final Parting": {"primary_role": "tutor", "tutor_targets": ["any"], "tutor_mode": "split_hand_graveyard"},
+        "Fauna Shaman": {"primary_role": "tutor", "tutor_targets": ["creature"], "tutor_extra_cost": "discard-creature",
+                         "tutor_cost": "{G}", "tutor_timing": "later"},
+        "Bloodghast": {"primary_role": "recursion", "recursion_mode": "self"},
+        "Gift of Immortality": {"primary_role": "recursion", "recursion_mode": "on_death"},
+        "Living Death": {"primary_role": "recursion", "recursion_mode": "none"},
+        "Reanimate": {"primary_role": "recursion", "recursion_targets": ["creature"],
+                      "recursion_mode": "to_battlefield"},
+        "Probe Twofold": {"primary_role": "tutor", "secondary_role": "recursion", "recursion_targets": ["any"],
+                          "recursion_mode": "to_hand"},
+        "Probe Artifact Tutor": {"primary_role": "tutor", "tutor_extra_cost": "sacrifice-artifact"},
+        "Probe Discard Tutor": {"primary_role": "tutor", "tutor_extra_cost": "discard-creature"},
+        "Probe Put Tutor": {"primary_role": "tutor", "tutor_mode": "to_battlefield"},
+        "Probe Put Back": {"primary_role": "recursion", "recursion_mode": "to_battlefield"},
+        "Probe Colorless Seek": {"primary_role": "tutor", "tutor_colors": ["C"]},
+        "Probe Aura Seek": {"primary_role": "tutor", "tutor_subtypes": ["Aura"]},
+        "Shepherd of the Cosmos": {"primary_role": "recursion", "recursion_targets": PERM, "recursion_mv_cap": 2,
+                                   "recursion_mode": "to_battlefield"},
+    }
+    SPARE = "C" * 12
+
+    @staticmethod
+    def line(*pieces, **extra) -> dict:
+        return dict({"title": "Probe line", "kind": "combo", "pieces": list(pieces)}, **extra)
+
+    def context(self, names, win_conditions=(), combos=None, deck_id="synthetic-substitutes") -> dict:
+        names = list(dict.fromkeys(names))
+        metadata = {name: self.SYNTHETIC.get(name) or FLEET_METADATA[name] for name in names + [self.COMMANDER]}
+        deck_data = {"decklist": [dict({"name": name}, **self.TAGS.get(name, {})) for name in names],
+                     "winConditions": list(win_conditions)}
+        with patch.dict(exporter.KEY_COMBOS, {deck_id: combos or []}):
+            return exporter.build_goldfish_context(names, deck_data, metadata, self.COMMANDER,
+                                                   ["W", "U", "B", "R", "G"], deck_id)
+
+    @staticmethod
+    def board(context, names) -> list[dict]:
+        permanents = []
+        for name in names:
+            exporter.resolve_cast_effects(name, context["profiles"][name], 3, exporter.GoldfishManaPool([]), [], [],
+                                          permanents, [], context["profiles"], ["W", "U", "B", "R", "G"])
+        return permanents
+
+    @staticmethod
+    def pool(mana: str) -> "exporter.GoldfishManaPool":
+        return exporter.GoldfishManaPool([frozenset({letter}) for letter in mana])
+
+    def combo_ready(self, line, hand, battlefield, mana) -> bool:
+        context = self.context(list(line["pieces"]) + list(hand) + list(battlefield), [line])
+        return exporter.combo_ready_this_turn(
+            turn=self.TURN, hand=list(hand), permanents=self.board(context, battlefield),
+            combo_lines=context["comboLines"], profiles=context["profiles"], pool=self.pool(mana),
+            commander_name=self.COMMANDER)
+
+    def check(self, cases) -> None:
+        for label, line, hand, battlefield, mana, expected in cases:
+            with self.subTest(label):
+                self.assertEqual(self.combo_ready(line, hand, battlefield, mana), expected)
+
+    # Every line below has Heliod, Sun-Crowned on the battlefield as its
+    # partner unless it says otherwise.
+    HELIOD = "Heliod, Sun-Crowned"
+
+    def test_restrictions_read_the_front_face_and_the_printed_mana_value(self):
+        line, heliod = self.line, [self.HELIOD]
+        self.check([
+            # Trophy Mage ({2}{U}): "an artifact card with mana value 3", to
+            # the hand. Ashnod's Altar ({3}) costs {2}{U} + {3}.
+            ("Trophy Mage, a mana-value-3 artifact, pool U + 5", line("Ashnod's Altar", self.HELIOD),
+             ["Trophy Mage"], heliod, "U" + "C" * 5, True),
+            ("Trophy Mage, a mana-value-3 artifact, pool U + 4", line("Ashnod's Altar", self.HELIOD),
+             ["Trophy Mage"], heliod, "U" + "C" * 4, False),
+            ("Trophy Mage, Isochron Scepter (mana value 2)", line("Isochron Scepter", self.HELIOD),
+             ["Trophy Mage"], heliod, "U" + self.SPARE, False),
+            ("Trophy Mage, Mystic Forge (mana value 4)", line("Mystic Forge", self.HELIOD),
+             ["Trophy Mage"], heliod, "U" + self.SPARE, False),
+            # Stoneforge Mystic ({1}{W}): "an Equipment card", to the hand;
+            # Sword of Feast and Famine ({3}) is an Equipment.
+            ("Stoneforge Mystic, an Equipment, pool W + 4", line("Sword of Feast and Famine", self.HELIOD),
+             ["Stoneforge Mystic"], heliod, "W" + "C" * 4, True),
+            ("Stoneforge Mystic, an Equipment, pool W + 3", line("Sword of Feast and Famine", self.HELIOD),
+             ["Stoneforge Mystic"], heliod, "W" + "C" * 3, False),
+            ("Stoneforge Mystic, an artifact that is not an Equipment", line("Ashnod's Altar", self.HELIOD),
+             ["Stoneforge Mystic"], heliod, "W" + self.SPARE, False),
+            # Forge Anew ({2}{W}): "return target Equipment card ... to the
+            # battlefield": the Sword is not paid.
+            ("Forge Anew, an Equipment, pool W + 2", line("Sword of Feast and Famine", self.HELIOD),
+             ["Forge Anew"], heliod, "WCC", True),
+            ("Forge Anew, an Equipment, pool W + 1", line("Sword of Feast and Famine", self.HELIOD),
+             ["Forge Anew"], heliod, "WC", False),
+            ("Forge Anew, an artifact that is not an Equipment", line("Isochron Scepter", self.HELIOD),
+             ["Forge Anew"], heliod, "W" + self.SPARE, False),
+            # Goblin Matron ({2}{R}): "a Goblin card", to the hand. Goblin
+            # Recruiter ({1}{R}) is a Goblin; Fable of the Mirror-Breaker's
+            # front face is a Saga, only its back face a Goblin.
+            ("Goblin Matron, a Goblin, pool RR + 3", line("Goblin Recruiter", self.HELIOD),
+             ["Goblin Matron"], heliod, "RRCCC", True),
+            ("Goblin Matron, a Goblin, pool RR + 2", line("Goblin Recruiter", self.HELIOD),
+             ["Goblin Matron"], heliod, "RRCC", False),
+            ("Goblin Matron, a card whose back face only is a Goblin",
+             line("Fable of the Mirror-Breaker // Reflection of Kiki-Jiki", self.HELIOD),
+             ["Goblin Matron"], heliod, "RR" + self.SPARE, False),
+            # Desecrate Reality ({7}): adamant, at least three colourless
+            # mana, returns "a permanent card with an odd mana value" to the
+            # battlefield. Glaring Fleshraker has mana value 3, Mystic Forge 4.
+            ("Desecrate Reality, an odd mana value, seven mana with three colourless",
+             line("Glaring Fleshraker", self.HELIOD), ["Desecrate Reality"], heliod, "CCCWWWW", True),
+            ("Desecrate Reality, an odd mana value, seven mana with two colourless",
+             line("Glaring Fleshraker", self.HELIOD), ["Desecrate Reality"], heliod, "CCWWWWW", False),
+            ("Desecrate Reality, an even mana value", line("Mystic Forge", self.HELIOD),
+             ["Desecrate Reality"], heliod, "CCC" + "W" * 9, False),
+            # Natural Order ({2}{G}{G}): sacrifice a green creature, put a
+            # green creature card onto the battlefield. Scurry Oak is green,
+            # Rosie Cotton of South Lane white; Eternal Witness and Fauna
+            # Shaman are green creatures, Viscera Seer a black one.
+            ("Natural Order, a spare green creature, pool GG + 2", line("Scurry Oak", "Rosie Cotton of South Lane"),
+             ["Natural Order"], ["Rosie Cotton of South Lane", "Eternal Witness"], "GGCC", True),
+            ("Natural Order, a spare green creature, pool GG + 1", line("Scurry Oak", "Rosie Cotton of South Lane"),
+             ["Natural Order"], ["Rosie Cotton of South Lane", "Eternal Witness"], "GGC", False),
+            ("Natural Order, only a non-green spare creature", line("Scurry Oak", "Rosie Cotton of South Lane"),
+             ["Natural Order"], ["Rosie Cotton of South Lane", "Viscera Seer"], "GG" + self.SPARE, False),
+            ("Natural Order, only a green line piece to sacrifice", line("Scurry Oak", "Eternal Witness"),
+             ["Natural Order"], ["Eternal Witness"], "GG" + self.SPARE, False),
+            ("Natural Order, a non-green creature piece", line("Rosie Cotton of South Lane", "Scurry Oak"),
+             ["Natural Order"], ["Scurry Oak", "Fauna Shaman"], "GG" + self.SPARE, False),
+            # A land in hand is never a substitute (Inventors' Fair, tagged
+            # as an artifact tutor); Fabricate ({2}{U}) is.
+            ("Inventors' Fair in hand", line("Isochron Scepter", self.HELIOD),
+             ["Inventors' Fair"], heliod, self.SPARE, False),
+            ("Fabricate in hand, pool U + 4", line("Isochron Scepter", self.HELIOD),
+             ["Fabricate"], heliod, "UCCCC", True),
+            # Agadeem's Awakening keeps its spell ({X}{B}{B}{B}, a land on its
+            # back): it returns Blood Artist (mana value 2) at X = 2.
+            ("Agadeem's Awakening, Blood Artist, pool BBB + 2", line("Blood Artist", self.HELIOD),
+             ["Agadeem's Awakening // Agadeem, the Undercrypt"], heliod, "BBBCC", True),
+            ("Agadeem's Awakening, Blood Artist, pool BBB + 1", line("Blood Artist", self.HELIOD),
+             ["Agadeem's Awakening // Agadeem, the Undercrypt"], heliod, "BBBC", False),
+        ])
+
+    def test_what_the_card_costs_and_its_extra_cost_objects(self):
+        line, heliod = self.line, [self.HELIOD]
+        self.check([
+            # Step Through: "Wizardcycling {2}"; Dualcaster Mage ({1}{R}{R})
+            # is a Wizard.
+            ("Step Through cycled, pool RR + 3", line("Dualcaster Mage", self.HELIOD),
+             ["Step Through"], heliod, "RRCCC", True),
+            ("Step Through cycled, pool RR + 2", line("Dualcaster Mage", self.HELIOD),
+             ["Step Through"], heliod, "RRCC", False),
+            # Wishclaw Talisman ({1}{B}, then "{1}, {T}, ...: Search your
+            # library for a card, put it into your hand"): {2}{B} + Ashnod's
+            # Altar's {3}.
+            ("Wishclaw Talisman, pool B + 5", line("Ashnod's Altar", self.HELIOD),
+             ["Wishclaw Talisman"], heliod, "B" + "C" * 5, True),
+            ("Wishclaw Talisman, pool B + 4", line("Ashnod's Altar", self.HELIOD),
+             ["Wishclaw Talisman"], heliod, "B" + "C" * 4, False),
+            # Two missing pieces: Natural Order puts Scurry Oak onto the
+            # battlefield (a green creature sacrificed); Diabolic Intent
+            # finds Isochron Scepter (a creature sacrificed). One object each.
+            ("Natural Order and Diabolic Intent, one spare green creature",
+             line("Scurry Oak", "Isochron Scepter", self.HELIOD), ["Natural Order", "Diabolic Intent"],
+             [self.HELIOD, "Eternal Witness"], "GGB" + self.SPARE, False),
+            ("Natural Order and Diabolic Intent, two spare green creatures",
+             line("Scurry Oak", "Isochron Scepter", self.HELIOD), ["Natural Order", "Diabolic Intent"],
+             [self.HELIOD, "Eternal Witness", "Fauna Shaman"], "GGB" + self.SPARE, True),
+            # The commander is never sacrificed; Viscera Seer can be.
+            ("Diabolic Intent, only the commander to sacrifice", line("Ashnod's Altar", self.HELIOD),
+             ["Diabolic Intent"], [self.HELIOD, self.COMMANDER], "B" + self.SPARE, False),
+            ("Diabolic Intent, Viscera Seer to sacrifice", line("Ashnod's Altar", self.HELIOD),
+             ["Diabolic Intent"], [self.HELIOD, self.COMMANDER, "Viscera Seer"], "B" + self.SPARE, True),
+            # Beseech the Mirror ({1}{B}{B}{B}), bargained, casts Solphim,
+            # Mayhem Dominus (mana value 4) free. Lotus Petal is never the
+            # bargain object; Thornbite Staff, an artifact, is.
+            ("Beseech bargained, only Lotus Petal out, pool its own cost",
+             line("Solphim, Mayhem Dominus", self.HELIOD), ["Beseech the Mirror"], [self.HELIOD, "Lotus Petal"],
+             "BBBC", False),
+            ("Beseech bargained, Thornbite Staff out, pool its own cost",
+             line("Solphim, Mayhem Dominus", self.HELIOD), ["Beseech the Mirror"], [self.HELIOD, "Thornbite Staff"],
+             "BBBC", True),
+            # Mogis, God of Slaughter ({2}{B}{R}) below its devotion is an
+            # enchantment: the only bargain object here (Heliod is a piece).
+            ("Beseech bargained, only Mogis below its devotion out, pool its own cost",
+             line("Solphim, Mayhem Dominus", self.HELIOD), ["Beseech the Mirror"],
+             [self.HELIOD, "Mogis, God of Slaughter"], "BBBC", True),
+            # ... and at seven devotion (Heartless Hidetsugu {3}{R}{R}, Fiery
+            # Emancipation {3}{R}{R}{R}, both pieces): a creature, still an
+            # enchantment.
+            ("Beseech bargained, only Mogis at seven devotion out, pool its own cost",
+             line("Solphim, Mayhem Dominus", "Heartless Hidetsugu", "Fiery Emancipation"), ["Beseech the Mirror"],
+             ["Heartless Hidetsugu", "Fiery Emancipation", "Mogis, God of Slaughter"], "BBBC", True),
+        ])
+
+    def test_where_the_card_puts_the_piece(self):
+        line, heliod = self.line, [self.HELIOD]
+        ballista = line(self.HELIOD, "Walking Ballista", minX={"Walking Ballista": 2})
+        top = line("Sensei's Divining Top", "Mystic Forge", "Glaring Fleshraker", startPiece="Sensei's Divining Top")
+        forge_out = ["Mystic Forge", "Glaring Fleshraker"]
+        self.check([
+            # Onto the battlefield (Whir of Invention): never a minX piece nor
+            # a start piece. To the hand (Fabricate, {2}{U}): the piece is
+            # cast, Walking Ballista at X = 2 ({4}), Sensei's Divining Top {1}.
+            ("Whir of Invention, a minX piece", ballista, ["Whir of Invention"], heliod, "UUU" + self.SPARE, False),
+            ("Fabricate, a minX piece, pool U + 6", ballista, ["Fabricate"], heliod, "U" + "C" * 6, True),
+            ("Fabricate, a minX piece, pool U + 5", ballista, ["Fabricate"], heliod, "U" + "C" * 5, False),
+            ("Whir of Invention, a start piece", top, ["Whir of Invention"], forge_out, "UUU" + self.SPARE, False),
+            ("Fabricate, a start piece, pool U + 3", top, ["Fabricate"], forge_out, "UCCC", True),
+            ("Fabricate, a start piece, pool U + 2", top, ["Fabricate"], forge_out, "UCC", False),
+            # Decision 5: back to the hand, the piece is cast and paid.
+            # Elena, Turk Recruit ({2}{W}) returns Walking Ballista, cast at
+            # X = 2: {2}{W} + {4}.
+            ("Elena returns Walking Ballista, pool W + 6", ballista, ["Elena, Turk Recruit"], heliod,
+             "W" + "C" * 6, True),
+            ("Elena returns Walking Ballista, pool W + 5", ballista, ["Elena, Turk Recruit"], heliod,
+             "W" + "C" * 5, False),
+            # Eternal Witness ({1}{G}{G}) returns the start piece: + {1}.
+            ("Eternal Witness returns the start piece, pool GG + 2", top, ["Eternal Witness"], forge_out,
+             "GGCC", True),
+            ("Eternal Witness returns the start piece, pool GG + 1", top, ["Eternal Witness"], forge_out,
+             "GGC", False),
+            # Pinnacle Monk ({3}{R}{R}) returns Twinflame ({1}{R}) to the hand.
+            ("Pinnacle Monk returns Twinflame, pool RRR + 4", line("Twinflame", "Dualcaster Mage"),
+             ["Pinnacle Monk // Mystic Peak"], ["Dualcaster Mage"], "RRRCCCC", True),
+            ("Pinnacle Monk returns Twinflame, pool RRR + 3", line("Twinflame", "Dualcaster Mage"),
+             ["Pinnacle Monk // Mystic Peak"], ["Dualcaster Mage"], "RRRCCC", False),
+            # Cast from the graveyard: Flashback ({R}) and Reiterate
+            # ({1}{R}{R}) cast with flashback.
+            ("Flashback casts Reiterate, pool RRR + 1", line("Reiterate", self.HELIOD), ["Flashback"], heliod,
+             "RRRC", True),
+            ("Flashback casts Reiterate, pool RRR", line("Reiterate", self.HELIOD), ["Flashback"], heliod,
+             "RRR", False),
+            # Beseech the Mirror with a bargain object out (Thornbite Staff):
+            # free only for a piece of mana value 4 or less that is not a
+            # minX piece. Heartless Hidetsugu ({3}{R}{R}, mana value 5) and
+            # Walking Ballista at X = 2 go to the hand and are paid.
+            ("Beseech, mana value 5, pool BBBRR + 4", line("Heartless Hidetsugu", self.HELIOD),
+             ["Beseech the Mirror"], [self.HELIOD, "Thornbite Staff"], "BBBRR" + "C" * 4, True),
+            ("Beseech, mana value 5, pool BBBRR + 3", line("Heartless Hidetsugu", self.HELIOD),
+             ["Beseech the Mirror"], [self.HELIOD, "Thornbite Staff"], "BBBRR" + "C" * 3, False),
+            ("Beseech, a minX piece, pool BBB + 5", ballista, ["Beseech the Mirror"], [self.HELIOD, "Thornbite Staff"],
+             "BBB" + "C" * 5, True),
+            ("Beseech, a minX piece, pool BBB + 4", ballista, ["Beseech the Mirror"], [self.HELIOD, "Thornbite Staff"],
+             "BBB" + "C" * 4, False),
+            # On top of the library (decision 1a): nothing this turn.
+            ("Vampiric Tutor", line("Ashnod's Altar", self.HELIOD), ["Vampiric Tutor"], heliod, "B" + self.SPARE,
+             False),
+        ])
+
+    def test_one_use_per_card(self):
+        line, heliod = self.line, [self.HELIOD]
+        loop = line("Sun Titan", "Kaya's Ghostform", "Viscera Seer", "Blood Artist")
+        self.check([
+            # Sun Titan ({4}{W}{W}) cast as a piece returns Kaya's Ghostform
+            # (mana value 1) with its enter trigger: one payment.
+            ("Sun Titan as a piece returns Kaya's Ghostform, pool WW + 4", loop, ["Sun Titan"],
+             ["Viscera Seer", "Blood Artist"], "WWCCCC", True),
+            ("Sun Titan as a piece returns Kaya's Ghostform, pool WW + 3", loop, ["Sun Titan"],
+             ["Viscera Seer", "Blood Artist"], "WWCCC", False),
+            # A sorcery piece (Demonic Tutor) is cast as the piece and is not
+            # also a substitute; Fabricate is.
+            ("a sorcery piece is not also a substitute", line("Demonic Tutor", "Isochron Scepter"),
+             ["Demonic Tutor"], [], "B" + self.SPARE, False),
+            ("the sorcery piece and Fabricate", line("Demonic Tutor", "Isochron Scepter"),
+             ["Demonic Tutor", "Fabricate"], [], "BU" + "C" * 5, True),
+            # Probe Twofold has both roles and supplies one piece; with
+            # Fabricate it supplies the other: {1} + {3} + {2}{U} + {2}.
+            ("a card with both roles supplies one piece", line("Ashnod's Altar", "Isochron Scepter", self.HELIOD),
+             ["Probe Twofold"], heliod, "U" + self.SPARE, False),
+            ("a card with both roles and Fabricate, pool U + 8",
+             line("Ashnod's Altar", "Isochron Scepter", self.HELIOD), ["Probe Twofold", "Fabricate"], heliod,
+             "U" + "C" * 8, True),
+            ("a card with both roles and Fabricate, pool U + 7",
+             line("Ashnod's Altar", "Isochron Scepter", self.HELIOD), ["Probe Twofold", "Fabricate"], heliod,
+             "U" + "C" * 7, False),
+        ])
+
+    def test_a_later_self_on_death_or_none_card_supplies_nothing(self):
+        line = self.line("Blood Artist", self.HELIOD)
+        every = "WWWUUUBBBRRRGGG" + self.SPARE
+        self.check([
+            ("later: Fauna Shaman, a creature card to discard", line, ["Fauna Shaman", "Viscera Seer"],
+             [self.HELIOD], every, False),
+            ("self: Bloodghast", line, ["Bloodghast"], [self.HELIOD], every, False),
+            ("on_death: Gift of Immortality", line, ["Gift of Immortality"], [self.HELIOD], every, False),
+            ("none: Living Death", line, ["Living Death"], [self.HELIOD], every, False),
+            # Reanimate ({B}) puts Blood Artist onto the battlefield.
+            ("to_battlefield: Reanimate, pool B", line, ["Reanimate"], [self.HELIOD], "B", True),
+        ])
+
+    def test_every_payable_assignment_is_tried(self):
+        line = self.line
+        self.check([
+            # Eladamri's Call ({G}{W}) is the cheapest tutor for Blood Artist
+            # but cannot be paid from black mana; Grim Tutor ({1}{B}{B}) can:
+            # {1}{B}{B} + {1}{B}.
+            ("an off-colour cheapest tutor, pool BBBBB", line("Blood Artist", self.HELIOD),
+             ["Eladamri's Call", "Grim Tutor"], [self.HELIOD], "BBBBB", True),
+            ("an off-colour cheapest tutor, pool BBBB", line("Blood Artist", self.HELIOD),
+             ["Eladamri's Call", "Grim Tutor"], [self.HELIOD], "BBBB", False),
+            # Demonic Tutor finds any card, Eladamri's Call only a creature:
+            # only Call -> Blood Artist, Demonic -> Isochron Scepter works.
+            # {G}{W} + {1}{B} + {1}{B} + {2}.
+            ("a wide and a narrow tutor, pool GWBB + 4", line("Blood Artist", "Isochron Scepter", self.HELIOD),
+             ["Demonic Tutor", "Eladamri's Call"], [self.HELIOD], "GWBBCCCC", True),
+            ("a wide and a narrow tutor, pool GWBB + 3", line("Blood Artist", "Isochron Scepter", self.HELIOD),
+             ["Demonic Tutor", "Eladamri's Call"], [self.HELIOD], "GWBBCCC", False),
+        ])
+
+    @staticmethod
+    def pinned_deal(opening: list[str], library: list[str]) -> tuple[list[str], object]:
+        """(the deck, a random.shuffle that puts it in a fixed order). The
+        games below mock only the randomness: commander_mulligan_goldfish
+        deals its seven from the shuffled library's end and every draw pops
+        the end, so the order is ``library`` (its last card the first draw)
+        under ``opening`` (its first card dealt first)."""
+        order = list(library) + list(reversed(opening))
+
+        def shuffle(cards: list[str]) -> None:
+            assert sorted(cards) == sorted(order), "the pinned order is not the deck"
+            cards[:] = order
+
+        return order, shuffle
+
+    def test_the_mana_held_back_keeps_the_payable_assignment(self):
+        """Pinned game (random.shuffle pinned). Line: Blood Artist + Isochron
+        Scepter. Kept seven: three Swamps, the Scepter, Eladamri's Call
+        ({G}{W}), Grim Tutor ({1}{B}{B}) and Filler 0 ({2}); draws: Fillers
+        1, 2 and 3 on turns 1 to 3, a Swamp on turns 4 and 5. Turn 2: the
+        Scepter. Turn 3: three Swamps, the gate ({1}{B}{B} + {1}{B}) is out
+        of reach: Filler 0. Turn 4: Fillers 1 and 2. Turn 5: five Swamps
+        reach the gate through Grim Tutor, so Filler 3 is held and the gate
+        is ready that turn."""
+        swamp = CARDS["Swamp"]
+        fillers = [f"Filler {i}" for i in range(4)]
+        bears = [f"Bear {i}" for i in range(20)]
+        opening = ["Swamp", "Swamp", "Swamp", "Isochron Scepter", "Eladamri's Call", "Grim Tutor", "Filler 0"]
+        library = ["Blood Artist"] + bears + ["Swamp", "Swamp", "Filler 3", "Filler 2", "Filler 1"]
+        names = list(dict.fromkeys(opening + library))
+        metadata = {name: FLEET_METADATA[name] for name in ("Isochron Scepter", "Eladamri's Call", "Grim Tutor",
+                                                           "Blood Artist")}
+        metadata.update({"Swamp": swamp, self.COMMANDER: self.SYNTHETIC[self.COMMANDER]})
+        metadata.update({name: {"type_line": "Sorcery", "mana_cost": "{2}", "cmc": 2.0, "oracle_text": "",
+                                "colors": []} for name in fillers})
+        metadata.update({name: {"type_line": "Sorcery", "mana_cost": "{9}", "cmc": 9.0, "oracle_text": "",
+                                "colors": []} for name in bears})
+        deck_data = {"decklist": [dict({"name": name}, **self.TAGS.get(name, {})) for name in names],
+                     "winConditions": [self.line("Blood Artist", "Isochron Scepter")]}
+        decklist, shuffle = self.pinned_deal(opening, library)
+        context = exporter.build_goldfish_context(decklist, deck_data, metadata, self.COMMANDER, ["B"],
+                                                  "synthetic-substitutes")
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"]))
+        casts = defaultdict(list)
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts[turn].append(name)
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter.random, "shuffle", shuffle), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            by_turn, _ = exporter.simulate_goldfish_game(decklist, context, 6)
+        self.assertEqual([casts[turn] for turn in (2, 3, 4, 5)],
+                         [["Isochron Scepter"], ["Filler 0"], ["Filler 1", "Filler 2"], []])
+        self.assertEqual([by_turn[turn]["comboLethal"] for turn in (4, 5)], [0, 1])
+
+    def test_more_restrictions_and_cost_objects(self):
+        line, heliod = self.line, [self.HELIOD]
+        hidetsugu = line("Heartless Hidetsugu", "Solphim, Mayhem Dominus")
+        self.check([
+            # Mogis, God of Slaughter: "As long as your devotion to black and
+            # red is less than seven, Mogis isn't a creature." Beside Heartless
+            # Hidetsugu ({3}{R}{R}) and Mogis ({2}{B}{R}) the devotion is 4:
+            # Diabolic Intent ({1}{B}, sacrifice a creature) has nothing to
+            # sacrifice; Viscera Seer is a creature.
+            ("Diabolic Intent, Mogis below seven devotion", hidetsugu, ["Diabolic Intent"],
+             ["Heartless Hidetsugu", "Mogis, God of Slaughter"], "BRR" + self.SPARE, False),
+            ("Diabolic Intent, Mogis and Viscera Seer", hidetsugu, ["Diabolic Intent"],
+             ["Heartless Hidetsugu", "Mogis, God of Slaughter", "Viscera Seer"], "BRR" + self.SPARE, True),
+            # Fiery Emancipation ({3}{R}{R}{R}) makes it 2 + 2 + 3 = 7: Mogis
+            # is a creature, sacrificed; {1}{B} + Solphim's {2}{R}{R}.
+            ("Diabolic Intent, Mogis at seven devotion, pool BRR + 3", hidetsugu, ["Diabolic Intent"],
+             ["Heartless Hidetsugu", "Mogis, God of Slaughter", "Fiery Emancipation"], "BRRCCC", True),
+            ("Diabolic Intent, Mogis at seven devotion, pool BRR + 2", hidetsugu, ["Diabolic Intent"],
+             ["Heartless Hidetsugu", "Mogis, God of Slaughter", "Fiery Emancipation"], "BRRCC", False),
+            # Xenagos, God of Revels ({3}{R}{G}): "As long as your devotion to
+            # red and green is less than seven, Xenagos isn't a creature."
+            # Raph & Mikey, Troublemakers ({5}{R/G}{R/G}), a piece, adds two,
+            # each hybrid symbol once; Hardened Scales ({G}) and Doubling
+            # Season ({4}{G}) one each: 6, not a creature. Fiery Emancipation
+            # ({3}{R}{R}{R}) instead: 7. Diabolic Intent finds Ashnod's Altar
+            # ({3}).
+            ("Diabolic Intent, Xenagos at six devotion", line("Ashnod's Altar", "Raph & Mikey, Troublemakers"),
+             ["Diabolic Intent"],
+             ["Raph & Mikey, Troublemakers", "Xenagos, God of Revels", "Hardened Scales", "Doubling Season"],
+             "B" + self.SPARE, False),
+            ("Diabolic Intent, Xenagos at seven devotion", line("Ashnod's Altar", "Raph & Mikey, Troublemakers"),
+             ["Diabolic Intent"], ["Raph & Mikey, Troublemakers", "Xenagos, God of Revels", "Fiery Emancipation"],
+             "B" + self.SPARE, True),
+            # A hybrid symbol counts toward its second colour too. Heliod,
+            # Sun-Crowned ({2}{W}): "As long as your devotion to white is less
+            # than five, Heliod isn't a creature." Zirda, the Dawnwaker
+            # ({1}{R/W}{R/W}) adds two, Mikey & Leo, Chaos & Order
+            # ({G/W}{G/W}) two: 5, a creature; Elena, Turk Recruit ({2}{W})
+            # in Mikey & Leo's place adds one: 4. Both are pieces.
+            ("Diabolic Intent, Heliod at five devotion",
+             line("Ashnod's Altar", "Zirda, the Dawnwaker", "Mikey & Leo, Chaos & Order"), ["Diabolic Intent"],
+             ["Zirda, the Dawnwaker", "Mikey & Leo, Chaos & Order", self.HELIOD], "B" + self.SPARE, True),
+            ("Diabolic Intent, Heliod at four devotion",
+             line("Ashnod's Altar", "Zirda, the Dawnwaker", "Elena, Turk Recruit"), ["Diabolic Intent"],
+             ["Zirda, the Dawnwaker", "Elena, Turk Recruit", self.HELIOD], "B" + self.SPARE, False),
+            # A Phyrexian symbol counts: Ajani, Sleeper Agent
+            # ({1}{G}{G/W/P}{W}) adds two white beside Zirda's two: 5.
+            ("Diabolic Intent, Heliod at five devotion with Ajani, Sleeper Agent",
+             line("Ashnod's Altar", "Zirda, the Dawnwaker"), ["Diabolic Intent"],
+             ["Zirda, the Dawnwaker", self.HELIOD, "Ajani, Sleeper Agent"], "B" + self.SPARE, True),
+            # A Room is played as its first door, whose cost alone counts
+            # (only an unlocked door's characteristics are on the battlefield):
+            # Unholy Annex ({2}{B}; Ritual Chamber {3}{B}{B} locked) and
+            # Spiked Corridor ({3}{R}; Torture Pit {3}{R} locked) add one each:
+            # 2 + 2 + 1 + 1 = 6; Dragon Tempest ({1}{R}) makes it 7.
+            ("Diabolic Intent, Mogis at six devotion with two Rooms", hidetsugu, ["Diabolic Intent"],
+             ["Heartless Hidetsugu", "Mogis, God of Slaughter", "Unholy Annex // Ritual Chamber",
+              "Spiked Corridor // Torture Pit"], "BRR" + self.SPARE, False),
+            ("Diabolic Intent, Mogis at seven devotion with two Rooms", hidetsugu, ["Diabolic Intent"],
+             ["Heartless Hidetsugu", "Mogis, God of Slaughter", "Unholy Annex // Ritual Chamber",
+              "Spiked Corridor // Torture Pit", "Dragon Tempest"], "BRR" + self.SPARE, True),
+            # Natural Order ({2}{G}{G}) sacrifices a green creature: Xenagos
+            # (red and green) at seven devotion is one; it puts Scurry Oak
+            # onto the battlefield, not paid. At six it is not a creature.
+            ("Natural Order, Xenagos at seven devotion, pool GG + 2",
+             line("Scurry Oak", "Raph & Mikey, Troublemakers"), ["Natural Order"],
+             ["Raph & Mikey, Troublemakers", "Xenagos, God of Revels", "Fiery Emancipation"], "GGCC", True),
+            ("Natural Order, Xenagos at seven devotion, pool GG + 1",
+             line("Scurry Oak", "Raph & Mikey, Troublemakers"), ["Natural Order"],
+             ["Raph & Mikey, Troublemakers", "Xenagos, God of Revels", "Fiery Emancipation"], "GGC", False),
+            ("Natural Order, Xenagos at six devotion", line("Scurry Oak", "Raph & Mikey, Troublemakers"),
+             ["Natural Order"],
+             ["Raph & Mikey, Troublemakers", "Xenagos, God of Revels", "Hardened Scales", "Doubling Season"],
+             "GG" + self.SPARE, False),
+            # In the hand a god is a creature card, whatever the devotion.
+            ("Probe Discard Tutor discards Mogis from the hand, pool 4", line("Ashnod's Altar", self.HELIOD),
+             ["Probe Discard Tutor", "Mogis, God of Slaughter"], heliod, "CCCC", True),
+            # A piece of the line in hand is never discarded: Blood Artist is
+            # the only creature card; Viscera Seer beside it can be.
+            ("Probe Discard Tutor, only a line piece to discard",
+             line("Ashnod's Altar", "Blood Artist", self.HELIOD), ["Probe Discard Tutor", "Blood Artist"], heliod,
+             "B" + self.SPARE, False),
+            ("Probe Discard Tutor, a line piece and Viscera Seer, pool B + 5",
+             line("Ashnod's Altar", "Blood Artist", self.HELIOD),
+             ["Probe Discard Tutor", "Blood Artist", "Viscera Seer"], heliod, "B" + "C" * 5, True),
+            # Probe Artifact Tutor ({1}, sacrifice an artifact) finds Ashnod's
+            # Altar ({3}): Thornbite Staff, an artifact, can be sacrificed;
+            # Viscera Seer, a creature, cannot; nor Isochron Scepter, a piece.
+            ("an artifact to sacrifice, pool 4", line("Ashnod's Altar", self.HELIOD), ["Probe Artifact Tutor"],
+             [self.HELIOD, "Thornbite Staff"], "CCCC", True),
+            ("an artifact to sacrifice, pool 3", line("Ashnod's Altar", self.HELIOD), ["Probe Artifact Tutor"],
+             [self.HELIOD, "Thornbite Staff"], "CCC", False),
+            ("only a creature, no artifact, to sacrifice", line("Ashnod's Altar", self.HELIOD),
+             ["Probe Artifact Tutor"], [self.HELIOD, "Viscera Seer"], self.SPARE, False),
+            ("only an artifact line piece to sacrifice", line("Ashnod's Altar", "Isochron Scepter"),
+             ["Probe Artifact Tutor"], ["Isochron Scepter"], self.SPARE, False),
+            # Probe Discard Tutor ({1}, discard a creature card): Viscera Seer
+            # in hand can be discarded; Eternal Witness cannot when the same
+            # assignment uses it to return Isochron Scepter; a sorcery card
+            # (Demonic Tutor, unused) is not a creature card.
+            ("a creature card to discard, pool 4", line("Ashnod's Altar", self.HELIOD),
+             ["Probe Discard Tutor", "Viscera Seer"], heliod, "CCCC", True),
+            ("only a sorcery card to discard", line("Ashnod's Altar", self.HELIOD),
+             ["Probe Discard Tutor", "Twinflame"], heliod, self.SPARE, False),
+            # The commander, a creature card, is never discarded, should the
+            # hand ever hold it.
+            ("only the commander to discard", line("Ashnod's Altar", self.HELIOD),
+             ["Probe Discard Tutor", self.COMMANDER], heliod, self.SPARE, False),
+            ("the only creature card is used by the same assignment",
+             line("Ashnod's Altar", "Isochron Scepter", self.HELIOD), ["Probe Discard Tutor", "Eternal Witness"],
+             heliod, "GG" + self.SPARE, False),
+            ("a spare creature card beside the one the assignment uses",
+             line("Ashnod's Altar", "Isochron Scepter", self.HELIOD),
+             ["Probe Discard Tutor", "Eternal Witness", "Viscera Seer"], heliod, "GG" + self.SPARE, True),
+            # A Changeling card has every creature subtype: Goblin Matron
+            # ({2}{R}) finds Changeling Outcast ({B}), a Shapeshifter...
+            ("Goblin Matron finds a Changeling, pool RB + 2", line("Changeling Outcast", self.HELIOD),
+             ["Goblin Matron"], heliod, "RBCC", True),
+            ("Goblin Matron finds a Changeling, pool RB + 1", line("Changeling Outcast", self.HELIOD),
+             ["Goblin Matron"], heliod, "RBC", False),
+            # ...but not the Aura subtype (Probe Aura Seek, {1}).
+            ("an Aura tutor and a Changeling", line("Changeling Outcast", self.HELIOD), ["Probe Aura Seek"],
+             heliod, "B" + self.SPARE, False),
+            # Colour C is colourless (Probe Colorless Seek, {1}): Glaring
+            # Fleshraker ({2}{C}) yes, Blood Artist (black) no.
+            ("a colourless tutor, a colourless piece, pool C + 3", line("Glaring Fleshraker", self.HELIOD),
+             ["Probe Colorless Seek"], heliod, "CCCC", True),
+            ("a colourless tutor, a black piece", line("Blood Artist", self.HELIOD), ["Probe Colorless Seek"],
+             heliod, "B" + self.SPARE, False),
+            # The printed mana value, not the cost read: Zirda, the Dawnwaker
+            # ({1}{R/W}{R/W}) has mana value 3, above Shepherd of the Cosmos's
+            # "mana value 2 or less"; Blood Artist (2) is not.
+            ("Shepherd of the Cosmos, Zirda (mana value 3)", line("Zirda, the Dawnwaker", self.HELIOD),
+             ["Shepherd of the Cosmos"], heliod, "WW" + self.SPARE, False),
+            ("Shepherd of the Cosmos, Blood Artist (mana value 2), pool WW + 4", line("Blood Artist", self.HELIOD),
+             ["Shepherd of the Cosmos"], heliod, "WWCCCC", True),
+        ])
+
+    def test_more_destinations(self):
+        line, heliod = self.line, [self.HELIOD]
+        top = line("Sensei's Divining Top", "Mystic Forge", "Glaring Fleshraker", startPiece="Sensei's Divining Top")
+        self.check([
+            # A non-permanent piece never goes onto the battlefield: Probe Put
+            # Back returns any card there, not Twinflame (a sorcery).
+            ("onto the battlefield, a sorcery piece", line("Twinflame", self.HELIOD), ["Probe Put Back"], heliod,
+             self.SPARE, False),
+            ("onto the battlefield, a permanent piece, pool 1", line("Isochron Scepter", self.HELIOD),
+             ["Probe Put Back"], heliod, "C", True),
+            # Bargained Beseech the Mirror casts the start piece (Sensei's
+            # Divining Top, mana value 1) free: its own cost only, with
+            # Thornbite Staff as the bargain object; by the hand route + {1}.
+            ("Beseech bargained casts the start piece, pool its own cost", top, ["Beseech the Mirror"],
+             ["Mystic Forge", "Glaring Fleshraker", "Thornbite Staff"], "BBBC", True),
+            ("Beseech, the start piece, no bargain object, pool its own cost", top, ["Beseech the Mirror"],
+             ["Mystic Forge", "Glaring Fleshraker"], "BBBC", False),
+        ])
+
+    def assembly_game(self, slots, opening, library, fillers) -> tuple:
+        """One pinned game (pinned_deal) with one table line; (casts by turn,
+        the line's assembly turn). ``opening``: the seven kept; ``library``:
+        its last card the first draw. ``fillers``: name -> (mana cost, mana
+        value) of made-up sorceries with no text; "Bear N" are made-up {9}
+        sorceries."""
+        names = list(dict.fromkeys(opening + library))
+        metadata = {name: self.SYNTHETIC.get(name) or FLEET_METADATA.get(name) for name in names + [self.COMMANDER]}
+        metadata.update({name: {"type_line": "Sorcery", "mana_cost": cost, "cmc": float(mana_value),
+                                "oracle_text": "", "colors": []} for name, (cost, mana_value) in fillers.items()})
+        metadata.update({name: {"type_line": "Sorcery", "mana_cost": "{9}", "cmc": 9.0, "oracle_text": "",
+                                "colors": []} for name in names if name.startswith("Bear ")})
+        deck_data = {"decklist": [dict({"name": name}, **self.TAGS.get(name, {})) for name in names]}
+        combo = {"name": "Probe table line", "slots": slots, "requiresCommander": False}
+        decklist, shuffle = self.pinned_deal(opening, library)
+        with patch.dict(exporter.KEY_COMBOS, {"synthetic-assembly-game": [combo]}):
+            context = exporter.build_goldfish_context(decklist, deck_data, metadata, self.COMMANDER,
+                                                      ["W", "U", "B", "R", "G"], "synthetic-assembly-game")
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"]))
+        casts = defaultdict(list)
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts[turn].append(name)
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter.random, "shuffle", shuffle), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            _, assembly = exporter.simulate_goldfish_game(decklist, context, 6)
+        return casts, assembly[0]
+
+    def test_the_mana_held_back_keeps_a_payable_assembly(self):
+        """Pinned games (random.shuffle pinned), one table line each. (a)
+        Sensei's Divining Top + Blood Artist; kept seven: three Swamps, Top,
+        Eladamri's Call ({G}{W}), Grim Tutor ({1}{B}{B}) and Phyrexian Arena
+        ({1}{B}{B}); every draw a {9} Bear. Turn 1: Top. Turn 3: three Swamps
+        pay Grim Tutor, not Eladamri's Call, so Arena is held and the line is
+        assembled that turn. (b) Blood Artist + Isochron Scepter, both in the
+        library; kept seven: a Swamp, a Plains, a Forest, a Wastes, Demonic
+        Tutor ({1}{B}), Eladamri's Call and Filler A ({3}); the turn-1 draw
+        is Filler B ({3}), then Bears. Turn 3: three lands, the line needs
+        four: a filler. Turn 4: only Call -> Blood Artist, Demonic -> Scepter
+        is an assignment ({G}{W} + {1}{B}): the second filler is held and the
+        line is assembled that turn."""
+        bears = [f"Bear {i}" for i in range(20)]
+        casts, turn = self.assembly_game(
+            [["Sensei's Divining Top"], ["Blood Artist"]],
+            ["Swamp", "Swamp", "Swamp", "Sensei's Divining Top", "Eladamri's Call", "Grim Tutor", "Phyrexian Arena"],
+            ["Blood Artist"] + bears, {})
+        self.assertEqual(([casts[t] for t in (1, 2, 3)], turn), ([["Sensei's Divining Top"], [], []], 3))
+        casts, turn = self.assembly_game(
+            [["Blood Artist"], ["Isochron Scepter"]],
+            ["Swamp", "Plains", "Forest", "Wastes", "Demonic Tutor", "Eladamri's Call", "Filler A"],
+            ["Blood Artist", "Isochron Scepter"] + bears + ["Filler B"],
+            {"Filler A": ("{3}", 3), "Filler B": ("{3}", 3)})
+        self.assertEqual((casts[3], casts[4], turn), (["Filler A"], [], 4))
+
+    def assembled(self, slots, hand, battlefield, library, mana) -> bool:
+        combo = {"name": "Probe table line", "slots": slots, "requiresCommander": False}
+        names = [member for slot in slots for member in slot] + list(hand) + list(battlefield) + list(library)
+        context = self.context(names, combos=[combo])
+        return exporter.combo_assembled_this_turn(
+            turn=self.TURN, hand=list(hand), permanents=self.board(context, battlefield), library=list(library),
+            assembly_line=context["assemblyLines"][0], profiles=context["profiles"], pool=self.pool(mana),
+            commander_name=self.COMMANDER)
+
+    def test_assembly_pays_the_fetch_and_keeps_a_member_in_each_filled_slot(self):
+        scepter_altar = [["Isochron Scepter"], ["Ashnod's Altar"]]
+        cases = [
+            # Fabricate ({2}{U}) fetches Ashnod's Altar; the Altar is not paid.
+            ("the fetch only, pool U + 2", scepter_altar, ["Isochron Scepter", "Fabricate"], [],
+             ["Ashnod's Altar"], "UCC", True),
+            ("the fetch only, pool U + 1", scepter_altar, ["Isochron Scepter", "Fabricate"], [],
+             ["Ashnod's Altar"], "UC", False),
+            ("the target is gone from the library", scepter_altar, ["Isochron Scepter", "Fabricate"], [],
+             [], "U" + self.SPARE, False),
+            # Final Parting ({3}{B}{B}): the card for the hand.
+            ("Final Parting's hand half, pool BB + 3", scepter_altar, ["Isochron Scepter", "Final Parting"], [],
+             ["Ashnod's Altar"], "BBCCC", True),
+            ("Final Parting's hand half, pool BB + 2", scepter_altar, ["Isochron Scepter", "Final Parting"], [],
+             ["Ashnod's Altar"], "BBCC", False),
+            # Stoneforge Mystic ({1}{W}) fills its own slot and, cast, fetches
+            # the Sword for the other.
+            ("a permanent member that is a tutor, pool W + 1", [["Stoneforge Mystic"], ["Sword of Feast and Famine"]],
+             ["Stoneforge Mystic"], [], ["Sword of Feast and Famine"], "WC", True),
+            ("a permanent member that is a tutor, pool W", [["Stoneforge Mystic"], ["Sword of Feast and Famine"]],
+             ["Stoneforge Mystic"], [], ["Sword of Feast and Famine"], "W", False),
+            # Demonic Tutor, a sorcery, cast leaves its slot: only with a
+            # second member of that slot in hand.
+            ("a sorcery member that is its slot's only card", [["Demonic Tutor"], ["Ashnod's Altar"]],
+             ["Demonic Tutor"], [], ["Ashnod's Altar"], "B" + self.SPARE, False),
+            ("a sorcery member with another member of its slot", [["Demonic Tutor", "Grim Tutor"], ["Ashnod's Altar"]],
+             ["Demonic Tutor", "Grim Tutor"], [], ["Ashnod's Altar"], "BC", True),
+            # Diabolic Intent ({1}{B}) sacrifices a creature: a member of a
+            # filled slot that keeps another drawn member.
+            ("a spare member pays the sacrifice", [["Viscera Seer", "Blood Artist"], ["Ashnod's Altar"]],
+             ["Diabolic Intent"], ["Viscera Seer", "Blood Artist"], ["Ashnod's Altar"], "BC", True),
+            ("the slot's only member cannot pay it", [["Viscera Seer", "Blood Artist"], ["Ashnod's Altar"]],
+             ["Diabolic Intent"], ["Viscera Seer"], ["Ashnod's Altar", "Blood Artist"], "B" + self.SPARE, False),
+            # Every assignment is tried here too: Eladamri's Call ({G}{W}),
+            # the cheapest tutor for Blood Artist, cannot be paid from black
+            # mana; Grim Tutor ({1}{B}{B}) can.
+            ("an off-colour cheapest tutor, pool BBB", [["Isochron Scepter"], ["Blood Artist"]],
+             ["Isochron Scepter", "Eladamri's Call", "Grim Tutor"], [], ["Blood Artist"], "BBB", True),
+            ("an off-colour cheapest tutor, pool BB", [["Isochron Scepter"], ["Blood Artist"]],
+             ["Isochron Scepter", "Eladamri's Call", "Grim Tutor"], [], ["Blood Artist"], "BB", False),
+            # Two open slots: Eladamri's Call can fetch only Blood Artist, so
+            # Demonic Tutor fetches Isochron Scepter: {G}{W} + {1}{B}.
+            ("a wide and a narrow tutor, pool GWB + 1", [["Blood Artist"], ["Isochron Scepter"]],
+             ["Demonic Tutor", "Eladamri's Call"], [], ["Blood Artist", "Isochron Scepter"], "GWBC", True),
+            ("a wide and a narrow tutor, pool GWB", [["Blood Artist"], ["Isochron Scepter"]],
+             ["Demonic Tutor", "Eladamri's Call"], [], ["Blood Artist", "Isochron Scepter"], "GWB", False),
+            # Beseech the Mirror fills a slot by its route to the hand: its own
+            # cost ({1}{B}{B}{B}), even with a bargain object out.
+            ("Beseech the Mirror, pool its own cost", [["Isochron Scepter"], ["Ashnod's Altar"]],
+             ["Isochron Scepter", "Beseech the Mirror"], ["Thornbite Staff"], ["Ashnod's Altar"], "BBBC", True),
+            ("Beseech the Mirror, pool one short", [["Isochron Scepter"], ["Ashnod's Altar"]],
+             ["Isochron Scepter", "Beseech the Mirror"], ["Thornbite Staff"], ["Ashnod's Altar"], "BBB", False),
+            # ... and with no bargain object at all.
+            ("Beseech the Mirror, nothing on the battlefield, pool its own cost",
+             [["Isochron Scepter"], ["Ashnod's Altar"]], ["Isochron Scepter", "Beseech the Mirror"], [],
+             ["Ashnod's Altar"], "BBBC", True),
+            # A tutor that puts the card onto the battlefield (Probe Put Tutor)
+            # fetches a permanent member, not an instant or sorcery one.
+            ("onto the battlefield, a sorcery member", [["Isochron Scepter"], ["Twinflame"]],
+             ["Isochron Scepter", "Probe Put Tutor"], [], ["Twinflame"], self.SPARE, False),
+            ("onto the battlefield, a permanent member", [["Isochron Scepter"], ["Ashnod's Altar"]],
+             ["Isochron Scepter", "Probe Put Tutor"], [], ["Ashnod's Altar"], "C", True),
+            # Mogis, God of Slaughter below seven devotion (Heartless Hidetsugu
+            # and Mogis: 4) is not a creature to sacrifice for Diabolic Intent;
+            # with Fiery Emancipation (7) it is.
+            ("Diabolic Intent, Mogis below seven devotion", [["Heartless Hidetsugu"], ["Solphim, Mayhem Dominus"]],
+             ["Diabolic Intent"], ["Heartless Hidetsugu", "Mogis, God of Slaughter"],
+             ["Solphim, Mayhem Dominus"], "B" + self.SPARE, False),
+            ("Diabolic Intent, Mogis and Viscera Seer", [["Heartless Hidetsugu"], ["Solphim, Mayhem Dominus"]],
+             ["Diabolic Intent"], ["Heartless Hidetsugu", "Mogis, God of Slaughter", "Viscera Seer"],
+             ["Solphim, Mayhem Dominus"], "B" + self.SPARE, True),
+            ("Diabolic Intent, Mogis at seven devotion", [["Heartless Hidetsugu"], ["Solphim, Mayhem Dominus"]],
+             ["Diabolic Intent"], ["Heartless Hidetsugu", "Mogis, God of Slaughter", "Fiery Emancipation"],
+             ["Solphim, Mayhem Dominus"], "B" + self.SPARE, True),
+        ]
+        for label, slots, hand, battlefield, library, mana, expected in cases:
+            with self.subTest(label):
+                self.assertEqual(self.assembled(slots, hand, battlefield, library, mana), expected)
+
+
+class SubstituteTagVocabularyTests(unittest.TestCase):
+    """The tag checks (gate_tags_lib.entry_errors) are one definition: the
+    validator reports exactly what the exporter raises on, for an unknown
+    field or value, a tag without its role, a missing recursion_mode on a
+    non-land recursion entry of a deck with a combo win condition (rule B9),
+    and an "X" cap on a card that pays no {X}. The validator reads each card's
+    front face (type line, mana cost) from the oracle mirror
+    (load_scryfall_name_index, here a mirror written in its shape: a
+    two-faced card's costs on its faces), the exporter from the card
+    metadata: both are given the same cards here."""
+
+    COMMANDER = "Probe Rule Commander"
+    METADATA = dict(ComboCheckSubstituteTests.SYNTHETIC, **{
+        name: FLEET_METADATA[name] for name in ("Reanimate", "Demonic Tutor", "Blood Artist", "Isochron Scepter",
+                                                "Academy Ruins", "Viscera Seer", "Whir of Invention",
+                                                "Agadeem's Awakening // Agadeem, the Undercrypt",
+                                                "Pinnacle Monk // Mystic Peak", "Genesis Hydra")})
+    LINE = {"title": "Probe line", "kind": "combo", "pieces": ["Blood Artist", "Isochron Scepter"],
+            "cards": ["Blood Artist", "Isochron Scepter"]}
+
+    def mirror_cards(self) -> list[dict]:
+        cards = []
+        for name, meta in self.METADATA.items():
+            type_lines = meta["type_line"].split(" // ")
+            if len(type_lines) == 1:
+                cards.append({"name": name, "type_line": meta["type_line"], "mana_cost": meta["mana_cost"]})
+                continue
+            faces = [{"name": face, "type_line": type_line, "mana_cost": cost}
+                     for face, type_line, cost in zip(name.split(" // "), type_lines, [meta["mana_cost"], ""])]
+            cards.append({"name": name, "type_line": meta["type_line"], "mana_cost": None, "card_faces": faces})
+        return cards
+
+    def outcome(self, entry, win_conditions, details=False):
+        """(validator issue types, or their details with ``details``; exporter
+        error or None) for a deck with one tagged entry."""
+        validator = importlib.import_module("scripts.validate_deck_json")
+        names = ["Blood Artist", "Isochron Scepter", entry["name"]]
+        deck = {"id": "test-deck", "commander": self.COMMANDER, "winConditions": list(win_conditions),
+                "decklist": [{"name": name} for name in names[:2]] + [entry]}
+        with tempfile.TemporaryDirectory() as tmpdir:
+            mirror_file = Path(tmpdir) / "scryfall-oracle.json"
+            mirror_file.write_text(json.dumps(self.mirror_cards()))
+            deck_file = Path(tmpdir) / "deck.json"
+            deck_file.write_text(json.dumps(deck))
+            issues = validator.validate_deck_json([deck_file], validator.load_scryfall_name_index(mirror_file))
+        try:
+            exporter.build_goldfish_context(names, deck, self.METADATA, self.COMMANDER, ["B"], "test-deck")
+            error = None
+        except ValueError as exc:
+            error = str(exc)
+        return [issue.detail if details else issue.issue_type for issue in issues], error
+
+    def test_an_unknown_field_or_value_fails_in_both(self):
+        cases = [
+            ("a misspelt field", {"name": "Demonic Tutor", "primary_role": "tutor", "tutor_targts": ["any"]},
+             "tutor_targts: unknown field"),
+            ("an unknown tutor_mode", {"name": "Demonic Tutor", "primary_role": "tutor", "tutor_mode": "to_library"},
+             "tutor_mode: 'to_library' is not one of"),
+            ("an unknown target type", {"name": "Demonic Tutor", "primary_role": "tutor", "tutor_targets": ["spell"]},
+             "tutor_targets: ['spell'] is not a non-empty list"),
+            ("an empty target list", {"name": "Demonic Tutor", "primary_role": "tutor", "tutor_targets": []},
+             "tutor_targets: [] is not a non-empty list"),
+            ("an unknown extra cost", {"name": "Reanimate", "primary_role": "recursion",
+                                       "recursion_mode": "to_battlefield", "recursion_extra_cost": "pay-life"},
+             "recursion_extra_cost: 'pay-life' is not one of"),
+            ("a malformed cost", {"name": "Reanimate", "primary_role": "recursion",
+                                  "recursion_mode": "to_battlefield", "recursion_cost": "1B"},
+             "recursion_cost: '1B' is not a mana cost"),
+            # A symbol no card prints, which the exporter would price as free.
+            ("a cost symbol that does not exist", {"name": "Reanimate", "primary_role": "recursion",
+                                                   "recursion_mode": "to_battlefield", "recursion_cost": "{W/W}"},
+             "recursion_cost: '{W/W}' is not a mana cost"),
+            ("an unknown letter in a cost", {"name": "Demonic Tutor", "primary_role": "tutor", "tutor_cost": "{1}{Q}"},
+             "tutor_cost: '{1}{Q}' is not a mana cost"),
+            # Symbols no card prints: an empty or a two-letter part, a third
+            # part other than P, a hybrid out of its printed order ({W/U},
+            # {G/U/P} are printed), lower case, a digit that is not ASCII
+            # (superscript two, Arabic-Indic three), a number with a leading
+            # zero ({0} alone is printed: Ornithopter).
+            *(("a cost symbol " + cost, {"name": "Demonic Tutor", "primary_role": "tutor", "tutor_cost": cost},
+               f"tutor_cost: {cost!r} is not a mana cost")
+              for cost in ("{/W}", "{W/}", "{WU/B}", "{W/U/G}", "{U/W}", "{U/G/P}", "{b}", "{1}{b}", "{²}",
+                           "{٣}", "{01}", "{00}")),
+            # A key that only looks like a tag field is refused, not read as no tag.
+            ("a key spelt tutorMode", {"name": "Demonic Tutor", "primary_role": "tutor", "tutorMode": "to_top"},
+             "tutorMode: unknown field"),
+            ("a key spelt tutor-mode", {"name": "Demonic Tutor", "primary_role": "tutor", "tutor-mode": "to_top"},
+             "tutor-mode: unknown field"),
+            ("a key spelt Recursion_Mode", {"name": "Reanimate", "primary_role": "recursion",
+                                            "recursion_mode": "to_battlefield", "Recursion_Mode": "to_hand"},
+             "Recursion_Mode: unknown field"),
+        ]
+        for label, entry, message in cases:
+            for win_conditions in ([], [self.LINE]):
+                with self.subTest(label, combo=bool(win_conditions)):
+                    issues, error = self.outcome(entry, win_conditions)
+                    self.assertEqual(issues, ["invalid_tag"])
+                    self.assertIn(f"test-deck: {entry['name']}: {message}", error)
+
+    def test_every_real_mana_symbol_passes_both(self):
+        # The symbol forms of printed costs, as the cards print them: Fiend
+        # Artisan {B/G}{B/G} (two-colour hybrid), Birthing Pod {3}{G/P}
+        # (Phyrexian), Ulalek, Fused Atrocity {C/W}{C/U}{C/B}{C/R}{C/G}
+        # (colourless hybrid), Tamiyo, Compleated Sage {2}{G}{G/U/P}{U}
+        # (hybrid Phyrexian), Spectral Procession {2/W}{2/W}{2/W} (generic
+        # hybrid), Azorius Guildmage {W/U}{W/U} and Boros Reckoner
+        # {R/W}{R/W}{R/W} (hybrids in their printed order), Ornithopter {0}
+        # and Emrakul, the Aeons Torn {15}; with {X} and {C}. The accepted
+        # tags hold {X}{B/G} and {1}{G/P}. The exporter prices the hybrid and
+        # Phyrexian symbols as free (a known limit).
+        for cost in ("{B/G}{B/G}", "{3}{G/P}", "{C/W}{C/U}{C/B}{C/R}{C/G}", "{2}{G}{G/U/P}{U}", "{2/W}{2/W}{2/W}",
+                     "{W/U}{W/U}", "{R/W}{R/W}{R/W}", "{0}", "{15}", "{X}{B/G}", "{1}{G/P}", "{4}{C}{C}{C}"):
+            with self.subTest(cost):
+                entry = {"name": "Reanimate", "primary_role": "recursion", "recursion_targets": ["creature"],
+                         "recursion_mode": "to_battlefield", "recursion_cost": cost}
+                self.assertEqual(self.outcome(entry, [self.LINE]), ([], None))
+
+    # Every non-generic symbol a cost tag accepts, written out by hand: X, the
+    # colours and C; the ten hybrid pairs in the order cards print them; 2/colour;
+    # C/colour; colour/P; the ten pairs with /P.
+    ACCEPTED_SYMBOLS = [
+        "X", "W", "U", "B", "R", "G", "C",
+        "W/U", "U/B", "B/R", "R/G", "G/W", "W/B", "U/R", "B/G", "R/W", "G/U",
+        "2/W", "2/U", "2/B", "2/R", "2/G",
+        "C/W", "C/U", "C/B", "C/R", "C/G",
+        "W/P", "U/P", "B/P", "R/P", "G/P",
+        "W/U/P", "U/B/P", "B/R/P", "R/G/P", "G/W/P", "W/B/P", "U/R/P", "B/G/P", "R/W/P", "G/U/P",
+    ]
+
+    def test_every_accepted_symbol_passes_both_and_no_other(self):
+        self.assertEqual(len(self.ACCEPTED_SYMBOLS), 42)
+        for symbol in self.ACCEPTED_SYMBOLS:
+            with self.subTest(symbol):
+                entry = {"name": "Demonic Tutor", "primary_role": "tutor", "tutor_cost": "{" + symbol + "}"}
+                self.assertEqual(self.outcome(entry, [self.LINE]), ([], None))
+        gate_tags_lib = importlib.import_module("scripts.gate_tags_lib")
+        self.assertEqual(set(gate_tags_lib.MANA_SYMBOLS), set(self.ACCEPTED_SYMBOLS))
+
+    def test_the_checks_that_read_the_deck_and_the_card_fail_in_both(self):
+        cases = [
+            # Demonic Tutor ({1}{B}) has no {X} to pay: an "X" cap cannot be read.
+            ("an X cap on a card that pays no {X}", {"name": "Demonic Tutor", "primary_role": "tutor",
+                                                    "tutor_mv_cap": "X"}, [self.LINE],
+             "tutor_mv_cap: \"X\" but the cost the card pays has no {X}"),
+            # Whir of Invention ({X}{U}{U}{U}) pays {X}: passes (control).
+            ("an X cap on a card that pays {X}", {"name": "Whir of Invention", "primary_role": "tutor",
+                                                 "tutor_mv_cap": "X", "tutor_mode": "to_battlefield"}, [self.LINE],
+             None),
+            ("a recursion entry with no mode, in a deck with a combo line", {"name": "Reanimate",
+                                                                             "primary_role": "recursion"},
+             [self.LINE], "recursion_mode: missing on a recursion entry in a deck with a kind \"combo\" win condition"),
+            ("a recursion entry with no mode, in a deck with no combo line", {"name": "Reanimate",
+                                                                              "primary_role": "recursion"},
+             [], None),
+            ("a land recursion entry with no mode", {"name": "Academy Ruins", "primary_role": "land",
+                                                     "secondary_role": "recursion"}, [self.LINE], None),
+            # A modal DFC whose back face only is a land: its front face is
+            # read, a sorcery (Agadeem's Awakening) or a creature (Pinnacle
+            # Monk), so the mode is required.
+            ("a spell-face modal DFC recursion entry with no mode",
+             {"name": "Agadeem's Awakening // Agadeem, the Undercrypt", "primary_role": "recursion"}, [self.LINE],
+             "recursion_mode: missing on a recursion entry in a deck with a kind \"combo\" win condition"),
+            ("a creature-face modal DFC recursion entry with no mode",
+             {"name": "Pinnacle Monk // Mystic Peak", "primary_role": "recursion"}, [self.LINE],
+             "recursion_mode: missing on a recursion entry in a deck with a kind \"combo\" win condition"),
+            # A permanent is cast before its cost tag is paid, so its printed
+            # {X} counts beside the tag. Genesis Hydra ({X}{G}{G}): "When you
+            # cast this spell, reveal the top X cards of your library. You may
+            # put a nonland permanent card with mana value X or less from
+            # among them onto the battlefield." Its trigger costs nothing more
+            # than the cast: the explicit {0} cost tag says so, and the "X"
+            # cap reads the X of the printed cost.
+            ("an X cap on a permanent with {X} printed and a cost tag",
+             {"name": "Genesis Hydra", "primary_role": "tutor",
+              "tutor_targets": ["artifact", "battle", "creature", "enchantment", "planeswalker"],
+              "tutor_mv_cap": "X", "tutor_cost": "{0}", "tutor_mode": "to_battlefield"}, [self.LINE], None),
+            # A forgotten role: Viscera Seer tagged as a tutor without the
+            # tutor role, Demonic Tutor carrying a recursion tag.
+            ("a tutor tag without the tutor role", {"name": "Viscera Seer", "primary_role": "payoff",
+                                                    "tutor_targets": ["any"]}, [self.LINE],
+             "tutor_targets: on an entry without the tutor role"),
+            ("a recursion tag without the recursion role", {"name": "Demonic Tutor", "primary_role": "tutor",
+                                                            "recursion_mode": "to_hand"}, [],
+             "recursion_mode: on an entry without the recursion role"),
+        ]
+        for label, entry, win_conditions, message in cases:
+            with self.subTest(label):
+                issues, error = self.outcome(entry, win_conditions)
+                if message is None:
+                    self.assertEqual((issues, error), ([], None))
+                else:
+                    self.assertEqual((issues, error), (["invalid_tag"], f"test-deck: {entry['name']}: {message}"))
+
+    def test_a_role_that_is_not_a_string_is_reported_in_both(self):
+        # Reported with its field named, not a crash that stops the report. A
+        # JSON null is a value, not an omitted field: it is reported too.
+        cases = [
+            ({"name": "Viscera Seer", "primary_role": ["payoff"]}, "primary_role: ['payoff'] is not a string"),
+            ({"name": "Demonic Tutor", "primary_role": "tutor", "secondary_role": ["recursion"],
+              "tutor_targets": ["any"]}, "secondary_role: ['recursion'] is not a string"),
+            ({"name": "Viscera Seer", "primary_role": None}, "primary_role: None is not a string"),
+            ({"name": "Demonic Tutor", "primary_role": "tutor", "secondary_role": None, "tutor_targets": ["any"]},
+             "secondary_role: None is not a string"),
+        ]
+        for entry, message in cases:
+            for win_conditions in ([], [self.LINE]):
+                with self.subTest(message, combo=bool(win_conditions)):
+                    self.assertEqual(self.outcome(entry, win_conditions, details=True),
+                                     ([f"Deck test-deck: {message}"], f"test-deck: {entry['name']}: {message}"))
+        # Control: an omitted secondary_role is no issue.
+        for win_conditions in ([], [self.LINE]):
+            with self.subTest("omitted secondary_role", combo=bool(win_conditions)):
+                self.assertEqual(self.outcome({"name": "Demonic Tutor", "primary_role": "tutor",
+                                               "tutor_targets": ["any"]}, win_conditions), ([], None))
+
+
+class SubstituteFleetTests(unittest.TestCase):
+    """The 21 deck files after the step-1 tags (owner-accepted 2026-11-24):
+    every one loads through the tag vocabulary, and what the combo checks let
+    each tutor and recursion entry supply is what the accepted checklist says
+    (tests/fixtures/gate_substitutes.json, written by hand from its "Step 1"
+    column)."""
+
+    ROOT = Path(__file__).resolve().parent.parent
+    FIXTURE = json.loads((Path(__file__).resolve().parent / "fixtures" / "gate_substitutes.json").read_text())
+
+    def deck_context(self, deck_id: str) -> tuple[dict, dict]:
+        deck = json.loads((self.ROOT / "data" / "commanders" / deck_id / "deck.json").read_text())
+        index = {e["id"]: e for e in json.loads((self.ROOT / "data" / "index.json").read_text())["commanders"]}
+        decklist = [e["name"] for e in deck["decklist"] for _ in range(e.get("quantity", 1))]
+        context = exporter.build_goldfish_context(decklist, deck, FLEET_METADATA, deck["commander"],
+                                                  list(index[deck_id]["colors"]) or ["C"], deck_id)
+        return deck, context
+
+    def test_every_deck_file_loads_through_the_vocabulary(self):
+        gate_tags_lib = importlib.import_module("scripts.gate_tags_lib")
+        deck_ids = sorted(path.name for path in (self.ROOT / "data" / "commanders").iterdir() if path.is_dir())
+        self.assertEqual(len(deck_ids), 21)
+        for deck_id in deck_ids:
+            with self.subTest(deck=deck_id):
+                # Building the context raises on a vocabulary error or a
+                # missing recursion_mode; the validator's check is the same.
+                deck, _ = self.deck_context(deck_id)
+                self.assertEqual([error for entry in deck["decklist"] for error in gate_tags_lib.tag_errors(entry)], [])
+
+    def test_the_accepted_checklist_agrees_with_the_checks(self):
+        lines = 0
+        for deck_id, expected in self.FIXTURE.items():
+            if deck_id.startswith("_"):
+                continue
+            with self.subTest(deck=deck_id):
+                deck, context = self.deck_context(deck_id)
+                profiles = context["profiles"]
+                got = defaultdict(lambda: {"combo": defaultdict(set), "assembly": defaultdict(set)})
+                for line in context["comboLines"]:
+                    for piece, options in line["deliveries"].items():
+                        for option in options:
+                            got[option["card"]]["combo"][piece].add(option["route"])
+                for line in context["assemblyLines"]:
+                    for options in line["fetches"]:
+                        for option in options:
+                            got[option["card"]]["assembly"][line["name"]].add(option["member"])
+                as_read = {card: {kind: {key: sorted(value) for key, value in by.items()}
+                                  for kind, by in uses.items() if by}
+                           for card, uses in got.items()}
+                stated = {card: {kind: {key: sorted(value) for key, value in by.items()}
+                                 for kind, by in uses.items()}
+                          for card, uses in expected.items() if uses}
+                self.assertEqual(as_read, stated)
+                # The checklist lists every tutor and recursion entry whose
+                # front face is not a land, except the recursion entries of a
+                # deck with table lines only (assembly reads none).
+                listed = {e["name"] for e in deck["decklist"]
+                          if not profiles[e["name"]]["libraryLand"]
+                          and ("tutor" in (e.get("primary_role"), e.get("secondary_role"))
+                               or ("recursion" in (e.get("primary_role"), e.get("secondary_role"))
+                                   and context["comboLines"]))}
+                self.assertEqual(set(expected), listed)
+                lines += len(expected)
+        self.assertEqual(lines, 113)
+
+    def test_a_paid_mulligan_keeps_only_the_substitutes_the_checks_use(self):
+        # Decision 6, in gandalf-party-guest: a kept seven of four lands, one
+        # line piece (Twinflame), Mystical Tutor (puts the card on top of the
+        # library: no credit) and Mox Amber, one card to bottom. Neither
+        # Tutor nor Mox is kept; the dearer goes: Mystical Tutor ({U}) before
+        # Mox Amber ({0}).
+        _, context = self.deck_context("gandalf-party-guest")
+        hand = ["Command Tower", "Glacial Fortress", "Sulfur Falls", "Clifftop Retreat", "Twinflame",
+                "Mystical Tutor", "Mox Amber"]
+        self.assertEqual(exporter.goldfish_bottom_cards(hand, 1, context["profiles"], ["W", "U", "R"], [],
+                                                        context["mulliganKeep"]), ["Mystical Tutor"])
 
 
 class ControlDeckGoldfishEqualityTests(unittest.TestCase):

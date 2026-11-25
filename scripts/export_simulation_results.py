@@ -45,6 +45,7 @@ import mana_simulation_shield_doctrine as sim_shield_doctrine
 import mana_simulation_gandalf_party_guest as sim_gandalf
 import mana_simulation_broodfire_hatchery as sim_broodfire_hatchery
 import mana_simulation_anvil_chorus as sim_anvil_chorus
+import gate_tags_lib
 
 PROJECT_ROOT = SCRIPTS_DIR.parent
 METADATA_FILE = PROJECT_ROOT / "data" / "card-metadata.json"
@@ -149,6 +150,11 @@ LAND_SUBTYPE_COLORS = {
 # tokens", "seven or more lands").
 COUNT_WORDS = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
                "seven": 7}
+COLOUR_WORDS = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
+# A creature that is not one while a condition holds: "As long as <condition>,
+# <name> isn't a creature." A Theros god's condition is its devotion.
+NOT_CREATURE_WHILE = re.compile(r"As long as ([^.\n]*), [^.\n]* isn't a creature")
+DEVOTION_BELOW = re.compile(r"your devotion to (\w+)(?: and (\w+))? is less than (\w+)")
 
 # KEY_COMBOS slot schema (DEC-363): a combo is a list of *slots*; the combo is
 # assembled when every slot is filled. A slot is a list of interchangeable cards
@@ -1277,10 +1283,20 @@ def build_combo_assembly_lines(deck_id: str, decklist: list[str],
     or holds >=1 member present in the decklist; a combo whose every slot is
     valid is included. Combos with a missing-from-deck slot are dropped (the
     deck cannot assemble them) — mirrors the old closed-form behaviour.
+
+    A card listed in two slots of one combo raises ValueError: assembly
+    (assembly_tutor_cost) reads each slot as filled by any of its drawn
+    members, so one card would fill both, and two slots could keep the same
+    card from paying an extra cost. With every member in one slot only, one
+    card fills at most one slot.
     """
     deck_cards = set(decklist)
     lines = []
     for combo in KEY_COMBOS.get(deck_id, []):
+        listed = [member for members in combo_slot_lists(combo) for member in members]
+        repeated = sorted({member for member in listed if listed.count(member) > 1})
+        if repeated:
+            raise ValueError(f"KEY_COMBOS {deck_id} {combo.get('name')!r}: {repeated} listed in two slots")
         slots = []
         complete = True
         for members in combo_slot_lists(combo):
@@ -2772,6 +2788,47 @@ def mana_value_impact(mana_value: int) -> int:
     return max(2, min(8, mana_value))
 
 
+def creature_condition(face_text: str) -> tuple[bool, tuple | None]:
+    """(whether the face is a creature only while a condition holds, the
+    devotion that makes it one). A Theros god: "As long as your devotion to
+    black and red is less than seven, Mogis isn't a creature" is
+    (True, ({B, R}, 7)). A condition that is not a devotion the goldfish reads
+    is (True, None): never read as a creature (extra_cost_objects)."""
+    found = NOT_CREATURE_WHILE.search(strip_reminder_text(face_text))
+    if found is None:
+        return False, None
+    devotion = DEVOTION_BELOW.fullmatch(found.group(1))
+    if devotion is None:
+        return True, None
+    first, second, count = devotion.groups()
+    words = [word for word in (first, second) if word]
+    if count not in COUNT_WORDS or not all(word in COLOUR_WORDS for word in words):
+        return True, None
+    return True, (frozenset(COLOUR_WORDS[word] for word in words), COUNT_WORDS[count])
+
+
+def devotion_symbols(mana_cost: str) -> tuple:
+    """The coloured mana symbols of a front face's mana cost, each as the set
+    of its colours, for devotion (CR 700.5): {R/G} is red and green, {2/W},
+    {C/W} and {W/P} white; {C}, {X} and generic symbols count for none. A
+    Room counts its first door's cost: only unlocked doors contribute mana
+    symbols to devotion, and the goldfish casts that door and never unlocks
+    the other (reads devotion too low)."""
+    return tuple(colours for colours in (frozenset(symbol.split("/")) & frozenset("WUBRG")
+                                         for symbol in re.findall(r"\{([^}]+)\}", mana_cost.split("//")[0]))
+                 if colours)
+
+
+def devotion_to(colours, permanents: list[dict], profiles: dict) -> int:
+    """Devotion to ``colours`` (CR 700.5): the mana symbols in the mana costs
+    of the non-land permanents (a land, an MDFC's land face too, has none)
+    that are one of those colours, each symbol once (a hybrid {R/G} once
+    toward red and green). Nykthos reads each colour alone (board_term_atoms);
+    a Theros god its own colours (extra_cost_objects)."""
+    return sum(1 for record in permanents if record["kind"] != "land"
+               for symbol in profiles[record["name"]]["devotionSymbols"] if symbol & colours)
+
+
 def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
                            commander_colors: list[str], commander_name: str) -> dict:
     """Compile per-card goldfish heuristics from metadata.
@@ -2785,6 +2842,7 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
     mana = card_mana_model(name, meta, commander_colors)
     is_land = mana["isLand"]
     face_type, face_text = battlefield_face(meta)
+    conditional_creature, creature_devotion = creature_condition(face_text)
     is_threat = is_threat_card(name, meta, category_names) or name == commander_name
     is_draw = is_draw_card(meta)
     is_interaction = is_interaction_card(meta, category_names)
@@ -2886,6 +2944,13 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
         "colors": (frozenset(meta.get("colors") or [])
                    if not is_land or "Creature" in type_words(face_type) else frozenset()),
         "changeling": "Changeling" in face_text,
+        # A creature only while a condition holds, and the devotion that
+        # makes it one (creature_condition): a Theros god is a creature to
+        # sacrifice once its devotion is met (extra_cost_objects).
+        "conditionalCreature": conditional_creature,
+        "creatureDevotion": creature_devotion,
+        # The coloured symbols of its mana cost, for devotion (devotion_to).
+        "devotionSymbols": devotion_symbols(meta.get("mana_cost") or ""),
         # Printed basic land types, read in the hand (a Snarl's reveal) and
         # the library (searches); a type granted on the battlefield (Urborg)
         # is read there only (land_types_on_battlefield).
@@ -2897,6 +2962,12 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
         "libraryLand": "Land" in type_words(type_line.split(" // ")[0]),
         "librarySubtypes": extract_land_subtypes(type_line.split(" // ")[0]),
         "libraryBasic": "Basic" in type_words(type_line.split(" // ")[0]),
+        # The front face's type words, colours and Changeling, which the combo
+        # checks' tutor and recursion tags are read against (substitute_allows),
+        # with the printed mana value (``cmc``).
+        "libraryTypeWords": type_words(type_line.split(" // ")[0]),
+        "libraryColors": frozenset(meta.get("colors") or []),
+        "libraryChangeling": "Changeling" in oracle,
     }
 
 
@@ -3376,25 +3447,28 @@ def x_cast_profile(profile: dict, x: int, commander_casts: int) -> dict:
 def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
     """Parse winConditions[] entries with kind=='combo' into combo-line specs.
 
-    Each combo line: {pieces: [name], costs: [pip_dict], permanentPieces: set[name],
-    startPiece: name | None, minX: {name: int}}.
-    Pieces not found in profiles are skipped (with the whole line dropped if any piece is missing).
+    Each combo line: {pieces: [name], costs: [pip_dict], startPiece: name | None,
+    minX: {name: int}}; build_goldfish_context adds
+    ``deliveries`` (combo_deliveries). Pieces not found in profiles are skipped (with
+    the whole line dropped if any piece is missing).
 
     ``startPiece`` is the optional piece the loop starts by casting (e.g. Sensei's
-    Divining Top recast through Mystic Forge). In ``combo_ready_this_turn`` it is free
+    Divining Top recast through Mystic Forge). In ``combo_line_costs`` it is free
     only if it was the last of the line's pieces to enter this turn; if it has been on
     the battlefield since an earlier turn its cost is paid again; if it entered this
-    turn before a partner, or could only come from reanimation, the line is not ready
-    that turn. A ``startPiece`` that is not one of the line's ``pieces`` raises
-    ``ValueError``.
+    turn before a partner, or could only be put onto the battlefield (a tutor or
+    recursion card that puts it there), the line is not ready that turn. A
+    ``startPiece`` that is not one of the line's ``pieces`` raises ``ValueError``.
 
     ``minX`` (owner-approved 2026-11-19, built 2026-11-21) maps a piece with {X} in its
     cost to the X it is priced at: the cheapest direct cast with which the line's listed
     pieces work (Walking Ballista beside Heliod, Sun-Crowned: 2; beside Mikaeus, the
     Unhallowed: 1). Its cost in ``costs`` is priced at that X (x_spell_cost: {X}{X} at
-    X = 2 is 4 mana), and ``combo_line_costs`` takes the piece only from the hand or
-    through a tutor the tags read as to-hand (combo_ready_this_turn states the paths
-    and the limits). ``minX`` must be a mapping, on a ``kind: "combo"`` entry whose
+    X = 2 is 4 mana), and ``combo_line_costs`` takes the piece only from the hand, or
+    through a card that puts it into the hand or lets it be cast from the graveyard
+    (decision 5, 2026-11-24), cast at that X; never through one that puts it onto the
+    battlefield or a bargained free cast (combo_deliveries). ``minX`` must be a mapping,
+    on a ``kind: "combo"`` entry whose
     ``pieces`` is a list, whose keys are pieces of that line named exactly as the deck
     lists them (a face name is not the card's name) with {X} in their mana cost, and
     whose values are positive integers; anything else raises ``ValueError``
@@ -3429,67 +3503,225 @@ def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
         if not all(p in profiles for p in pieces):
             continue
         costs = [x_spell_cost(profiles[p]["manaCost"], min_x.get(p, 0)) for p in pieces]
-        permanent_pieces = {p for p in pieces if profiles[p].get("isPermanent")}
         lines.append({
             "pieces": list(pieces),
             "costs": costs,
-            "permanentPieces": permanent_pieces,
             "startPiece": start_piece,
             "minX": dict(min_x),
         })
     return lines
 
 
-PIECE_TYPE_KEYWORDS = ("creature", "instant", "sorcery", "planeswalker", "artifact", "enchantment", "land", "battle")
+# --- The combo checks' substitutes (owner-approved plan "combo checks, step 1",
+# 2026-11-24) ---
+#
+# A substitute is a tutor or recursion card in hand that a combo check lets
+# stand in for a missing piece. What it may supply, and what that costs, is
+# read from the tags of its decklist entry (gate_tags_lib holds the
+# vocabulary): rules B1-B10 of the plan. The graveyard is not tracked (step
+# 3): combo lethal assumes a piece a recursion card could return is in the
+# graveyard, and a tutor's target in the library. The goldfish never casts a
+# tutor or recursion card (step 2), so a use that needs the card on the
+# battlefield before this turn supplies nothing.
+
+# The modes that supply a piece this turn; every other mode supplies nothing
+# (to_top: decision 1a; to_graveyard: while the graveyard is assumed, a
+# recursion card alone covers the piece; self, on_death, none: no credit).
+TUTOR_CREDIT_MODES = frozenset({"to_hand", "split_hand_graveyard", "to_battlefield"})
+RECURSION_CREDIT_MODES = frozenset({"to_battlefield", "to_hand", "cast_from_graveyard"})
+# Beseech the Mirror, bargained, casts the card it finds free at mana value 4 or less.
+BARGAIN_FREE_MV = 4
+COST_KEYS = ("generic", "W", "U", "B", "R", "G", "C")
 
 
-def card_type_tokens(type_line: str) -> set[str]:
-    """Lowercase set of card-type tokens present in a typeLine."""
-    lowered = (type_line or "").lower()
-    return {token for token in PIECE_TYPE_KEYWORDS if token in lowered}
+def is_front_permanent(profile: dict) -> bool:
+    """Whether a card's front face is a permanent (what it is in the hand,
+    library and graveyard)."""
+    return bool(profile["libraryTypeWords"] & gate_tags_lib.PERMANENT_TYPE_WORDS)
 
 
-def extract_tutor_metadata(deck_data: dict) -> dict:
-    """Build per-tutor metadata table.
+def substitute_use(entry: dict, role: str, profile: dict) -> dict:
+    """One role ("tutor" or "recursion") of a decklist entry, as the combo
+    checks read it (gate_tags_lib.entry_errors has checked its tags).
 
-    Returns name → {targets: set[str], mv_cap: int|None, free_cast_via_bargain: bool,
-    mode: "to_hand"|"to_graveyard", extra_cost: str|None}.
-    Default tutor with no schema overrides is universal (targets={"any"}, mv_cap=None,
-    mode="to_hand", extra_cost=None).
+    ``useCost`` is what using the card costs (rule B4): its printed cost; with
+    a ``*_cost`` tag, a card whose front face is a permanent pays its printed
+    cost and that cost (it is cast, then used: Wishclaw Talisman {1}{B} + {1}),
+    and any other card that cost instead (Step Through's wizardcycling {2}).
+    ``abilityCost`` is the ``*_cost`` tag alone (a piece cast from the hand
+    pays only it for its second use, rule B6). ``xCount`` is the {X} in the
+    cost paid: each is paid as the piece's mana value. ``credits`` is false
+    for a card that supplies nothing this turn: a land in hand (B2), a use
+    that is ``later`` (decision 2a), and the modes outside
+    TUTOR_CREDIT_MODES / RECURSION_CREDIT_MODES.
     """
-    tutors = {}
+    printed = profile["manaCost"]
+    ability = entry.get(f"{role}_cost")
+    ability_cost = parse_generic_mana_cost(ability or "")
+    front_permanent = is_front_permanent(profile)
+    if ability is None:
+        use_cost, x_count = printed, printed["X"]
+    elif front_permanent:
+        use_cost, x_count = combine_mana_costs([printed, ability_cost]), printed["X"] + ability_cost["X"]
+    else:
+        use_cost, x_count = ability_cost, ability_cost["X"]
+    mv_cap = entry.get(f"{role}_mv_cap")
+    targets = entry.get(f"{role}_targets")
+    mode = entry.get(f"{role}_mode", "to_hand" if role == "tutor" else None)
+    credit_modes = TUTOR_CREDIT_MODES if role == "tutor" else RECURSION_CREDIT_MODES
+    return {
+        "mode": mode,
+        "targets": None if not targets or "any" in targets else frozenset(targets),
+        "subtypes": frozenset(entry[f"{role}_subtypes"]) if f"{role}_subtypes" in entry else None,
+        "colors": frozenset(entry[f"{role}_colors"]) if f"{role}_colors" in entry else None,
+        "mvCap": mv_cap if type(mv_cap) is int else None,
+        "mvExact": entry.get(f"{role}_mv_exact"),
+        "mvOdd": bool(entry.get(f"{role}_mv_odd")),
+        "extra": entry.get(f"{role}_extra_cost"),
+        "bargain": role == "tutor" and bool(entry.get("tutor_free_cast_via_bargain")),
+        "useCost": combine_mana_costs([use_cost]),
+        "abilityCost": combine_mana_costs([ability_cost]),
+        "xCount": x_count,
+        "frontPermanent": front_permanent,
+        "credits": (not profile["libraryLand"] and entry.get(f"{role}_timing") != "later"
+                    and mode in credit_modes),
+    }
+
+
+def substitute_tables(deck_data: dict, profiles: dict, metadata: dict, deck_id: str = "") -> tuple[dict, dict]:
+    """(tutors, recursion cards): name -> substitute_use, for every decklist
+    entry with the ``tutor`` or ``recursion`` role whose card has a profile.
+
+    Every entry's tags are checked in every deck by gate_tags_lib.entry_errors,
+    the check validate_deck_json.py also runs: an unknown field or a value
+    outside its set, a role that is not a string, a tag without its role, a
+    missing ``recursion_mode`` on a non-land recursion entry of a deck with a
+    ``kind: "combo"`` win condition (rule B9), or an "X" cap on a card that
+    pays no {X}, raises ValueError naming the deck and the card.
+    """
+    has_combo_line = any(wincon.get("kind") == "combo" for wincon in deck_data.get("winConditions") or [])
+    tutors, recursion = {}, {}
     for entry in deck_data.get("decklist", []) or []:
         name = entry.get("name")
-        if not name:
+        meta = metadata.get(name)
+        front = None if meta is None else ((meta.get("type_line") or "").split(" // ")[0],
+                                           (meta.get("mana_cost") or "").split("//")[0].strip())
+        errors = gate_tags_lib.entry_errors(entry, has_combo_line, front)
+        if errors:
+            raise ValueError(f"{deck_id}: {name}: " + "; ".join(errors))
+        if name not in profiles:
             continue
-        if entry.get("primary_role") != "tutor" and entry.get("secondary_role") != "tutor":
-            continue
-        targets = entry.get("tutor_targets") or ["any"]
-        tutors[name] = {
-            "targets": {t.lower() for t in targets},
-            "mv_cap": entry.get("tutor_mv_cap"),
-            "free_cast_via_bargain": bool(entry.get("tutor_free_cast_via_bargain", False)),
-            "mode": entry.get("tutor_mode") or "to_hand",
-            "extra_cost": entry.get("tutor_extra_cost"),
-        }
-    return tutors
+        roles = {entry.get("primary_role"), entry.get("secondary_role")}
+        if "tutor" in roles:
+            tutors[name] = substitute_use(entry, "tutor", profiles[name])
+        if "recursion" in roles:
+            recursion[name] = substitute_use(entry, "recursion", profiles[name])
+    return tutors, recursion
 
 
-def extract_tutor_names(deck_data: dict) -> set[str]:
-    """Collect tutor card names from decklist[].primary_role / secondary_role."""
-    return set(extract_tutor_metadata(deck_data).keys())
+def role_names(deck_data: dict, role: str) -> set[str]:
+    """The decklist cards with ``role`` as their primary or secondary role."""
+    return {entry["name"] for entry in deck_data.get("decklist", []) or []
+            if entry.get("name") and role in (entry.get("primary_role"), entry.get("secondary_role"))}
 
 
-def extract_reanimation_names(deck_data: dict) -> set[str]:
-    """Collect reanimation card names from decklist[].primary_role / secondary_role == 'recursion'."""
-    names = set()
-    for entry in deck_data.get("decklist", []) or []:
-        name = entry.get("name")
-        if not name:
-            continue
-        if entry.get("primary_role") == "recursion" or entry.get("secondary_role") == "recursion":
-            names.add(name)
-    return names
+def substitute_allows(use: dict, piece: dict) -> bool:
+    """Whether a substitute's tags allow it to find or return ``piece`` (rule
+    B1): its card types, subtypes (a Changeling card has every creature
+    subtype) and colours (C: colourless) on the piece's front face, and its
+    mana value caps on the printed mana value (``cmc``; X caps nothing)."""
+    words = piece["libraryTypeWords"]
+    if use["targets"] is not None and not any(target.capitalize() in words for target in use["targets"]):
+        return False
+    mana_value = piece["cmc"]
+    if use["mvCap"] is not None and mana_value > use["mvCap"]:
+        return False
+    if use["mvExact"] is not None and mana_value != use["mvExact"]:
+        return False
+    if use["mvOdd"] and mana_value % 2 == 0:
+        return False
+    colors = piece["libraryColors"]
+    if use["colors"] is not None and not any(
+            (not colors) if color == "C" else color in colors for color in use["colors"]):
+        return False
+    if use["subtypes"] is not None and not any(
+            subtype in words or (piece["libraryChangeling"] and subtype in gate_tags_lib.CREATURE_SUBTYPES)
+            for subtype in use["subtypes"]):
+        return False
+    return True
+
+
+def x_paid(use: dict, piece: dict) -> dict:
+    """The X a substitute with {X} in the cost it pays spends: the piece's
+    printed mana value per {X} (Whir of Invention, Agadeem's Awakening). It is
+    not the piece's minX."""
+    paid = piece["cmc"] * use["xCount"]
+    return dict(combine_mana_costs([]), generic=paid, total=paid)
+
+
+def combo_deliveries(line: dict, profiles: dict, tutor_meta: dict, recursion_meta: dict) -> dict:
+    """For each piece of a combo line, every way a substitute can supply it
+    when it is missing (rule B3), as dicts: ``card``, ``use``
+    (substitute_use), ``route``, ``parts`` (the costs paid on top of the use:
+    the X paid, and the piece when it is cast), ``kinds`` (extra-cost
+    objects).
+
+    - into the hand (a tutor, or Final Parting's hand half), or back to the
+      hand or castable from the graveyard (a recursion card, decision 5): the
+      piece is cast and paid, at its line's minX;
+    - onto the battlefield (a tutor or a recursion card): only a permanent
+      piece that is neither a minX piece nor the line's startPiece, not paid;
+    - Beseech the Mirror bargained (``tutor_free_cast_via_bargain``): a piece
+      of mana value 4 or less that is not a minX piece, cast free, with one
+      bargain object; its other route is the paid route to the hand.
+    """
+    deliveries = {}
+    for piece, piece_cost in zip(line["pieces"], line["costs"]):
+        profile = profiles[piece]
+        start = piece == line["startPiece"]
+        min_x = piece in line["minX"]
+        options = []
+        for card, use in itertools.chain(tutor_meta.items(), recursion_meta.items()):
+            if not use["credits"] or not substitute_allows(use, profile):
+                continue
+            kinds = (use["extra"],) if use["extra"] else ()
+            x_cost = x_paid(use, profile)
+            if use["mode"] == "to_battlefield":
+                if is_front_permanent(profile) and not start and not min_x:
+                    options.append({"card": card, "use": use, "route": "battlefield", "parts": [x_cost],
+                                    "kinds": kinds})
+                continue
+            options.append({"card": card, "use": use, "route": "hand", "parts": [x_cost, piece_cost],
+                            "kinds": kinds})
+            if use["bargain"] and profile["cmc"] <= BARGAIN_FREE_MV and not min_x:
+                options.append({"card": card, "use": use, "route": "bargain", "parts": [],
+                                "kinds": kinds + ("bargain",)})
+        deliveries[piece] = options
+    return deliveries
+
+
+def assembly_fetches(line: dict, profiles: dict, tutor_meta: dict) -> list[list[dict]]:
+    """For each slot of an assembly line, every (tutor, member) fetch: a
+    tutor that supplies a piece this turn and whose tags allow the member
+    (onto the battlefield: a permanent member), as dicts: ``card``, ``use``,
+    ``member``, ``cost`` (the tutor's use and the X paid; assembly never pays
+    for the piece; Beseech the Mirror by its route to the hand), ``kinds``.
+    A commander slot fills itself and fetches nothing."""
+    fetches = []
+    for slot in line["slots"]:
+        options = []
+        for member in [] if slot["isCommander"] else slot["members"]:
+            profile = profiles[member]
+            for card, use in tutor_meta.items():
+                if not use["credits"] or not substitute_allows(use, profile):
+                    continue
+                if use["mode"] == "to_battlefield" and not is_front_permanent(profile):
+                    continue
+                options.append({"card": card, "use": use, "member": member,
+                                "cost": combine_mana_costs([use["useCost"], x_paid(use, profile)]),
+                                "kinds": (use["extra"],) if use["extra"] else ()})
+        fetches.append(options)
+    return fetches
 
 
 def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
@@ -3508,11 +3740,18 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         )
     combo_lines = extract_combo_lines(deck_data, profiles)
     assembly_lines = build_combo_assembly_lines(deck_id, decklist, commander_name)
-    # Tutor/reanim tables drive both the winConditions combo-readiness check and
-    # the KEY_COMBOS assembly tracker; build them whenever either is present.
+    # The substitute tables (every deck's tags are checked against the
+    # vocabulary here) drive both the winConditions combo check and the
+    # KEY_COMBOS assembly check; each line carries what may supply each of
+    # its pieces (combo_deliveries) or slots (assembly_fetches).
     needs_substitution = bool(combo_lines or assembly_lines)
-    tutor_meta = extract_tutor_metadata(deck_data) if needs_substitution else {}
-    reanim_names = extract_reanimation_names(deck_data) if needs_substitution else set()
+    tutor_meta, recursion_meta = substitute_tables(deck_data, profiles, metadata, deck_id)
+    if not needs_substitution:
+        tutor_meta, recursion_meta = {}, {}
+    for line in combo_lines:
+        line["deliveries"] = combo_deliveries(line, profiles, tutor_meta, recursion_meta)
+    for line in assembly_lines:
+        line["fetches"] = assembly_fetches(line, profiles, tutor_meta)
     # Reserve non-permanent combo pieces (e.g. Demonic Consultation), tutors, and
     # reanimation spells — never cast as filler. Permanent pieces (e.g. Thassa's Oracle)
     # can still be cast proactively; once on the battlefield they remain available for
@@ -3529,7 +3768,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         for slot in line["slots"]
         for member in slot["members"]
         if not profiles[member].get("isPermanent")
-    } | set(tutor_meta) | reanim_names
+    } | set(tutor_meta) | set(recursion_meta)
     # DEC-944 — every card the deck's two gates name: combo-gate pieces
     # (winConditions[] kind:'combo') plus KEY_COMBOS assembly slot members.
     # These are cast ahead of filler and are never held back by either hold
@@ -3545,27 +3784,24 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
     # Cards an imprint never exiles, in every deck whether or not it has a
     # gate: tutors and reanimation spells by their roles, and every combo-line
     # and assembly-line member (imprint_from_hand).
-    imprint_keep = (frozenset(extract_tutor_metadata(deck_data)) | extract_reanimation_names(deck_data)
+    imprint_keep = (frozenset(role_names(deck_data, "tutor")) | role_names(deck_data, "recursion")
                     | line_members)
     # The spells a paid mulligan bottoms last (goldfish_bottom_cards): those
-    # the goldfish takes from the hand without casting them as filler. It is
-    # defined by the substitute classes each gate takes, not by matching each
-    # card to a piece: every combo-line and assembly-line member; with a combo
-    # line, every tutor and the reanimation cards (combo_line_costs); with
-    # only assembly lines, the to_hand tutors (assembly_tutor_cost's own mode
-    # test) and no reanimation; and the deploy engine's Equipment, never cast
-    # and deployed free from the hand (deploy_engine_choice). A deck with no
-    # gate and no deploy engine keeps nothing. Its limit: a tutor whose
-    # targets or mana-value cap fit no piece is still kept (stampede-acres'
-    # Enlightened Tutor, zada-hedron-grinder's Goblin Engineer). Unlike
-    # imprintKeep, which an imprint never exiles in any deck, it holds no
-    # tutor or reanimation card of a class no gate takes.
+    # the goldfish takes from the hand without casting them as filler. Every
+    # combo-line and assembly-line member; the tutor and recursion cards whose
+    # tags can supply some piece of one of the deck's lines from the hand
+    # (decision 6: a combo_deliveries or assembly_fetches entry; not a land,
+    # a top-of-library or ``later`` card, a to-graveyard tutor, a no-credit
+    # mode, or a card that matches no piece); and the deploy engine's
+    # Equipment, never cast and deployed free from the hand
+    # (deploy_engine_choice). A deck with no gate and no deploy engine keeps
+    # nothing. Unlike imprintKeep, which an imprint never exiles in any deck,
+    # it holds no tutor or recursion card the checks cannot use.
     deploy_engine = COMMANDER_DEPLOY_ENGINE.get(deck_id)
-    if combo_lines:
-        gate_substitutes = frozenset(tutor_meta) | reanim_names
-    else:
-        gate_substitutes = frozenset(name for name, meta in tutor_meta.items()
-                                     if meta.get("mode", "to_hand") == "to_hand")
+    gate_substitutes = frozenset(
+        {option["card"] for line in combo_lines for options in line["deliveries"].values()
+         for option in options}
+        | {option["card"] for line in assembly_lines for options in line["fetches"] for option in options})
     mulligan_keep = line_members | gate_substitutes
     if deploy_engine is not None:
         mulligan_keep |= frozenset(deploy_engine["equipmentPower"]) | deploy_engine["doubleStrikeNames"]
@@ -3607,9 +3843,6 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "commanderColors": commander_colors,
         "comboLines": combo_lines,
         "assemblyLines": assembly_lines,
-        "tutorNames": set(tutor_meta.keys()),
-        "tutorMeta": tutor_meta,
-        "reanimationNames": reanim_names,
         "reservedPieces": reserved_pieces,
         "lineMembers": line_members,
         "cascade": COMMANDER_CASCADE.get(deck_id),
@@ -3669,15 +3902,13 @@ def goldfish_bottom_cards(hand: list[str], count: int, profiles: dict,
     spells, the most expensive first, keeping the cheap ones a six-card hand
     casts early; lands last. ``keep`` is the deck's mulliganKeep
     (build_goldfish_context): the cards the goldfish takes from the hand
-    without casting them as filler, defined by the substitute classes each
-    gate takes, not by matching each card to a piece: every combo-line and
-    assembly-line member; with a combo line, every tutor and the reanimation
-    cards; with only assembly lines, the to_hand tutors and no reanimation;
-    and the deploy engine's Equipment, deployed free from the hand. A card
-    the goldfish never casts, such as a reanimation spell that reads as
-    interaction, is not a card it never uses. Its limit: a tutor whose
-    targets or mana-value cap fit no piece is still kept. A deck with no gate
-    and no deploy engine keeps nothing.
+    without casting them as filler: every combo-line and assembly-line
+    member; the tutor and recursion cards whose tags can supply some piece
+    of one of the deck's lines from the hand (decision 6, 2026-11-24); and
+    the deploy engine's Equipment, deployed free from the hand. A card the
+    goldfish never casts, such as a recursion spell that reads as
+    interaction, is not a card it never uses. A deck with no gate and no
+    deploy engine keeps nothing.
 
     Exception: a hand of five or more lands bottoms lands first, as a pilot
     does not keep a flood by bottoming a spell; five lands of seven leave
@@ -3929,13 +4160,11 @@ def board_term_atoms(term: tuple, atoms: list[frozenset], permanents: list[dict]
         if gate is not None and not board_condition(gate, permanents, profiles, granted):
             return atoms
         if key[0] == "devotion":
-            # Each colour with its own devotion: the mana costs of the
-            # permanents (a land, an MDFC's land face too, has none). The
-            # k-th mana is every colour with devotion k or more past the
-            # cost; the activation is one colour (manaOneColour), so a colour
-            # pays only the mana it makes (GoldfishManaPool._left).
-            devotion = {colour: sum(profiles[p["name"]]["manaCost"][colour] for p in permanents
-                                    if p["kind"] != "land")
+            # Each colour with its own devotion (devotion_to). The k-th mana
+            # is every colour with devotion k or more past the cost; the
+            # activation is one colour (manaOneColour), so a colour pays only
+            # the mana it makes (GoldfishManaPool._left).
+            devotion = {colour: devotion_to(frozenset(colour), permanents, profiles)
                         for colour in "WUBRG" if colour in colours}
             top = max(devotion.values(), default=0) - cost
             candidate = [frozenset(c for c, n in devotion.items() if n - cost >= k)
@@ -4223,168 +4452,179 @@ def refresh_pool(pool: "GoldfishManaPool", permanents: list[dict], profiles: dic
     return pool
 
 
-def piece_type_matches(piece_types: set[str], tutor_targets: set[str]) -> bool:
-    """Check whether a tutor's target-type list permits fetching a piece of these types."""
-    if "any" in tutor_targets:
-        return True
-    return bool(piece_types & tutor_targets)
+def cost_vector(cost: dict) -> tuple:
+    """A cost's mana, one count per kind (generic, then W, U, B, R, G, C)."""
+    return tuple(cost.get(key, 0) for key in COST_KEYS)
 
 
-def is_bargainable_battlefield(permanents: list[dict], profiles: dict,
-                               commander_in_play: bool, commander_play_turn: int | None,
-                               current_turn: int) -> bool:
-    """Whether at least one bargain-legal target exists on battlefield.
+def payable_assignments(fixed: list[dict], options: list[list[dict]], leaf_ok) -> list[dict]:
+    """The costs of every way to fill each entry of ``options`` with a
+    different choice (rule B7), keeping only the cheapest (Pareto-minimal:
+    no other cost is at most as much in every kind of mana).
 
-    Bargain (per Beseech the Mirror): sacrifice an artifact, enchantment, or token.
-    Approximated as: any enchantment permanent on battlefield OR (commander in play
-    for >= 1 prior turn — proxy for "Sauron's Army token has appeared via opponent
-    casts in a real 4-player game"). Mana rocks are excluded as bargain targets to
-    avoid double-counting their mana production.
+    ``options[i]`` lists the ways to supply the i-th missing piece or open
+    slot, each a dict with ``uses`` (the cards it takes; no two choices of
+    one assignment share one) and
+    ``cost``. ``fixed`` is paid by every assignment. ``leaf_ok(chosen)``
+    decides whether a full assignment's extra costs find their objects. A
+    check is ready when any returned cost is payable, so the cost a dearer
+    assignment would add is never needed.
     """
-    for permanent in permanents:
-        if permanent["kind"] == "land":
+    frontier: list[tuple[tuple, dict]] = []
+
+    def covered(vector: tuple) -> bool:
+        return any(all(a <= b for a, b in zip(other, vector)) for other, _ in frontier)
+
+    def search(index: int, used: frozenset, parts: list[dict], chosen: list[dict]) -> None:
+        cost = combine_mana_costs(fixed + parts)
+        vector = cost_vector(cost)
+        if covered(vector):
+            return  # every completion costs at least as much as a cost already kept
+        if index == len(options):
+            if leaf_ok(chosen):
+                frontier[:] = [(other, kept) for other, kept in frontier
+                               if not all(a <= b for a, b in zip(vector, other))]
+                frontier.append((vector, cost))
+            return
+        for option in options[index]:
+            if option["uses"] & used:
+                continue
+            search(index + 1, used | option["uses"], parts + [option["cost"]], chosen + [option])
+
+    search(0, frozenset(), [], [])
+    return [cost for _, cost in frontier]
+
+
+def extra_cost_objects(permanents: list[dict], hand: list[str], profiles: dict, commander_name: str,
+                       excluded: set[str]) -> list[tuple]:
+    """The objects that can pay an extra cost (rule B5), as (key, card name,
+    the kinds it pays): a non-land permanent to sacrifice (a creature, a
+    green creature, an artifact) or as the bargain object (an artifact or an
+    enchantment), read on its battlefield face; a creature card in hand to
+    discard (its front face). Never the commander, a card named in
+    ``excluded``, or a permanent whose mana comes from sacrificing it (Lotus
+    Petal: its mana is already in the pool). A land permanent and a token
+    never pay one: the goldfish keeps tokens as counts, not objects. A
+    creature only while a condition holds (``conditionalCreature``) is a
+    creature to sacrifice only when that condition is a devotion
+    (``creatureDevotion``) met on this battlefield, the god's own mana cost
+    included (devotion_to): Mogis, God of Slaughter at devotion to black and
+    red of seven or more. Below it, it is still the bargain object as an
+    enchantment, and in the hand a creature card to discard. The devotion is
+    read once, from ``permanents`` as the check starts: a cast that would add
+    to it this turn is not counted (reads too little), nor a sacrifice that
+    would lower it (reads too much: two gods whose creature status depends on
+    devotion, both at their thresholds, both count, though sacrificing one
+    could turn the other off; no deck holds two such gods)."""
+    objects = []
+    for index, record in enumerate(permanents):
+        name = record["name"]
+        if record["kind"] == "land" or name == commander_name or name in excluded:
             continue
-        if permanent["kind"] == "ramp":
-            continue  # don't bargain mana rocks
-        type_line = profiles.get(permanent["name"], {}).get("typeLine", "")
-        if "Enchantment" in type_line:
-            return True
-    if commander_in_play and commander_play_turn is not None and current_turn > commander_play_turn:
-        return True
-    return False
+        profile = profiles[name]
+        if profile["onceLeaves"]:
+            continue
+        words = profile["typeWords"]
+        devotion = profile["creatureDevotion"]
+        is_creature = "Creature" in words and (not profile["conditionalCreature"] or (
+            devotion is not None and devotion_to(devotion[0], permanents, profiles) >= devotion[1]))
+        kinds = set()
+        if is_creature:
+            kinds.add("sacrifice-creature")
+            if "G" in profile["colors"]:
+                kinds.add("sacrifice-green-creature")
+        if "Artifact" in words:
+            kinds |= {"sacrifice-artifact", "bargain"}
+        if "Enchantment" in words:
+            kinds.add("bargain")
+        if kinds:
+            objects.append((("battlefield", index), name, frozenset(kinds)))
+    for index, name in enumerate(hand):
+        if name != commander_name and name not in excluded and "Creature" in profiles[name]["libraryTypeWords"]:
+            objects.append((("hand", index), name, frozenset({"discard-creature"})))
+    return objects
+
+
+def objects_found(kinds: list[str], objects: list[tuple], used_names: set[str],
+                  keeps=lambda taken: True) -> bool:
+    """Whether every extra cost in ``kinds`` takes its own object (one object
+    per cost) that is not a card the assignment uses, such that
+    ``keeps(the keys taken)`` holds."""
+    candidates = [[obj for obj in objects if kind in obj[2] and obj[1] not in used_names] for kind in kinds]
+
+    def search(index: int, taken: frozenset) -> bool:
+        if index == len(kinds):
+            return keeps(taken)
+        return any(search(index + 1, taken | {obj[0]}) for obj in candidates[index] if obj[0] not in taken)
+
+    return search(0, frozenset())
 
 
 def combo_ready_this_turn(turn: int, hand: list[str], permanents: list[dict],
                           combo_lines: list[dict], profiles: dict,
-                          tutor_meta: dict, reanim_names: set[str],
-                          commander_in_play: bool, commander_play_turn: int | None,
                           pool: "GoldfishManaPool", commander_name: str = "") -> bool:
-    """Check whether any combo line is fully assembled and castable this turn.
-
-    Three substitution paths for a missing piece, tried in priority order:
-      1. Bargain-free-cast tutor (e.g. Beseech the Mirror) — to_hand tutors only.
-         If bargainable + piece MV ≤ tutor's mv_cap + piece type matches tutor's targets,
-         adds tutor cost; piece is free.
-      2. Type-matched regular tutor — cheapest tutor whose targets include piece's type
-         and whose mv_cap permits the piece's MV.
-         - to_hand mode (default): adds tutor cost + piece cost.
-         - to_graveyard mode (e.g. Entomb, Buried Alive): requires piece is permanent AND
-           a reanim spell is popped from the per-line reanim_pool. Cost chain becomes
-           tutor cost + reanim cost (piece comes from graveyard).
-      3. Reanimation — only for permanent pieces (creature/planeswalker). Adds reanim cost;
-         piece's cast cost is replaced by reanim's cost.
-
-    Tutors with extra_cost == "sacrifice-creature" (e.g. Diabolic Intent) only fire if a
-    non-commander creature-typed permanent is on the battlefield. The commander itself does
-    not satisfy the cost (the goldfish always casts commander early; counting it as a free
-    sac target would neutralize the cost).
-
-    A piece on the battlefield costs nothing, except a line's ``startPiece``: the loop
-    starts with that piece being cast while the other pieces are out (e.g. Sensei's
-    Divining Top tapped onto the library and recast through Mystic Forge, or redrawn
-    and cast from hand with Echoes of Eternity). One conservative rule covers every
-    start-piece line:
-      - in hand, fetched by a to_hand tutor or cast free by the bargain path: it is
-        cast, and its cost is handled as for any other piece;
-      - on the battlefield and the last of the line's pieces to enter, this turn (its
-        record has ``enteredTurn == turn``, every other piece is on the battlefield,
-        and each of their records comes before it in ``permanents``): free;
-      - on the battlefield since an earlier turn: its cost is added;
-      - on the battlefield, entered this turn but not last: the line is not ready
-        this turn (it cannot get back to hand the same turn);
-      - missing: substitution path 3 (reanimation) and path 2's to_graveyard branch
-        are not used for it, because it must be cast; the tutor search goes on to a
-        later to_hand tutor as if the graveyard tutor were not in hand.
-    The rule cannot tell a line that recasts the piece from the battlefield (Mystic
-    Forge) from one that needs it in hand (Echoes), so it under-counts the former on
-    purpose: such a line could start the same turn by paying the cost again. The
-    goldfish does not plan its casts around the start piece: it casts line pieces
-    cheapest first, so a start piece cast from hand in the same turn as its last
-    partner lands first and the line waits a turn. The same happens when a cascade
-    hit or a later draw brings a partner after the start piece.
-
-    A piece the line's ``minX`` names (owner-approved 2026-11-19, built 2026-11-21) is
-    priced at that X, the cheapest direct cast with which the line's listed pieces
-    work. It is supplied from the hand or by a tutor the tags read as to-hand: the
-    tutor's cost plus the piece at that X, a bargain tutor (Beseech the Mirror) by its
-    paid route, as the card goes to the hand when it is not cast free. Every card with
-    the recursion role, a to-graveyard tutor and a bargain free cast do not supply it
-    (the free cast pays no X; the others are read as putting it onto the battlefield
-    with X = 0). Known limits: recursion that returns the card to the hand (Elena,
-    Turk Recruit and Eternal Witness by an enter trigger, Junk Diver, Myr Retriever
-    and Scrap Trawler on death) is excluded with the rest, an under-read; a tutor the
-    tags read as to-hand whose text does not put a castable copy into the hand that
-    turn (it puts the card onto the battlefield, on top of the library, or cannot find
-    it: Oswald Fiddlebender, Urza's Saga, Enlightened Tutor, Fiend Artisan, Birthing
-    Pod) still supplies it, an over-read; both wait for per-card destination tags. A
-    land the tags read as a tutor (Inventors' Fair) supplies it from the hand at no
-    cost, its activation and condition unpriced, as for any piece. A ``minX`` piece
-    already on the battlefield is read as any other piece, whatever X it entered with:
-    it costs nothing, except as a ``startPiece`` out since an earlier turn, which is
-    cast again at its ``minX`` price (the start-piece rule above). Walking Ballista,
-    the only such piece in the fleet, reads as interaction, so the cast loop never
-    casts it, and the free puts the goldfish models (cascade, which declines
-    interaction, hatch and deploy) are in no deck that holds it.
-
-    Returns True if any combo line has all pieces resolved (via presence or substitution)
-    AND the synthetic combined mana cost is payable from ``pool`` — the mana still
-    unspent this turn after the main-phase casts (DEC-937), not a fresh turn pool.
-    """
+    """Whether any combo line is fully assembled and payable this turn: one of
+    combo_line_costs is payable from ``pool``, the mana still unspent this
+    turn after the main-phase casts (DEC-937), not a fresh turn pool."""
     return any(pool.can_cast(cost) for cost in combo_line_costs(
-        turn, hand, permanents, combo_lines, profiles, tutor_meta, reanim_names,
-        commander_in_play, commander_play_turn, commander_name))
+        turn, hand, permanents, combo_lines, profiles, commander_name))
 
 
 def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
-                     combo_lines: list[dict], profiles: dict, tutor_meta: dict,
-                     reanim_names: set[str], commander_in_play: bool,
-                     commander_play_turn: int | None, commander_name: str = "") -> list[dict]:
-    """The combined mana cost of each combo line whose pieces all resolve
-    this turn (combo_ready_this_turn, which pays any one of them): the costs
-    a spend keeps the combo gate by keeping one of payable."""
+                     combo_lines: list[dict], profiles: dict, commander_name: str = "") -> list[dict]:
+    """The costs that put each combo line together this turn, the cheapest
+    (payable_assignments) of every way to supply its missing pieces: the
+    costs a spend keeps the combo gate by keeping one of payable.
+
+    A piece on the non-land battlefield costs nothing; one in hand costs its
+    cost (a ``minX`` piece at its line's minX: Walking Ballista beside
+    Heliod, Sun-Crowned is priced at X = 2). A missing piece is supplied by a
+    substitute in hand, as the line's ``deliveries`` (combo_deliveries) say:
+    a tutor or recursion card whose tags allow the piece, paying its use and,
+    when the piece goes to the hand or is cast from the graveyard, the piece;
+    onto the battlefield it is not paid and never supplies a minX piece or
+    the startPiece; bargained Beseech the Mirror casts a piece of mana value
+    4 or less free. Every assignment of the missing pieces to different cards
+    is tried (rule B7). One use per card (B6): a card that is a piece in hand
+    supplies another piece only if it is a permanent, paying only its
+    ``*_cost`` on top of the cast already counted (Sun Titan cast as a piece
+    returns Kaya's Ghostform); an instant or sorcery piece is never also a
+    substitute. Each extra cost takes its own object (extra_cost_objects),
+    never a piece of the line.
+
+    A line's ``startPiece`` is the piece its loop starts by casting (Sensei's
+    Divining Top tapped onto the library and recast through Mystic Forge, or
+    redrawn and cast with Echoes of Eternity). On the battlefield it is free
+    only if it was the last of the line's pieces to enter, this turn (its
+    record has ``enteredTurn == turn`` and every other piece's record comes
+    before it in ``permanents``); out since an earlier turn its cost is paid
+    again (a minX piece at its minX); entered this turn before a partner, the
+    line is not ready this turn. Missing, it is supplied only by a route that
+    casts it. The rule cannot tell a line that recasts the piece from the
+    battlefield (Mystic Forge) from one that needs it in hand (Echoes), so it
+    under-counts the former on purpose. The goldfish does not plan its casts
+    around the start piece: it casts line pieces cheapest first, so a start
+    piece cast in the same turn as its last partner lands first and the line
+    waits a turn.
+
+    A minX piece already on the battlefield counts whatever X it entered
+    with. Walking Ballista, the only such piece in the fleet, reads as
+    interaction, so the cast loop never casts it, and the free puts the
+    goldfish models (cascade, which declines interaction, hatch and deploy)
+    are in no deck that holds it.
+    """
     costs = []
     if not combo_lines:
         return costs
     battlefield_names = {permanent["name"] for permanent in permanents if permanent["kind"] != "land"}
     hand_names = set(hand)
-    bargainable = is_bargainable_battlefield(
-        permanents, profiles, commander_in_play, commander_play_turn, turn,
-    )
-
-    # Non-commander creature-typed permanent available as a sac target?
-    sac_creature_available = any(
-        "creature" in (profiles.get(p["name"], {}).get("typeLine", "") or "").lower()
-        and p["name"] != commander_name
-        for p in permanents
-        if p["kind"] != "land"
-    )
-
-    def tutor_extra_cost_satisfied(meta: dict) -> bool:
-        if meta.get("extra_cost") == "sacrifice-creature":
-            return sac_creature_available
-        return True
-
-    # Pre-build cheapest-first ordered lists of substitute resources currently in hand.
-    tutors_in_hand = [name for name in hand if name in tutor_meta]
-    tutors_in_hand.sort(key=lambda n: profiles[n]["manaCost"].get("total", 0))
-    reanims_in_hand = [name for name in hand if name in reanim_names]
-    reanims_in_hand.sort(key=lambda n: profiles[n]["manaCost"].get("total", 0))
-
     # Entry position of each non-land permanent (latest copy), for the startPiece rule.
     entry_index = (
         {p["name"]: idx for idx, p in enumerate(permanents) if p["kind"] != "land"}
         if any(line["startPiece"] for line in combo_lines) else {}
     )
-
     for line in combo_lines:
-        to_cast_costs = []
-        # Per-line copies so consumption doesn't bleed across lines.
-        tutor_pool = list(tutors_in_hand)
-        reanim_pool = list(reanims_in_hand)
-        line_ok = True
         start_piece = line["startPiece"]
-        # Pieces cast with X paid: only the hand and to-hand tutors supply them.
-        min_x = line["minX"]
         start_recast = False
         if start_piece in entry_index:
             start_idx = entry_index[start_piece]
@@ -4393,220 +4633,116 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
             elif not all(other in entry_index and entry_index[other] < start_idx
                          for other in line["pieces"] if other != start_piece):
                 continue  # entered this turn before a partner: no restart this turn
+        fixed, missing = [], []
         for piece, piece_cost in zip(line["pieces"], line["costs"]):
             if piece in battlefield_names:
                 if piece == start_piece and start_recast:
-                    to_cast_costs.append(piece_cost)
+                    fixed.append(piece_cost)
                 continue
             if piece in hand_names:
-                to_cast_costs.append(piece_cost)
+                fixed.append(piece_cost)
                 continue
-
-            piece_profile = profiles.get(piece, {})
-            piece_types = card_type_tokens(piece_profile.get("typeLine", ""))
-            piece_mv = piece_profile.get("manaCost", {}).get("total", 0)
-            piece_is_permanent = piece_profile.get("isPermanent", False)
-
-            # Path 1: bargain free-cast (e.g. Beseech the Mirror) — to_hand only;
-            # never for a minX piece (cast without paying its mana cost, X is 0):
-            # path 2 takes its paid route to the hand instead.
-            bargain_idx = None
-            if bargainable and piece not in min_x:
-                for idx, tname in enumerate(tutor_pool):
-                    meta = tutor_meta[tname]
-                    if not meta["free_cast_via_bargain"]:
-                        continue
-                    if meta.get("mode", "to_hand") != "to_hand":
-                        continue  # bargain semantics assume piece arrives in hand
-                    if meta["mv_cap"] is not None and piece_mv > meta["mv_cap"]:
-                        continue
-                    if not piece_type_matches(piece_types, meta["targets"]):
-                        continue
-                    if not tutor_extra_cost_satisfied(meta):
-                        continue
-                    bargain_idx = idx
-                    break
-            if bargain_idx is not None:
-                tname = tutor_pool.pop(bargain_idx)
-                to_cast_costs.append(profiles[tname]["manaCost"])
-                # piece cast is free under bargain; nothing added for the piece itself
-                continue
-
-            # Path 2: type-matched regular tutor (cheapest-first).
-            # to_graveyard tutors require a reanim spell and a permanent piece.
-            chosen_tutor_idx = None
-            chosen_reanim_idx = None  # only set for to_graveyard mode
-            for idx, tname in enumerate(tutor_pool):
-                meta = tutor_meta[tname]
-                if meta["free_cast_via_bargain"] and piece not in min_x:
-                    # Reserved for the bargain path; a minX piece takes the paid
-                    # route: not cast free, the card goes to the hand.
-                    continue
-                if meta["mv_cap"] is not None and piece_mv > meta["mv_cap"]:
-                    continue
-                if not piece_type_matches(piece_types, meta["targets"]):
-                    continue
-                if not tutor_extra_cost_satisfied(meta):
-                    continue
-                mode = meta.get("mode", "to_hand")
-                if mode == "to_graveyard":
-                    if piece == start_piece or piece in min_x:
-                        continue  # cast, not reanimated (a minX piece would return with X = 0)
-                    if not piece_is_permanent:
-                        continue
-                    if not reanim_pool:
-                        continue  # graveyard tutor needs a reanim to deliver the piece
-                    chosen_tutor_idx = idx
-                    chosen_reanim_idx = 0  # cheapest reanim
-                    break
-                # to_hand
-                chosen_tutor_idx = idx
-                break
-            if chosen_tutor_idx is not None:
-                tname = tutor_pool.pop(chosen_tutor_idx)
-                to_cast_costs.append(profiles[tname]["manaCost"])
-                if chosen_reanim_idx is not None:
-                    rname = reanim_pool.pop(chosen_reanim_idx)
-                    to_cast_costs.append(profiles[rname]["manaCost"])
-                    # piece comes from graveyard for free
-                else:
-                    to_cast_costs.append(piece_cost)
-                continue
-
-            # Path 3: reanimation for permanent pieces (creature/planeswalker etc.);
-            # never for a start piece, which must be cast to start the loop, nor
-            # for a minX piece: every recursion card is read as returning it to the
-            # battlefield, with X = 0 (a return to the hand is a known limit).
-            if piece_is_permanent and reanim_pool and piece != start_piece and piece not in min_x:
-                rname = reanim_pool.pop(0)
-                to_cast_costs.append(profiles[rname]["manaCost"])
-                # piece cast cost replaced by reanim cost (piece comes from graveyard)
-                continue
-
-            line_ok = False
-            break
-
-        if not line_ok:
+            missing.append(piece)
+        if not missing:
+            costs.append(combine_mana_costs(fixed))
             continue
-        # All pieces already on the battlefield: nothing to pay.
-        costs.append(combine_mana_costs(to_cast_costs))
-    return costs
+        hand_pieces = {piece for piece in line["pieces"]
+                       if piece in hand_names and piece not in battlefield_names}
+        options = []
+        for piece in missing:
+            piece_options = []
+            for delivery in line["deliveries"][piece]:
+                card, use = delivery["card"], delivery["use"]
+                if card not in hand_names:
+                    continue
+                if card in hand_pieces:
+                    if not use["frontPermanent"]:
+                        continue  # an instant or sorcery piece is not also a substitute
+                    base = use["abilityCost"]  # its cast is already paid as the piece
+                else:
+                    base = use["useCost"]
+                piece_options.append({"uses": frozenset({card}), "card": card, "kinds": delivery["kinds"],
+                                      "cost": combine_mana_costs([base] + delivery["parts"])})
+            if not piece_options:
+                break
+            options.append(sorted(piece_options, key=lambda option: option["cost"]["total"]))
+        if len(options) < len(missing):
+            continue
+        line_objects = []
 
-
-def _max_bipartite_matching(slot_options: list[list[int]]) -> dict[int, int]:
-    """Match each slot to a distinct tutor; return the tutor->slot assignment.
-
-    ``slot_options[i]`` lists the tutor indices that can legally fill slot ``i``,
-    cheapest tutor first. Standard Kuhn augmenting-path matching. Sizes here are
-    tiny (slots and tutors both <=~5), so the recursion cost is negligible. This
-    one-tutor-one-slot constraint is what stops a single generic tutor from filling
-    two open slots — the bug the DEC-362 review flagged in the naive "tutors as
-    virtual copies" model. ``len(result)`` is the number of slots covered.
-    """
-    tutor_to_slot: dict[int, int] = {}
-
-    def augment(slot: int, seen: set[int]) -> bool:
-        for tutor in slot_options[slot]:
-            if tutor in seen:
-                continue
-            seen.add(tutor)
-            if tutor not in tutor_to_slot or augment(tutor_to_slot[tutor], seen):
-                tutor_to_slot[tutor] = slot
+        def leaf_ok(chosen: list[dict], pieces=frozenset(line["pieces"]), line_objects=line_objects) -> bool:
+            kinds = [kind for option in chosen for kind in option["kinds"]]
+            if not kinds:
                 return True
-        return False
+            if not line_objects:
+                line_objects.append(extra_cost_objects(permanents, hand, profiles, commander_name, set(pieces)))
+            return objects_found(kinds, line_objects[0], {option["card"] for option in chosen})
 
-    for slot in range(len(slot_options)):
-        augment(slot, set())
-    return tutor_to_slot
+        costs.extend(payable_assignments(fixed, options, leaf_ok))
+    return costs
 
 
 def combo_assembled_this_turn(turn: int, hand: list[str], permanents: list[dict],
                               library: list[str], assembly_line: dict, profiles: dict,
-                              tutor_meta: dict, pool: "GoldfishManaPool") -> bool:
-    """Whether every slot of one combo can be filled this turn (DEC-363).
-
-    A slot is filled directly when any of its members has been drawn — i.e. is in
-    hand or already on the battlefield. The commander slot is auto-filled from the
-    command zone. A still-open slot can instead be filled by assigning one
-    not-yet-used generic to-hand tutor that is in hand, can legally fetch a member
-    still left in the library (card-type + mana-value gate), and whose mana is
-    payable. Each tutor fills at most one slot (bipartite matching); the combined
-    cost of all assigned tutors must be castable from ``pool`` — the mana still
-    unspent this turn after the main-phase casts (DEC-937).
-
-    Conditional tutors (bargain free-cast, sacrifice extra-cost) are credited
-    conservatively as plain hand tutors — full mana, no free ride. Graveyard
-    tutors and reanimation are excluded: they are not library finders that put a
-    piece in hand.
-    """
-    cost = assembly_tutor_cost(hand, permanents, library, assembly_line, profiles, tutor_meta)
-    return cost is not None and pool.can_cast(cost)
+                              pool: "GoldfishManaPool", commander_name: str = "") -> bool:
+    """Whether every slot of one combo can be filled this turn (DEC-363): one
+    of assembly_tutor_cost is payable from ``pool``, the mana still unspent
+    this turn after the main-phase casts (DEC-937)."""
+    return any(pool.can_cast(cost) for cost in assembly_tutor_cost(
+        hand, permanents, library, assembly_line, profiles, commander_name))
 
 
 def assembly_tutor_cost(hand: list[str], permanents: list[dict], library: list[str],
-                        assembly_line: dict, profiles: dict, tutor_meta: dict) -> dict | None:
-    """The mana the tutors that fill a combo's open slots cost
-    (combo_assembled_this_turn): nothing when every slot is filled, None when
-    the slots cannot be filled this turn whatever the mana."""
-    battlefield_names = {p["name"] for p in permanents}
-    drawn = battlefield_names | set(hand)
-    library_set = set(library)
+                        assembly_line: dict, profiles: dict, commander_name: str = "") -> list[dict]:
+    """The costs of the tutors that fill a combo's open slots, the cheapest
+    of every way to fill them (payable_assignments): ``[nothing]`` when every
+    slot is filled, ``[]`` when the slots cannot be filled this turn whatever
+    the mana.
 
-    open_slots = []
-    for slot in assembly_line["slots"]:
-        if slot["isCommander"]:
-            continue  # command zone
-        if any(member in drawn for member in slot["members"]):
-            continue  # directly filled by a drawn member
-        open_slots.append(slot)
-
+    A slot is filled by a drawn member (in hand or on the battlefield, lands
+    included); the commander slot fills itself from the command zone. An
+    open slot is filled by a tutor in hand, as the line's ``fetches``
+    (assembly_fetches) say: one whose tags allow a member still in the
+    library, paying the tutor's use and the X paid, never the piece; each
+    tutor fills one slot (and each member belongs to one slot only,
+    build_combo_assembly_lines). Recursion cards fill none. Extra
+    costs each take their own object (extra_cost_objects), and every filled
+    slot keeps one drawn member that pays nothing: a member may be sacrificed,
+    discarded or bargained, or, as a tutor that is an instant or sorcery,
+    cast, only if another drawn member of its slot is left. A member that is
+    a permanent tutor stays when cast (B6: it pays its cast).
+    """
+    slots = assembly_line["slots"]
+    drawn = {permanent["name"] for permanent in permanents} | set(hand)
+    open_slots = [index for index, slot in enumerate(slots)
+                  if not slot["isCommander"] and not any(member in drawn for member in slot["members"])]
     if not open_slots:
-        return combine_mana_costs([])
+        return [combine_mana_costs([])]
+    hand_names, library_set = set(hand), set(library)
+    options = []
+    for index in open_slots:
+        slot_options = [{"uses": frozenset({fetch["card"]}), "card": fetch["card"],
+                         "use": fetch["use"], "kinds": fetch["kinds"], "cost": fetch["cost"]}
+                        for fetch in assembly_line["fetches"][index]
+                        if fetch["card"] in hand_names and fetch["member"] in library_set]
+        if not slot_options:
+            return []
+        options.append(sorted(slot_options, key=lambda option: option["cost"]["total"]))
+    # The drawn members of each filled slot, as object keys.
+    filled = [{("battlefield", i) for i, permanent in enumerate(permanents) if permanent["name"] in slot["members"]}
+              | {("hand", i) for i, card in enumerate(hand) if card in slot["members"]}
+              for index, slot in enumerate(slots) if not slot["isCommander"] and index not in open_slots]
+    line_objects = []
 
-    # Candidate tutors: generic to-hand tutors currently in hand, cheapest first
-    # so the matching prefers affordable tutors when several could fill a slot.
-    tutors_in_hand = [
-        name for name in hand
-        if name in tutor_meta and tutor_meta[name].get("mode", "to_hand") == "to_hand"
-    ]
-    tutors_in_hand.sort(key=lambda n: profiles[n]["manaCost"].get("total", 0))
-    if len(tutors_in_hand) < len(open_slots):
-        return None  # cannot cover every open slot one-tutor-one-slot
+    def leaf_ok(chosen: list[dict]) -> bool:
+        spent = {("hand", hand.index(option["card"])) for option in chosen if not option["use"]["frontPermanent"]}
+        kinds = [kind for option in chosen for kind in option["kinds"]]
+        if kinds and not line_objects:
+            line_objects.append(extra_cost_objects(permanents, hand, profiles, commander_name, set()))
+        return objects_found(kinds, line_objects[0] if kinds else [], {option["card"] for option in chosen},
+                             lambda taken: all(keys - taken - spent for keys in filled))
 
-    def tutor_can_fetch(meta: dict, slot: dict) -> bool:
-        mv_cap = meta.get("mv_cap")
-        targets = meta.get("targets", {"any"})
-        for member in slot["members"]:
-            if member not in library_set:
-                continue  # already drawn/used — no copy left to fetch
-            mprofile = profiles.get(member, {})
-            piece_mv = mprofile.get("manaCost", {}).get("total", 0)
-            if mv_cap is not None and piece_mv > mv_cap:
-                continue
-            if not piece_type_matches(card_type_tokens(mprofile.get("typeLine", "")), targets):
-                continue
-            return True
-        return False
-
-    slot_options = []
-    for slot in open_slots:
-        options = [
-            idx for idx, tname in enumerate(tutors_in_hand)
-            if tutor_can_fetch(tutor_meta[tname], slot)
-        ]
-        if not options:
-            return None  # this slot has no legal tutor — combo not assemblable
-        slot_options.append(options)
-
-    assignment = _max_bipartite_matching(slot_options)
-    if len(assignment) < len(open_slots):
-        return None  # no one-tutor-one-slot assignment covers all open slots
-
-    # Mana gate: exactly the tutors in the chosen assignment, paid out of the
-    # mana still unspent this turn (DEC-937).
-    return combine_mana_costs([
-        profiles[tutors_in_hand[tutor_idx]]["manaCost"] for tutor_idx in assignment
-    ])
+    return payable_assignments([], options, leaf_ok)
 
 
 def metrics_from_board(turn: int, permanents: list[dict], profiles: dict, commander_name: str,
@@ -5278,8 +5414,6 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
     combo_lines = context.get("comboLines", [])
     assembly_lines = context.get("assemblyLines", [])
 
-    tutor_meta = context.get("tutorMeta", {})
-    reanim_names = context.get("reanimationNames", set())
     cascade = context.get("cascade")
     copy_engine = context.get("copyEngine")
     token_engine = context.get("tokenEngine")
@@ -5546,11 +5680,13 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
 
     def gate_costs(cast: str | None = None) -> list[list[dict]]:
         """The still-open gates (DEC-944), each as the costs any one of which
-        reaches it: the comboLethal gate (one cost per line whose pieces
-        resolve), then one per unassembled KEY_COMBOS line (its tutors' cost;
-        none when no tutor can fill its slots). Hand and battlefield are read
-        as they stand; with ``cast``, a line piece being cast, as they will
-        stand once it is on the battlefield (G1: the rest of the line)."""
+        reaches it: the comboLethal gate (the cheapest costs of each line
+        whose pieces resolve, combo_line_costs), then one per unassembled
+        KEY_COMBOS line (the cheapest costs of its tutors,
+        assembly_tutor_cost; none when no tutor can fill its slots). Hand and
+        battlefield are read as they stand; with ``cast``, a line piece being
+        cast, as they will stand once it is on the battlefield (G1: the rest
+        of the line)."""
         board, in_hand = permanents, hand
         if cast is not None:
             in_hand = list(hand)
@@ -5559,14 +5695,11 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
             board = permanents + [{"name": cast, "kind": "spell", "enteredTurn": turn}]
         gates = []
         if combo_lines and not combo_ready_ever:
-            gates.append(combo_line_costs(
-                turn, in_hand, board, combo_lines, profiles, tutor_meta, reanim_names,
-                commander_in_play, commander_play_turn, commander_name))
+            gates.append(combo_line_costs(turn, in_hand, board, combo_lines, profiles, commander_name))
         for idx, line in enumerate(assembly_lines):
             if assembly_turn[idx] is not None:
                 continue
-            cost = assembly_tutor_cost(in_hand, board, library, line, profiles, tutor_meta)
-            gates.append([] if cost is None else [cost])
+            gates.append(assembly_tutor_cost(in_hand, board, library, line, profiles, commander_name))
         return gates
 
     def holds(current_pool: "GoldfishManaPool", held: dict | None = None,
@@ -6362,10 +6495,6 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
                 permanents=permanents,
                 combo_lines=combo_lines,
                 profiles=profiles,
-                tutor_meta=tutor_meta,
-                reanim_names=reanim_names,
-                commander_in_play=commander_in_play,
-                commander_play_turn=commander_play_turn,
                 pool=pool,
                 commander_name=commander_name,
             )
@@ -6379,8 +6508,8 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
                 library=library,
                 assembly_line=line,
                 profiles=profiles,
-                tutor_meta=tutor_meta,
                 pool=pool,
+                commander_name=commander_name,
             ):
                 assembly_turn[idx] = turn
         # TOKEN_MAKER_ENGINE activated makers, once per turn each in name
@@ -6843,17 +6972,57 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "power/toughness is in the card metadata since DEC-940 but is deliberately not used "
             "for the damage sum, only for the combat modifiers' power gates. "
             "Combo lethal = at least one winConditions[] entry tagged kind:'combo' has all pieces "
-            "present (hand, battlefield, or substitutable) and combined mana cost payable. Substitution "
-            "priority for missing pieces: (1) bargain free-cast tutor (e.g. Beseech the Mirror) when a "
-            "non-rock enchantment is on battlefield OR commander has been in play for 1+ turn (approximates "
-            "Sauron-style amass token from real-game opponent casts); (2) type-matched regular tutor "
-            "whose tutor_targets includes piece's card type and tutor_mv_cap permits piece's MV; "
-            "(3) reanimation spell (decklist[].primary_role/secondary_role == 'recursion') for permanent "
-            "pieces only — cost replaces piece's cast cost (treats piece as if in graveyard). Each substitute "
-            "is consumed once per combo line. Tutors, non-permanent combo pieces, and reanimation spells "
-            "are reserved from filler casting. v2 limitations: no literal graveyard tracking (reanim "
-            "assumes piece could be in GY), no opponent interaction, no multi-turn assembly tracking, "
-            "no stack-trigger ordering."
+            "present (hand, battlefield, or supplied by a substitute) and the combined mana cost "
+            "payable. A substitute is a tutor or recursion card in hand (decklist[] role tutor or "
+            "recursion), read by its tags (combo-check step 1, owner-approved 2026-11-24): the card "
+            "types, subtypes, colours and mana value it may find or return, read on the piece's front "
+            "face and printed mana value, and where it puts the card. Into the hand (a tutor; Final "
+            "Parting's hand half), back to the hand or castable from the graveyard (a recursion "
+            "card): the card and the piece are paid. Onto the battlefield (a tutor or a recursion "
+            "card): the card is paid, not the piece, and it never supplies a piece the line's minX "
+            "lists or its start piece. Beseech the Mirror, bargained, casts a piece of mana value 4 "
+            "or less that the line's minX does not list free, sacrificing an artifact or "
+            "enchantment; otherwise the piece goes to the hand. A "
+            "card with {X} in its cost pays X = the piece's mana value. A card with a separate search "
+            "or return cost (tutor_cost, recursion_cost) pays its cast and that cost if its front face "
+            "is a permanent, that cost alone otherwise (cycling, transmute). Each extra cost (a "
+            "creature, a green creature or an artifact sacrificed, a creature card discarded, the "
+            "bargain object) takes its own object: never the commander, a piece of the line, a card "
+            "the assignment uses or a permanent whose mana comes from sacrificing it (Lotus Petal); "
+            "a land or a token is never sacrificed or bargained, but a land creature card in hand "
+            "(Dryad Arbor) can be discarded. A Theros god is a creature to sacrifice only once its "
+            "devotion (the colours and number its text names, counted as for Nykthos over the mana "
+            "costs of the non-land permanents as the check starts, its own included; a Room counts "
+            "only its first door, the door the goldfish casts, as it never unlocks the other, which "
+            "reads too little) is met: a cast that would add devotion that turn is not counted "
+            "(reads too little), nor a sacrifice that would remove it (reads too much; no deck "
+            "holds two gods whose creature status depends on devotion); below "
+            "it, it is still the bargain object as an enchantment and, in the hand, a creature card "
+            "to discard. Each card supplies one piece; a permanent "
+            "piece cast from the hand may also supply one other piece with its own ability (Sun "
+            "Titan returning Kaya's Ghostform), paying only that ability's cost. Every assignment of "
+            "the missing pieces to different cards is tried. Supplying nothing until the goldfish "
+            "casts tutors and recursion cards, uses abilities and lands (step 2) and tracks the "
+            "graveyard (step 3): a card that puts the found card on top of the library or into the "
+            "graveyard, an ability that cannot act the turn the card is cast (tutor_timing / "
+            "recursion_timing 'later'), a land in hand, a card that returns only itself or acts only "
+            "after a permanent dies, and a no-credit card (tutor_mode or recursion_mode 'none': a "
+            "restriction the tags cannot state, where crediting it would mostly be wrong). Other "
+            "restrictions the tags cannot state are credited, the gap a known limit: a condition not "
+            "tested (Victimize, Unfinished Business, Gamble, Underworld Breach), several cards counted "
+            "as one (Agadeem's Awakening, Victimize), a restriction read wider than the text "
+            "(Elena, Turk Recruit's historic card). Not tracked: the graveyard (a piece a recursion "
+            "card could return is assumed to be in it, an over-read) and a tutor's target in the "
+            "library. Not counted: life paid, cards exiled from the graveyard, a random discard, "
+            "equip, improvise; a card that finds or returns several counts one, and a piece put onto "
+            "the battlefield does not then supply another piece with its own ability. A split card "
+            "is read by its first half's type. In a cost, hybrid and Phyrexian mana symbols are read "
+            "as free (devotion counts them). "
+            "Tutors, non-permanent combo pieces and recursion cards are reserved from filler "
+            "casting. A paid mulligan bottoms last the line pieces and the tutor and recursion cards "
+            "whose tags can supply one of the deck's line pieces from the hand. Other limitations: "
+            "lines that do not win with the pieces they list still count, no opponent interaction, "
+            "no multi-turn assembly tracking, no stack-trigger ordering."
         ) + goldfish_mana_methodology(context, decklist),
     }
     if any(line["startPiece"] for line in combo_lines):
@@ -6862,7 +7031,7 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "starts by casting) is free only if it was the last of the line's pieces to "
             "enter this turn; if it has been on the battlefield since an earlier turn its "
             "cost is paid again; if it entered this turn before a partner, or could only "
-            "come from reanimation, the line is not ready that turn."
+            "be put onto the battlefield, the line is not ready that turn."
         )
     priced_x = [f"{piece} at X = {x}" for line in combo_lines for piece, x in line["minX"].items()]
     if priced_x:
@@ -6870,14 +7039,12 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             " A combo line's X piece (winConditions[].minX, owner-approved 2026-11-19) is "
             "priced at the X of the cheapest direct cast with which the line's listed pieces "
             "work: " + ", ".join(priced_x) + " (each {X} in its cost is X mana). It is "
-            "supplied from the hand or by a tutor the tags read as to-hand (a bargain tutor "
-            "by its paid route to the hand); a card with the recursion role, a tutor to the "
-            "graveyard and a bargain free cast do not supply it. Known limits: recursion that "
-            "returns the card to the hand is excluded with the rest (an under-read), a tutor "
-            "the tags read as to-hand whose text does not put a castable copy into the hand "
-            "that turn (it puts the card onto the battlefield, on top of the library, or "
-            "cannot find it) still supplies it (an over-read), and an X piece already on the "
-            "battlefield counts whatever X it entered with."
+            "supplied from the hand, by a tutor that puts it into the hand (a bargain tutor by "
+            "its paid route to the hand) or by a card that returns it to the hand or lets it be "
+            "cast from the graveyard, cast at that X; a card that puts it onto the battlefield "
+            "and a bargained free cast do not supply it. Known limits: an X piece a card returns "
+            "is assumed to be in the graveyard, which is not tracked (an over-read), and an X piece "
+            "already on the battlefield counts whatever X it entered with."
         )
     if x_spells:
         # Only this deck's own X_SPELL_DRAW cards, in the table's words.
@@ -7177,7 +7344,7 @@ def combo_assembly_from_goldfish(assembly_lines: list[dict],
 
     Replaces the old closed-form hypergeometric ``compute_combo_assembly`` (DEC-363).
     Each combo's ``byTurn`` is the % of goldfish games in which it was assembled by
-    that turn (slots filled by drawn members or one-tutor-one-slot crediting), and
+    that turn (slots filled by drawn members or by tutors, assembly_tutor_cost), and
     ``bestByTurn`` is the per-turn max across the deck's combos. Output shape is
     unchanged so downstream consumers (health score, UI) need no changes.
     """
@@ -7214,11 +7381,27 @@ def combo_assembly_from_goldfish(assembly_lines: list[dict],
         "methodology": (
             "Tutor/redundancy-aware Monte-Carlo assembly (DEC-363): share of "
             f"{GOLDFISH_GAMES:,} seeded goldfish games in which every combo slot is filled by "
-            "the given turn. A slot is filled by a drawn member (hand or battlefield) or by "
-            "assigning one not-yet-used generic to-hand tutor (drawn + mana payable + a legal "
-            "library target left), with one-tutor-one-slot bipartite matching so a single tutor "
-            "can never fill two open slots. The commander slot is auto-filled from the command "
-            "zone. Graveyard tutors and reanimation are excluded as non-finders."
+            "the given turn. A slot is filled by a drawn member (hand or battlefield) or by a "
+            "tutor in hand whose tags (combo-check step 1, owner-approved 2026-11-24) allow a "
+            "member still in the library: one that puts the card into the hand (Final Parting's "
+            "hand half; Beseech the Mirror by its route to the hand) or onto the battlefield (a "
+            "permanent member). Each tutor and each member fills one slot (no card is listed in two "
+            "slots of a line), every assignment is tried, and the tutors' cost must be payable: "
+            "the tutor's use (its cast, plus a separate search cost when it is a permanent; that "
+            "cost alone when it is used another way, such as cycling) and X = the member's mana "
+            "value, never the member itself. Each extra cost takes its own object (never the "
+            "commander or a permanent whose mana comes from sacrificing it; a land or a token is "
+            "never sacrificed or bargained, but a land creature card in hand can be discarded; a "
+            "Theros god is a creature to sacrifice only once its devotion, read as the check starts, "
+            "is met: a cast that would add devotion that turn is not counted, which reads too "
+            "little, nor a sacrifice that would remove it, which reads too much; below it, it is the "
+            "bargain object as an enchantment), and every filled slot keeps one drawn "
+            "member that pays nothing: a member may be sacrificed, discarded or bargained, or cast "
+            "as an instant or sorcery tutor, only if another drawn member of its slot is left; a "
+            "member that is a permanent tutor stays when cast and pays its cast. The commander slot "
+            "is auto-filled from the command zone. Recursion cards fill no slot, and neither do "
+            "tutors that put the card on top of the library or into the graveyard, abilities that "
+            "cannot act the turn the card is cast, lands in hand and no-credit cards."
         ),
     }
 

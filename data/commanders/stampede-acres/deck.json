@@ -67,6 +67,11 @@
       "type": "other",
       "name": "Board swap approval, DEC-933, 2026-09-29",
       "detail": "Verdict card 031e35bb, accepted. IN Peregrin Took, OUT Felidar Retreat. Took's replacement adds a Food token to every token-creation event (3-7 per turn cycle once two engines are online: Smothering Tithe on each opponent's draw step, The Queen of Dale recruits, own-turn producers and attacks); three Foods are a card through Baylen's draw ability or Took's own sacrifice, and each Food is a Rosie Cotton trigger and Baylen mana fuel. With Draconic Visitor out each Food becomes a 5/5 flying Dragon instead. Felidar Retreat fired on own land drops only (about 1.1 per cycle) for a 2/2 Cat or counters plus vigilance; vigilance also worked against Halo Fountain's tapped-creature costs. Trade-off on record: Retreat's Cats were creature bodies (ETB pings, Craterhoof) on an enchantment; Took is a creature and dies to Hour of Reckoning. Applied inside the DEC-933 Trigger-2 reset, so the swap-round counter stays at 0."
+    },
+    {
+      "type": "other",
+      "name": "User tag approval, combo-check step 1, 2026-11-24",
+      "detail": "Tutor and recursion tags from the step-1 tag checklist of the combo-check fix (plan \"combo checks, step 1\"; this deck is rows 85-88 of the checklist's 113), accepted by the owner on 2026-11-24. No card entered or left the list and no role changed, so this is not a swap round. The combo checks now read what each tutor or recursion card may find or return and where it puts it (data/bracket-philosophy.md, comboLethal proxy schema). Tags: Natural Order: tutor_extra_cost sacrifice-creature -> sacrifice-green-creature, tutor_colors [G] (new), tutor_mode to_battlefield (new); Enlightened Tutor: tutor_mode to_top (new); Worldly Tutor: tutor_mode to_top (new); Sevinne's Reclamation: recursion_targets [artifact, battle, creature, enchantment, land, planeswalker] (new), recursion_mv_cap 3 (new), recursion_mode to_battlefield (new). Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 10.8% -> 7.4%; best assembly at turn 8 9.8% -> 3.1%; best-of (comboLethal, lethalProxy) at turn 8 64.6% -> 65.4%; win turn best/typical/contested 7/8/9 unchanged; B2/B3 table row unchanged; simulation health score 74.6 B -> 74.5 B; metrics global_health 86 unchanged. The graveyard is still assumed, not tracked (step 3): not measured."
     }
   ],
   "guideContent": {
@@ -666,7 +671,11 @@
       "tutor_targets": [
         "creature"
       ],
-      "tutor_extra_cost": "sacrifice-creature"
+      "tutor_extra_cost": "sacrifice-green-creature",
+      "tutor_colors": [
+        "G"
+      ],
+      "tutor_mode": "to_battlefield"
     },
     {
       "name": "Enlightened Tutor",
@@ -675,7 +684,8 @@
       "tutor_targets": [
         "artifact",
         "enchantment"
-      ]
+      ],
+      "tutor_mode": "to_top"
     },
     {
       "name": "Command Tower",
@@ -822,7 +832,8 @@
       "primary_role": "tutor",
       "tutor_targets": [
         "creature"
-      ]
+      ],
+      "tutor_mode": "to_top"
     },
     {
       "name": "Eiganjo, Seat of the Empire",
@@ -847,7 +858,17 @@
     {
       "name": "Sevinne's Reclamation",
       "type": "Sorcery",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "artifact",
+        "battle",
+        "creature",
+        "enchantment",
+        "land",
+        "planeswalker"
+      ],
+      "recursion_mv_cap": 3,
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Windswept Heath",

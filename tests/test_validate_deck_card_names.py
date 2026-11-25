@@ -1,5 +1,7 @@
 import importlib
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -191,6 +193,21 @@ class ValidateDeckJsonTests(unittest.TestCase):
         )
 
         self.assertEqual(missing, [])
+
+
+class ImportTests(unittest.TestCase):
+    def test_the_module_imports_in_a_new_process(self):
+        """The validator puts its own folder on sys.path, so its sibling
+        gate_tags_lib imports when the validator is imported or run as
+        scripts.validate_deck_json from the repository root, without another
+        module having done it first."""
+        root = Path(validator.__file__).resolve().parent.parent
+        imported = "import scripts.validate_deck_json as m; print(m.gate_tags_lib.__name__)"
+        for label, args in (("import", ["-c", imported]), ("-m", ["-m", "scripts.validate_deck_json", "--help"])):
+            with self.subTest(label):
+                proc = subprocess.run([sys.executable, *args], cwd=root, capture_output=True, text=True)
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+                self.assertIn("gate_tags_lib" if label == "import" else "usage:", proc.stdout)
 
 
 if __name__ == "__main__":

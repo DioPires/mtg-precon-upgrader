@@ -123,6 +123,11 @@
       "type": "other",
       "name": "User tag-audit approval, 2026-11-21",
       "detail": "Tag and role correction from the 2026-11-21 tutor and recursion tag audit, approved by the owner on 2026-11-21. No card entered or left the list, so this is not a swap round. Stonehewer Giant: tutor_targets artifact (\"{1}{W}, {T}: Search your library for an Equipment card, put it onto the battlefield\"), and role tutor primary, engine secondary -> engine primary, tutor secondary, the class docs/role-taxonomy.md names for repeatable engine tutors. Sunforger: instant, tutor_mv_cap 4 (\"{R}{W}, Unattach this Equipment: Search your library for a red or white instant card with mana value 4 or less and cast that card without paying its mana cost\"). Cloud, Midgar Mercenary and Stoneforge Mystic: artifact (\"an Equipment card\"). Not expressible in the tags: Equipment (artifact admits every artifact), Sunforger's red or white, and both activated abilities' own costs and timing (the gate charges the printed cost); Stonehewer puts the Equipment onto the battlefield and Sunforger casts the instant, both credited as reaching the hand the same turn. Axgard Armory's targets are unchanged (held for a subtype field). Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 17.3% -> 15.0% (1,497 of 10,000 games, 14.97%, which rounds to the 15% best-win-turn floor, so the best win turn stays 8); best combo assembly at turn 8 17.4% -> 8.1%; lethalProxy at turn 8 11.7% -> 11.9%. Win turns 8/10/11 unchanged; simulation health 82.0 -> 81.9 (A); metrics global_health 87 unchanged (tutor coverage 100 -> 88; confidence margin 2 -> 5)."
+    },
+    {
+      "type": "other",
+      "name": "User tag approval, combo-check step 1, 2026-11-24",
+      "detail": "Tutor and recursion tags from the step-1 tag checklist of the combo-check fix (plan \"combo checks, step 1\"; this deck is rows 78-84 of the checklist's 113), accepted by the owner on 2026-11-24. No card entered or left the list and no role changed, so this is not a swap round. The combo checks now read what each tutor or recursion card may find or return and where it puts it (data/bracket-philosophy.md, comboLethal proxy schema). Tags: Stonehewer Giant: tutor_subtypes [Equipment] (new), tutor_mode to_battlefield (new), tutor_cost {1}{W} (new), tutor_timing later (new); Sunforger: tutor_colors [R, W] (new), tutor_cost {R}{W} (new); Forge Anew: recursion_targets [artifact] (new), recursion_subtypes [Equipment] (new), recursion_mode to_battlefield (new); Emry, Lurker of the Loch: recursion_targets [artifact] (new), recursion_mode cast_from_graveyard (new), recursion_timing later (new); Cloud, Midgar Mercenary: tutor_subtypes [Equipment] (new); Stoneforge Mystic: tutor_subtypes [Equipment] (new); Unfinished Business: recursion_targets [artifact, enchantment] (new), recursion_subtypes [Aura, Equipment] (new), recursion_mode to_battlefield (new). Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 19.9% -> 7.0%; best assembly at turn 8 10.0% -> 4.9%; best-of (comboLethal, lethalProxy) at turn 8 19.9% -> 15.6%; win turn best/typical/contested 7/10/11 -> 8/10/11; B2/B3 table row unchanged; simulation health score 83.6 A -> 83.5 A; metrics global_health 87 unchanged. The graveyard is still assumed, not tracked (step 3): not measured."
     }
   ],
   "guideContent": {
@@ -694,7 +699,13 @@
       "secondary_role": "tutor",
       "tutor_targets": [
         "artifact"
-      ]
+      ],
+      "tutor_subtypes": [
+        "Equipment"
+      ],
+      "tutor_mode": "to_battlefield",
+      "tutor_cost": "{1}{W}",
+      "tutor_timing": "later"
     },
     {
       "name": "Colossus Hammer",
@@ -745,7 +756,12 @@
       "tutor_targets": [
         "instant"
       ],
-      "tutor_mv_cap": 4
+      "tutor_mv_cap": 4,
+      "tutor_colors": [
+        "R",
+        "W"
+      ],
+      "tutor_cost": "{R}{W}"
     },
     {
       "name": "Buster Sword",
@@ -794,7 +810,14 @@
       "name": "Forge Anew",
       "type": "Enchantment",
       "primary_role": "engine",
-      "secondary_role": "recursion"
+      "secondary_role": "recursion",
+      "recursion_targets": [
+        "artifact"
+      ],
+      "recursion_subtypes": [
+        "Equipment"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Super-Soldier Serum",
@@ -810,7 +833,12 @@
       "name": "Emry, Lurker of the Loch",
       "type": "Legendary Creature — Merfolk Wizard",
       "primary_role": "recursion",
-      "secondary_role": "engine"
+      "secondary_role": "engine",
+      "recursion_targets": [
+        "artifact"
+      ],
+      "recursion_mode": "cast_from_graveyard",
+      "recursion_timing": "later"
     },
     {
       "name": "Cloud, Midgar Mercenary",
@@ -819,6 +847,9 @@
       "secondary_role": "engine",
       "tutor_targets": [
         "artifact"
+      ],
+      "tutor_subtypes": [
+        "Equipment"
       ]
     },
     {
@@ -834,6 +865,9 @@
       "secondary_role": "engine",
       "tutor_targets": [
         "artifact"
+      ],
+      "tutor_subtypes": [
+        "Equipment"
       ]
     },
     {
@@ -857,7 +891,16 @@
     {
       "name": "Unfinished Business",
       "type": "Sorcery",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "artifact",
+        "enchantment"
+      ],
+      "recursion_subtypes": [
+        "Aura",
+        "Equipment"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Sram, Senior Edificer",

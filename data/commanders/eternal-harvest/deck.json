@@ -111,7 +111,12 @@
     {
       "type": "other",
       "name": "User-approved X pricing for a combo line, approved 2026-11-19, built 2026-11-21",
-      "detail": "winConditions \"Walking Ballista Undying Loop\": minX {\"Walking Ballista\": 1} added. Approved by the owner on 2026-11-19, built on 2026-11-21. No card entered or left the list, so this is not a swap round. minX is the X the piece is priced at: the cheapest direct cast with which the line's listed pieces work. Walking Ballista ({X}{X}) enters with X +1/+1 counters and can remove a counter to deal 1 damage; Mikaeus, the Unhallowed gives it +1/+1 and undying. At X = 1 it removes its counter to ping itself, dies with no +1/+1 counter and undying returns it with one, so the two listed pieces loop from a direct cast at X = 1, 2 mana. The line's own text describes an X = 0 start that needs a sacrifice outlet, which the line's pieces do not include (an X = 0 Ballista could also buy its first counter with its {4} ability); priced on the two pieces alone, X = 1. The combo gate takes Ballista from the hand or through a tutor the tags read as to-hand (the tutor's cost plus Ballista at that X); every card with the recursion role, a to-graveyard tutor and a bargain free cast do not supply it. So reanimating a Ballista (X = 0) no longer counts for this line. Known limits: recursion that returns the card to the hand (Eternal Witness by an enter trigger) is excluded with the rest, an under-read (a scratch variant that counts it measures 17.8% at turn 8 against 17.1%); tutors the tags read as to-hand whose text does not put a castable copy into the hand that turn still supply Ballista, an over-read: Fiend Artisan (puts the card onto the battlefield) and Birthing Pod (cannot find it: it finds mana value 1 or more); in a scratch variant where they do not supply Ballista the reading is 12.6% at turn 8; a Ballista already on the battlefield would count whatever X it entered with (the goldfish never casts it: its ping reads as interaction). The first two wait for the destination tags of the gate fix. The two-piece loop deals no damage to an opponent, as each ping has to hit Ballista for it to die: the kill needs a death payoff the line's pieces do not list. The outlet route and the payoff are left to the combo-line review. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turns 6-10 14.6/20.7/27.2/33.4/39.7% -> 6.9/11.5/17.1/22.9/29.2% (at turn 8, the X = 1 price alone gives 21.6%, the excluded X = 0 paths alone 23.1%); best-of at turn 8 34.7% -> 35.0% (lethalProxy); win turn best/typical/contested 7/9/10 -> 8/9/10; B2/B3 table row True B3 unchanged; simulation health score 73.0 B unchanged; metrics global_health 87 unchanged."
+      "detail": "winConditions \"Walking Ballista Undying Loop\": minX {\"Walking Ballista\": 1} added. Approved by the owner on 2026-11-19, built on 2026-11-21. No card entered or left the list, so this is not a swap round. minX is the X the piece is priced at: the cheapest direct cast with which the line's listed pieces work. Walking Ballista ({X}{X}) enters with X +1/+1 counters and can remove a counter to deal 1 damage; Mikaeus, the Unhallowed gives it +1/+1 and undying. At X = 1 it removes its counter to ping itself, dies with no +1/+1 counter and undying returns it with one, so the two listed pieces loop from a direct cast at X = 1, 2 mana. The line's own text describes an X = 0 start that needs a sacrifice outlet, which the line's pieces do not include (an X = 0 Ballista could also buy its first counter with its {4} ability); priced on the two pieces alone, X = 1. The combo gate takes Ballista from the hand or through a tutor the tags read as to-hand (the tutor's cost plus Ballista at that X); every card with the recursion role, a to-graveyard tutor and a bargain free cast do not supply it. So reanimating a Ballista (X = 0) no longer counts for this line. Known limits: recursion that returns the card to the hand (Eternal Witness by an enter trigger) is excluded with the rest, an under-read (a scratch variant that counts it measures 17.8% at turn 8 against 17.1%); tutors the tags read as to-hand whose text does not put a castable copy into the hand that turn still supply Ballista, an over-read: Fiend Artisan (puts the card onto the battlefield) and Birthing Pod (cannot find it: it finds mana value 1 or more); in a scratch variant where they do not supply Ballista the reading is 12.6% at turn 8; a Ballista already on the battlefield would count whatever X it entered with (the goldfish never casts it: its ping reads as interaction). The first two wait for the destination tags of the gate fix. The two-piece loop deals no damage to an opponent, as each ping has to hit Ballista for it to die: the kill needs a death payoff the line's pieces do not list. The outlet route and the payoff are left to the combo-line review. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turns 6-10 14.6/20.7/27.2/33.4/39.7% -> 6.9/11.5/17.1/22.9/29.2% (at turn 8, the X = 1 price alone gives 21.6%, the excluded X = 0 paths alone 23.1%); best-of at turn 8 34.7% -> 35.0% (lethalProxy); win turn best/typical/contested 7/9/10 -> 8/9/10; B2/B3 table row True B3 unchanged; simulation health score 73.0 B unchanged; metrics global_health 87 unchanged. Updated 2026-11-24 by the step-1 tags of the combo-check fix (decision 5, owner-approved 2026-11-24): a card that returns Ballista to the hand now supplies it, cast and paid at X = 1 (Eternal Witness: {1}{G}{G} plus {2}). The over-reads named above are gone: Fiend Artisan's search cannot act the turn it is cast and puts the card onto the battlefield, and Birthing Pod gets no credit. A card that puts Ballista onto the battlefield (Reanimate, Animate Dead, Victimize, Agadeem's Awakening) still never supplies it. A Ballista a card returns is assumed to be in the graveyard, which the goldfish does not track until step 3: an over-read that now covers this piece."
+    },
+    {
+      "type": "other",
+      "name": "User tag approval, combo-check step 1, 2026-11-24",
+      "detail": "Tutor and recursion tags from the step-1 tag checklist of the combo-check fix (plan \"combo checks, step 1\"; this deck is rows 22-33 of the checklist's 113), accepted by the owner on 2026-11-24. No card entered or left the list and no role changed, so this is not a swap round. The combo checks now read what each tutor or recursion card may find or return and where it puts it (data/bracket-philosophy.md, comboLethal proxy schema). Tags: Fiend Artisan: tutor_mv_cap X (new), tutor_mode to_battlefield (new), tutor_cost {X}{B/G} (new), tutor_timing later (new); Eternal Witness: recursion_targets [any] (new), recursion_mode to_hand (new); Birthing Pod: tutor_mode none (new), tutor_cost {1}{G/P} (new); Reanimate: recursion_targets [creature] (new), recursion_mode to_battlefield (new); Animate Dead: recursion_targets [creature] (new), recursion_mode to_battlefield (new); Victimize: recursion_targets [creature] (new), recursion_mode to_battlefield (new), recursion_extra_cost sacrifice-creature (new); Agadeem's Awakening // Agadeem, the Undercrypt: recursion_targets [creature] (new), recursion_mv_cap X (new), recursion_mode to_battlefield (new); Emeritus of Woe: tutor_cost {1}{B} (new); The Soul Stone: recursion_targets [creature] (new), recursion_mode to_battlefield (new), recursion_timing later (new). Unchanged: 3 of the 12 checklist rows. Measured after the change (simulation re-exported with the same seed, 10,000 goldfish games; metrics recomputed): comboLethal at turn 8 22.2% -> 13.5%; best assembly at turn 8 19.1% -> 6.6%; best-of (comboLethal, lethalProxy) at turn 8 44.3% -> 45.3%; win turn best/typical/contested 7/9/10 -> 8/9/10; B2/B3 table row unchanged; simulation health score 75.9 A -> 75.6 A; metrics global_health 87 unchanged. The graveyard is still assumed, not tracked (step 3): not measured."
     }
   ],
   "guideContent": {
@@ -1992,7 +1997,11 @@
       "tutor_targets": [
         "creature"
       ],
-      "tutor_extra_cost": "sacrifice-creature"
+      "tutor_extra_cost": "sacrifice-creature",
+      "tutor_mv_cap": "X",
+      "tutor_mode": "to_battlefield",
+      "tutor_cost": "{X}{B/G}",
+      "tutor_timing": "later"
     },
     {
       "name": "Liliana, Dreadhorde General",
@@ -2002,7 +2011,11 @@
     {
       "name": "Eternal Witness",
       "type": "Creature",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "any"
+      ],
+      "recursion_mode": "to_hand"
     },
     {
       "name": "Tyvar, Jubilant Brawler",
@@ -2113,22 +2126,37 @@
       "tutor_targets": [
         "creature"
       ],
-      "tutor_extra_cost": "sacrifice-creature"
+      "tutor_extra_cost": "sacrifice-creature",
+      "tutor_mode": "none",
+      "tutor_cost": "{1}{G/P}"
     },
     {
       "name": "Reanimate",
       "type": "Sorcery",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Animate Dead",
       "type": "Enchantment",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Victimize",
       "type": "Sorcery",
-      "primary_role": "recursion"
+      "primary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield",
+      "recursion_extra_cost": "sacrifice-creature"
     },
     {
       "name": "Forsaken Miner",
@@ -2144,7 +2172,12 @@
       "name": "Agadeem's Awakening // Agadeem, the Undercrypt",
       "type": "Sorcery // Land",
       "primary_role": "recursion",
-      "is_mdfc_land": true
+      "is_mdfc_land": true,
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mv_cap": "X",
+      "recursion_mode": "to_battlefield"
     },
     {
       "name": "Gray Merchant of Asphodel",
@@ -2199,7 +2232,8 @@
       "secondary_role": "tutor",
       "tutor_targets": [
         "any"
-      ]
+      ],
+      "tutor_cost": "{1}{B}"
     },
     {
       "name": "Diabolic Intent",
@@ -2309,7 +2343,12 @@
       "name": "The Soul Stone",
       "type": "Artifact",
       "primary_role": "ramp",
-      "secondary_role": "recursion"
+      "secondary_role": "recursion",
+      "recursion_targets": [
+        "creature"
+      ],
+      "recursion_mode": "to_battlefield",
+      "recursion_timing": "later"
     }
   ],
   "tokens": [
