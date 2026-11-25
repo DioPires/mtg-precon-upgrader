@@ -47,8 +47,8 @@ class ValidateDeckJsonTests(unittest.TestCase):
                     "id": "test-deck",
                     "commander": "Known Commander",
                     "decklist": [
-                        {"name": "Known Spell"},
-                        {"name": "Known DFC Front"},
+                        {"name": "Known Spell", "primary_role": "utility"},
+                        {"name": "Known DFC Front", "primary_role": "utility"},
                     ],
                     "adds": [{"name": "Known Add"}],
                     "highlights": [{"name": "Off Deck Highlight"}],
@@ -96,7 +96,8 @@ class ValidateDeckJsonTests(unittest.TestCase):
             }
             deck_files = []
             for deck_id, pins in decks.items():
-                deck = {"id": deck_id, "commander": "Known Commander", "decklist": [{"name": "Known Spell"}]}
+                deck = {"id": deck_id, "commander": "Known Commander",
+                        "decklist": [{"name": "Known Spell", "primary_role": "utility"}]}
                 if pins is not no_key:
                     deck["candidate_pins"] = pins
                 deck_file = Path(tmpdir) / deck_id / "deck.json"
@@ -167,7 +168,7 @@ class ValidateDeckJsonTests(unittest.TestCase):
                 deck_file.write_text(json.dumps({
                     "id": "test-deck",
                     "commander": "Known Commander",
-                    "decklist": [{"name": name} for name in pieces + ["Hangarback Walker"]],
+                    "decklist": [{"name": name, "primary_role": "utility"} for name in pieces + ["Hangarback Walker"]],
                     "winConditions": [
                         {"title": "No minX", "kind": "combo", "cards": pieces, "pieces": pieces},
                         {"title": "Loop", "kind": "combo", "cards": pieces, "pieces": pieces, "minX": min_x},

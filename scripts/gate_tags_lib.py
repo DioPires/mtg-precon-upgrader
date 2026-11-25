@@ -6,7 +6,8 @@ The goldfish's two combo checks (scripts/export_simulation_results.py:
 which piece a tutor or recursion card in hand may stand in for, and what it
 costs (owner-approved plan "combo checks, step 1", 2026-11-24). This module is
 the one definition of the fields, their closed value sets and the checks on
-them: the exporter (substitute_tables) and scripts/validate_deck_json.py both
+them, and of the closed role set (ROLES) every entry's roles are checked
+against: the exporter (substitute_tables) and scripts/validate_deck_json.py both
 call entry_errors, so a decklist entry one accepts the other accepts. What
 each value means to the checks is documented in data/bracket-philosophy.md
 ("comboLethal proxy schema") and in the exporter.
@@ -21,6 +22,17 @@ from __future__ import annotations
 import re
 from collections.abc import Callable, Mapping
 
+# The closed role set of decklist[].primary_role and secondary_role and of
+# commanderRoles (docs/role-taxonomy.md). compute_deck_metrics.py scores role
+# coverage against it, and the goldfish holds an instant or sorcery back by its
+# primary role (export_simulation_results.goldfish_holds_back), so entry_errors
+# refuses a role that is not a string or is outside it, and a missing primary
+# role on a card whose front face is not a land or is not known.
+ROLES = frozenset({
+    "land", "ramp", "mana-fixing", "card-draw", "tutor",
+    "removal-spot", "removal-board", "counterspell", "protection",
+    "recursion", "payoff", "wincon", "engine", "threat", "utility",
+})
 # Card types a target list may name, lower-case, read on the front face of the
 # card found or returned; "any" allows every card type.
 CARD_TYPES = frozenset({"artifact", "battle", "creature", "enchantment", "instant", "land",
@@ -172,7 +184,10 @@ def entry_errors(entry: Mapping[str, object], has_combo_line: bool,
 
     - a ``primary_role`` or ``secondary_role`` that is present and not a
       string, JSON null included (the role checks below then read only the
-      roles that are);
+      roles that are), or a string outside ROLES (a typo, a legacy word such
+      as "removal");
+    - a missing ``primary_role`` on a card whose front face is not a land,
+      or not known (``front`` None): the goldfish's hold reads it;
     - a ``tutor_*`` field on an entry without the ``tutor`` role, or a
       ``recursion_*`` field without the ``recursion`` role (a forgotten role
       would leave the tags unread);
@@ -191,10 +206,17 @@ def entry_errors(entry: Mapping[str, object], has_combo_line: bool,
         if key not in entry:
             continue
         value = entry[key]
-        if isinstance(value, str):
-            roles.add(value)
-        else:
+        if not isinstance(value, str):
             errors.append(f"{key}: {value!r} is not a string")
+        elif value not in ROLES:
+            errors.append(f"{key}: {value!r} is not a role (docs/role-taxonomy.md)")
+        else:
+            roles.add(value)
+    if "primary_role" not in entry:
+        if front is None:
+            errors.append("primary_role: missing on a card whose front face is not known")
+        elif "Land" not in re.findall(r"[\w'-]+", front[0]):
+            errors.append("primary_role: missing on a card whose front face is not a land")
     for role in ("tutor", "recursion"):
         tagged = sorted(key for key in entry if key in TAG_FIELDS and key.startswith(f"{role}_"))
         if tagged and role not in roles:

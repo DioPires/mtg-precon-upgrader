@@ -5,7 +5,7 @@ Checks that every card-name reference resolves against the local Scryfall
 oracle mirror and that category/highlight/synergy/win-condition references
 point at cards in the deck; `candidate_pins` must list objects with a non-empty
 `name`, a combo line's `minX` must map its in-deck {X}-cost pieces to integers >= 1,
-and a decklist entry's tutor and recursion tags must pass gate_tags_lib.entry_errors,
+and a decklist entry's roles and tutor and recursion tags must pass gate_tags_lib.entry_errors,
 the check the simulation exporter runs.
 """
 
@@ -278,9 +278,11 @@ def iter_tag_issues(
     """Yield one issue per error gate_tags_lib.entry_errors finds in a decklist
     entry's tags: a key that names a tutor or recursion field ("tutor" or
     "recursion" in it, any case) that the vocabulary does not define, a value
-    outside its field's set, a role that is not a string, a tag without its
-    role, a missing recursion_mode
-    in a deck with a combo win condition, an "X" cap on a card that pays no
+    outside its field's set, a role that is not a string or not one of the
+    roles (gate_tags_lib.ROLES), a missing primary_role on a card whose front
+    face is not a land or is not known, a tag without its role, a missing recursion_mode
+    on a recursion entry whose front face is known and is not a land, in a deck
+    with a combo win condition, an "X" cap on a card that pays no
     {X}. The exporter (substitute_tables) runs the same check and raises."""
     deck_id = str(deck.get("id") or deck_file.parent.name)
     decklist = deck.get("decklist")

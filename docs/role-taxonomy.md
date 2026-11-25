@@ -31,6 +31,8 @@ The 15 roles are deliberately coarse. They power deterministic deck metrics (man
 
 Roles are **deck-contextual**, not card-intrinsic. Eternal Witness in a graveyard-reanimator deck is `engine`; in a value midrange deck it might be `recursion`.
 
+The goldfish simulation reads the primary role (owner-approved 2026-11-23): an instant or sorcery whose `primary_role` is `removal-spot`, `removal-board`, `counterspell` or `protection` is held back and never cast, as the goldfish has no opponents' cards or spells to answer; a permanent with one of those roles is cast like any other card (a modal card with a spell front and a land back is played as that land unless it is a combo-line or assembly piece kept in the hand), and so is a card with one only as its `secondary_role`. A `primary_role` or `secondary_role` outside the 15 roles above, or a missing `primary_role` on a card whose front face is not a land or not known, is refused by `validate_deck_json.py` and the simulation export (`gate_tags_lib.entry_errors`). Tag a card by the reason the deck runs it, never to change what the goldfish casts.
+
 ## Tutor classification
 
 Use `tutor` for library-search effects that find a specific card or a non-mana-development category, including hand tutors (Demonic Tutor, Eladamri's Call), top-of-library tutors (Worldly Tutor, Mystical Tutor), graveyard tutors (Entomb, Buried Alive), and battlefield tutors (Finale of Devastation, Whir of Invention). One-shot tutors are usually `primary_role: "tutor"`.

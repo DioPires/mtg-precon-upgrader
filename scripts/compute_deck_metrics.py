@@ -19,6 +19,10 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import gate_tags_lib
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DECKS_DIR = PROJECT_ROOT / "data" / "commanders"
 MIRROR_FILE = PROJECT_ROOT / "priv_data" / "scryfall-oracle.json"
@@ -42,11 +46,10 @@ DEFAULT_WEIGHT_OPTION = "A"
 # (a bracket redeclaration alone must not move the normalized score).
 NORMALIZED_REFERENCE_BRACKET = 3
 
-VALID_ROLES = {
-    "land", "ramp", "mana-fixing", "card-draw", "tutor",
-    "removal-spot", "removal-board", "counterspell", "protection",
-    "recursion", "payoff", "wincon", "engine", "threat", "utility",
-}
+# The closed role set (docs/role-taxonomy.md), defined once in gate_tags_lib,
+# which the deck validator and the simulation export check every decklist
+# entry against.
+VALID_ROLES = gate_tags_lib.ROLES
 
 # docs/deck-metrics.md — per-role targets per bracket
 ROLE_TARGETS = {

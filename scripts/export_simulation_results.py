@@ -563,8 +563,13 @@ COMMANDER_COPY_ENGINE = {
 # turn after they were minted (summoning sickness): each contributes
 # tokenPower + (count of battlefield anthem permanents) to per-turn combat
 # damage, and the commander adds commanderPowerPerToken per ready token once
-# he can attack (his */4 power scales with the swarm). Copies and free-casts
-# never mint (CR 707.10 — only casts trigger). Floors, not ceilings: X pips
+# he can attack (his */4 power scales with the swarm). A copy of a spell
+# made on the stack is not cast (CR 707.10) and never mints. A card that lets
+# its controller cast a copy (Harmonized Trio, prepared) does cast it, and a
+# free cast is a cast too: either would trigger him (his trigger is on
+# casting, paid or not), but the engine is credited only on the cast loop's
+# casts from the hand, so neither mints: a limit of the model, which reads
+# too little. Floors, not ceilings: X pips
 # credit only printed symbols, anthems don't pump nontoken creature cards
 # (their cmc-based combat already counts), and token draw engines (Curiosity
 # Crafter/Bident) are not modeled.
@@ -606,11 +611,12 @@ COMMANDER_TOKEN_ENGINE = {
 # the commander is in play, affordability-checked against the turn pool like
 # any other cast; (2) once transformed, one artifact from hand is deployed
 # free at each combat via resolve_cast_effects (deployed creatures are
-# summoning-sick; the record's combatReadyTurn handles that); (3) deployed
-# Equipment with a configured power bonus count as attached, and the
-# commander swings each turn from the transform turn (haste) for
-# (transformedPower + attached bonuses), doubled while a double-strike
-# Equipment is attached. Configured kill-piece Equipment are held in hand as
+# summoning-sick; the record's combatReadyTurn handles that); (3) every
+# deployed Equipment counts as attached, adding its configured power bonus (0
+# when the table does not list it), and the commander swings each turn from
+# the transform turn (haste) for
+# (transformedPower + attached bonuses), doubled while an Equipment listed
+# in doubleStrikeNames is attached. Configured kill-piece Equipment are held in hand as
 # deploy fuel (mirrors the DEC-393 fuel-hold): the sim has no equip-cost path,
 # so hard-casting them would strand them. Floors, not ceilings: the front-face
 # {1},{T} artifact dig, Nexus of Becoming's second deploy stream, backup
@@ -628,6 +634,11 @@ COMMANDER_TOKEN_ENGINE = {
 #       conservative flat +15 (assumes ~20 life mid-game replacing the 5/5
 #       base) because the goldfish tracks no life; Embercleave / The Reaver
 #       Cleaver / Sword of the Animist +1/+1; Iron Man Armor +2/+1.
+#       Mjölnir, Hammer of Thor at 0 (2026-11-25): "Double all damage equipped
+#       creature would deal." is not credited (a question for the owner); it
+#       is listed so the goldfish holds it for the free deploy, as the old
+#       interaction classifier did by its "deals 2 damage to each creature"
+#       text, instead of hard-casting it where it never attaches.
 #   doubleStrikeNames — Equipment granting double strike (Fireshrieker,
 #       Embercleave): doubles the commander's combat damage while attached.
 COMMANDER_DEPLOY_ENGINE = {
@@ -645,6 +656,7 @@ COMMANDER_DEPLOY_ENGINE = {
             "The Reaver Cleaver": 1,
             "Sword of the Animist": 1,
             "Iron Man Armor": 2,
+            "Mjölnir, Hammer of Thor": 0,
         },
         "doubleStrikeNames": {"Fireshrieker", "Embercleave"},
     },
@@ -705,11 +717,16 @@ CAST_TURN_ACTIVATION_DRAW = {
 # pips and the DEC-944 holds ({X}{X} costs two per X). Below X_SPELL_MIN_X the
 # card stays in hand and the next candidate is tried. An X spell is never a
 # mana source (build_goldfish_profile). Combo-line pieces and KEY_COMBOS
-# assembly members are not under this rule: the loop casts them at X = 0, and
-# the combo gate prices its pieces at X = 0, except a piece its line's minX
-# names, priced at that X (owner-approved 2026-11-19, extract_combo_lines). A
-# commander with {X} (none in the fleet) would fall under this rule and its
-# holds; to be decided when a deck has one. Effects at the paid X, and nothing
+# assembly members with {X} are not under this rule: they are reserved, never
+# cast from the hand (owner-approved 2026-11-23, decision C,
+# build_goldfish_context), and the combo gate reads them from the hand at
+# X = 0, except a piece its line's minX names, priced at that X
+# (owner-approved 2026-11-19, extract_combo_lines). A commander with {X} named
+# in a combo line's pieces (winConditions[]) is cast from the command zone at
+# X = 0 with the line pieces; any other commander with {X}, one named only in
+# a KEY_COMBOS slot included (the slot fills itself from the command zone and
+# lists no member), falls under this rule and its holds (no commander in the
+# fleet has {X}); to be decided when a deck has one. Effects at the paid X, and nothing
 # else: a creature's combat and impact read mana value + X (x_cast_profile), the
 # draws below, AMASS_ARMY_ENGINE's amassXNames and TOKEN_MAKER_ENGINE's perX
 # token spells. Other token, life-loss, damage, tutor, pump and proliferate X
@@ -761,7 +778,9 @@ X_SPELL_DRAW = {
 #    (3 batches/turn, vanilla 4-player model per DEC-477) while the commander
 #    is on the battlefield.
 #  * amassOnResolve: one-shot amass credited when the named card is cast
-#    (Book of Mazarbul's chapter I+II credited once on cast).
+#    (Book of Mazarbul's chapter I+II credited once on cast). Foray of Orcs is
+#    a removal-spot sorcery in gathering-shadow, held back as interaction
+#    (goldfish_holds_back), so its amass is never credited.
 #  * amassXNames: amass X spells, credited with the X paid for them (see
 #    X_SPELL_MIN_X above).
 #  * amassPerTurn: repeatable attack/begin-of-combat/connect triggers, credited
@@ -783,8 +802,12 @@ X_SPELL_DRAW = {
 #    are simply lost (no graveyard re-buy credit).
 # Floors, not ceilings: Saruman's ward, Nazgul/In the Darkness Bind Them/
 # Soothing of Smeagol tempts, Witch-king sacrifice punisher, Gorbag/Moria
-# Marauder connect draws, Barad-dur activations, and all graveyard re-buys
-# (Reanimate/Gathering of Darkness/Along the Crooked Way) are unmodeled.
+# Marauder connect draws, Barad-dur activations, Orcish Bowmasters' ping and
+# amass ("When this creature enters and whenever an opponent draws a card
+# except the first one they draw in each of their draw steps, this creature
+# deals 1 damage to any target. Then amass Orcs 1."), and all graveyard
+# re-buys (Reanimate/Gathering of Darkness/Along the Crooked Way) are
+# unmodeled.
 AMASS_ARMY_ENGINE = {
     "gathering-shadow": {
         "opponentCastsPerTurn": 3,
@@ -857,7 +880,8 @@ AMASS_ARMY_ENGINE = {
 #                           battlefield when the
 #                           commander entered (the sim has no equip path, so the
 #                           free "whenever a Shaman enters, attach" is the only
-#                           way it lands)
+#                           way it lands; its Equip {4} is a floor: a Staff cast
+#                           after her never attaches)
 #   untapStepName/untapStepActivations — Seedborn Muse: three extra activations
 #                           on opponents' untap steps, free (lands untap too);
 #                           those hatches are ready next turn regardless of haste
@@ -1012,10 +1036,11 @@ TOKEN_MAKER_ENGINE = {
         },
         "needsTappedCreature": {"Halo Fountain"},
         # "If an effect would create one or more tokens under your control,
-        # it creates twice that many of those tokens instead." and "If one
-        # or more tokens would be created under your control, twice that many
-        # of those tokens are created instead."
-        "doublerNames": {"Anointed Procession", "Mondrak, Glory Dominus"},
+        # it creates twice that many of those tokens instead." and, Mondrak
+        # and Elspeth, "If one or more tokens would be created under your
+        # control, twice that many of those tokens are created instead."
+        # Elspeth's +1 Soldier is not credited (notCredited).
+        "doublerNames": {"Anointed Procession", "Mondrak, Glory Dominus", "Elspeth, Storm Slayer"},
         # "If one or more tokens would be created under your control, those
         # tokens plus an additional Food token are created instead."
         "extraFoodName": "Peregrin Took",
@@ -1044,11 +1069,15 @@ TOKEN_MAKER_ENGINE = {
             ("its Treasure needs an opponent's second draw in a turn: the "
              "goldfish models no opponent draws and never activates its {2}{W}",
              ("Gleaming Splendor",)),
-            # Elspeth's "−3: Destroy target creature ...", the others'
-            # Interaction category or "Destroy" text: goldfish_never_casts.
-            ("never cast: read as interaction",
-             ("Elspeth, Storm Slayer", "Voice of Victory", "Artifact Mutation",
-              "The Battle of Bywater")),
+            # A removal-spot instant and a removal-board sorcery:
+            # goldfish_holds_back.
+            ("never cast: held back as interaction",
+             ("Artifact Mutation", "The Battle of Bywater")),
+            # "Mobilize 2 (Whenever this creature attacks, create two tapped
+            # and attacking 1/1 red Warrior creature tokens. Sacrifice them at
+            # the beginning of the next end step.)"
+            ("its Warriors are sacrificed at the end of the turn they attack, "
+             "and the token ledger never removes a token", ("Voice of Victory",)),
             # Flurry: "Whenever you cast your second spell each turn, ..."
             ("tokens only on the second spell in a turn",
              ("Aligned Heart", "Cori-Steel Cutter")),
@@ -1069,6 +1098,7 @@ TOKEN_MAKER_ENGINE = {
             "landfall from lands a fetch land or ramp spell puts onto the "
             "battlefield",
             "the makers' other abilities (Prosperous Partnership's Treasure)",
+            "Elspeth, Storm Slayer's +1 Soldier token",
             "an attack maker's trigger on the turn it is cast (another creature "
             "attacking would trigger it)",
         ),
@@ -1497,8 +1527,12 @@ def is_draw_card(meta: dict) -> bool:
     return text_matches(oracle, DRAW_PATTERNS)
 
 
-def is_interaction_card(meta: dict, category_names: set[str]) -> bool:
-    """Removal / stack interaction / combat denial classifier."""
+def is_health_interaction_card(meta: dict, category_names: set[str]) -> bool:
+    """The interaction count of interactionAvailability and the health
+    score's interactionDensity (classify_functional_cards): a guide category
+    name with an interaction word, or removal, stack interaction or combat
+    denial text. The goldfish does not read it: it holds cards back by role
+    and type (goldfish_holds_back)."""
     oracle = meta.get("oracle_text", "")
     category_blob = " ".join(category_names).lower()
     if any(term in category_blob for term in ("interaction", "removal", "counter", "stax", "disruption", "lock")):
@@ -1544,7 +1578,7 @@ def classify_functional_cards(decklist: list[str], deck_data: dict, metadata: di
             threats.append(name)
         if is_draw_card(meta):
             draw.append(name)
-        if is_interaction_card(meta, category_names):
+        if is_health_interaction_card(meta, category_names):
             interaction.append(name)
 
     return {
@@ -1558,6 +1592,31 @@ def is_permanent_card(meta: dict) -> bool:
     """Return True for cards that remain on battlefield after resolution."""
     type_line = meta.get("type_line", "")
     return any(marker in type_line for marker in ("Land", "Artifact", "Creature", "Enchantment", "Planeswalker", "Battle"))
+
+
+# The decklist roles (docs/role-taxonomy.md) whose instants and sorceries the
+# goldfish holds back (owner-approved 2026-11-23): an answer to an opponent's
+# card or spell, or a save for the pilot's own permanents against one, and the
+# goldfish has no opponents' cards or spells.
+GOLDFISH_HELD_ROLES = frozenset({"removal-spot", "removal-board", "counterspell", "protection"})
+
+
+def goldfish_holds_back(primary_role: str | None, meta: dict) -> bool:
+    """Whether the goldfish holds a card back as interaction (owner-approved
+    2026-11-23): its primary role in the deck is one of GOLDFISH_HELD_ROLES
+    and it is an instant or sorcery, with no permanent type on its type line
+    (both faces', is_permanent_card). A permanent with one of those roles (a
+    creature, an Aura, an Adventure creature, a card with a land face) is not
+    held. Its secondary role, its guide categories and its text are not read;
+    the commander is never held (build_goldfish_profile). A held card is never
+    cast from the hand (goldfish_never_casts). Outside the cards a paid
+    mulligan keeps, it is bottomed before the other spells; one the mulligan
+    keeps (Muddle the Mixture, also a tutor) goes with the kept spells, the
+    dearest first; from a seven with five or more playable lands a land goes
+    first (goldfish_bottom_cards). An imprint that can exile it exiles it
+    first (imprint_choice: never a kept or reserved card); a cascade declines
+    it."""
+    return primary_role in GOLDFISH_HELD_ROLES and not is_permanent_card(meta)
 
 
 def type_words(type_line: str) -> frozenset:
@@ -1575,9 +1634,10 @@ def battlefield_face(meta: dict) -> tuple[str, str]:
 
     The metadata holds the front face's text and the joined type line
     ("A // B"). A modal DFC whose front is not a land but whose back is
-    (``back_face``) is played as its land face; any other card is its front
-    face, so a transform card with a land back (Growing Rites of Itlimoc) is
-    cast as its front.
+    (``back_face``) is on the battlefield as its land face (played as a land,
+    unless the goldfish keeps it in the hand as a combo-line or assembly
+    piece: handOnlyPieces); any other card is its front face, so a transform
+    card with a land back (Growing Rites of Itlimoc) is cast as its front.
     """
     front_type = meta.get("type_line", "").split(" // ")[0]
     back = meta.get("back_face")
@@ -2829,9 +2889,13 @@ def devotion_to(colours, permanents: list[dict], profiles: dict) -> int:
                for symbol in profiles[record["name"]]["devotionSymbols"] if symbol & colours)
 
 
-def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
+def build_goldfish_profile(name: str, meta: dict, category_names: set[str], primary_role: str | None,
                            commander_colors: list[str], commander_name: str) -> dict:
     """Compile per-card goldfish heuristics from metadata.
+
+    ``category_names`` (the card's guide categories) feed the threat flag;
+    ``primary_role`` (its decklist entry's, None for a card with none) the
+    interaction flag (goldfish_holds_back; the commander is never held).
 
     Raises ValueError for a card whose mana text no rule reads (an "unread"
     verdict, entry rule or land search): nothing is read by accident.
@@ -2845,7 +2909,7 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
     conditional_creature, creature_devotion = creature_condition(face_text)
     is_threat = is_threat_card(name, meta, category_names) or name == commander_name
     is_draw = is_draw_card(meta)
-    is_interaction = is_interaction_card(meta, category_names)
+    is_interaction = name != commander_name and goldfish_holds_back(primary_role, meta)
     land_ramp = None if is_land else parse_land_ramp_profile(meta, name)
     unread = [line for line, verdict in mana["verdicts"] if verdict == "unread"]
     if mana["landEntry"] == "unread":
@@ -2867,7 +2931,8 @@ def build_goldfish_profile(name: str, meta: dict, category_names: set[str],
     # the fleet has a mana ability of its own (Springleaf Parade grants one to
     # its creature tokens, which the goldfish does not model). Lands are
     # outside the X rule: an MDFC whose front has {X} (Agadeem's Awakening) is
-    # played as its land.
+    # played as its land, unless it is a combo-line or assembly piece the
+    # goldfish keeps in the hand (handOnlyPieces).
     if mana_cost["X"] and not is_land:
         land_ramp = None
         mana = dict(mana, manaAtoms=[], manaOnce=[], manaBoard=[], manaOnCast=[],
@@ -3520,9 +3585,12 @@ def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
 # read from the tags of its decklist entry (gate_tags_lib holds the
 # vocabulary): rules B1-B10 of the plan. The graveyard is not tracked (step
 # 3): combo lethal assumes a piece a recursion card could return is in the
-# graveyard, and a tutor's target in the library. The goldfish never casts a
-# tutor or recursion card (step 2), so a use that needs the card on the
-# battlefield before this turn supplies nothing.
+# graveyard, and a tutor's target in the library. In a deck with a combo or
+# KEY_COMBOS line the goldfish never casts a tutor or recursion card from the
+# hand (step 2, reservedPieces; a cascade can free-cast a permanent one), and
+# the combo checks read substitutes only from the hand, so a use that needs
+# the card on the battlefield before this turn supplies nothing, even when a
+# cascade put it there on an earlier turn.
 
 # The modes that supply a piece this turn; every other mode supplies nothing
 # (to_top: decision 1a; to_graveyard: while the graveyard is assumed, a
@@ -3592,10 +3660,13 @@ def substitute_tables(deck_data: dict, profiles: dict, metadata: dict, deck_id: 
     """(tutors, recursion cards): name -> substitute_use, for every decklist
     entry with the ``tutor`` or ``recursion`` role whose card has a profile.
 
-    Every entry's tags are checked in every deck by gate_tags_lib.entry_errors,
-    the check validate_deck_json.py also runs: an unknown field or a value
-    outside its set, a role that is not a string, a tag without its role, a
-    missing ``recursion_mode`` on a non-land recursion entry of a deck with a
+    Every entry's tags and roles are checked in every deck by
+    gate_tags_lib.entry_errors, the check validate_deck_json.py also runs: an
+    unknown field or a value outside its set, a role that is not a string or
+    not one of gate_tags_lib.ROLES, a missing ``primary_role`` on a card whose
+    front face is not a land (or not known), a tag without its role, a
+    missing ``recursion_mode`` on a recursion entry whose front face is known
+    and is not a land, in a deck with a
     ``kind: "combo"`` win condition (rule B9), or an "X" cap on a card that
     pays no {X}, raises ValueError naming the deck and the card.
     """
@@ -3729,12 +3800,21 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
                            deck_id: str = "") -> dict:
     """Precompute per-card profiles for goldfish simulation."""
     category_lookup = build_card_category_lookup(deck_data)
+    # Each card's primary role, from its first decklist entry: the
+    # interaction flag reads it (goldfish_holds_back). A role that is not a
+    # string is read as none here; substitute_tables below refuses the deck
+    # and names it.
+    primary_roles = {}
+    for entry in deck_data.get("decklist", []) or []:
+        role = entry.get("primary_role")
+        primary_roles.setdefault(entry.get("name"), role if isinstance(role, str) else None)
     profiles = {}
     for name in ordered_unique(decklist + [commander_name]):
         profiles[name] = build_goldfish_profile(
             name=name,
             meta=metadata.get(name, {}),
             category_names=category_lookup.get(name, set()),
+            primary_role=primary_roles.get(name),
             commander_colors=commander_colors,
             commander_name=commander_name,
         )
@@ -3752,28 +3832,12 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         line["deliveries"] = combo_deliveries(line, profiles, tutor_meta, recursion_meta)
     for line in assembly_lines:
         line["fetches"] = assembly_fetches(line, profiles, tutor_meta)
-    # Reserve non-permanent combo pieces (e.g. Demonic Consultation), tutors, and
-    # reanimation spells — never cast as filler. Permanent pieces (e.g. Thassa's Oracle)
-    # can still be cast proactively; once on the battlefield they remain available for
-    # the combo check. Non-permanent KEY_COMBOS assembly members are reserved too, so an
-    # instant/sorcery slot member is not spent before the slot is counted as filled.
-    reserved_pieces = {
-        piece
-        for line in combo_lines
-        for piece in line["pieces"]
-        if not profiles[piece].get("isPermanent")
-    } | {
-        member
-        for line in assembly_lines
-        for slot in line["slots"]
-        for member in slot["members"]
-        if not profiles[member].get("isPermanent")
-    } | set(tutor_meta) | set(recursion_meta)
     # DEC-944 — every card the deck's two gates name: combo-gate pieces
     # (winConditions[] kind:'combo') plus KEY_COMBOS assembly slot members.
     # These are cast ahead of filler and are never held back by either hold
     # in the cast loop, because casting a piece advances the line instead of
-    # spending it; an X piece among them is cast at X = 0.
+    # spending it; an X piece or a non-permanent one among them is kept in the
+    # hand instead (handOnlyPieces, below).
     line_members = frozenset(
         {piece for line in combo_lines for piece in line["pieces"]}
         | {member
@@ -3781,12 +3845,30 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
            for slot in line["slots"]
            for member in slot["members"]}
     )
+    # The combo-line and assembly members the goldfish keeps in the hand
+    # (handOnlyPieces), where the combo checks read them: one whose front face
+    # is not a permanent (Demonic Consultation; an instant or sorcery slot
+    # member is not spent before its slot counts as filled; a modal DFC whose
+    # front is a spell is not played as its land), and one with {X} in its
+    # cost whatever its type (owner-approved 2026-11-23, decision C: the combo
+    # gate prices it at its line's minX, else at X = 0; cast at X = 0, a 0/0
+    # Walking Ballista would die). The goldfish never casts one from the hand,
+    # plays one as its land (choose_land_to_play), deploys one free (the
+    # DEC-405 deploy engine) or casts one from a cascade
+    # (resolve_cascade_triggers). Permanent pieces (Thassa's Oracle) are cast
+    # proactively and stay available to the checks on the battlefield.
+    hand_only_pieces = frozenset(member for member in line_members
+                                 if not is_front_permanent(profiles[member]) or profiles[member]["manaCost"]["X"])
+    # Reserved from filler casting: those pieces, and the tutor and
+    # recursion cards the checks read as substitutes (none in a deck with no
+    # combo or KEY_COMBOS line: the tables are emptied above).
+    reserved_pieces = hand_only_pieces | set(tutor_meta) | set(recursion_meta)
     # Cards an imprint never exiles, in every deck whether or not it has a
-    # gate: tutors and reanimation spells by their roles, and every combo-line
+    # gate: tutor and recursion cards by their roles, and every combo-line
     # and assembly-line member (imprint_from_hand).
     imprint_keep = (frozenset(role_names(deck_data, "tutor")) | role_names(deck_data, "recursion")
                     | line_members)
-    # The spells a paid mulligan bottoms last (goldfish_bottom_cards): those
+    # The spells a paid mulligan bottoms last of the spells (goldfish_bottom_cards): those
     # the goldfish takes from the hand without casting them as filler. Every
     # combo-line and assembly-line member; the tutor and recursion cards whose
     # tags can supply some piece of one of the deck's lines from the hand
@@ -3844,6 +3926,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "comboLines": combo_lines,
         "assemblyLines": assembly_lines,
         "reservedPieces": reserved_pieces,
+        "handOnlyPieces": hand_only_pieces,
         "lineMembers": line_members,
         "cascade": COMMANDER_CASCADE.get(deck_id),
         "copyEngine": COMMANDER_COPY_ENGINE.get(deck_id),
@@ -3861,8 +3944,13 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
 def goldfish_never_casts(name: str, profile: dict, context: dict) -> bool:
     """Cards the goldfish cast loop never casts from hand.
 
-    Lands (played as lands), interaction (the goldfish has no targets), the
-    reserved combo pieces, tutors and reanimation spells, and the DEC-405
+    Lands and modal cards with a land back (isLand: played as lands, except
+    a line piece kept in the hand, which is neither cast nor played),
+    interaction (goldfish_holds_back: a removal,
+    counterspell or protection instant or sorcery, which has nothing to answer
+    or save), the reserved cards (reservedPieces, only in a deck with a combo
+    or KEY_COMBOS line: the line pieces kept in the hand, an X piece among
+    them, decision C, and the tutor and recursion cards), and the DEC-405
     deploy engine's configured Equipment: the sim has no equip-cost path, so a
     hard-cast copy would sit on the battlefield unattached forever, and a real
     pilot holds them for the back face's free attach. The cast loop and the
@@ -3878,9 +3966,12 @@ def goldfish_never_casts(name: str, profile: dict, context: dict) -> bool:
                  or name in deploy_engine["doubleStrikeNames"]))
 
 
-def should_goldfish_mulligan(hand: list[str], profiles: dict) -> bool:
-    """Simple Commander goldfish mulligan heuristic."""
-    lands = sum(1 for name in hand if profiles[name]["isLand"])
+def should_goldfish_mulligan(hand: list[str], profiles: dict, hand_only: frozenset) -> bool:
+    """Simple Commander goldfish mulligan heuristic. A card in ``hand_only``
+    (the deck's handOnlyPieces, the combo-line and assembly pieces the
+    goldfish keeps in the hand: one with a land face, Agadeem's Awakening, is
+    never played as a land) is not a land here."""
+    lands = sum(1 for name in hand if profiles[name]["isLand"] and name not in hand_only)
     cheap_ramp = sum(
         1 for name in hand
         if not profiles[name]["isLand"]
@@ -3892,47 +3983,56 @@ def should_goldfish_mulligan(hand: list[str], profiles: dict) -> bool:
 
 def goldfish_bottom_cards(hand: list[str], count: int, profiles: dict,
                           commander_colors: list[str], library: list[str],
-                          keep: frozenset) -> list[str]:
+                          keep: frozenset, hand_only: frozenset) -> list[str]:
     """The ``count`` cards of the seven-card ``hand`` a paid mulligan puts on
     the bottom, in order.
 
-    Spells go first: those outside ``keep`` before those in it, and within
-    each group interaction first (the goldfish has no targets and never casts
-    it, goldfish_never_casts), the most expensive first, then the other
+    Spells go first: those outside ``keep`` before those in it. Outside it,
+    interaction first (held back, goldfish_holds_back: the goldfish never
+    casts it, so never uses it), the most expensive first, then the other
     spells, the most expensive first, keeping the cheap ones a six-card hand
-    casts early; lands last. ``keep`` is the deck's mulliganKeep
+    casts early; inside it, the most expensive first, interaction or not (a
+    kept card is one the combo checks read from the hand: Muddle the Mixture,
+    a counterspell and a transmute tutor); lands last. ``keep`` is the deck's mulliganKeep
     (build_goldfish_context): the cards the goldfish takes from the hand
     without casting them as filler: every combo-line and assembly-line
     member; the tutor and recursion cards whose tags can supply some piece
     of one of the deck's lines from the hand (decision 6, 2026-11-24); and
-    the deploy engine's Equipment, deployed free from the hand. A card the
-    goldfish never casts, such as a recursion spell that reads as
-    interaction, is not a card it never uses. A deck with no gate and no
+    the deploy engine's configured Equipment, deployed free from the hand. A card the
+    goldfish never casts, such as a spell held back as interaction whose
+    secondary role is recursion, is not a card it never uses. A deck with no gate and no
     deploy engine keeps nothing.
 
-    Exception: a hand of five or more lands bottoms lands first, as a pilot
+    Exception: a hand of five or more lands it can play (a card in
+    ``hand_only`` is not one) bottoms lands first, as a pilot
     does not keep a flood by bottoming a spell; five lands of seven leave
     four in six. The land bottomed is the one the land
     drop ranks lowest on the empty opening battlefield (land_play_score:
     one that enters tapped, then the fewest commander colours), the fetch
     lands scored against ``library``. Ties go by name.
+
+    A card in ``hand_only`` (handOnlyPieces, the combo-line and assembly
+    pieces kept in the hand: one with a land face is never played as a land)
+    is a kept spell here, not a land.
     """
-    spells = sorted((name for name in hand if not profiles[name]["isLand"]),
-                    key=lambda name: (name in keep, not profiles[name]["isInteraction"],
+    land_names = [name for name in hand if profiles[name]["isLand"] and name not in hand_only]
+    spells = sorted((name for name in hand if name not in land_names),
+                    key=lambda name: (name in keep, name in keep or not profiles[name]["isInteraction"],
                                       -profiles[name]["cmc"], name))
-    lands = sorted((name for name in hand if profiles[name]["isLand"]),
+    lands = sorted(land_names,
                    key=lambda name: land_play_score(name, hand, profiles, [], [],
                                                     commander_colors, library))
     return (lands + spells if len(lands) >= 5 else spells + lands)[:count]
 
 
 def commander_mulligan_goldfish(decklist: list[str], profiles: dict, commander_colors: list[str],
-                                keep: frozenset) -> tuple[list[str], list[str]]:
+                                keep: frozenset, hand_only: frozenset) -> tuple[list[str], list[str]]:
     """Run the Commander mulligan and return library + kept hand.
 
     The first mulligan is free (a new seven); the second is paid: the third
     seven is kept and one card goes to the bottom (goldfish_bottom_cards,
-    ``keep`` the deck's mulliganKeep). Draws pop the library's end, so the
+    ``keep`` the deck's mulliganKeep; ``hand_only`` its handOnlyPieces,
+    never counted as lands). Draws pop the library's end, so the
     card goes in at index 0: ordinary draws leave it under the rest of the
     library, but a land search can still take it and a cascade or hatch dig
     can reach it (the goldfish does not shuffle after a search, as a real
@@ -3943,13 +4043,14 @@ def commander_mulligan_goldfish(decklist: list[str], profiles: dict, commander_c
         library = list(decklist)
         random.shuffle(library)
         hand = [library.pop() for _ in range(7)]
-        if should_goldfish_mulligan(hand, profiles) and attempt < 2:
+        if should_goldfish_mulligan(hand, profiles, hand_only) and attempt < 2:
             attempt += 1
             continue
         break
 
     if attempt >= 2:
-        for card in goldfish_bottom_cards(hand, attempt - 1, profiles, commander_colors, library, keep):
+        for card in goldfish_bottom_cards(hand, attempt - 1, profiles, commander_colors, library, keep,
+                                          hand_only):
             hand.remove(card)
             library.insert(0, card)
     return library, hand
@@ -3992,13 +4093,16 @@ def crack_target(name: str, library: list[str], profiles: dict, commander_colors
 
 def choose_land_to_play(hand: list[str], profiles: dict, battlefield_lands: list[dict],
                         permanents: list[dict], commander_colors: list[str],
-                        library: list[str] = ()) -> str | None:
+                        library: list[str] = (), keep: frozenset = frozenset()) -> str | None:
     """Pick the land in hand that land_play_score ranks highest on this board.
 
     A land that sacrifices or returns N lands as it enters (Scorched Ruins,
     Lotus Field, Simic Growth Chamber) is played only with N other lands out.
+    A card in ``keep`` (the deck's handOnlyPieces: a combo-line or assembly
+    piece with a land face, Agadeem's Awakening) stays in the hand for the
+    combo checks.
     """
-    land_names = [name for name in hand if profiles[name]["isLand"]
+    land_names = [name for name in hand if profiles[name]["isLand"] and name not in keep
                   and (profiles[name]["landEntryCost"] or {"count": 0})["count"]
                   <= len(battlefield_lands)]
     if not land_names:
@@ -4608,10 +4712,11 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
     waits a turn.
 
     A minX piece already on the battlefield counts whatever X it entered
-    with. Walking Ballista, the only such piece in the fleet, reads as
-    interaction, so the cast loop never casts it, and the free puts the
-    goldfish models (cascade, which declines interaction, hatch and deploy)
-    are in no deck that holds it.
+    with. Walking Ballista, the only such piece in the fleet, is reserved as
+    a line piece with {X} (decision C, build_goldfish_context), so the cast
+    loop never casts it, a cascade declines it and a deploy never takes it;
+    the hatch, the other free put the goldfish models, is in no deck that
+    holds it.
     """
     costs = []
     if not combo_lines:
@@ -4975,11 +5080,20 @@ def deploy_engine_choice(deploy_engine: dict, hand: list[str], profiles: dict,
                          attached: set[str]) -> str | None:
     """Pick the artifact to free-deploy at combat (DEC-405).
 
-    Scores each artifact in hand by the per-turn damage it adds: configured
-    kill-piece Equipment by their attach bonus (a first double-strike piece is
-    worth the commander's whole current swing, since it doubles it), artifact
-    creatures by their combat score, other artifacts by their impact score.
-    CMC breaks ties so the deploy leans toward the biggest mana cheat.
+    Scores each artifact in hand: an Equipment by its attach bonus in the
+    table (0 when the table does not list it; one listed in the table's
+    doubleStrikeNames, while none of those is attached, adds the commander's
+    whole current swing to its bonus, since it doubles it; an Equipment that
+    grants double strike but is not listed there, such as Genji Glove, scores
+    0 and loses to The Reaver Cleaver's 1), an
+    artifact creature by its combat score, another artifact by its impact
+    (pressure) score, which adds no combat damage: Nexus of Becoming (8) is
+    chosen over Kaldra Compleat (bonus 5), though Kaldra would add 5 to the
+    commander's damage. The highest score wins; ties
+    go to the higher mana value, so the deploy leans toward the biggest mana
+    cheat, then to the name later in alphabetical order. An Equipment's own
+    pressure score plays no part in the choice; it applies once the
+    Equipment is on the battlefield.
     """
     equipment_power = deploy_engine["equipmentPower"]
     ds_names = deploy_engine["doubleStrikeNames"]
@@ -5024,12 +5138,19 @@ def resolve_cascade_triggers(spell_profile: dict, cascade: dict, turn: int,
     """Resolve commander-granted cascade off a qualifying cast (DEC-385).
 
     Each trigger digs the library top-down: the first nonland card with lesser
-    mana value is free-cast via ``resolve_cast_effects``; the cards dug past it
-    go to the bottom (library order is already random, so no reshuffle needed).
-    "May cast" is declined for reactive spells (no goldfish targets), for
-    reserved non-permanent combo pieces/tutors and for a Chrome Mox with no
-    card in hand to imprint (can_imprint_from_hand) — those are bottomed
-    instead; a cascaded Mox imprints as a paid one does (imprint_on_entry).
+    mana value, read as the card is in the library (its front face: a modal
+    DFC whose front is a spell is a nonland card there), is free-cast via
+    ``resolve_cast_effects``; the cards dug past it go to the bottom (library
+    order is already random, so no reshuffle needed). "May cast" is declined
+    for a card held back as interaction (goldfish_holds_back), for a
+    combo-line or assembly piece the goldfish keeps in the hand
+    (handOnlyPieces: one whose front face is not a permanent, or one with {X}
+    in its cost, decision C: a free cast pays X = 0), for a reserved tutor or
+    recursion card whose front face is not a permanent, for a card the
+    goldfish plays as its land face (it does not cast the spell face) and for
+    a Chrome Mox with no card in hand to imprint (can_imprint_from_hand) —
+    those are bottomed instead; a cascaded Mox imprints as a paid one does
+    (imprint_on_entry).
     With ``fromHandOnly`` (Zhulodok-style grants) free-casts never re-trigger;
     without it, qualifying free-casts recurse, bounded because every hit costs
     strictly less than its parent.
@@ -5039,7 +5160,7 @@ def resolve_cascade_triggers(spell_profile: dict, cascade: dict, turn: int,
         hit = None
         while library:
             card = library.pop()
-            if not profiles[card]["isLand"] and profiles[card]["cmc"] < spell_profile["cmc"]:
+            if not profiles[card]["libraryLand"] and profiles[card]["cmc"] < spell_profile["cmc"]:
                 hit = card
                 break
             exiled.append(card)
@@ -5048,7 +5169,9 @@ def resolve_cascade_triggers(spell_profile: dict, cascade: dict, turn: int,
             return
         hit_profile = profiles[hit]
         imprints = context is not None and hit_profile["imprint"] and not hit_profile["isLand"]
-        if (hit_profile["isInteraction"] or (hit in reserved_pieces and not hit_profile["isPermanent"])
+        hand_only = context["handOnlyPieces"] if context is not None else frozenset()
+        if (hit_profile["isInteraction"] or hit in hand_only or hit_profile["isLand"]
+                or (hit in reserved_pieces and not is_front_permanent(hit_profile))
                 or (imprints and not can_imprint_from_hand(hit, hit_profile, hand, profiles, context,
                                                            commander_in_play))):
             library.insert(0, hit)
@@ -5309,13 +5432,17 @@ def imprint_from_hand(record: dict, profile: dict, hand: list[str], profiles: di
     nonland card, then one mana of its colours (a colourless one gives
     nothing, so it is never chosen); with no such card the Mox gives nothing.
 
-    The card chosen is interaction the goldfish never casts (no targets) if
-    the hand has any, else the castable card last in its own cast order (ties:
-    the higher mana value). Never exiled, in every deck: tutors and
-    reanimation spells (by their roles), every combo-line and assembly-line
+    The card chosen is one held back as interaction (goldfish_holds_back),
+    which the goldfish never casts, if the hand has any, else the castable
+    card last in its own cast order (ties:
+    the higher mana value). Never exiled, in every deck: tutor and
+    recursion cards (by their roles), every combo-line and assembly-line
     member (``imprintKeep``), reserved combo pieces and the deploy engine's
-    Equipment. A card with a land face is played as its land, never
-    imprinted. Returns the card exiled, or None.
+    Equipment; nor a land (a Pathway included) or a modal card with a spell
+    front and a land back, played as its land or kept in the hand as a line
+    piece (handOnlyPieces). A transforming card with a land back (Growing
+    Rites of Itlimoc, an enchantment on its front) can be exiled. Returns the
+    card exiled, or None.
     """
     card = imprint_choice(profile, hand, profiles, context, commander_in_play)
     if card is None:
@@ -5427,7 +5554,8 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
     # DEC-472 activated-draw bookkeeping: activations so far per engine name.
     # The cast-turn activation is credited by immediateDraw, so it seeds at 1.
     draw_engine_activations: dict[str, int] = {}
-    library, hand = commander_mulligan_goldfish(decklist, profiles, commander_colors, context["mulliganKeep"])
+    library, hand = commander_mulligan_goldfish(decklist, profiles, commander_colors, context["mulliganKeep"],
+                                                context["handOnlyPieces"])
     permanents = []
     battlefield_lands = []
     commander_in_play = False
@@ -5595,8 +5723,9 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
                             in board else 0)
             run_hatches(triggers, turn, combat_phase=phase_index)
     # DEC-405 transform/free-deploy bookkeeping: the back face comes online
-    # when the transform activation is paid; engine-deployed Equipment with a
-    # configured bonus count as attached from then on.
+    # when the transform activation is paid; every engine-deployed Equipment
+    # counts as attached from then on, adding its configured bonus (0 when
+    # unlisted).
     commander_transformed = False
     attached_equipment: set[str] = set()
     # DEC-940 — the turn Combat Celebrant last exerted. It does not untap during
@@ -5854,7 +5983,7 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
                                   if atom.source is permanent]
                 leave_battlefield(permanent, permanents, battlefield_lands)
         land_name = choose_land_to_play(hand, profiles, battlefield_lands, permanents,
-                                        commander_colors, library)
+                                        commander_colors, library, context["handOnlyPieces"])
         if land_name:
             hand.remove(land_name)
             if profiles[land_name]["landEntryCost"]:
@@ -5957,9 +6086,14 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
             for name in candidates:
                 profile = profiles[name]
                 # An X spell (X_SPELL_MIN_X) takes the mana left after the
-                # holds as X, or stays in hand. Line pieces are cast below at
-                # X = 0; an X spell is never a mana source (its profile says
-                # so), so nothing else exempts it from the holds.
+                # holds as X, or stays in hand. A line piece with {X} in the
+                # hand is kept there (decision C), never a candidate; a
+                # commander named in a combo line's pieces, cast from the
+                # command zone, can be one, and is cast below at X = 0 with
+                # the line pieces (one named only in a KEY_COMBOS slot is no
+                # line member: the X rule; none in the fleet has {X}). An X
+                # spell is never a mana source (its profile
+                # says so), so nothing else exempts it from the holds.
                 if profile["manaCost"]["X"] and name not in line_members:
                     found = x_payment(profile["manaCost"], keep)
                     if found is None:
@@ -6114,8 +6248,11 @@ def simulate_goldfish_game(decklist: list[str], context: dict,
                         # zero the record so it isn't double-counted.
                         permanent["combat"] = 0
         if deploy_engine is not None and commander_transformed:
-            deploy_name = deploy_engine_choice(deploy_engine, hand, profiles,
-                                               attached_equipment)
+            # A line piece kept in the hand (handOnlyPieces: a Walking
+            # Ballista) is never deployed: the combo checks read it there.
+            deploy_name = deploy_engine_choice(
+                deploy_engine, [card for card in hand if card not in context["handOnlyPieces"]], profiles,
+                attached_equipment)
             if deploy_name is not None:
                 hand.remove(deploy_name)
                 deploy_profile = profiles[deploy_name]
@@ -6657,7 +6794,9 @@ GOLDFISH_MANA_METHODOLOGY = (
     " Mana model (owner-approved 2026-11-19, review rounds 1 to 5 2026-11-20): a permanent gives the "
     "mana its own text gives a pilot on a normal turn, using only itself and what the goldfish has on"
     " its own battlefield; a wording the parser is known not to read stops the export. The face on "
-    "the battlefield is read (a modal DFC with a land back is played as its land face; a Pathway "
+    "the battlefield is read (a modal DFC with a spell front and a land back is on the battlefield "
+    "as its land face, played as a land unless it is a combo-line or assembly piece the goldfish "
+    "keeps in the hand; a Pathway "
     "played from the hand enters as the face that adds a commander colour the lands lack, one a "
     "search or a fetch land puts onto the battlefield front face up), without reminder text; an "
     "ability granted to a group the card belongs to counts for the card itself, the grant's subject "
@@ -6746,11 +6885,13 @@ GOLDFISH_MANA_METHODOLOGY = (
     "floats) and leaves. Imprint (owner-approved): Ugin's Labyrinth exiles a colourless card of mana "
     "value 7 or more from the hand and makes {C}{C}, else {C}; Chrome Mox exiles a coloured "
     "nonartifact, nonland card and makes one mana of its colours, and is not cast, paid or by "
-    "cascade, while no card can be exiled for it; the card exiled is interaction the goldfish never "
-    "casts if the hand holds one, else the castable card last in its cast order, and it leaves the "
-    "hand; never exiled, in every deck: tutors and reanimation spells (by their roles), combo-line "
-    "and assembly-line members, reserved combo pieces and deploy-engine Equipment; a card with a land"
-    " face is played as its land. Land-ramp spells move the lands their text says, each destination "
+    "cascade, while no card can be exiled for it; the card exiled is one the goldfish holds back as "
+    "interaction if the hand holds one, else the castable card last in its cast order, and it leaves the "
+    "hand; never exiled, in every deck: tutor and recursion cards (by their roles), combo-line "
+    "and assembly-line members, reserved combo pieces, deploy-engine Equipment, a land, and a modal "
+    "card with a spell front and a land back (played as its land, or kept in the hand as a line "
+    "piece); a transforming card with a land back (Growing Rites of Itlimoc, an enchantment on its "
+    "front) can be exiled. Land-ramp spells move the lands their text says, each destination "
     "as written (an untapped land's mana joins the turn); a search looks at a card as it is in the "
     "library, its front face (a modal DFC whose front is a spell is not a land card there); a land a "
     "search puts onto the battlefield gives up the lands its entry takes, as one that is played does "
@@ -6784,8 +6925,8 @@ GOLDFISH_MANA_METHODOLOGY = (
     "Reversal, Seedborn Muse, Quirion Ranger, Wirewood Symbiote, Wirewood Lodge's untap); mana that "
     "needs the graveyard, the hand or opponents; Three Tree City's chosen type; growth past printed "
     "power (Marwyn, the Nurturer, Vivi Ornitier and Kami of Whispered Hopes are credited at their "
-    "printed power); Rubble Rouser; Mutable Explorer's token; Extraplanar Lens (it exiles one of the "
-    "pilot's lands and the goldfish does not cast it); Emrakul, the Exigent Doom's untap and hand "
+    "printed power); Rubble Rouser; Mutable Explorer's token; Extraplanar Lens (the goldfish casts "
+    "it and exiles no land to it, so it adds no mana); Emrakul, the Exigent Doom's untap and hand "
     "ability; Growing Rites of Itlimoc's transformation (cast as its front); Urza's Saga's chapter "
     "III search; \"Nonbasic lands are\" a type in a deck of that type's one colour (Harbinger of the "
     "Seas' Islands in a mono-blue deck), not applied to the goldfish's own lands; an Aura that makes "
@@ -6904,12 +7045,11 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
     combo_assembly = combo_assembly_from_goldfish(
         context.get("assemblyLines", []), stats["combo_assembled"])
     # The deck's X spells the cast loop casts under the X rule (X_SPELL_MIN_X):
-    # every card it can cast from hand except the line pieces, which it casts
-    # at X = 0. They decide the X wording of the methodology below.
+    # every X card it can cast from hand (a line piece with {X} is reserved,
+    # decision C). They decide the X wording of the methodology below.
     x_spells = sorted(
         name for name, profile in context["profiles"].items()
-        if profile["manaCost"]["X"] and name not in context["lineMembers"]
-        and not goldfish_never_casts(name, profile, context))
+        if profile["manaCost"]["X"] and not goldfish_never_casts(name, profile, context))
     x_creature_score = ", MV + X for an X creature cast with X paid" if x_spells else ""
     section = {
         "numGames": GOLDFISH_GAMES,
@@ -6951,8 +7091,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "engine-activation gates, which are checked against what is left) never exceed the "
             "available mana (DEC-937). Sources that come online untapped mid-turn join the pool. "
             "Cast priority holds mana for the line instead of emptying the pool into filler "
-            "(DEC-944). The commander, mana sources and the cards named by the deck's combo gate "
-            "or KEY_COMBOS assembly slots are cast freely — mana sources are mana-positive across "
+            "(DEC-944). The commander, mana sources and the castable cards named by the deck's "
+            "combo gate or KEY_COMBOS assembly slots are cast freely — mana sources are mana-positive across "
             "the turn and a piece cast advances a line rather than spending it. Every other cast "
             "is filler, and filler is skipped when the pool it would leave behind no longer pays "
             "for (a) a combo or assembly line that was reachable this turn before the cast, or "
@@ -7002,7 +7142,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "piece cast from the hand may also supply one other piece with its own ability (Sun "
             "Titan returning Kaya's Ghostform), paying only that ability's cost. Every assignment of "
             "the missing pieces to different cards is tried. Supplying nothing until the goldfish "
-            "casts tutors and recursion cards, uses abilities and lands (step 2) and tracks the "
+            "casts tutors and recursion cards from the hand, uses abilities and lands (step 2) and "
+            "tracks the "
             "graveyard (step 3): a card that puts the found card on top of the library or into the "
             "graveyard, an ability that cannot act the turn the card is cast (tutor_timing / "
             "recursion_timing 'later'), a land in hand, a card that returns only itself or acts only "
@@ -7018,9 +7159,66 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "the battlefield does not then supply another piece with its own ability. A split card "
             "is read by its first half's type. In a cost, hybrid and Phyrexian mana symbols are read "
             "as free (devotion counts them). "
-            "Tutors, non-permanent combo pieces and recursion cards are reserved from filler "
-            "casting. A paid mulligan bottoms last the line pieces and the tutor and recursion cards "
-            "whose tags can supply one of the deck's line pieces from the hand. Other limitations: "
+            "Held back as interaction (owner-approved 2026-11-23): a card whose primary role in "
+            "this deck is removal-spot, removal-board, counterspell or protection and that is an "
+            "instant or sorcery (no permanent type on its type line) is never cast from the hand, "
+            "as the goldfish has no opponents' cards or spells to answer; its secondary role, guide "
+            "categories and text are not read, and the commander is never held. A permanent with "
+            "one of those roles (a creature, an Aura, an Adventure creature) is cast like any other "
+            "card; a modal card with a spell front and a land back is played as that land unless it "
+            "is a line piece kept in the hand (below; a Pathway, a land on both faces, enters as "
+            "either), and a transforming card is cast as its front (verdant-tide's Growing Rites of "
+            "Itlimoc). A paid mulligan bottoms from a seven with fewer than five lands it can play "
+            "the spells it does not keep first (a held card before the others, then the dearest), "
+            "then the spells it keeps (the combo checks' cards and a deploy engine's configured "
+            "Equipment, the dearest first, a held card among them too: gandalf-party-guest's Muddle "
+            "the Mixture), then lands; from five or more, a land first. An imprint "
+            "that can exile a held card exiles it first, never a kept or reserved card. "
+            "Known limits: a creature is credited by mana value, by what the general parsers read in "
+            "its text (a draw as it enters: exponential-growth's Zegana, Utopian Speaker; its mana) "
+            "and by what an engine table credits (The Great Goblin's damage per amass, Vodalian "
+            "Hexcatcher's anthem); not credited: a removal ability as it enters, Orcish Bowmasters' "
+            "ping and amass; a permanent whose text damages or "
+            "destroys creatures is cast and nothing is applied to the pilot's own board "
+            "(hoard-and-bleed's Spiteful Banditry, cast under the X rule, deals no damage; "
+            "verdant-tide's Whiptongue Hydra destroys nothing), nor a mandatory target or a "
+            "symmetric sacrifice; an Aura is cast without checking that something can be "
+            "enchanted (creeping-corruption's Corrupted Conscience, as before); ordinary paid equips "
+            "are not modeled: an Equipment cast from the hand stays unattached and counts by its "
+            "pressure score (shield-doctrine's Mjölnir, Hammer of Thor and Sword of Fire and Ice), "
+            "or, if it is also a creature, as any creature does, by its mana value "
+            "(shield-doctrine's The Reality Chip: 2 pressure, and 2 combat once ready), except where "
+            "a table models an attachment: broodfire-hatchery's "
+            "Thornbite Staff attaches to the commander when she enters after it, and its "
+            "Skullclamp's {1} equip on a 0/1 Egg (the commander's or Palani's Hatcher's) draws two, "
+            "while Nesting Dragon's 0/2 Dragon Egg survives the -1 and draws nothing; "
+            "armory-protocol's deploy engine, once the "
+            "commander has transformed, puts one artifact from the hand onto the battlefield free at "
+            "each combat (a put, not a cast), the one with the highest score, as that deck's own "
+            "methodology states: an Equipment it "
+            "puts out counts as attached and adds its table's bonus to the commander's damage (none "
+            "when the table does not list it), its own pressure score applying once it is out, and "
+            "only the table's Equipment is held in the hand for it; +1/+1 counter growth is not modeled, "
+            "so a counter doubler adds no damage of its own; a protection spell with a proactive "
+            "use (a pump, a draw) is held; gathering-shadow's Foray of Orcs is in the amass table "
+            "but held as a removal sorcery, so its amass never counts. "
+            "In a deck with a combo win condition or a KEY_COMBOS line, the tutor and recursion "
+            "cards, and the combo-line and assembly pieces whose front face is not a permanent or "
+            "that have {X} in their cost (owner-approved 2026-11-23), are reserved from filler "
+            "casting from the hand; in a deck with neither, the reservation of tutor and recursion "
+            "cards is lifted, and the other rules still apply (a held instant or sorcery stays "
+            "held; a modal card with a spell front and a land back is still played as its land). "
+            "Those line pieces kept in the hand are also never played as a land, counted as a land "
+            "by the mulligan, deployed free or cast from a cascade. A reserved tutor or recursion "
+            "card is not cast from the hand, but one played as a land (a land, or a modal card with "
+            "a land back) is played and counted as a land, and a cascade can free-cast any other "
+            "that is a permanent. A commander with {X} named in a combo line's pieces is "
+            "cast from the command zone at X = 0; one named only in a KEY_COMBOS slot waits for a "
+            "positive X under the X rule (no commander in the fleet has {X}). "
+            "The spells a paid mulligan keeps, bottoming them last of "
+            "the spells, are the line pieces, the tutor and recursion cards whose tags can supply one "
+            "of the deck's line pieces from the hand, and a deploy engine's configured Equipment. "
+            "Other limitations: "
             "lines that do not win with the pieces they list still count, no opponent interaction, "
             "no multi-turn assembly tracking, no stack-trigger ordering."
         ) + goldfish_mana_methodology(context, decklist),
@@ -7058,8 +7256,11 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "reached, is cast with X = the largest value the mana left pays after its "
             "coloured pips and the holds above, with no mana-source exemption; {X}{X} "
             f"costs two per X. Below X = {X_SPELL_MIN_X} it stays in hand and the next "
-            "spell is tried. Combo-line pieces and KEY_COMBOS assembly members are still "
-            "cast at X = 0, and the combo gate prices its pieces at X = 0"
+            "spell is tried. Combo-line pieces and KEY_COMBOS assembly members with {X} are "
+            "not cast from the hand (owner-approved 2026-11-23): they stay there for the combo "
+            "checks (a commander with {X} named in a combo line's pieces is cast from the command "
+            "zone at X = 0; one named only in a KEY_COMBOS slot falls under this rule), and the "
+            "combo gate prices its pieces at X = 0"
             + (" except the X pieces above" if priced_x else "") + ". "
             "Credited at the paid X: a creature's combat, and a threat creature's pressure "
             "score, read mana value + X (capped at 8, keyword bonus as before)"
@@ -7079,8 +7280,12 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             f" Commander-granted cascade modeled (DEC-385): with the commander on the battlefield, "
             f"each {'colorless ' if cascade.get('colorlessOnly') else ''}spell of mana value "
             f"{cascade['minValue']}+ cast from hand resolves {cascade['triggers']} cascade trigger(s) — "
-            "dig the library for the first cheaper nonland card, free-cast it (reactive spells and "
-            "reserved combo pieces are declined and bottomed), bottom the rest; "
+            "dig the library for the first cheaper nonland card, read as it is in the library (a "
+            "modal DFC whose front is a spell is one), free-cast it (a card held back as "
+            "interaction, a combo-line or assembly piece whose front face is not a permanent or "
+            "that has {X} in its cost, a reserved tutor or recursion card that is not a permanent, "
+            "and a card the goldfish plays as its land face are declined and bottomed), bottom the "
+            "rest; "
             + ("free-casts do not re-trigger (from-hand grant)."
                if cascade.get("fromHandOnly") else "qualifying free-casts re-trigger.")
         )
@@ -7115,7 +7320,12 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "from the turn after minting (summoning sickness); each contributes tokenPower "
             f"plus one per battlefield anthem ({len(token_engine['anthemNames'])} tracked), "
             "and the commander adds one damage per ready token once he can attack (variable "
-            "power). Copies and free-casts never mint (CR 707.10 — only casts trigger). "
+            "power). A copy of a spell made on the stack is not cast (CR 707.10) and never "
+            "mints. A card that lets its controller cast a copy (Harmonized Trio, prepared) does "
+            "cast it, and a free cast is a cast too: either would trigger the commander (his "
+            "trigger is on casting, paid or not), but the engine is credited only on the cast "
+            "loop's casts from the hand, so neither mints: a limit of the model, which reads too "
+            "little. "
             "Counts are floors: X pips credit printed symbols only, anthems don't pump "
             "nontoken creatures, and token-hit draw engines are not modeled."
         )
@@ -7130,9 +7340,18 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "affordability like any other cast. From the transform turn (haste) the "
             f"{deploy_engine['transformedPower']}-power back face attacks every turn, "
             "and one artifact from hand is put onto the battlefield free at each "
-            "combat — deployed creatures are summoning-sick, deployed kill-piece "
-            f"Equipment ({len(deploy_engine['equipmentPower'])} configured) add their "
-            "attach bonus to commander damage, and double-strike Equipment double it. "
+            "combat, the one with the highest score: an Equipment by its attach bonus (0 when the "
+            "table does not list it; one listed in the table's double-strike names, while none of "
+            "those is attached, by its bonus plus the commander's whole swing; one that grants "
+            "double strike but is not listed, such as Genji Glove, scores 0 and loses to The Reaver "
+            "Cleaver's 1), an artifact creature by its combat score, another artifact "
+            "by its pressure score, which adds no combat damage (so Nexus of Becoming, 8, goes "
+            "before Kaldra Compleat, bonus 5), ties to the higher mana value, then to the name "
+            "later in alphabetical order. "
+            "Deployed creatures are summoning-sick; every deployed Equipment counts as attached "
+            f"and adds its attach bonus to commander damage ({len(deploy_engine['equipmentPower'])} "
+            "configured), its own pressure score applying once it is out; an Equipment listed in "
+            "the table's double-strike names doubles the commander's damage while attached. "
             "Configured Equipment are held in hand as deploy fuel (no equip-cost path "
             "exists in the sim). Floors: the front-face artifact dig, Nexus of "
             "Becoming's second deploy stream, backup attachers, and paid equips are "
@@ -7204,7 +7423,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "Dragon tokens that Egg sacrifices leave behind are not credited, "
             "Skullclamp and Palani's Hatcher do not open the engine on their own, "
             "ramp-fetched lands do not trigger landfall, and Maskwood Nexus turning "
-            "every creature into an Egg, the paid Zopandrel/Mondrak outlets and "
+            "every creature into an Egg, the paid Zopandrel/Mondrak outlets, "
+            "Thornbite Staff's equip (cast after the commander, it never attaches) and "
             "opponent-end-step hatching beyond Seedborn are unmodelled."
         )
     token_makers = context.get("tokenMakers")
@@ -7252,8 +7472,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
                      "is doubled too); Food made with tokens that enter tapped enters "
                      "tapped.")
         if token_makers["doublerNames"]:
-            text += (f" {' and '.join(sorted(token_makers['doublerNames']))} each double "
-                     "every token of an event.")
+            text += (f" Each of {'; '.join(sorted(token_makers['doublerNames']))} doubles every "
+                     "token of an event.")
         if token_makers["artifactTokensReplacedBy"]:
             text += (f" While {token_makers['artifactTokensReplacedBy']} is on the "
                      "battlefield no new Food is credited: it would be a creature token "

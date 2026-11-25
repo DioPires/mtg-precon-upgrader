@@ -14,6 +14,14 @@ from unittest.mock import patch
 
 exporter = importlib.import_module("scripts.export_simulation_results")
 
+# Every decklist entry of a nonland card needs a primary_role
+# (gate_tags_lib.entry_errors, run by the exporter's substitute_tables). The
+# fixtures give their cards this one unless a case needs another: the goldfish
+# reads utility as none of interaction, tutor or recursion.
+FIXTURE_ROLE = {"primary_role": "utility"}
+# The fleet's card data, for fixtures that use real cards' text.
+FLEET_METADATA = json.loads((Path(__file__).resolve().parent.parent / "data" / "card-metadata.json").read_text())
+
 
 class ExportSimulationResultsHelperTests(unittest.TestCase):
     def test_resolve_decks_defaults_to_all(self):
@@ -343,7 +351,7 @@ class HatchEngineGoldfishTests(unittest.TestCase):
         lands = ["Forest"] * forests + list(extra_lands)
         decklist = (lands + ["Mana Crystal"] * crystals
                     + list(self.FREE_PERMANENTS) + self.BEARS + self.FILLERS)
-        deck_data = {"decklist": [{"name": name} for name in decklist]}
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist]}
         context = exporter.build_goldfish_context(
             decklist, deck_data, metadata, self.COMMANDER, ["G"], self.DECK_ID)
         hand = lands + ["Mana Crystal"] * crystals + list(engine_cards)
@@ -538,7 +546,7 @@ class GoldfishManaSpendTests(unittest.TestCase):
                 "oracle_text": "", "mana_cost": "{1}{G}", "cmc": 2,
                 "colors": ["G"], "color_identity": ["G"],
             }
-        deck_data = {"decklist": [{"name": name} for name in decklist]}
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist]}
         context = exporter.build_goldfish_context(
             decklist, deck_data, metadata, "Bear 1", ["G"], "synthetic-two-drops")
         return decklist, metadata, context
@@ -677,7 +685,7 @@ class PrintedPowerProfileTests(unittest.TestCase):
                 "mana_cost": "{3}", "cmc": 3, "colors": ["G"]}
         base.update(meta)
         return exporter.build_goldfish_profile(
-            name="Bear", meta=base, category_names=set(),
+            name="Bear", meta=base, category_names=set(), primary_role=None,
             commander_colors=["G"], commander_name="Other")
 
     def test_printed_power_is_parsed_and_defaults_to_zero(self):
@@ -1090,8 +1098,8 @@ CARDS = {
         "colors": [],
         "power": "0",
     },
-    # data/card-metadata.json, 2026-11-21. Its ping reads as interaction, so
-    # the cast loop never casts it.
+    # data/card-metadata.json, 2026-11-21. A line piece with {X} in two decks,
+    # kept in the hand there (decision C), so the cast loop never casts it.
     "Walking Ballista": {
         "type_line": "Artifact Creature — Construct",
         "mana_cost": "{X}{X}",
@@ -1992,7 +2000,7 @@ class CastTimeDrawTests(unittest.TestCase):
         meta = {"name": name, "type_line": type_line, "mana_cost": mana_cost,
                 "cmc": cmc, "oracle_text": oracle_text}
         profile = exporter.build_goldfish_profile(
-            name=name, meta=meta, category_names=set(),
+            name=name, meta=meta, category_names=set(), primary_role=None,
             commander_colors=["U", "B", "R"], commander_name="Other")
         library = [f"Library {i}" for i in range(10)]
         hand = []
@@ -2445,7 +2453,7 @@ class TurnOneDrawTests(unittest.TestCase):
             order = ["Probe Nine"] * 90 + [under, top] + list(reversed(seven))
             decklist = sorted(order)
             context = exporter.build_goldfish_context(
-                decklist, {"decklist": [{"name": name} for name in decklist]}, cards,
+                decklist, {"decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist]}, cards,
                 "Probe Commander", ["G"], "synthetic-draw")
 
             def deal(library, order=order):
@@ -3197,7 +3205,7 @@ class XSpellGoldfishTests(unittest.TestCase):
         context = exporter.build_goldfish_context(
             hands["Mind Stone"] + hands["Springleaf Parade"], {"decklist": []},
             CARDS, "Probe Commander", ["G"], "synthetic-x")
-        decisions = {card: exporter.should_goldfish_mulligan(hand, context["profiles"])
+        decisions = {card: exporter.should_goldfish_mulligan(hand, context["profiles"], context["handOnlyPieces"])
                      for card, hand in hands.items()}
         self.assertEqual(decisions, {"Mind Stone": False, "Springleaf Parade": True})
 
@@ -3244,7 +3252,7 @@ class XSpellGoldfishTests(unittest.TestCase):
         metadata = self._combo_metadata()
         decklist = hand + library
         deck_data = {
-            "decklist": [{"name": name} for name in decklist],
+            "decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist],
             "winConditions": [{"kind": "combo", "pieces": list(pieces)}],
         }
         context = exporter.build_goldfish_context(
@@ -3276,18 +3284,95 @@ class XSpellGoldfishTests(unittest.TestCase):
         self.assertEqual(by_turn[3]["comboLethal"], 1)
         self.assertEqual(by_turn[4]["combat"], 1)
 
-    def test_a_combo_line_piece_with_x_is_cast_at_x_zero(self):
-        # The line's permanent piece costs {X}{2}. Line pieces are cast freely
-        # at X = 0, so it lands on turn 2 out of two Forests; under the X rule
-        # it would need a third mana.
-        by_turn, casts = self._run_line(
-            ["X Piece Permanent", "Piece Instant"],
-            ["Forest"] * 3 + ["X Piece Permanent", "Piece Instant"],
-            ["Forest"] * 18)
-        # Cast on turn 2, and the gate fires on turn 3 with {2} for the
-        # instant piece.
-        self.assertEqual((casts[2], by_turn[3]["comboLethal"]),
-                         (["X Piece Permanent"], 1))
+    def _pinned_x_game(self, opening, library, deck_extra=None, combos=None):
+        """One pinned game (ComboCheckSubstituteTests.pinned_deal: only
+        random.shuffle is patched) on _combo_metadata plus Probe Huge A to D,
+        {20} sorceries the goldfish never casts; (by_turn, assembly turns,
+        casts by turn)."""
+        metadata = dict(self._combo_metadata(), **{
+            name: {"name": name, "type_line": "Sorcery", "oracle_text": "", "mana_cost": "{20}",
+                   "cmc": 20, "colors": [], "color_identity": []}
+            for name in ("Probe Huge A", "Probe Huge B", "Probe Huge C", "Probe Huge D")})
+        names = list(dict.fromkeys(opening + library))
+        deck_data = dict({"decklist": [{"name": name, **FIXTURE_ROLE} for name in names]}, **(deck_extra or {}))
+        decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
+        with patch.dict(exporter.KEY_COMBOS, {self.COMBO_DECK_ID: combos or []}):
+            context = exporter.build_goldfish_context(decklist, deck_data, metadata, "Synthetic Commander", ["G"],
+                                                      self.COMBO_DECK_ID)
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
+        casts = defaultdict(list)
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts[turn].append(name)
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter.random, "shuffle", shuffle), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            by_turn, assembly = exporter.simulate_goldfish_game(decklist, context, 6)
+        return by_turn, assembly, casts
+
+    def test_a_combo_line_piece_with_x_stays_in_hand_and_counts_for_its_line(self):
+        # Decision C (owner-approved 2026-11-23): the line's permanent piece
+        # costs {X}{2} and is kept in the hand, never cast. Kept seven: three
+        # Forests, the two pieces, Probe Huge A and B; a Forest is drawn each
+        # turn, so one land a turn. The gate reads both pieces from the hand,
+        # the X piece at X = 0: {2} + {2}, so it fires on turn 4 with four
+        # Forests, not on turn 3. The only cast is the commander ({9}) on
+        # turn 9 (the instant piece is reserved too).
+        by_turn, _, casts = self._pinned_x_game(
+            ["Forest"] * 3 + ["X Piece Permanent", "Piece Instant", "Probe Huge A", "Probe Huge B"],
+            ["Forest"] * 18,
+            {"winConditions": [{"kind": "combo", "pieces": ["X Piece Permanent", "Piece Instant"]}]})
+        self.assertEqual((dict(casts), [by_turn[turn]["comboLethal"] for turn in (3, 4)]),
+                         ({9: ["Synthetic Commander"]}, [0, 1]))
+
+    def test_an_assembly_member_with_x_stays_in_hand_and_fills_its_slot(self):
+        # The same {X}{2} permanent as the only member of a KEY_COMBOS slot
+        # (no combo win condition), beside Piece Permanent ({2}) in the other
+        # slot. Both are in the kept seven (three Forests, Probe Huge A and B),
+        # so the line is assembled on turn 1. Piece Permanent is cast on turn
+        # 2 (two Forests) and the commander ({9}) on turn 9; the X member
+        # stays in the hand.
+        combo = {"name": "Probe X line", "slots": [["X Piece Permanent"], ["Piece Permanent"]],
+                 "requiresCommander": False}
+        _, assembly, casts = self._pinned_x_game(
+            ["Forest"] * 3 + ["X Piece Permanent", "Piece Permanent", "Probe Huge A", "Probe Huge B"],
+            ["Forest"] * 18,
+            combos=[combo])
+        self.assertEqual((dict(casts), assembly), ({2: ["Piece Permanent"], 9: ["Synthetic Commander"]}, [1]))
+
+    def test_a_commander_with_x_that_is_a_line_piece_is_cast_at_x_zero(self):
+        # Probe X Commander ({X}{2}) is a piece of the deck's combo line. From
+        # the command zone it is cast with the line pieces at X = 0: on turn
+        # 2, with two Forests (under the X rule it would wait for a third).
+        # Kept seven: three Forests and Probe Huge A to D; Forests are drawn.
+        metadata = dict(self._combo_metadata(), **{
+            "Probe X Commander": {"name": "Probe X Commander", "type_line": "Legendary Creature — Human",
+                                  "oracle_text": "", "mana_cost": "{X}{2}", "cmc": 2, "colors": [],
+                                  "color_identity": []},
+            **{name: {"name": name, "type_line": "Sorcery", "oracle_text": "", "mana_cost": "{20}",
+                      "cmc": 20, "colors": [], "color_identity": []}
+               for name in ("Probe Huge A", "Probe Huge B", "Probe Huge C", "Probe Huge D")}})
+        opening = ["Forest"] * 3 + ["Probe Huge A", "Probe Huge B", "Probe Huge C", "Probe Huge D"]
+        library = ["Piece Permanent"] + ["Forest"] * 18
+        names = list(dict.fromkeys(opening + library))
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in names],
+                     "winConditions": [{"kind": "combo", "pieces": ["Probe X Commander", "Piece Permanent"]}]}
+        decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
+        context = exporter.build_goldfish_context(decklist, deck_data, metadata, "Probe X Commander", ["G"],
+                                                  self.COMBO_DECK_ID)
+        casts = defaultdict(list)
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts[turn].append(name)
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter.random, "shuffle", shuffle), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            exporter.simulate_goldfish_game(decklist, context, 6)
+        self.assertEqual([turn for turn in sorted(casts) if "Probe X Commander" in casts[turn]], [2])
 
     def test_the_gate_prices_a_combo_line_piece_with_x_at_x_zero(self):
         # Two Forests in all (the library holds Bears). Turn 2 casts the
@@ -3313,7 +3398,11 @@ class XSpellGoldfishTests(unittest.TestCase):
         "after its coloured pips and the holds above, with no mana-source "
         "exemption; {X}{X} costs two per X. Below X = 1 it stays in hand and the "
         "next spell is tried. Combo-line pieces and KEY_COMBOS assembly members "
-        "are still cast at X = 0, and the combo gate prices its pieces at X = 0. "
+        "with {X} are not cast from the hand (owner-approved 2026-11-23): they "
+        "stay there for the combo checks (a commander with {X} named in a combo "
+        "line's pieces is cast from the command zone at X = 0; one named only in "
+        "a KEY_COMBOS slot falls under this rule), and the combo gate prices its pieces "
+        "at X = 0. "
         "Credited at the paid X: a creature's combat, and a threat creature's "
         "pressure score, read mana value + X (capped at 8, keyword bonus as "
         "before)")
@@ -3329,7 +3418,7 @@ class XSpellGoldfishTests(unittest.TestCase):
     def _methodology(self, decklist, win_conditions=(), roles=None,
                      deck_id="synthetic-x"):
         roles = roles or {}
-        deck_data = {"decklist": [dict({"name": name}, **roles.get(name, {}))
+        deck_data = {"decklist": [dict({"name": name, **FIXTURE_ROLE}, **roles.get(name, {}))
                                   for name in decklist],
                      "winConditions": list(win_conditions)}
         with patch.object(exporter, "GOLDFISH_GAMES", 16), \
@@ -3378,8 +3467,10 @@ class XSpellGoldfishTests(unittest.TestCase):
                 ["Stonecoil Serpent", "Primordial Hydra"] + ["Forest"] * 97,
                 [{"kind": "combo",
                   "pieces": ["Stonecoil Serpent", "Primordial Hydra"]}], None),
-            # "Counter target spell": interaction, never cast.
-            "an interaction X card": (["Syncopate"] + ["Forest"] * 98, (), None),
+            # "Counter target spell ...": an instant whose primary role is
+            # counterspell, held back as interaction, never cast.
+            "an interaction X card": (["Syncopate"] + ["Forest"] * 98, (),
+                                      {"Syncopate": {"primary_role": "counterspell"}}),
             "a reserved X tutor": (
                 ["Whir of Invention", "Zero Trinket", "Mind Stone"] + ["Forest"] * 96,
                 self.PLAIN_COMBO,
@@ -3399,8 +3490,8 @@ class XSpellGoldfishTests(unittest.TestCase):
 
     def test_methodology_states_a_combo_lines_min_x(self):
         # Stonecoil Serpent is cast under the X rule; Walking Ballista, which
-        # the cast loop never casts (its ping reads as interaction), is a line
-        # piece priced at X = 2 by the line's minX.
+        # the cast loop never casts (a line piece with {X}, reserved), is a
+        # line piece priced at X = 2 by the line's minX.
         decklist = ["Stonecoil Serpent", "Walking Ballista", "Mind Stone"] + ["Forest"] * 96
         line = {"kind": "combo", "pieces": ["Walking Ballista", "Mind Stone"]}
         min_x_sentence = (
@@ -3787,8 +3878,8 @@ class TokenMakerGoldfishTests(unittest.TestCase):
         "pool. Peregrin Took adds one Food to each "
         "event before any doubler (the controller orders replacement effects, "
         "so the Food is doubled too); Food made with tokens that enter tapped "
-        "enters tapped. Anointed Procession and Mondrak, Glory Dominus each "
-        "double every token of an event. While Draconic Visitor is on the "
+        "enters tapped. Each of Anointed Procession; Elspeth, Storm Slayer; Mondrak, "
+        "Glory Dominus doubles every token of an event. While Draconic Visitor is on the "
         "battlefield no new Food is credited: it would be a creature token the "
         "engine does not credit. Combat, the DEC-404 convention: each "
         "creature token deals 1 plus one per anthem on the battlefield "
@@ -3806,9 +3897,10 @@ class TokenMakerGoldfishTests(unittest.TestCase):
         "Smothering Tithe, The Queen of Dale (their tokens depend on opponents' "
         "choices); Gleaming Splendor (its Treasure needs an opponent's second "
         "draw in a turn: the goldfish models no opponent draws and never "
-        "activates its {2}{W}); Elspeth, Storm Slayer, Voice of "
-        "Victory, Artifact Mutation, The Battle of Bywater (never cast: read as "
-        "interaction); Aligned Heart, Cori-Steel Cutter (tokens only on the "
+        "activates its {2}{W}); Artifact Mutation, The Battle of Bywater (never "
+        "cast: held back as interaction); Voice of Victory (its Warriors are "
+        "sacrificed at the end of the turn they attack, and the token ledger "
+        "never removes a token); Aligned Heart, Cori-Steel Cutter (tokens only on the "
         "second spell in a turn); Caretaker's Talent, Idol of Oblivion "
         "(one-shot activations); Scurry Oak (Squirrels from +1/+1 counters: "
         "with Rosie Cotton of South Lane they are the infinite the combo gate "
@@ -3817,7 +3909,8 @@ class TokenMakerGoldfishTests(unittest.TestCase):
         "Pakal's Gnomes count as 1/1s); nor token copies' own landfall, "
         "landfall from lands a fetch land or ramp spell puts onto the "
         "battlefield, the makers' other abilities (Prosperous Partnership's "
-        "Treasure), an attack maker's trigger on the turn it is cast (another "
+        "Treasure), Elspeth, Storm Slayer's +1 Soldier token, an attack maker's "
+        "trigger on the turn it is cast (another "
         "creature attacking would trigger it). Not modeled: the commander's "
         "mana and +1/+1 counter abilities, Halo Fountain's draw and win abilities, Treasure and "
         "Food being spent, untaps on opponents' turns (Seedborn Muse, "
@@ -4260,7 +4353,7 @@ class ManaModelRuleTests(unittest.TestCase):
                 self.assertIn("unread", [verdict for _, verdict in got["verdicts"]])
                 meta = {"type_line": "Artifact", "oracle_text": text, "mana_cost": "{0}", "cmc": 0}
                 with self.assertRaises(ValueError):
-                    exporter.build_goldfish_profile("Probe Card", meta, set(), ["G"], "Other")
+                    exporter.build_goldfish_profile("Probe Card", meta, set(), None, ["G"], "Other")
 
     def test_each_rule_reads_the_card_text(self):
         keys = {"mana": "manaAtoms", "once": "manaOnce", "onCast": "manaOnCast", "board": "manaBoard"}
@@ -4442,7 +4535,7 @@ class ManaModelRuleTests(unittest.TestCase):
                 meta = {"type_line": types[name], "oracle_text": texts[name], "mana_cost": "{3}",
                         "cmc": 3, "colors": [], "power": "2"}
                 profile = exporter.build_goldfish_profile(
-                    name=name, meta=meta, category_names=set(), commander_colors=["G"],
+                    name=name, meta=meta, category_names=set(), primary_role=None, commander_colors=["G"],
                     commander_name="Other")
                 self.assertEqual(exporter.is_mana_source(profile), expected)
 
@@ -4631,8 +4724,10 @@ class ManaModelGoldfishTests(unittest.TestCase):
 
     def _run(self, hand, library, colors=("C",), commander="The Ur-Dragon", deck_id="synthetic-mana"):
         decklist = hand + library
-        context = exporter.build_goldfish_context(decklist, {"decklist": []}, CARDS, commander,
-                                                  list(colors), deck_id)
+        # Probe Kill, a removal instant, is held back as interaction by its role.
+        context = exporter.build_goldfish_context(
+            decklist, {"decklist": [{"name": "Probe Kill", "primary_role": "removal-spot"}]}, CARDS, commander,
+            list(colors), deck_id)
         with patch.object(exporter, "commander_mulligan_goldfish", return_value=(library, hand)):
             by_turn, _ = exporter.simulate_goldfish_game(decklist, context, 6)
         return by_turn
@@ -4860,8 +4955,8 @@ class ManaModelGoldfishTests(unittest.TestCase):
         self.assertEqual(self._series(by_turn, "cumulativeDamage"), [0, 0, 2, 4, 6, 8])
 
     def test_chrome_mox_imprints_a_coloured_card(self):
-        # Turn 1 Chrome Mox exiles Probe Kill (black interaction the goldfish
-        # never casts) and taps for {B}: with the Swamp it casts Probe BB on
+        # Turn 1 Chrome Mox exiles Probe Kill (a black removal instant, held
+        # back as interaction) and taps for {B}: with the Swamp it casts Probe BB on
         # turn 1. With only colourless cards to exile the Mox makes nothing
         # and Probe Two waits for turn 2.
         library = ["Swamp"] * 92
@@ -6189,7 +6284,7 @@ class ManaRoundTwoEngineTests(unittest.TestCase):
         library = ["Forest"] * 6 + bears + list(library_extra)
         decklist = hand + library
         context = exporter.build_goldfish_context(
-            decklist, {"decklist": [{"name": n} for n in decklist]}, metadata,
+            decklist, {"decklist": [{"name": n, **FIXTURE_ROLE} for n in decklist]}, metadata,
             CastPriorityHoldTests.HATCH_COMMANDER, ["G"], CastPriorityHoldTests.HATCH_DECK_ID)
         hatched = []
         original = exporter.hatch_from_library
@@ -6411,7 +6506,7 @@ class ManaRoundThreeEngineTests(unittest.TestCase):
         metadata.update(R3_PROBES)
         library = ["Forest"] * 6 + [f"Bear {i}" for i in range(20)] + list(library_extra)
         decklist = list(hand) + library
-        deck_data = {"decklist": [{"name": n} for n in decklist], "winConditions": list(win_conditions)}
+        deck_data = {"decklist": [{"name": n, **FIXTURE_ROLE} for n in decklist], "winConditions": list(win_conditions)}
         context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, ["G"],
                                                   CastPriorityHoldTests.HATCH_DECK_ID)
         hatched, casts, market_tapped, market_mana = [], defaultdict(list), [], []
@@ -6760,7 +6855,8 @@ class ManaRoundFourGoldfishTests(unittest.TestCase):
                 + ["Ashnod's Altar", "Aggravated Assault", "Attacker A"])
         library = list(CombatModifierGoldfishTests.FILLERS)
         decklist = hand + library
-        context = exporter.build_goldfish_context(decklist, {"decklist": [{"name": n} for n in decklist]},
+        context = exporter.build_goldfish_context(decklist,
+                                                  {"decklist": [{"name": n, **FIXTURE_ROLE} for n in decklist]},
                                                   metadata, commander, ["G"], CombatModifierGoldfishTests.DECK_ID)
         eggs = []
         hatch = exporter.hatch_from_library
@@ -6803,7 +6899,7 @@ class ManaRoundFourGoldfishTests(unittest.TestCase):
         library = (["Probe Line B1", "Probe Line B2"] + ["Forest"] * 6 + [f"Bear {i}" for i in range(5, 20)]
                    + ["Probe Tutor One", "Bear 0", "Bear 1", "Bear 2", "Bear 3", "Bear 4"])
         decklist = hand + library
-        deck_data = {"decklist": [{"name": n, "primary_role": "tutor" if n == "Probe Tutor One" else "other"}
+        deck_data = {"decklist": [{"name": n, "primary_role": "tutor" if n == "Probe Tutor One" else "utility"}
                                   for n in decklist]}
         combos = {CastPriorityHoldTests.HATCH_DECK_ID: [
             {"name": "Probe line 1", "pieces": ["Probe Line A1", "Probe Line B1"]},
@@ -7054,12 +7150,12 @@ class ManaRoundFourParserTests(unittest.TestCase):
             with self.subTest(card=name):
                 with self.assertRaisesRegex(ValueError, re.escape(reason)):
                     exporter.build_goldfish_profile(name, ManaRoundThreeParserTests.card(type_line, text, cost),
-                                                    set(), ["R", "G", "W"], "Other")
+                                                    set(), None, ["R", "G", "W"], "Other")
 
     def test_two_named_basic_types_are_read_as_two_lands(self):
         # Yasharn: "a basic Forest card and a basic Plains card", to the hand.
         meta = dict(R4_PROBES["Yasharn, Implacable Earth"])
-        profile = exporter.build_goldfish_profile("Yasharn, Implacable Earth", meta, set(), ["G", "W"], "Other")
+        profile = exporter.build_goldfish_profile("Yasharn, Implacable Earth", meta, set(), None, ["G", "W"], "Other")
         ramp = profile["landRamp"]
         self.assertEqual((ramp["count"], ramp["toHand"], ramp["perType"], ramp["basicOnly"]),
                          (0, 2, ["Forest", "Plains"], True))
@@ -7163,7 +7259,8 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
         metadata["Skullclamp"] = dict(R5_PROBES["Skullclamp"], name="Skullclamp")
         library = list(CombatModifierGoldfishTests.FILLERS)
         decklist = list(hand) + library
-        context = exporter.build_goldfish_context(decklist, {"decklist": [{"name": n} for n in decklist]},
+        context = exporter.build_goldfish_context(decklist,
+                                                  {"decklist": [{"name": n, **FIXTURE_ROLE} for n in decklist]},
                                                   metadata, commander, ["G"], CombatModifierGoldfishTests.DECK_ID)
         hatched = []
         hatch = exporter.hatch_from_library
@@ -7217,7 +7314,7 @@ class ManaRoundFiveGoldfishTests(unittest.TestCase):
         metadata["Island"] = CARDS["Island"]
         decklist = hand + library
         deck_data = {"decklist": [dict({"name": n, "primary_role": "tutor", "tutor_targets": roles[n]}
-                                       if n in roles else {"name": n}) for n in decklist]}
+                                       if n in roles else {"name": n, **FIXTURE_ROLE}) for n in decklist]}
         combos = {CastPriorityHoldTests.HATCH_DECK_ID: [
             {"name": "Probe line 1", "pieces": ["Probe Line A1", "Probe Line B1"]},
             {"name": "Probe line 2", "pieces": ["Probe Line A2", "Probe Line Sorcery"]}]}
@@ -7542,7 +7639,7 @@ class ManaRoundFiveParserTests(unittest.TestCase):
 
     def test_a_split_between_the_battlefield_and_the_hand_is_read(self):
         profile = exporter.build_goldfish_profile("Viewpoint Synchronization",
-                                                  R5_PROBES["Viewpoint Synchronization"], set(), ["G"], "Other")
+                                                  R5_PROBES["Viewpoint Synchronization"], set(), None, ["G"], "Other")
         ramp = profile["landRamp"]
         self.assertEqual((ramp["count"], ramp["toHand"], ramp["entersTapped"]), (2, 1, True))
 
@@ -7556,7 +7653,7 @@ class ManaRoundFiveParserTests(unittest.TestCase):
                            ("Embermouth Sentinel", R5_PROBES["Embermouth Sentinel"]), ("Probe Split Search", split)):
             with self.subTest(card=name):
                 with self.assertRaisesRegex(ValueError, re.escape("its land search")):
-                    exporter.build_goldfish_profile(name, meta, set(), ["G"], "Other")
+                    exporter.build_goldfish_profile(name, meta, set(), None, ["G"], "Other")
 
 
 class ManaRoundTwoParserTests(unittest.TestCase):
@@ -7633,13 +7730,13 @@ class ManaRoundTwoParserTests(unittest.TestCase):
         for name, type_line, text in self.REFUSED:
             with self.subTest(card=name):
                 with self.assertRaisesRegex(ValueError, re.escape(self.REASONS[name])):
-                    exporter.build_goldfish_profile(name, self.meta(type_line, text), set(), ["R", "G", "W"],
+                    exporter.build_goldfish_profile(name, self.meta(type_line, text), set(), None, ["R", "G", "W"],
                                                     "Other")
 
     def test_an_opponent_condition_inside_an_ability_is_a_floor(self):
         profile = exporter.build_goldfish_profile(
             "Probe Opponent Rock", self.meta("Artifact", "{T}: If an opponent controls more lands than you, "
-                                             "add {C}{C}."), set(), ["G"], "Other")
+                                             "add {C}{C}."), set(), None, ["G"], "Other")
         self.assertEqual((profile["manaAtoms"], [v for _, v in profile["manaVerdicts"]]),
                          ([], ["condition floor"]))
 
@@ -7667,7 +7764,7 @@ class ManaRoundTwoParserTests(unittest.TestCase):
         # Harbinger of the Seas: its type-setting is a named floor, not
         # refused and not applied.
         profile = exporter.build_goldfish_profile("Harbinger of the Seas", self.meta(
-            "Creature — Merfolk Wizard", "Nonbasic lands are Islands."), set(), ["U"], "Other")
+            "Creature — Merfolk Wizard", "Nonbasic lands are Islands."), set(), None, ["U"], "Other")
         self.assertEqual([v for _, v in profile["manaVerdicts"]], ["land types set, not applied"])
         # A count creature's {T} is recorded: it does not attack when tapped.
         self.assertTrue(exporter.card_mana_model("Elvish Archdruid", CARDS["Elvish Archdruid"],
@@ -7720,7 +7817,7 @@ class ManaRoundThreeParserTests(unittest.TestCase):
         for name, type_line, text, cost in self.REFUSED:
             with self.subTest(card=name):
                 with self.assertRaisesRegex(ValueError, re.escape(self.REASONS[name])):
-                    exporter.build_goldfish_profile(name, self.card(type_line, text, cost), set(),
+                    exporter.build_goldfish_profile(name, self.card(type_line, text, cost), set(), None,
                                                     ["R", "G", "W"], "Other")
 
     def test_a_card_that_gives_up_a_land_is_named_in_the_refusal(self):
@@ -7728,7 +7825,7 @@ class ManaRoundThreeParserTests(unittest.TestCase):
             exporter.build_goldfish_profile("Harrow", self.card(
                 "Instant", "As an additional cost to cast this spell, sacrifice a land.\nSearch your library "
                 "for up to two basic land cards, put them onto the battlefield, then shuffle.", "{2}{G}"),
-                set(), ["G"], "Other")
+                set(), None, ["G"], "Other")
 
     def test_readings_that_replaced_a_refusal(self):
         # Harbinger of the Seas in a mono-blue deck: a named floor; Blood Moon
@@ -7736,32 +7833,32 @@ class ManaRoundThreeParserTests(unittest.TestCase):
         for name, colours in (("Harbinger of the Seas", ["U"]), ("Blood Moon", ["R"])):
             text = "Nonbasic lands are Islands." if name.startswith("Harbinger") else "Nonbasic lands are Mountains."
             profile = exporter.build_goldfish_profile(name, self.card("Creature — Merfolk Wizard", text, "{U}"),
-                                                      set(), colours, "Other")
+                                                      set(), None, colours, "Other")
             self.assertEqual([v for _, v in profile["manaVerdicts"]], ["land types set, not applied"])
         # An Aura that makes another permanent a colourless land: a floor.
         profile = exporter.build_goldfish_profile("Imprisoned in the Moon", self.card(
             "Enchantment — Aura", "Enchant creature, land, or planeswalker\nEnchanted permanent is a colorless "
             "land with \"{T}: Add {C}\" and loses all other card types and abilities.", "{2}{U}"),
-            set(), ["U"], "Other")
+            set(), None, ["U"], "Other")
         self.assertEqual(([v for _, v in profile["manaVerdicts"]], profile["manaAtoms"]), (["grant floor"], []))
         # "Add five mana in any combination of colors" for {5}: nets nothing.
         profile = exporter.build_goldfish_profile("Cascading Cataracts", self.card(
             "Land", "Indestructible\n{T}: Add {C}.\n{5}, {T}: Add five mana in any combination of colors.", ""),
-            set(), ["U", "G"], "Other")
+            set(), None, ["U", "G"], "Other")
         self.assertEqual(mana_letters(profile["manaAtoms"]), ["C"])
         # An entering trigger worded with the card's short name.
         profile = exporter.build_goldfish_profile("Sutina, Speaker of the Tajuru", self.card(
             "Legendary Creature — Elf Scout", "When Sutina enters, search your library for a basic land card, "
             "put it onto the battlefield tapped, then shuffle.\nWhenever Sutina attacks, you may return a land "
             "you control to its owner's hand. When you do, put a +1/+1 counter on target creature.", "{2}{G}"),
-            set(), ["G"], "Other")
+            set(), None, ["G"], "Other")
         self.assertEqual((profile["landRamp"]["count"], profile["landRamp"]["entersTapped"]), (1, True))
         # A land sacrificed for a search (Elvish Reclaimer) nets nothing: no
         # land fetch, not refused.
         profile = exporter.build_goldfish_profile("Elvish Reclaimer", self.card(
             "Creature — Elf Warrior", "This creature gets +2/+2 as long as there are three or more land cards in "
             "your graveyard.\n{2}, {T}, Sacrifice a land: Search your library for a land card, put it onto the "
-            "battlefield tapped, then shuffle.", "{G}"), set(), ["G"], "Other")
+            "battlefield tapped, then shuffle.", "{G}"), set(), None, ["G"], "Other")
         self.assertIsNone(profile["landFetch"])
 
 
@@ -7772,8 +7869,10 @@ class ManaPilotHelperTests(unittest.TestCase):
 
     @staticmethod
     def context(names, colors):
-        return exporter.build_goldfish_context(list(names), {"decklist": []}, CARDS, "Probe Commander",
-                                               list(colors), "synthetic-pilot")
+        # Probe Kill, a removal instant, is held back as interaction by its role.
+        return exporter.build_goldfish_context(
+            list(names), {"decklist": [{"name": "Probe Kill", "primary_role": "removal-spot"}]}, CARDS,
+            "Probe Commander", list(colors), "synthetic-pilot")
 
     def test_an_imprint_exiles_the_card_the_goldfish_gets_least_from(self):
         context = self.context(["Chrome Mox", "Ugin's Labyrinth", "Probe BB", "Probe Kill", "Probe Two",
@@ -7781,7 +7880,7 @@ class ManaPilotHelperTests(unittest.TestCase):
         profiles = context["profiles"]
         # (permanent, hand, card exiled, hand after, mana after)
         cases = [
-            # Interaction the goldfish never casts goes first.
+            # A card held back as interaction (never cast) goes first.
             ("Chrome Mox", ["Probe BB", "Probe Kill", "Probe Two"], "Probe Kill",
              ["Probe BB", "Probe Two"], ["B"]),
             # Else the castable card last in the cast order: the only coloured one.
@@ -7803,16 +7902,21 @@ class ManaPilotHelperTests(unittest.TestCase):
 
     def test_an_imprint_never_exiles_a_line_member_tutor_or_reanimation_spell(self):
         # With Probe BB in a combo line and Probe Kill a tutor (by its role),
-        # in a deck with no gate configured for them to matter, Chrome Mox
-        # exiles nothing; in a deck without those roles it takes Probe Kill
-        # (interaction it never casts).
+        # Chrome Mox exiles nothing. Probe Kill a tutor or a reanimation card
+        # (by its role) in a deck with no gate, where neither is reserved: the
+        # Mox takes Probe BB, though Probe Kill, an instant, is the castable
+        # card last in the cast order. Probe Kill as removal: it takes Probe
+        # Kill (held back as interaction, never cast).
         names = ["Chrome Mox", "Probe BB", "Probe Kill", "Swamp"]
         tutor = {"name": "Probe Kill", "primary_role": "tutor"}
         line = {"title": "line", "kind": "combo", "description": "",
                 "pieces": ["Probe BB", "Swamp"], "cards": ["Probe BB", "Swamp"]}
         hand = ["Probe BB", "Probe Kill"]
-        for deck_data, exiled in (({"decklist": []}, "Probe Kill"),
+        for deck_data, exiled in (({"decklist": [{"name": "Probe Kill", "primary_role": "removal-spot"}]},
+                                   "Probe Kill"),
                                   ({"decklist": [tutor]}, "Probe BB"),
+                                  ({"decklist": [{"name": "Probe Kill", "primary_role": "recursion"}]},
+                                   "Probe BB"),
                                   ({"decklist": [tutor], "winConditions": [line]}, None)):
             with self.subTest(deck=deck_data):
                 context = exporter.build_goldfish_context(names, deck_data, CARDS, "Probe Commander",
@@ -7964,7 +8068,7 @@ class ManaPilotHelperTests(unittest.TestCase):
         decklist = ["Mana Vault", "Basalt Monolith", "Chrome Mox", "Lotus Field", "Wayfarer's Bauble",
                     "Llanowar Elves", "Tainted Wood", "Krark-Clan Ironworks",
                     "Birgi, God of Storytelling // Harnfel, Horn of Bounty"] + ["Wastes"] * 90
-        deck_data = {"decklist": [{"name": name} for name in decklist], "winConditions": []}
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist], "winConditions": []}
         with patch.object(exporter, "GOLDFISH_GAMES", 16), patch("multiprocessing.Pool", SerialPool):
             goldfish, _ = exporter.compute_goldfish_section(
                 decklist=decklist, deck_data=deck_data, metadata=CARDS,
@@ -8010,7 +8114,7 @@ class ManaPilotHelperTests(unittest.TestCase):
         decklist = ["Elvish Archdruid"] + ["Forest"] * 98
         with patch.object(exporter, "GOLDFISH_GAMES", 16), patch("multiprocessing.Pool", SerialPool):
             goldfish, _ = exporter.compute_goldfish_section(
-                decklist=decklist, deck_data={"decklist": [{"name": n} for n in decklist]},
+                decklist=decklist, deck_data={"decklist": [{"name": n, **FIXTURE_ROLE} for n in decklist]},
                 metadata=CARDS, commander_name="Probe Commander", commander_colors=["G"],
                 deck_id="synthetic-pilot")
         self.assertIn("mana creatures that tap instead of attacking: Elvish Archdruid.",
@@ -8026,9 +8130,9 @@ class ManaPilotHelperTests(unittest.TestCase):
         hand = ["Forest", "Forest", "Sakura-Tribe Elder", "Probe Nine", "Probe Nine", "Probe Nine",
                 "Probe Nine"]
         profiles = dict(profiles, **self.context(["Probe Nine"], ("G",))["profiles"])
-        self.assertFalse(exporter.should_goldfish_mulligan(hand, profiles))
+        self.assertFalse(exporter.should_goldfish_mulligan(hand, profiles, frozenset()))
         self.assertTrue(exporter.should_goldfish_mulligan(
-            ["Forest", "Forest"] + ["Probe Nine"] * 5, profiles))
+            ["Forest", "Forest"] + ["Probe Nine"] * 5, profiles, frozenset()))
 
 
 class GoldfishMulliganTests(unittest.TestCase):
@@ -8038,18 +8142,23 @@ class GoldfishMulliganTests(unittest.TestCase):
     pop its end), the given cards under it, then the rest of the deck in deck
     order. The first mulligan is free; the second is paid: the third seven is
     kept and one card goes to the bottom. Card data from CARDS; made up:
-    "Probe Big Kill" (interaction of mana value 5), "Probe Wipe" (a board
-    wipe of mana value 7), "Probe Raise" (a recursion spell of mana value 4
-    that returns an instant to the hand, interaction by its "return target"
-    text), "Probe Revive" (a recursion spell of mana value 4 that returns a
-    creature to the battlefield, interaction by the same text), "Probe Seek"
-    (a tutor of mana value 7), "Probe Entomb" (a tutor of mana value 1 that
-    puts its card into the graveyard), "Probe Blade" (an Equipment of mana
-    value 4) and "Probe Tapped Forest" (a land that enters tapped and makes
-    {G}).
+    "Probe Big Kill" (a removal sorcery of mana value 5), "Probe Wipe" (a
+    board wipe of mana value 7), "Probe Raise" (a recursion spell of mana
+    value 4 that returns an instant to the hand), "Probe Revive" (a recursion
+    spell of mana value 4 that returns a creature to the battlefield), "Probe
+    Seek" (a tutor of mana value 7), "Probe Entomb" (a tutor of mana value 1
+    that puts its card into the graveyard), "Probe Blade" (an Equipment of
+    mana value 4) and "Probe Tapped Forest" (a land that enters tapped and
+    makes {G}). Muddle the Mixture as data/card-metadata.json holds it
+    ({U}{U}: "Counter target instant or sorcery spell. Transmute {1}{U}{U}"),
+    with gandalf-party-guest's roles and tags.
 
-    The deck data gives Probe Raise, Probe Revive, Probe Seek and Probe
-    Entomb their roles and tags. The gate decides what the mulligan keeps
+    The deck data gives Probe Kill and Probe Big Kill (removal-spot) and
+    Probe Wipe (removal-board) their roles, so the goldfish holds them back
+    as interaction (goldfish_holds_back), Muddle the Mixture its
+    (counterspell, held; tutor, finding a card of mana value 2: Probe Combo
+    A), and Probe Raise, Probe Revive, Probe Seek and Probe Entomb their
+    roles and tags; a recursion or tutor role is not interaction. The gate decides what the mulligan keeps
     (mulliganKeep): the line members and the tutor and recursion cards whose
     tags can supply one of them from the hand (decision 6). "combo" is a
     combo line of Probe Combo A and Probe Combo B, two instants (both pieces,
@@ -8060,6 +8169,7 @@ class GoldfishMulliganTests(unittest.TestCase):
     deploy engine whose Equipment is Probe Blade (Probe Blade)."""
 
     METADATA = dict(CARDS, **{
+        "Muddle the Mixture": FLEET_METADATA["Muddle the Mixture"],
         "Probe Big Kill": {"type_line": "Sorcery", "mana_cost": "{4}{B}", "cmc": 5.0,
                            "oracle_text": "Destroy target creature.", "colors": ["B"]},
         "Probe Wipe": {"type_line": "Sorcery", "mana_cost": "{5}{B}{B}", "cmc": 7.0,
@@ -8087,7 +8197,12 @@ class GoldfishMulliganTests(unittest.TestCase):
              {"name": "Probe Revive", "primary_role": "recursion", "recursion_targets": ["creature"],
               "recursion_mode": "to_battlefield"},
              {"name": "Probe Seek", "primary_role": "tutor"},
-             {"name": "Probe Entomb", "primary_role": "tutor", "tutor_mode": "to_graveyard"}]
+             {"name": "Probe Entomb", "primary_role": "tutor", "tutor_mode": "to_graveyard"},
+             {"name": "Probe Kill", "primary_role": "removal-spot"},
+             {"name": "Probe Big Kill", "primary_role": "removal-spot"},
+             {"name": "Probe Wipe", "primary_role": "removal-board"},
+             {"name": "Muddle the Mixture", "primary_role": "counterspell", "secondary_role": "tutor",
+              "tutor_mv_exact": 2, "tutor_cost": "{1}{U}{U}"}]
     PAIR = ["Probe Combo A", "Probe Combo B"]
     GATES = {
         "combo": ({"decklist": ROLES, "winConditions": [
@@ -8100,7 +8215,8 @@ class GoldfishMulliganTests(unittest.TestCase):
     }
     DECK = (["Forest"] * 29 + ["Probe Tapped Forest", "Polluted Delta"] + ["Swamp"] * 6
             + ["Probe Slow Land"] * 2 + ["Probe Kill", "Probe Big Kill", "Probe Wipe", "Probe Seek"]
-            + ["Probe Raise"] * 2 + ["Probe Revive"] + PAIR + ["Probe Entomb", "Probe Blade"] + ["Probe Two"] * 14
+            + ["Probe Raise"] * 2 + ["Probe Revive"] + PAIR + ["Probe Entomb", "Probe Blade"] + ["Probe Two"] * 13
+            + ["Muddle the Mixture"]
             + ["Probe Three"] * 14 + ["Probe Five"] * 14 + ["Probe Nine"] * 7)
     # One land: a mulligan (should_goldfish_mulligan).
     BAD = ["Forest", "Probe Two", "Probe Three", "Probe Five", "Probe Nine", "Probe Two", "Probe Three"]
@@ -8132,7 +8248,8 @@ class GoldfishMulliganTests(unittest.TestCase):
         context = self.context(colors, gate)
         with patch.object(exporter.random, "shuffle", self.scripted([self.deal(s) for s in sevens], received)):
             library, hand = exporter.commander_mulligan_goldfish(list(self.DECK), context["profiles"],
-                                                                 list(colors), context["mulliganKeep"])
+                                                                 list(colors), context["mulliganKeep"],
+                                                                 context["handOnlyPieces"])
         return library, hand, received
 
     def test_a_bottomed_card_is_drawn_after_the_rest_of_the_library(self):
@@ -8202,7 +8319,7 @@ class GoldfishMulliganTests(unittest.TestCase):
              ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Nine", "Probe Five"],
              ("B", "G"), "Probe Nine",
              ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Five"]),
-            ("a kept recursion spell stays though it reads as dearer interaction",
+            ("a kept recursion spell stays; the interaction outside the keep goes",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Kill", "Probe Nine", "Probe Two"],
              ("B", "G"), "Probe Kill",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Nine", "Probe Two"]),
@@ -8210,10 +8327,17 @@ class GoldfishMulliganTests(unittest.TestCase):
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Two", "Probe Three", "Probe Nine"],
              ("B", "G"), "Probe Nine",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Two", "Probe Three"]),
-            ("every spell kept: still a spell, interaction first",
+            ("every spell kept: still a spell, the dearest first",
              ["Forest", "Forest", "Swamp", "Swamp", "Probe Raise", "Probe Seek", "Probe Raise"],
-             ("B", "G"), "Probe Raise",
-             ["Forest", "Forest", "Swamp", "Swamp", "Probe Seek", "Probe Raise"]),
+             ("B", "G"), "Probe Seek",
+             ["Forest", "Forest", "Swamp", "Swamp", "Probe Raise", "Probe Raise"]),
+            # Muddle the Mixture (mana value 2) is held back as interaction
+            # but kept (its transmute finds Probe Combo A): inside the keep
+            # the dearest goes, Probe Seek (7), not the held card.
+            ("every spell kept: the dearest first, a held kept card too",
+             ["Forest", "Forest", "Swamp", "Swamp", "Muddle the Mixture", "Probe Seek", "Probe Raise"],
+             ("B", "G"), "Probe Seek",
+             ["Forest", "Forest", "Swamp", "Swamp", "Muddle the Mixture", "Probe Raise"]),
             ("four lands: still a spell",
              ["Forest", "Forest", "Swamp", "Probe Slow Land", "Probe Two", "Probe Three", "Probe Five"],
              ("B", "G"), "Probe Five",
@@ -8252,9 +8376,9 @@ class GoldfishMulliganTests(unittest.TestCase):
     def test_what_the_mulligan_keeps_follows_the_decks_gates(self):
         # (case, gate, kept seven, card bottomed, six kept)
         cases = [
-            ("no gate: the recursion spell is dearer interaction and goes", "none",
+            ("no gate: interaction goes before a dearer recursion spell", "none",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Kill", "Probe Nine", "Probe Two"],
-             "Probe Raise", ["Forest", "Forest", "Swamp", "Probe Kill", "Probe Nine", "Probe Two"]),
+             "Probe Kill", ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Nine", "Probe Two"]),
             ("no gate: the tutor is the dearest spell and goes", "none",
              ["Forest", "Forest", "Swamp", "Probe Seek", "Probe Two", "Probe Three", "Probe Five"],
              "Probe Seek", ["Forest", "Forest", "Swamp", "Probe Two", "Probe Three", "Probe Five"]),
@@ -8274,12 +8398,12 @@ class GoldfishMulliganTests(unittest.TestCase):
              "Probe Entomb", ["Forest", "Forest", "Swamp", "Probe Seek", "Probe Combo A", "Probe Combo B"]),
             # Decision 6: a recursion spell whose tags match no piece (a
             # creature to the battlefield; both pieces are instants) is not
-            # kept: as interaction, it goes before Probe Two...
+            # kept: the dearer spell, it goes before Probe Two...
             ("combo: a recursion spell that matches no piece is not kept and goes", "combo",
              ["Forest", "Forest", "Swamp", "Probe Revive", "Probe Two", "Probe Combo A", "Probe Combo B"],
              "Probe Revive", ["Forest", "Forest", "Swamp", "Probe Two", "Probe Combo A", "Probe Combo B"]),
             # ...and one whose tags match a piece (an instant to the hand) is
-            # kept: the spell outside the keep goes, not the interaction.
+            # kept: the spell outside the keep goes, not the dearer kept one.
             ("combo: a recursion spell that matches a piece is kept", "combo",
              ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Two", "Probe Combo A", "Probe Combo B"],
              "Probe Two", ["Forest", "Forest", "Swamp", "Probe Raise", "Probe Combo A", "Probe Combo B"]),
@@ -8491,7 +8615,7 @@ class GoldfishManaTableGuardTests(unittest.TestCase):
                 meta = metadata[name]
                 try:
                     profile = exporter_module.build_goldfish_profile(
-                        name, meta, set(), sorted(cmd), deck["commander"])
+                        name, meta, set(), None, sorted(cmd), deck["commander"])
                 except ValueError as error:
                     problems.append(f"{name} ({deck_id}): {error}")
                     continue
@@ -8631,7 +8755,7 @@ class CombatModifierGoldfishTests(unittest.TestCase):
         metadata = self._metadata()
         decklist = (["Forest"] * forests + ["Ruby Crystal"] * max(crystals, 1)
                     + list(self.COMBAT_CARDS) + ["Probe Red Dork"] + self.FILLERS)
-        deck_data = {"decklist": [{"name": name} for name in decklist]}
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist]}
         context = exporter.build_goldfish_context(
             decklist, deck_data, metadata, self.COMMANDER, ["G"],
             self.DECK_ID if deck_id is None else deck_id)
@@ -8826,7 +8950,7 @@ class CastPriorityHoldTests(unittest.TestCase):
         bears = [f"Bear {i}" for i in range(20)]
         decklist = (["Forest"] * 12 + ["Ashnod's Altar"] + two_drops + bears
                     + list(extra_hand))
-        deck_data = {"decklist": [{"name": name} for name in decklist]}
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist]}
         context = exporter.build_goldfish_context(
             decklist, deck_data, metadata, self.HATCH_COMMANDER, ["G"],
             self.HATCH_DECK_ID)
@@ -8929,7 +9053,7 @@ class CastPriorityHoldTests(unittest.TestCase):
         decklist = (["Forest"] * 20 + ["Piece Permanent", "Piece Instant"]
                     + bears)
         deck_data = {
-            "decklist": [{"name": name} for name in decklist],
+            "decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist],
             "winConditions": [{
                 "kind": "combo",
                 "pieces": ["Piece Permanent", "Piece Instant"],
@@ -9023,7 +9147,7 @@ class CastPriorityHoldTests(unittest.TestCase):
                     + ["Triple Rock", "Start Top", "Partner Forge", "Cantrip"]
                     + fillers)
         deck_data = {
-            "decklist": [{"name": name} for name in decklist],
+            "decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist],
             "winConditions": [{
                 "title": "Start Loop",
                 "kind": "combo",
@@ -9100,10 +9224,10 @@ class ComboStartPieceTests(unittest.TestCase):
     TURN = 5
     COMMANDER = "Synthetic Commander"
     DECKLIST = [
-        {"name": "Top Piece"},
-        {"name": "Forge Piece"},
-        {"name": "Raker Piece"},
-        {"name": "Other Artifact"},
+        {"name": "Top Piece", **FIXTURE_ROLE},
+        {"name": "Forge Piece", **FIXTURE_ROLE},
+        {"name": "Raker Piece", **FIXTURE_ROLE},
+        {"name": "Other Artifact", **FIXTURE_ROLE},
         {"name": "Reanimate Piece", "primary_role": "recursion", "recursion_mode": "to_battlefield"},
         {"name": "Entomb Piece", "primary_role": "tutor",
          "tutor_mode": "to_graveyard"},
@@ -9298,8 +9422,8 @@ class ComboLineMinXTests(unittest.TestCase):
     Shaped on the-white-forge's Heliod, Sun-Crowned + Walking Ballista
     (priced at X = 2) and eternal-harvest's Walking Ballista + Mikaeus, the
     Unhallowed (X = 1). X Piece carries Walking Ballista's cost and text
-    ({X}{X}: X = 2 costs 4 mana, X = 1 costs 2); the text reads as
-    interaction, so the cast loop never casts it, as with Ballista. Partner
+    ({X}{X}: X = 2 costs 4 mana, X = 1 costs 2); a line piece with {X} is
+    reserved (decision C), so the cast loop never casts it, as with Ballista. Partner
     Piece {3}, an unrelated {1} enchantment (the bargain object), a {2}
     to-hand tutor, a {1} to-graveyard tutor, a {2} recursion spell that
     returns a card to the battlefield and a {1} bargain tutor. The piece is
@@ -9315,9 +9439,9 @@ class ComboLineMinXTests(unittest.TestCase):
                      "this creature.\nRemove a +1/+1 counter from this creature: It deals 1 damage "
                      "to any target.")
     DECKLIST = [
-        {"name": "X Piece"},
-        {"name": "Partner Piece"},
-        {"name": "Other Enchantment"},
+        {"name": "X Piece", **FIXTURE_ROLE},
+        {"name": "Partner Piece", **FIXTURE_ROLE},
+        {"name": "Other Enchantment", **FIXTURE_ROLE},
         {"name": "Tutor Piece", "primary_role": "tutor"},
         {"name": "Entomb Piece", "primary_role": "tutor", "tutor_mode": "to_graveyard"},
         {"name": "Reanimate Piece", "primary_role": "recursion", "recursion_mode": "to_battlefield"},
@@ -9481,7 +9605,7 @@ class ComboLineMinXTests(unittest.TestCase):
         metas[agadeem] = {"type_line": "Sorcery // Land", "mana_cost": "{X}{B}{B}{B} // ", "oracle_text": "",
                           "colors": ["B"], "cmc": 3, "layout": "modal_dfc",
                           "back_face": {"type_line": "Land", "oracle_text": "{T}: Add {B}."}}
-        profiles = {name: exporter.build_goldfish_profile(name, meta, set(), ["W", "B"], self.COMMANDER)
+        profiles = {name: exporter.build_goldfish_profile(name, meta, set(), None, ["W", "B"], self.COMMANDER)
                     for name, meta in metas.items()}
         for label, changes, accepted in self.AGREEMENT_CASES:
             with self.subTest(label):
@@ -9489,7 +9613,7 @@ class ComboLineMinXTests(unittest.TestCase):
                           "pieces": ["Walking Ballista", "Heliod, Sun-Crowned"]}
                 wincon.update(changes)
                 deck = {"id": "test-deck", "commander": self.COMMANDER, "winConditions": [wincon],
-                        "decklist": [{"name": name} for name in decklist]}
+                        "decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist]}
                 with tempfile.TemporaryDirectory() as tmpdir:
                     deck_file = Path(tmpdir) / "deck.json"
                     deck_file.write_text(json.dumps(deck))
@@ -9521,10 +9645,11 @@ class ComboLineMinXTests(unittest.TestCase):
         hand = ["Forest", "X Piece", "Partner Piece"] + fillers
         library = bears + ["Forest"] * 8
         decklist = hand + library
-        deck_data = {"decklist": [{"name": name} for name in decklist], "winConditions": [dict(self.MINX)]}
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in decklist],
+                     "winConditions": [dict(self.MINX)]}
         context = exporter.build_goldfish_context(decklist, deck_data, metadata, self.COMMANDER, ["G"],
                                                   "synthetic-min-x")
-        self.assertTrue(context["profiles"]["X Piece"]["isInteraction"])
+        self.assertIn("X Piece", context["reservedPieces"])
         casts = defaultdict(list)
         original_resolve = exporter.resolve_cast_effects
 
@@ -9540,7 +9665,6 @@ class ComboLineMinXTests(unittest.TestCase):
         self.assertEqual([by_turn[turn]["comboLethal"] for turn in (3, 4)], [0, 1])
 
 
-FLEET_METADATA = json.loads((Path(__file__).resolve().parent.parent / "data" / "card-metadata.json").read_text())
 PERM = ["artifact", "battle", "creature", "enchantment", "land", "planeswalker"]
 
 
@@ -9651,7 +9775,7 @@ class ComboCheckSubstituteTests(unittest.TestCase):
     def context(self, names, win_conditions=(), combos=None, deck_id="synthetic-substitutes") -> dict:
         names = list(dict.fromkeys(names))
         metadata = {name: self.SYNTHETIC.get(name) or FLEET_METADATA[name] for name in names + [self.COMMANDER]}
-        deck_data = {"decklist": [dict({"name": name}, **self.TAGS.get(name, {})) for name in names],
+        deck_data = {"decklist": [dict({"name": name, **FIXTURE_ROLE}, **self.TAGS.get(name, {})) for name in names],
                      "winConditions": list(win_conditions)}
         with patch.dict(exporter.KEY_COMBOS, {deck_id: combos or []}):
             return exporter.build_goldfish_context(names, deck_data, metadata, self.COMMANDER,
@@ -9965,12 +10089,12 @@ class ComboCheckSubstituteTests(unittest.TestCase):
                                 "colors": []} for name in fillers})
         metadata.update({name: {"type_line": "Sorcery", "mana_cost": "{9}", "cmc": 9.0, "oracle_text": "",
                                 "colors": []} for name in bears})
-        deck_data = {"decklist": [dict({"name": name}, **self.TAGS.get(name, {})) for name in names],
+        deck_data = {"decklist": [dict({"name": name, **FIXTURE_ROLE}, **self.TAGS.get(name, {})) for name in names],
                      "winConditions": [self.line("Blood Artist", "Isochron Scepter")]}
         decklist, shuffle = self.pinned_deal(opening, library)
         context = exporter.build_goldfish_context(decklist, deck_data, metadata, self.COMMANDER, ["B"],
                                                   "synthetic-substitutes")
-        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"]))
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
         casts = defaultdict(list)
         original_resolve = exporter.resolve_cast_effects
 
@@ -10154,13 +10278,13 @@ class ComboCheckSubstituteTests(unittest.TestCase):
                                 "oracle_text": "", "colors": []} for name, (cost, mana_value) in fillers.items()})
         metadata.update({name: {"type_line": "Sorcery", "mana_cost": "{9}", "cmc": 9.0, "oracle_text": "",
                                 "colors": []} for name in names if name.startswith("Bear ")})
-        deck_data = {"decklist": [dict({"name": name}, **self.TAGS.get(name, {})) for name in names]}
+        deck_data = {"decklist": [dict({"name": name, **FIXTURE_ROLE}, **self.TAGS.get(name, {})) for name in names]}
         combo = {"name": "Probe table line", "slots": slots, "requiresCommander": False}
         decklist, shuffle = self.pinned_deal(opening, library)
         with patch.dict(exporter.KEY_COMBOS, {"synthetic-assembly-game": [combo]}):
             context = exporter.build_goldfish_context(decklist, deck_data, metadata, self.COMMANDER,
                                                       ["W", "U", "B", "R", "G"], "synthetic-assembly-game")
-        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"]))
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
         casts = defaultdict(list)
         original_resolve = exporter.resolve_cast_effects
 
@@ -10326,7 +10450,7 @@ class SubstituteTagVocabularyTests(unittest.TestCase):
         validator = importlib.import_module("scripts.validate_deck_json")
         names = ["Blood Artist", "Isochron Scepter", entry["name"]]
         deck = {"id": "test-deck", "commander": self.COMMANDER, "winConditions": list(win_conditions),
-                "decklist": [{"name": name} for name in names[:2]] + [entry]}
+                "decklist": [{"name": name, **FIXTURE_ROLE} for name in names[:2]] + [entry]}
         with tempfile.TemporaryDirectory() as tmpdir:
             mirror_file = Path(tmpdir) / "scryfall-oracle.json"
             mirror_file.write_text(json.dumps(self.mirror_cards()))
@@ -10503,6 +10627,40 @@ class SubstituteTagVocabularyTests(unittest.TestCase):
                 self.assertEqual(self.outcome({"name": "Demonic Tutor", "primary_role": "tutor",
                                                "tutor_targets": ["any"]}, win_conditions), ([], None))
 
+    def test_a_role_outside_the_taxonomy_or_a_missing_primary_role_is_reported_in_both(self):
+        # The goldfish holds an instant or sorcery back by its primary role
+        # (goldfish_holds_back), so a role it cannot read is refused, not read
+        # as none: a missing primary role on a card whose front face is not a
+        # land (a modal DFC with a spell front included), a typo, a legacy
+        # word (docs/role-taxonomy.md's old vocabulary), a secondary role
+        # outside the set.
+        cases = [
+            ({"name": "Viscera Seer"}, "primary_role: missing on a card whose front face is not a land"),
+            ({"name": "Agadeem's Awakening // Agadeem, the Undercrypt"},
+             "primary_role: missing on a card whose front face is not a land"),
+            ({"name": "Viscera Seer", "primary_role": "utilty"},
+             "primary_role: 'utilty' is not a role (docs/role-taxonomy.md)"),
+            ({"name": "Viscera Seer", "primary_role": "removal"},
+             "primary_role: 'removal' is not a role (docs/role-taxonomy.md)"),
+            ({"name": "Viscera Seer", "primary_role": "board-wipe"},
+             "primary_role: 'board-wipe' is not a role (docs/role-taxonomy.md)"),
+            ({"name": "Viscera Seer", "primary_role": "utility", "secondary_role": "sac-outlet"},
+             "secondary_role: 'sac-outlet' is not a role (docs/role-taxonomy.md)"),
+        ]
+        for entry, message in cases:
+            for win_conditions in ([], [self.LINE]):
+                with self.subTest(message, card=entry["name"], combo=bool(win_conditions)):
+                    self.assertEqual(self.outcome(entry, win_conditions, details=True),
+                                     ([f"Deck test-deck: {message}"], f"test-deck: {entry['name']}: {message}"))
+        # A land needs no role (every entry of the 21 decks carries a role).
+        for win_conditions in ([], [self.LINE]):
+            with self.subTest("a land without a role", combo=bool(win_conditions)):
+                self.assertEqual(self.outcome({"name": "Academy Ruins"}, win_conditions), ([], None))
+        # A card whose front face is not known (front None: the card is in
+        # neither the mirror nor the card data) needs one too.
+        self.assertEqual(exporter.gate_tags_lib.entry_errors({"name": "Probe Unknown"}, False, None),
+                         ["primary_role: missing on a card whose front face is not known"])
+
 
 class SubstituteFleetTests(unittest.TestCase):
     """The 21 deck files after the step-1 tags (owner-accepted 2026-11-24):
@@ -10579,7 +10737,8 @@ class SubstituteFleetTests(unittest.TestCase):
         hand = ["Command Tower", "Glacial Fortress", "Sulfur Falls", "Clifftop Retreat", "Twinflame",
                 "Mystical Tutor", "Mox Amber"]
         self.assertEqual(exporter.goldfish_bottom_cards(hand, 1, context["profiles"], ["W", "U", "R"], [],
-                                                        context["mulliganKeep"]), ["Mystical Tutor"])
+                                                        context["mulliganKeep"], context["handOnlyPieces"]),
+                         ["Mystical Tutor"])
 
 
 class ControlDeckGoldfishEqualityTests(unittest.TestCase):
@@ -10626,3 +10785,768 @@ class ControlDeckGoldfishEqualityTests(unittest.TestCase):
             if key in checked_in:
                 with self.subTest(key=key):
                     self.assertEqual(goldfish[key], checked_in[key])
+
+
+class GoldfishHoldTests(unittest.TestCase):
+    """Which cards the goldfish holds back as interaction (owner-approved
+    2026-11-23): a card whose primary role in the deck is removal-spot,
+    removal-board, counterspell or protection and that is an instant or
+    sorcery (no permanent type on its type line) is never cast from the hand
+    (goldfish_holds_back); its secondary role, categories and text are not
+    read. Each case is one pinned game (ComboCheckSubstituteTests.pinned_deal:
+    only random.shuffle is patched), read through the cards the cast loop
+    resolves. The kept seven is three basic lands of the probe's colour, the
+    probe and three Probe Nines ({9} creatures, never castable here); every
+    draw is a Probe Nine, so three lands are all the mana there is and
+    nothing but the probe is ever cast. Made up: Probe Hold Commander ({9}),
+    Probe Instant and Probe Sorcery ({G}, no text), Probe Creature ({G}
+    creature), Probe Aura ({1}{G} "Enchant creature"), Probe Piece A and B
+    ({5} artifacts); every other card as data/card-metadata.json holds it."""
+
+    COMMANDER = "Probe Hold Commander"
+    PROBES = {
+        COMMANDER: {"type_line": "Legendary Creature — Human", "mana_cost": "{9}", "cmc": 9.0,
+                    "oracle_text": "", "colors": []},
+        "Probe Instant": {"type_line": "Instant", "mana_cost": "{G}", "cmc": 1.0, "oracle_text": "",
+                          "colors": ["G"]},
+        "Probe Sorcery": {"type_line": "Sorcery", "mana_cost": "{G}", "cmc": 1.0, "oracle_text": "",
+                          "colors": ["G"]},
+        "Probe Creature": {"type_line": "Creature — Elf", "mana_cost": "{G}", "cmc": 1.0, "oracle_text": "",
+                           "colors": ["G"]},
+        "Probe Aura": {"type_line": "Enchantment — Aura", "mana_cost": "{1}{G}", "cmc": 2.0,
+                       "oracle_text": "Enchant creature", "colors": ["G"]},
+        "Probe Piece A": {"type_line": "Artifact", "mana_cost": "{5}", "cmc": 5.0, "oracle_text": "",
+                          "colors": []},
+        "Probe Piece B": {"type_line": "Artifact", "mana_cost": "{5}", "cmc": 5.0, "oracle_text": "",
+                          "colors": []},
+    }
+    REACTIVE = ("removal-spot", "removal-board", "counterspell", "protection")
+    LINE = {"title": "Probe line", "kind": "combo", "description": "", "pieces": ["Probe Piece A", "Probe Piece B"],
+            "cards": ["Probe Piece A", "Probe Piece B"]}
+
+    def game(self, probe, land, entry=None, deck_extra=None, companion=None):
+        """(the turns the probe is cast on, by_turn, the deck's goldfish
+        context, its deck data, its decklist). ``entry``: the probe's
+        decklist fields besides its name; ``companion``: a card kept in place
+        of one Probe Nine."""
+        opening = [land] * 3 + [probe] + ([companion] if companion else []) + ["Probe Nine"] * (
+            2 if companion else 3)
+        library = ["Probe Piece A", "Probe Piece B"] + ["Probe Nine"] * 12
+        names = list(dict.fromkeys(opening + library))
+        metadata = {name: self.PROBES.get(name) or CARDS.get(name) or FLEET_METADATA[name]
+                    for name in names + [self.COMMANDER]}
+        deck_data = {"decklist": [dict({"name": name, **FIXTURE_ROLE}, **(entry or {} if name == probe else {}))
+                                  for name in names]}
+        deck_data.update(deck_extra or {})
+        decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
+        context = exporter.build_goldfish_context(decklist, deck_data, metadata, self.COMMANDER,
+                                                  ["W", "U", "B", "R", "G"], "synthetic-hold")
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
+        casts = []
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts.append((turn, name))
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter.random, "shuffle", shuffle), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            by_turn, _ = exporter.simulate_goldfish_game(decklist, context, 6)
+        return [turn for turn, name in casts if name == probe], by_turn, context, deck_data, decklist
+
+    def test_each_reactive_role_holds_an_instant_and_a_sorcery(self):
+        # Held: never cast. The same probe with a role that is not reactive is
+        # cast on turn 1, out of the first Forest. (A missing role is refused:
+        # SubstituteTagVocabularyTests.)
+        for probe in ("Probe Instant", "Probe Sorcery"):
+            for role in self.REACTIVE:
+                with self.subTest(probe=probe, role=role):
+                    self.assertEqual(self.game(probe, "Forest", {"primary_role": role})[0], [])
+            for entry in ({"primary_role": "card-draw"}, {"primary_role": "utility"}):
+                with self.subTest(probe=probe, entry=entry):
+                    self.assertEqual(self.game(probe, "Forest", entry)[0], [1])
+
+    def test_the_held_roles_are_roles_of_the_one_role_set(self):
+        # gate_tags_lib.ROLES is the one role set: the metrics read it, and
+        # every held role is one of them.
+        metrics = importlib.import_module("scripts.compute_deck_metrics")
+        self.assertEqual((exporter.GOLDFISH_HELD_ROLES <= exporter.gate_tags_lib.ROLES,
+                          metrics.VALID_ROLES is exporter.gate_tags_lib.ROLES),
+                         (True, True))
+
+    def test_a_reactive_secondary_role_is_not_read(self):
+        entry = {"primary_role": "card-draw", "secondary_role": "removal-spot"}
+        self.assertEqual(self.game("Probe Instant", "Forest", entry)[0], [1])
+
+    def test_a_creature_and_an_aura_with_a_reactive_role_are_cast(self):
+        # The creature on turn 1; the Aura ({1}{G}) on turn 2, onto Probe
+        # Creature (kept beside it, utility, cast on turn 1). The goldfish does
+        # not check that an Aura has something to enchant (a known limit).
+        for role in self.REACTIVE:
+            with self.subTest(probe="Probe Creature", role=role):
+                self.assertEqual(self.game("Probe Creature", "Forest", {"primary_role": role})[0], [1])
+            with self.subTest(probe="Probe Aura", role=role):
+                self.assertEqual(self.game("Probe Aura", "Forest", {"primary_role": role},
+                                           companion="Probe Creature")[0], [2])
+
+    def test_a_card_in_a_counter_named_category_is_cast_and_still_counts_for_health(self):
+        # The category name holds "counter" (exponential-growth's "Counter
+        # Doublers & Multipliers"): the goldfish no longer reads it, so the
+        # payoff instant is cast on turn 1; the health score's interaction
+        # count (classify_functional_cards) still counts it.
+        categories = {"guideContent": {"deckCategories": [
+            {"name": "Counter Doublers & Multipliers", "cards": ["Probe Instant"]}]}}
+        turns, _, _, deck_data, decklist = self.game("Probe Instant", "Forest", {"primary_role": "payoff"},
+                                                     categories)
+        metadata = dict(CARDS, **self.PROBES)
+        self.assertEqual((turns, exporter.classify_functional_cards(decklist, deck_data, metadata)["interaction"]),
+                         ([1], ["Probe Instant"]))
+
+    def test_a_removal_instant_is_held_in_a_deck_with_no_categories(self):
+        # Swords to Plowshares ({W}, "Exile target creature."), in a deck with
+        # no guideContent: held by its role; tagged utility it is cast on
+        # turn 1, as its text is not read.
+        self.assertEqual(
+            (self.game("Swords to Plowshares", "Plains", {"primary_role": "removal-spot"})[0],
+             self.game("Swords to Plowshares", "Plains", {"primary_role": "utility"})[0]),
+            ([], [1]))
+
+    def test_an_adventure_creature_with_a_reactive_role_is_cast(self):
+        # Murderous Rider // Swift End ("Creature — Zombie Knight // Instant —
+        # Adventure", {1}{B}{B}): a creature card, cast on turn 3 with the
+        # third Swamp.
+        self.assertEqual(
+            self.game("Murderous Rider // Swift End", "Swamp", {"primary_role": "removal-spot"})[0], [3])
+
+    def test_a_land_backed_spell_with_a_reactive_role_is_played_as_its_land(self):
+        # Sink into Stupor // Soporific Springs ("Instant // Land", a modal
+        # DFC whose back is a land): played as its land beside the three
+        # Islands (four lands from turn 4), never cast, and not flagged. The
+        # land drop does not read the flag, so the flag is read on the
+        # profile.
+        turns, by_turn, context, _, _ = self.game("Sink into Stupor // Soporific Springs", "Island",
+                                                  {"primary_role": "removal-spot"})
+        self.assertEqual(
+            (turns, [by_turn[turn]["lands"] for turn in (3, 4, 5)],
+             context["profiles"]["Sink into Stupor // Soporific Springs"]["isInteraction"]),
+            ([], [3, 4, 4], False))
+
+    def test_a_tutor_is_still_reserved(self):
+        # Demonic Tutor ({1}{B}) in a deck with a combo line (its pieces deep
+        # in the library) is never cast; in a deck with no line nothing
+        # reserves it and it is cast on turn 2.
+        tutor = {"primary_role": "tutor"}
+        self.assertEqual(
+            (self.game("Demonic Tutor", "Swamp", tutor, {"winConditions": [self.LINE]})[0],
+             self.game("Demonic Tutor", "Swamp", tutor)[0]),
+            ([], [2]))
+
+    def cascade_game(self, revealed: str, bottom: str, roles=None, extra=None, spell_value=3) -> tuple[list, list]:
+        """One pinned game with a local cascade config (colourless spells of
+        mana value ``spell_value`` or more cast from the hand, one trigger):
+        (every (turn, card) the cast loop resolves, every (turn, the library's
+        bottom card) after a cascade). Probe Cascade Commander ({1}) is cast
+        on turn 1 and the cascade spell, a colourless artifact costing
+        ``spell_value``, on that turn with that many Wastes (five at most in
+        the kept seven, the rest drawn first); then Probe Nines ({9}) are
+        drawn, and the cascade reveals ``revealed``; ``bottom`` is the
+        library's bottom card. The deck's combo line is Walking Ballista and
+        Probe Partner ({1} artifact), both always in the deck. ``roles``:
+        decklist fields by name (utility otherwise); ``extra``: more card
+        data."""
+        commander = "Probe Cascade Commander"
+        spell = f"Probe Spell {spell_value}"
+        metadata = {
+            commander: {"type_line": "Legendary Creature — Human", "mana_cost": "{1}", "cmc": 1.0,
+                        "oracle_text": "", "colors": []},
+            spell: {"type_line": "Artifact", "mana_cost": f"{{{spell_value}}}", "cmc": float(spell_value),
+                    "oracle_text": "", "colors": []},
+            "Probe Partner": {"type_line": "Artifact", "mana_cost": "{1}", "cmc": 1.0, "oracle_text": "",
+                              "colors": []},
+            "Walking Ballista": FLEET_METADATA["Walking Ballista"],
+            "Wastes": CARDS["Wastes"], "Probe Nine": CARDS["Probe Nine"],
+        }
+        metadata.update(extra or {})
+        line = {"title": "Probe X line", "kind": "combo", "description": "",
+                "pieces": ["Walking Ballista", "Probe Partner"], "cards": ["Walking Ballista", "Probe Partner"]}
+        cascade = {"minValue": spell_value, "triggers": 1, "colorlessOnly": True, "fromHandOnly": True}
+        kept_lands = min(spell_value, 5)
+        opening = ["Wastes"] * kept_lands + [spell] + ["Probe Nine"] * (6 - kept_lands)
+        # The line's pieces are both in the deck: one not revealed or at the
+        # bottom sits just above the bottom card.
+        others = [piece for piece in line["pieces"] if piece not in (bottom, revealed)]
+        library = ([bottom] + others + ["Probe Nine"] * 6 + [revealed] + ["Probe Nine"] * kept_lands
+                   + ["Wastes"] * (spell_value - kept_lands))
+        names = list(dict.fromkeys(opening + library))
+        deck_data = {"decklist": [dict({"name": name, **FIXTURE_ROLE}, **(roles or {}).get(name, {}))
+                                  for name in names], "winConditions": [line]}
+        decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
+        with patch.dict(exporter.COMMANDER_CASCADE, {"synthetic-hold-cascade": cascade}):
+            context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, ["G"],
+                                                      "synthetic-hold-cascade")
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
+        casts, bottoms = [], []
+        original_resolve = exporter.resolve_cast_effects
+        original_cascade = exporter.resolve_cascade_triggers
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts.append((turn, name))
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        def recording_cascade(spell_profile, cascade_config, turn, pool, cascade_library, *args, **kwargs):
+            original_cascade(spell_profile, cascade_config, turn, pool, cascade_library, *args, **kwargs)
+            bottoms.append((turn, cascade_library[0]))
+
+        with patch.object(exporter.random, "shuffle", shuffle), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve), \
+                patch.object(exporter, "resolve_cascade_triggers", recording_cascade):
+            exporter.simulate_goldfish_game(decklist, context, 6)
+        return casts, bottoms
+
+    def test_an_x_line_piece_revealed_by_a_cascade_is_declined_and_bottomed(self):
+        # Walking Ballista ({X}{X}, mana value 0), a piece of the deck's combo
+        # line, is kept for the hand (decision C): the cascade declines it and
+        # puts it on the bottom of the library; nothing else is cast on turn
+        # 3, and Ballista is never cast. In its place Probe Partner (the line's
+        # other piece, no {X}) is cast free, Ballista still on the bottom.
+        casts, bottoms = self.cascade_game("Walking Ballista", "Probe Partner")
+        self.assertEqual(([name for turn, name in casts if turn == 3], bottoms,
+                          "Walking Ballista" in [name for _, name in casts]),
+                         (["Probe Spell 3"], [(3, "Walking Ballista")], False))
+        casts, bottoms = self.cascade_game("Probe Partner", "Walking Ballista")
+        self.assertEqual(([name for turn, name in casts if turn == 3], bottoms),
+                         (["Probe Spell 3", "Probe Partner"], [(3, "Walking Ballista")]))
+
+    def test_a_cascade_declines_a_held_card_and_casts_it_under_a_proactive_role(self):
+        # All Is Dust ("Kindred Sorcery — Eldrazi", {7}: "Each player
+        # sacrifices all permanents they control that are one or more colors."),
+        # titan-convergence's held removal-board card, revealed by a cascade
+        # off an {8} spell on turn 8: declined and put on the bottom. Tagged
+        # engine instead, it is cast free, and the bottom card stays.
+        roles = {"All Is Dust": {"primary_role": "removal-board"}}
+        extra = {"All Is Dust": FLEET_METADATA["All Is Dust"]}
+        casts, bottoms = self.cascade_game("All Is Dust", "Probe Partner", roles, extra, spell_value=8)
+        self.assertEqual(([name for turn, name in casts if turn == 8], bottoms),
+                         (["Probe Spell 8"], [(8, "All Is Dust")]))
+        roles = {"All Is Dust": {"primary_role": "engine"}}
+        casts, bottoms = self.cascade_game("All Is Dust", "Probe Partner", roles, extra, spell_value=8)
+        self.assertEqual(([name for turn, name in casts if turn == 8], bottoms),
+                         (["Probe Spell 8", "All Is Dust"], [(8, "Probe Partner")]))
+
+    def test_a_cascade_casts_a_tutor_permanent_with_x_that_is_no_line_piece(self):
+        # Probe X Seeker ({X}{1} artifact creature, mana value 1), a tutor in
+        # a deck with a combo line, is reserved from the hand like every tutor
+        # but is no line piece: a cascade casts it free.
+        roles = {"Probe X Seeker": {"primary_role": "tutor"}}
+        extra = {"Probe X Seeker": {"type_line": "Artifact Creature — Construct", "mana_cost": "{X}{1}",
+                                    "cmc": 1.0, "oracle_text": "", "colors": []}}
+        casts, bottoms = self.cascade_game("Probe X Seeker", "Walking Ballista", roles, extra)
+        self.assertEqual(([name for turn, name in casts if turn == 3], bottoms),
+                         (["Probe Spell 3", "Probe X Seeker"], [(3, "Walking Ballista")]))
+
+    def test_a_cascade_declines_a_reserved_recursion_sorcery(self):
+        # Reanimate ({B} sorcery: "Put target creature card from a graveyard
+        # onto the battlefield under your control. ..."), a recursion card in
+        # a deck with a combo line, is reserved and its front face is not a
+        # permanent: the cascade declines it and puts it on the bottom.
+        roles = {"Reanimate": {"primary_role": "recursion", "recursion_mode": "to_battlefield"}}
+        casts, bottoms = self.cascade_game("Reanimate", "Walking Ballista", roles,
+                                           {"Reanimate": FLEET_METADATA["Reanimate"]})
+        self.assertEqual(([name for turn, name in casts if turn == 3], bottoms),
+                         (["Probe Spell 3"], [(3, "Reanimate")]))
+
+    def test_a_cascade_reads_a_land_backed_card_as_the_spell_it_is_in_the_library(self):
+        # Agadeem's Awakening // Agadeem, the Undercrypt (mana value 3) is a
+        # nonland card in the library (its front is a sorcery): a cascade off
+        # a {4} spell stops on it, and as the goldfish plays it as its land
+        # and casts no spell face, declines it and puts it on the bottom. The
+        # dig does not go on to Probe Partner, the bottom card.
+        agadeem = "Agadeem's Awakening // Agadeem, the Undercrypt"
+        casts, bottoms = self.cascade_game(agadeem, "Probe Partner", extra={agadeem: FLEET_METADATA[agadeem]},
+                                           spell_value=4)
+        self.assertEqual(([name for turn, name in casts if turn == 4], bottoms),
+                         (["Probe Spell 4"], [(4, agadeem)]))
+
+    def test_a_land_backed_line_piece_is_not_played_as_a_land(self):
+        # A modal DFC whose front is a spell and whose back is a land, a piece
+        # of the deck's combo line beside Probe Partner, is kept in the hand
+        # for the combo check, so it is never played as the turn's land:
+        # Agadeem's Awakening // Agadeem, the Undercrypt ({X}{B}{B}{B} sorcery
+        # front, kept for its {X} and its front alike) and Sink into Stupor //
+        # Soporific Springs ({1}{U}{U} instant front, no {X}: kept because its
+        # front face is not a permanent). Kept seven: three basic lands, the
+        # card and three Probe Nines; every draw is a Probe Nine: three lands
+        # from turn 3 on, never four. In a deck with no line, it is played as
+        # the fourth land on turn 4.
+        agadeem = "Agadeem's Awakening // Agadeem, the Undercrypt"
+        sink = "Sink into Stupor // Soporific Springs"
+        lands = {}
+        for card, basic in ((agadeem, "Swamp"), (sink, "Island")):
+            line = {"title": "Probe land-backed line", "kind": "combo", "description": "",
+                    "pieces": [card, "Probe Partner"], "cards": [card, "Probe Partner"]}
+            for label, win_conditions in (("line piece", [line]), ("no line", [])):
+                opening = [basic] * 3 + [card] + ["Probe Nine"] * 3
+                library = ["Probe Partner"] + ["Probe Nine"] * 12
+                names = list(dict.fromkeys(opening + library))
+                synthetic = {self.COMMANDER: self.PROBES[self.COMMANDER],
+                             "Probe Partner": {"type_line": "Artifact", "mana_cost": "{1}", "cmc": 1.0,
+                                               "oracle_text": "", "colors": []}}
+                metadata = {name: synthetic.get(name) or CARDS.get(name) or FLEET_METADATA[name]
+                            for name in names + [self.COMMANDER]}
+                deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in names],
+                             "winConditions": win_conditions}
+                decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
+                context = exporter.build_goldfish_context(decklist, deck_data, metadata, self.COMMANDER,
+                                                          ["B", "U"], "synthetic-hold")
+                with patch.object(exporter.random, "shuffle", shuffle):
+                    by_turn, _ = exporter.simulate_goldfish_game(decklist, context, 6)
+                lands[card, label] = [by_turn[turn]["lands"] for turn in (3, 4, 5)]
+        self.assertEqual(lands, {(agadeem, "line piece"): [3, 3, 3], (agadeem, "no line"): [3, 4, 4],
+                                 (sink, "line piece"): [3, 3, 3], (sink, "no line"): [3, 4, 4]})
+
+    def test_the_mulligan_does_not_count_a_kept_land_backed_piece_as_a_land(self):
+        # Agadeem's Awakening, a piece of the deck's combo line, is kept in
+        # the hand, so the mulligan does not count it as a land. (a) Two
+        # Swamps, Agadeem and four spells: two lands and no cheap mana source,
+        # a free mulligan; the next seven (three Swamps) is kept. (b) Two
+        # one-land sevens, then four Swamps, Agadeem and two spells: four
+        # lands, so the paid mulligan bottoms a spell, the dearest outside the
+        # cards it keeps (Probe Spell D, {5}), not a land; Agadeem is kept.
+        agadeem = "Agadeem's Awakening // Agadeem, the Undercrypt"
+        spells = {f"Probe Spell {letter}": cost for letter, cost in zip("ABCD", (2, 3, 4, 5))}
+        metadata = {name: {"type_line": "Sorcery", "mana_cost": f"{{{cost}}}", "cmc": float(cost),
+                           "oracle_text": "", "colors": []} for name, cost in spells.items()}
+        metadata.update({agadeem: FLEET_METADATA[agadeem], "Swamp": CARDS["Swamp"], "Probe Nine": CARDS["Probe Nine"],
+                         "Probe Partner": {"type_line": "Artifact", "mana_cost": "{1}", "cmc": 1.0,
+                                           "oracle_text": "", "colors": []},
+                         self.COMMANDER: self.PROBES[self.COMMANDER]})
+        deck = ["Swamp"] * 12 + [agadeem, "Probe Partner"] + list(spells) + ["Probe Nine"] * 12
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in dict.fromkeys(deck)],
+                     "winConditions": [{"title": "Probe line", "kind": "combo", "description": "",
+                                        "pieces": [agadeem, "Probe Partner"], "cards": [agadeem, "Probe Partner"]}]}
+        context = exporter.build_goldfish_context(deck, deck_data, metadata, self.COMMANDER, ["B"], "synthetic-hold")
+
+        def mulligan(sevens):
+            received = []
+
+            def deal(seven):
+                rest = list(deck)
+                for card in seven:
+                    rest.remove(card)
+                return rest + list(reversed(seven))
+
+            orders = iter(deal(seven) for seven in sevens)
+
+            def shuffle(library):
+                received.append(len(library))
+                library[:] = next(orders)
+
+            with patch.object(exporter.random, "shuffle", shuffle):
+                library, hand = exporter.commander_mulligan_goldfish(
+                    list(deck), context["profiles"], ["B"], context["mulliganKeep"], context["handOnlyPieces"])
+            return hand, library[0], len(received)
+
+        two_lands = ["Swamp", "Swamp", agadeem] + list(spells)
+        three_lands = ["Swamp"] * 3 + ["Probe Spell A", "Probe Spell B", "Probe Spell C", "Probe Spell D"]
+        one_land = ["Swamp"] + ["Probe Nine"] * 6
+        four_lands = ["Swamp"] * 4 + [agadeem, "Probe Spell C", "Probe Spell D"]
+        hand, _, shuffles = mulligan([two_lands, three_lands])
+        self.assertEqual((hand, shuffles), (three_lands, 2))
+        hand, bottomed, shuffles = mulligan([one_land, one_land, four_lands])
+        self.assertEqual((hand, bottomed, shuffles),
+                         (["Swamp"] * 4 + [agadeem, "Probe Spell C"], "Probe Spell D", 3))
+
+    def test_the_games_mulligan_does_not_count_a_kept_land_backed_piece_as_a_land(self):
+        """The same, through simulate_goldfish_game. random.shuffle is
+        patched to deal the given sevens in turn (each order as
+        ComboCheckSubstituteTests.pinned_deal makes it), counting its calls,
+        and resolve_cast_effects is wrapped to record each resolution (it
+        calls the original). (a) Agadeem's Awakening ({X}{B}{B}{B}, mana value
+        3), a piece of the deck's combo line beside Probe Partner, with two
+        Swamps and four {2}-{5} spells, three times: two lands and no cheap
+        mana source, so both mulligans are taken (three shuffles). (b) Two
+        one-land sevens, then four Swamps, Agadeem, Mind Stone and Sol Ring:
+        four lands, so the paid mulligan bottoms a spell outside the kept
+        cards, the dearer, Mind Stone ({2}), which is never drawn again; Sol
+        Ring is cast on turn 1. Counting Agadeem as a land (five lands) would
+        bottom a land and keep Mind Stone; losing its keep priority instead
+        would bottom Agadeem (mana value 3). (c) In a deck whose combo line is
+        Dark Depths and Thespian's Stage (both lands), two Swamps, Dark Depths
+        and the four spells: a line piece that is a playable land counts as
+        one, three lands, and the first seven is kept (one shuffle)."""
+        agadeem = "Agadeem's Awakening // Agadeem, the Undercrypt"
+        spells = {f"Probe Spell {letter}": cost for letter, cost in zip("ABCD", (2, 3, 4, 5))}
+        metadata = {name: {"type_line": "Sorcery", "mana_cost": f"{{{cost}}}", "cmc": float(cost),
+                           "oracle_text": "", "colors": []} for name, cost in spells.items()}
+        metadata.update({name: CARDS[name] for name in ("Swamp", "Probe Nine", "Mind Stone", "Sol Ring")})
+        metadata.update({
+            agadeem: FLEET_METADATA[agadeem], "Thespian's Stage": FLEET_METADATA["Thespian's Stage"],
+            self.COMMANDER: self.PROBES[self.COMMANDER],
+            "Probe Partner": {"type_line": "Artifact", "mana_cost": "{1}", "cmc": 1.0, "oracle_text": "",
+                              "colors": []},
+            # The local Scryfall mirror (scripts/card_lookup.py), 2026-11-23.
+            "Dark Depths": {"type_line": "Legendary Snow Land", "mana_cost": "", "cmc": 0.0, "colors": [],
+                            "oracle_text": ("Dark Depths enters with ten ice counters on it.\n{3}: Remove an ice "
+                                            "counter from Dark Depths.\nWhen Dark Depths has no ice counters on "
+                                            "it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 "
+                                            "black Avatar creature token with flying and indestructible.")}})
+
+        def game(pieces, sevens):
+            deck = (["Swamp"] * 12 + pieces + ["Mind Stone", "Sol Ring"] + list(spells) + ["Probe Nine"] * 12)
+            deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in dict.fromkeys(deck)],
+                         "winConditions": [{"title": "Probe line", "kind": "combo", "description": "",
+                                            "pieces": pieces, "cards": pieces}]}
+            context = exporter.build_goldfish_context(deck, deck_data, metadata, self.COMMANDER, ["B"],
+                                                      "synthetic-hold")
+            orders = []
+            for seven in sevens:
+                rest = list(deck)
+                for card in seven:
+                    rest.remove(card)
+                order, _ = ComboCheckSubstituteTests.pinned_deal(seven, rest)
+                orders.append(order)
+            calls = []
+
+            def shuffle(cards):
+                calls.append(len(cards))
+                cards[:] = orders[len(calls) - 1]
+
+            casts = []
+            original_resolve = exporter.resolve_cast_effects
+
+            def recording_resolve(name, profile, turn, *args, **kwargs):
+                casts.append((turn, name))
+                return original_resolve(name, profile, turn, *args, **kwargs)
+
+            with patch.object(exporter.random, "shuffle", shuffle), \
+                    patch.object(exporter, "resolve_cast_effects", recording_resolve):
+                exporter.simulate_goldfish_game(list(deck), context, 6)
+            return len(calls), casts
+
+        agadeem_line = [agadeem, "Probe Partner"]
+        shuffles, _ = game(agadeem_line, [["Swamp", "Swamp", agadeem] + list(spells)] * 3)
+        self.assertEqual(shuffles, 3)
+        one_land = ["Swamp"] + ["Probe Nine"] * 6
+        shuffles, casts = game(agadeem_line, [one_land, one_land, ["Swamp"] * 4 + [agadeem, "Mind Stone", "Sol Ring"]])
+        self.assertEqual((shuffles, [(turn, name) for turn, name in casts if name in ("Mind Stone", "Sol Ring")]),
+                         (3, [(1, "Sol Ring")]))
+        shuffles, _ = game(["Dark Depths", "Thespian's Stage"], [["Swamp", "Swamp", "Dark Depths"] + list(spells)] * 3)
+        self.assertEqual(shuffles, 1)
+
+    def test_a_deploy_engine_never_puts_out_an_x_line_piece(self):
+        # A local deploy engine (transform for {4}, then one artifact from
+        # the hand put onto the battlefield free each combat). Probe Deploy
+        # Commander ({1}) is cast on turn 1 and transforms on turn 4 (four
+        # Wastes). Walking Ballista, a piece of the deck's combo line, stays
+        # in the hand for the combo check: never cast, never deployed. As no
+        # line piece it is cast from the hand under the X rule on turn 2
+        # (two Wastes, X = 1).
+        commander = "Probe Deploy Commander"
+        engine = {"transformCost": {"generic": 4}, "reducedTransformCost": {"generic": 2}, "reducerName": "",
+                  "transformedPower": 5, "equipmentPower": {}, "doubleStrikeNames": set()}
+        line = {"title": "Probe X line", "kind": "combo", "description": "",
+                "pieces": ["Walking Ballista", "Probe Partner"], "cards": ["Walking Ballista", "Probe Partner"]}
+        resolved = {}
+        for label, win_conditions in (("line piece", [line]), ("no line", [])):
+            opening = ["Wastes"] * 5 + ["Walking Ballista", "Probe Nine"]
+            library = ["Probe Partner"] + ["Probe Nine"] * 12
+            names = list(dict.fromkeys(opening + library))
+            synthetic = {commander: {"type_line": "Legendary Creature — Human", "mana_cost": "{1}", "cmc": 1.0,
+                                     "oracle_text": "", "colors": []},
+                         "Probe Partner": {"type_line": "Artifact", "mana_cost": "{1}", "cmc": 1.0,
+                                           "oracle_text": "", "colors": []}}
+            metadata = {name: synthetic.get(name) or CARDS.get(name) or FLEET_METADATA[name]
+                        for name in names + [commander]}
+            deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in names],
+                         "winConditions": win_conditions}
+            decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
+            with patch.dict(exporter.COMMANDER_DEPLOY_ENGINE, {"synthetic-deploy": engine}):
+                context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, ["G"],
+                                                          "synthetic-deploy")
+            casts = []
+            original_resolve = exporter.resolve_cast_effects
+
+            def recording_resolve(name, profile, turn, *args, casts=casts, original=original_resolve, **kwargs):
+                casts.append((turn, name))
+                return original(name, profile, turn, *args, **kwargs)
+
+            with patch.object(exporter.random, "shuffle", shuffle), \
+                    patch.object(exporter, "resolve_cast_effects", recording_resolve):
+                exporter.simulate_goldfish_game(decklist, context, 6)
+            resolved[label] = casts
+        self.assertEqual({label: [turn for turn, name in casts if name == "Walking Ballista"]
+                          for label, casts in resolved.items()},
+                         {"line piece": [], "no line": [2]})
+
+    def test_the_methodology_states_the_rule_and_the_cascade_declines(self):
+        # titan-convergence's cascade config, a deck of Forests.
+        with patch.object(exporter, "GOLDFISH_GAMES", 16), patch("multiprocessing.Pool", SerialPool):
+            goldfish, _ = exporter.compute_goldfish_section(
+                decklist=["Forest"] * 99, deck_data={"decklist": []}, metadata=CARDS,
+                commander_name="The Ur-Dragon", commander_colors=["G", "U"], deck_id="titan-convergence")
+        methodology = goldfish["methodology"]
+        self.assertEqual(
+            (methodology.count(
+                "Held back as interaction (owner-approved 2026-11-23): a card whose primary role in this deck "
+                "is removal-spot, removal-board, counterspell or protection and that is an instant or sorcery "
+                "(no permanent type on its type line) is never cast from the hand"),
+             methodology.count(
+                 "(a card held back as interaction, a combo-line or assembly piece whose front face is not a "
+                 "permanent or that has {X} in its cost, a reserved tutor or recursion card that is not a "
+                 "permanent, and a card the goldfish plays as its land face are declined and bottomed)")),
+            (1, 1))
+
+    def test_an_imprint_exiles_a_held_card_before_a_castable_one(self):
+        """The one path that consumes a held card while step 1 reads the
+        hand: an imprint exiles a card held back as interaction first. Pinned
+        game: kept seven Chrome Mox, two Swamps, Probe Kill ({1}{B} removal
+        instant, held by its role), Probe Big Black ({4}{B} sorcery, no
+        role: the castable card last in the cast order) and two Probe Nines;
+        a Swamp is drawn each turn. Turn 1: the Mox exiles Probe Kill and
+        makes {B}. Turn 4: four Swamps and the Mox cast Probe Big Black.
+        Probe Kill is never cast. The same with the two cards in the other
+        order in the hand."""
+        metadata = {name: CARDS[name] for name in ("Chrome Mox", "Swamp", "Probe Kill", "Probe Nine")}
+        metadata.update({self.COMMANDER: self.PROBES[self.COMMANDER],
+                         "Probe Big Black": {"type_line": "Sorcery", "mana_cost": "{4}{B}", "cmc": 5.0,
+                                             "oracle_text": "", "colors": ["B"]}})
+        deck_data = {"decklist": [{"name": "Probe Kill", "primary_role": "removal-spot"},
+                                  {"name": "Probe Big Black", **FIXTURE_ROLE}]}
+        for pair in (["Probe Kill", "Probe Big Black"], ["Probe Big Black", "Probe Kill"]):
+            with self.subTest(hand_order=pair):
+                opening = ["Chrome Mox", "Swamp", "Swamp"] + pair + ["Probe Nine", "Probe Nine"]
+                decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, ["Swamp"] * 12)
+                context = exporter.build_goldfish_context(decklist, deck_data, metadata, self.COMMANDER, ["B"],
+                                                          "synthetic-hold")
+                casts = []
+                original_resolve = exporter.resolve_cast_effects
+
+                def recording_resolve(name, profile, turn, *args, casts=casts, original=original_resolve,
+                                      **kwargs):
+                    casts.append((turn, name))
+                    return original(name, profile, turn, *args, **kwargs)
+
+                with patch.object(exporter.random, "shuffle", shuffle), \
+                        patch.object(exporter, "resolve_cast_effects", recording_resolve):
+                    exporter.simulate_goldfish_game(decklist, context, 6)
+                self.assertEqual([(turn, name) for turn, name in casts
+                                  if name in ("Chrome Mox", "Probe Kill", "Probe Big Black")],
+                                 [(1, "Chrome Mox"), (4, "Probe Big Black")])
+
+
+class EngineTableCastGuardTests(unittest.TestCase):
+    """The engine tables against the decks as they stand (live
+    data/commanders/{id}/deck.json and data/card-metadata.json, read through
+    each deck's goldfish context): every card a table credits only while it
+    is on the battlefield, and every KEY_COMBOS or combo-line member that is a
+    permanent with no {X} and neither a tutor nor a recursion card, is one
+    the goldfish casts from the hand. A table entry the goldfish never casts
+    is credited nowhere. Not read here: lands (played), the deploy engine's
+    Equipment (held for its free deploy) and TOKEN_MAKER_ENGINE (its own
+    guard, TokenMakerTableGuardTests).
+
+    Expected exception, with its reason: Foray of Orcs in gathering-shadow's
+    amassOnResolve is a removal-spot sorcery in that deck, held back as
+    interaction, so its amass is never credited (it was not cast before the
+    rule either)."""
+
+    ROOT = Path(__file__).resolve().parent.parent
+    EXCEPTIONS = {"gathering-shadow": ["Foray of Orcs"]}
+
+    @staticmethod
+    def battlefield_names() -> dict[str, set[str]]:
+        names: dict[str, set[str]] = defaultdict(set)
+        for deck_id, cfg in exporter.COMMANDER_HATCH_ENGINE.items():
+            names[deck_id] |= (cfg["instantOutletNames"] | cfg["limitedOutletNames"] | cfg["combatOutletNames"]
+                               | cfg["tokenDoublerNames"] | cfg["extraHatchNames"] | set(cfg["entryEggNames"])
+                               | cfg["landfallEggNames"] | cfg["combatHatchNames"]
+                               | {cfg["sorceryOutletName"], cfg["untapperName"], cfg["untapperRequiresName"],
+                                  cfg["untapStepName"], cfg["entryEggDoublerName"],
+                                  cfg["legendaryTriggerDoublerName"]})
+        for deck_id, cfg in exporter.AMASS_ARMY_ENGINE.items():
+            names[deck_id] |= (set(cfg["amassOnResolve"]) | cfg["amassXNames"] | set(cfg["amassPerTurn"])
+                               | set(cfg["temptPermanents"])
+                               | {cfg["perNoncreatureCastMV"], cfg["batchBonusName"], cfg["batchDamageName"]})
+        for deck_id, cfg in exporter.COMMANDER_TOKEN_ENGINE.items():
+            names[deck_id] |= cfg["anthemNames"]
+        for deck_id, cfg in exporter.COMBAT_MODIFIERS.items():
+            names[deck_id] |= (cfg["teamDoublerNames"] | cfg["largestDoublerNames"] | cfg["doubleStrikeGrantNames"]
+                               | cfg["extraCombatAttackerNames"] | cfg["exertCombatNames"]
+                               | cfg["powerGatedCombatNames"]
+                               | {cfg["paidCombatName"], cfg["legendaryTriggerDoublerName"]})
+        for deck_id, cfg in exporter.COMMANDER_HASTE_SOURCES.items():
+            names[deck_id] |= (cfg["staticNames"] | cfg["entryGatedNames"] | cfg["printedHasteNames"]
+                               | {name for pair in cfg["staticPairs"] for name in pair})
+        for deck_id, cfg in exporter.PERMANENT_DRAW_ENGINE.items():
+            names[deck_id] |= set(cfg)
+        return names
+
+    def test_every_battlefield_credit_and_permanent_line_member_is_cast(self):
+        metadata = json.loads(Path(exporter.METADATA_FILE).read_text())
+        battlefield = self.battlefield_names()
+        found = {}
+        for deck_dir in sorted((self.ROOT / "data" / "commanders").iterdir()):
+            deck_id = deck_dir.name
+            deck = json.loads((deck_dir / "deck.json").read_text())
+            decklist = [card["name"] for card in deck["decklist"] for _ in range(card.get("quantity", 1))]
+            context = exporter.build_goldfish_context(decklist, deck, metadata, deck["commander"],
+                                                      metadata[deck["commander"]]["colors"] or ["C"], deck_id)
+            profiles = context["profiles"]
+            substitutes = exporter.role_names(deck, "tutor") | exporter.role_names(deck, "recursion")
+            members = {name for name in context["lineMembers"]
+                       if name in profiles and profiles[name]["isPermanent"] and not profiles[name]["manaCost"]["X"]
+                       and name not in substitutes}
+            checked = (battlefield.get(deck_id, set()) | members) & set(decklist)
+            never = sorted(name for name in checked if not profiles[name]["isLand"]
+                           and exporter.goldfish_never_casts(name, profiles[name], context))
+            if never:
+                found[deck_id] = never
+        self.assertEqual(found, self.EXCEPTIONS)
+
+    def test_armory_protocols_mjolnir_waits_for_the_free_deploy(self):
+        # Mjölnir, Hammer of Thor (Legendary Artifact — Equipment, {3}{R};
+        # "Double all damage equipped creature would deal."): in the deck's
+        # goldfish context it is a deploy-engine Equipment (bonus 0), so it is
+        # never cast from the hand, where it would never attach.
+        metadata = json.loads(Path(exporter.METADATA_FILE).read_text())
+        deck = json.loads((self.ROOT / "data" / "commanders" / "armory-protocol" / "deck.json").read_text())
+        decklist = [card["name"] for card in deck["decklist"] for _ in range(card.get("quantity", 1))]
+        context = exporter.build_goldfish_context(decklist, deck, metadata, deck["commander"],
+                                                  metadata[deck["commander"]]["colors"], "armory-protocol")
+        name = "Mjölnir, Hammer of Thor"
+        self.assertEqual((context["deployEngine"]["equipmentPower"].get(name),
+                          exporter.goldfish_never_casts(name, context["profiles"][name], context)),
+                         (0, True))
+
+    def test_armory_protocols_mjolnir_enters_through_the_free_deploy(self):
+        # armory-protocol's deploy engine (transform for {4}{U}{R}, then one
+        # artifact from the hand put onto the battlefield free at each
+        # combat). Pinned game: kept seven two Islands, two Mountains,
+        # Mjölnir and two Probe Huges ({20} sorceries); an Island and a
+        # Mountain are drawn on turns 1 and 2, then Probe Nines. Probe Deploy
+        # Commander ({1}) is cast on turn 1 and transforms on turn 6 with six
+        # lands; Mjölnir ({3}{R}, the only artifact in the hand) is never cast
+        # from the hand and enters on turn 6 through the free deploy.
+        commander, mjolnir = "Probe Deploy Commander", "Mjölnir, Hammer of Thor"
+        opening = ["Island", "Island", "Mountain", "Mountain", mjolnir, "Probe Huge A", "Probe Huge B"]
+        library = ["Probe Nine"] * 10 + ["Mountain", "Island"]
+        metadata = {name: CARDS[name] for name in ("Island", "Mountain", "Probe Nine")}
+        metadata.update({mjolnir: FLEET_METADATA[mjolnir],
+                         commander: {"type_line": "Legendary Creature — Human", "mana_cost": "{1}", "cmc": 1.0,
+                                     "oracle_text": "", "colors": []},
+                         **{name: {"type_line": "Sorcery", "mana_cost": "{20}", "cmc": 20.0, "oracle_text": "",
+                                   "colors": []} for name in ("Probe Huge A", "Probe Huge B")}})
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in dict.fromkeys(opening + library)
+                                  if name != mjolnir] + [{"name": mjolnir, "primary_role": "wincon"}]}
+        decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
+        context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, ["U", "R"],
+                                                  "armory-protocol")
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
+        casts = []
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts.append((turn, name))
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter.random, "shuffle", shuffle), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            exporter.simulate_goldfish_game(decklist, context, 6)
+        self.assertEqual([turn for turn, name in casts if name == mjolnir], [6])
+
+
+class FreedEngineCreditTests(unittest.TestCase):
+    """Engine-table credits the goldfish never paid before the interaction
+    rule (owner-approved 2026-11-23), because the card was held back by its
+    guide category or text, through the goldfish loop with each deck's
+    shipped config and the real card's data/card-metadata.json text. Each
+    game is pinned (ComboCheckSubstituteTests.pinned_deal: only
+    random.shuffle is patched) from a seven the project's mulligan keeps.
+    Made up: Probe Huge ({20} sorcery, never cast), Probe Blue Sorcery ({U},
+    no text) and Probe Swarm Commander ({1} creature)."""
+
+    PROBES = {
+        **{name: {"type_line": "Sorcery", "mana_cost": "{20}", "cmc": 20.0, "oracle_text": "", "colors": []}
+           for name in ("Probe Huge", "Probe Huge B")},
+        "Probe Blue Sorcery": {"type_line": "Sorcery", "mana_cost": "{U}", "cmc": 1.0, "oracle_text": "",
+                               "colors": ["U"]},
+        "Probe Swarm Commander": {"type_line": "Legendary Creature — Merfolk", "mana_cost": "{1}", "cmc": 1.0,
+                                  "oracle_text": "", "colors": []},
+    }
+
+    def damage(self, opening, library, commander, colors, deck_id, roles=None):
+        """Cumulative damage on turns 1-10 of one pinned game."""
+        names = list(dict.fromkeys(opening + library))
+        metadata = {name: self.PROBES.get(name) or CARDS.get(name) or FLEET_METADATA[name]
+                    for name in names + [commander]}
+        deck_data = {"decklist": [dict({"name": name, **FIXTURE_ROLE}, **(roles or {}).get(name, {}))
+                                  for name in names]}
+        decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
+        context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, list(colors), deck_id)
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
+        with patch.object(exporter.random, "shuffle", shuffle):
+            by_turn, _ = exporter.simulate_goldfish_game(decklist, context, 6)
+        return [by_turn[turn]["cumulativeDamage"] for turn in range(1, 11)]
+
+    GOBLIN = {"The Great Goblin": {"primary_role": "engine"}}
+
+    def test_the_great_goblin_adds_two_damage_per_amass_batch(self):
+        # gathering-shadow's amass engine. The Great Goblin ("Whenever you
+        # put one or more counters on a Goblin, Orc, or Army you control, The
+        # Great Goblin deals 2 damage to target opponent.", {1}{B/R}{B/R}; the
+        # goldfish reads a hybrid symbol as free, so it costs {1}) is cast on
+        # turn 1: its 3/2 body (combat 3) attacks from turn 2.
+        # (a) Kept seven: four Mountains, the Goblin, Swarming of Moria
+        # ({2}{R}: "Create a Treasure token. Amass Orcs 2.") and Probe Huge;
+        # every draw is a Probe Huge, so Probe Commander ({5}) is never cast
+        # and no opponent amasses. Swarming is cast on turn 3: one batch of
+        # two counters, 2 damage (not 4); its Army of 2 attacks from turn 4.
+        # 0, 3, 3 + 3 + 2 = 8, then 3 + 2 a turn.
+        self.assertEqual(
+            self.damage(["Mountain"] * 4 + ["The Great Goblin", "Swarming of Moria", "Probe Huge"],
+                        ["Probe Huge"] * 12, "Probe Commander", ["B", "R"], "gathering-shadow", self.GOBLIN),
+            [0, 3, 8, 13, 18, 23, 28, 33, 38, 43])
+        # (b) Kept seven: five Islands, the Goblin and Probe Huge; an Island
+        # is drawn each turn. Probe Commander ({5}) is cast on turn 5; three
+        # opponent batches of one counter a turn from turn 6. Seven Islands
+        # in hand give, from ArmyReadinessGoldfishTests' literal, [0, 0, 0, 0,
+        # 0, 8, 19, 33, 50, 70]; the Goblin adds its 3 a turn from turn 2 and
+        # 2 per batch (6 a turn) from turn 6.
+        self.assertEqual(
+            self.damage(["Island"] * 5 + ["The Great Goblin", "Probe Huge"], ["Island"] * 92,
+                        "Probe Commander", ["U", "B"], "gathering-shadow", self.GOBLIN),
+            [0, 3, 6, 9, 12, 29, 49, 72, 98, 127])
+
+    def test_vodalian_hexcatcher_pumps_tidal_legions_tokens(self):
+        # tidal-legion's token-swarm engine: with the commander out, each
+        # noncreature spell cast makes a 1/1 Merfolk per {U} in its cost,
+        # ready the next turn; the commander adds 1 per ready token from the
+        # turn after he was cast. Vodalian Hexcatcher ({1}{U} 1/1: "Other
+        # Merfolk you control get +1/+1.") is an anthem. Kept seven: four
+        # Islands, Hexcatcher, Probe Blue Sorcery and Probe Huge; every draw
+        # is a Probe Huge. Turn 1: Probe Swarm Commander ({1}, combat 1).
+        # Turn 2: Hexcatcher (combat 2). Turn 3: Probe Blue Sorcery, one
+        # token. From turn 4: 1 + 2 + (1 + 1 anthem) + 1 = 6 a turn.
+        self.assertEqual(
+            self.damage(["Island"] * 4 + ["Vodalian Hexcatcher", "Probe Blue Sorcery", "Probe Huge"],
+                        ["Probe Huge"] * 12, "Probe Swarm Commander", ["U"], "tidal-legion",
+                        {"Vodalian Hexcatcher": {"primary_role": "payoff"}}),
+            [0, 1, 4, 10, 16, 22, 28, 34, 40, 46])
+
+    def test_elspeth_doubles_stampede_acres_tokens(self):
+        # stampede-acres' token makers, The Ur-Dragon never cast. Kept seven:
+        # Elspeth, Storm Slayer ({3}{W}{W}, "If one or more tokens would be
+        # created under your control, twice that many of those tokens are
+        # created instead."), three Plains, two Mountains and Probe Huge; a
+        # Plains is drawn each turn but turn 6's Frontline Rush ({R}{W}, two
+        # 1/1 Goblins). Elspeth is cast on turn 5 with five lands; Rush on
+        # turn 6 then makes four, each dealing 1 from turn 7. Without Elspeth
+        # (Probe Huge B in her place), two.
+        library = TokenMakerGoldfishTests._library_with("Frontline Rush", 6, land="Plains")
+        elspeth = {"Elspeth, Storm Slayer": {"primary_role": "payoff"}}
+        self.assertEqual(
+            (self.damage(["Elspeth, Storm Slayer"] + ["Plains"] * 3 + ["Mountain"] * 2 + ["Probe Huge"], library,
+                         "The Ur-Dragon", ["R", "G", "W"], "stampede-acres", elspeth),
+             self.damage(["Probe Huge B"] + ["Plains"] * 3 + ["Mountain"] * 2 + ["Probe Huge"], library,
+                         "The Ur-Dragon", ["R", "G", "W"], "stampede-acres")),
+            ([0, 0, 0, 0, 0, 0, 4, 8, 12, 16], [0, 0, 0, 0, 0, 0, 2, 4, 6, 8]))
