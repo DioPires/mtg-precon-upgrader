@@ -162,7 +162,11 @@ DEVOTION_BELOW = re.compile(r"your devotion to (\w+)(?: and (\w+))? is less than
 # *independently* completes that slot's function (e.g. any noncombat-damage
 # doubler for Heartless Hidetsugu). No padding. Back-compat: a combo declared
 # with a bare "pieces" list is read as one 1-card slot per piece. The commander,
-# when named in a slot, fills it from the command zone automatically.
+# when named in a slot, fills it from the command zone automatically. A slot
+# written {"members": [...], "noPriority": True} (owner decision 27,
+# 2026-11-25, 6b) fills like any other, but its cards are not line members by
+# it: no cast priority, paid-mulligan keep or imprint protection
+# (build_goldfish_context).
 KEY_COMBOS = {
     # gathering-shadow: Oracle Consultation removed in the DEC-533 remake — the
     # Thoracle/Consultation shell was cut with the strategy change. Commander
@@ -177,21 +181,39 @@ KEY_COMBOS = {
                 [
                     "Solphim, Mayhem Dominus",
                     "Twinflame Tyrant",
-                    "Fiery Emancipation",
                     "Bloodletter of Aclazotz",
+                    "Wound Reflection",
                 ],
             ],
             "requiresCommander": False,
-            "description": "Any noncombat-damage/life-loss doubler turns a Heartless "
-                           "Hidetsugu activation (half each opponent's life) lethal.",
+            "description": "A doubler of damage or life loss to opponents makes a Heartless "
+                           "Hidetsugu activation (half each player's life) lethal at even life "
+                           "totals (Spellbook 3011-4847, 3011-6093, 3011-4475; Wound Reflection "
+                           "makes each opponent lose the same life again at the end step); Fiery "
+                           "Emancipation is not one: it triples the damage to you too.",
         }
     ],
     "eternal-harvest": [
         {
             "name": "Ballista Undying",
-            "pieces": ["Walking Ballista", "Mikaeus, the Unhallowed"],
+            "slots": [
+                ["Walking Ballista"],
+                ["Mikaeus, the Unhallowed"],
+                # A drain payoff or a free outlet; added without cast priority
+                # (owner decision 27, 6b).
+                {
+                    "members": [
+                        "Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance",
+                        "Sephiroth, Fabled SOLDIER", "Ashnod's Altar", "Phyrexian Altar",
+                        "Altar of Dementia",
+                    ],
+                    "noPriority": True,
+                },
+            ],
             "requiresCommander": False,
-            "description": "Repeatable undying damage loop with any sacrifice outlet.",
+            "description": "Walking Ballista and Mikaeus loop deaths without end (Spellbook "
+                           "628-3693); a drain payoff, or a free outlet that lets each counter "
+                           "ping an opponent, makes it a kill.",
         }
     ],
     "the-white-forge": [
@@ -204,27 +226,28 @@ KEY_COMBOS = {
     ],
     "titan-convergence": [
         {
-            "name": "Basalt Infinite Mana",
-            # DEC-370: Forsaken Monument added as an interchangeable partner —
-            # either card makes Basalt Monolith net positive colorless mana.
+            # Owner decision 27 (2026-11-25, tick K4): rewritten from the
+            # mana loop alone (Basalt Monolith with Rings of Brighthearth or
+            # Forsaken Monument) to a line that names its finish.
+            "name": "Basalt Rings Top Fleshraker",
             "slots": [
                 ["Basalt Monolith"],
-                ["Rings of Brighthearth", "Forsaken Monument"],
+                ["Rings of Brighthearth"],
+                ["Sensei's Divining Top"],
+                ["Glaring Fleshraker"],
             ],
             "requiresCommander": False,
-            "description": "2-card infinite colorless mana engine: Basalt Monolith plus "
-                           "either Rings of Brighthearth (copy the untap) or Forsaken "
-                           "Monument (extra {C} per tap).",
+            "description": "Rings of Brighthearth copies Basalt Monolith's untap for unbounded "
+                           "colorless mana (Spellbook 4131-4235) and Sensei's Divining Top's draw, "
+                           "returning Top to hand; each recast makes a Spawn that Glaring Fleshraker "
+                           "turns into 1 damage to each opponent. Needs {2} to start; one library "
+                           "card per cycle.",
         }
     ],
-    "creeping-corruption": [
-        {
-            "name": "Vorinclex Vraska Kill",
-            "pieces": ["Vorinclex, Monstrous Raider", "Vraska, Betrayal's Sting"],
-            "requiresCommander": False,
-            "description": "Vraska enters with doubled loyalty, -9 deals doubled poison for instant kill.",
-        }
-    ],
+    # creeping-corruption: Vorinclex + Vraska removed (owner decision 27,
+    # 2026-11-25, tick K5): it kills only the targeted opponent, who must have
+    # eight or fewer poison counters (Spellbook 1529-1887), not the table. The
+    # deck has NO entry.
     "anvil-chorus": [
         {
             "name": "Blink Loop Lethal",
@@ -244,7 +267,7 @@ KEY_COMBOS = {
         {
             "name": "Recursive-ETB + Death-Return Aura + Free Outlet",
             "slots": [
-                ["Sun Titan", "Angel of Indemnity", "Redemption Choir", "Shepherd of the Cosmos"],
+                ["Sun Titan", "Angel of Indemnity"],
                 ["Kaya's Ghostform", "Gift of Immortality", "Angelic Renewal", "Necrogen Communion"],
                 ["Viscera Seer", "Carrion Feeder", "Ashnod's Altar", "Umbral Collar Zealot"],
                 ["Blood Artist", "Zulaport Cutthroat", "Elas il-Kor, Sadistic Pilgrim",
@@ -253,7 +276,9 @@ KEY_COMBOS = {
             "requiresCommander": False,
             "description": "Enchant a recursive-ETB creature with a cheap death-return aura it can "
                            "rebuy on enter; sac to a free outlet — the aura returns the body, the "
-                           "body returns the aura. Infinite death + ETB; any drain payoff wins.",
+                           "body returns the aura. Infinite death + ETB; any drain payoff wins. "
+                           "(Spellbook 2292-2730-3175.) Shepherd of the Cosmos is left out: it "
+                           "returns mana value 2 or less, not Gift of Immortality.",
         },
         {
             "name": "Leonin Relic-Warder + Reanimation Aura",
@@ -274,11 +299,13 @@ KEY_COMBOS = {
                 ["Pitiless Plunderer"],
                 ["Ashnod's Altar"],
                 ["Reassembling Skeleton"],
-                ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance"],
+                ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance",
+                 "Elas il-Kor, Sadistic Pilgrim", "Marionette Apprentice"],
             ],
             "requiresCommander": False,
             "description": "Sac Skeleton to Altar ({C}{C}) + Plunderer Treasure covers the "
-                           "{1}{B} rebuy — infinite mana + infinite death triggers drain the table.",
+                           "{1}{B} rebuy — infinite mana + infinite death triggers drain the table. "
+                           "(Spellbook 1580-2034-4871.)",
         },
     ],
     # hoard-and-bleed (DEC-543): both lines are Commander Spellbook `included[]`
@@ -297,18 +324,22 @@ KEY_COMBOS = {
                 # payoff below fires: creature death, artifact-to-graveyard,
                 # artifact entering, and token created/sacrificed all happen.
                 # Exsanguinate qualifies because the loop nets {C} per iteration
-                # (in {C}{C}{B}, out {1}{B}) and Treasures pay the {B}{B}.
+                # (in {C}{C}{B}, out {1}{B}); it needs one black mana beyond the
+                # last Treasure. Goblin Bombardment (owner decision 27, tick
+                # K10) is a sacrifice outlet that alternates with the Altar.
                 [
                     "Marionette Apprentice", "Marionette Master", "Mayhem Devil",
                     "Mirkwood Bats", "Reckless Fireweaver", "Weftstalker Ardent",
-                    "The Sackville-Bagginses", "Exsanguinate",
+                    "The Sackville-Bagginses", "Exsanguinate", "Goblin Bombardment",
                 ],
             ],
             "requiresCommander": False,
             "description": "Sacrifice Reassembling Skeleton to Ashnod's Altar for {C}{C}; "
                            "Pitiless Plunderer makes a Treasure, which pays part of the "
                            "{1}{B} rebuy. Nets {C} per loop, so infinite colorless mana plus "
-                           "infinite death, sacrifice and artifact triggers.",
+                           "infinite death, sacrifice and artifact triggers. Goblin Bombardment "
+                           "alternates with the Altar; Exsanguinate needs one black mana beyond "
+                           "the last Treasure (Spellbook 1580-2034-4871).",
         },
         {
             "name": "Mycosynth Lattice free-loop",
@@ -339,44 +370,43 @@ KEY_COMBOS = {
     # prerequisite, which a solitaire model cannot check. Mycosynth Lattice +
     # Vandalblast is mass land denial, not a win, so it does not belong in a
     # combo-assembly tracker.
+    # zada-hedron-grinder: Reiterate with Mana Geyser or Jeska's Will removed
+    # (owner decision 27, 2026-11-25, tick K12): its included records need an
+    # opponent's state the goldfish does not have (six or more tapped lands,
+    # six or more cards in hand).
     "zada-hedron-grinder": [
-        {
-            "name": "Reiterate Ritual Storm",
-            "slots": [
-                ["Reiterate"],
-                ["Mana Geyser", "Jeska's Will"],
-                ["Grapeshot"],
-            ],
-            "requiresCommander": False,
-            "description": "Buyback Reiterate copying a big ritual nets infinite red mana "
-                           "and storm count; Grapeshot closes.",
-        },
         {
             "name": "Reiterate Seething Song",
             "slots": [
                 ["Reiterate"],
-                ["Seething Song"],
+                ["Seething Song", "Blazing Firesinger // Seething Song"],
                 ["Birgi, God of Storytelling // Harnfel, Horn of Bounty",
-                 "Storm-Kiln Artist", "Ruby Medallion", "Bonus Round"],
+                 "Storm-Kiln Artist", "Ruby Medallion", "Bonus Round", "Spinerock Tyrant"],
                 ["Grapeshot"],
             ],
             "requiresCommander": False,
-            "description": "Seething Song alone nets -1 with buyback; any of Birgi, "
-                           "Storm-Kiln Artist, Ruby Medallion, or Bonus Round flips the "
-                           "loop positive (Spellbook-confirmed variants).",
+            "description": "Reiterate with buyback copying Seething Song is mana-neutral with "
+                           "Birgi or Ruby Medallion and gains with Storm-Kiln Artist or Bonus "
+                           "Round or Spinerock Tyrant; storm grows and Grapeshot closes, given "
+                           "the start mana for Song and Reiterate with buyback (Spellbook "
+                           "3368-4036-5195 and siblings).",
         },
         {
+            # Kiki-Jiki has no slot (tick K14): Recruiter stacks it from the
+            # library, which is not tracked, so a game where it was drawn is
+            # also counted (the line fails there).
             "name": "Snoop Kiki Tokens",
             "slots": [
                 ["Conspicuous Snoop"],
-                ["Kiki-Jiki, Mirror Breaker"],
                 ["Goblin Recruiter"],
-                ["Impact Tremors", "Goblin Bombardment"],
+                ["Impact Tremors", "Goblin Bombardment", "General Kreat, the Boltbringer",
+                 "Boggart Shenanigans", "Pashalik Mons"],
             ],
             "requiresCommander": False,
-            "description": "Recruiter stacks Kiki-Jiki on top; Snoop gains Kiki's ability "
-                           "and copies itself infinitely — Tremors/Bombardment convert "
-                           "tokens to damage.",
+            "description": "Recruiter stacks Kiki-Jiki on top (it must still be in the library); "
+                           "Snoop gains Kiki's ability and copies itself without end; any of five "
+                           "payoffs turns the tokens into damage (mechanism of Spellbook "
+                           "618-1827-2240).",
         },
     ],
     # broodfire-hatchery (DEC-544/DEC-550): slot spec authored by the CEO. Atla
@@ -430,11 +460,26 @@ KEY_COMBOS = {
     "stampede-acres": [
         {
             "name": "Scurry Rosie Squirrels",
-            "pieces": ["Scurry Oak", "Rosie Cotton of South Lane"],
+            "slots": [
+                ["Scurry Oak"],
+                ["Rosie Cotton of South Lane"],
+                # Added without cast priority (owner decision 27, 6b). A payoff
+                # fills the slot without the commander, so the line is not
+                # requiresCommander.
+                {
+                    "members": [
+                        "Baylen, the Haymaker", "Impact Tremors", "Purphoros, God of the Forge",
+                        "Warleader's Call",
+                    ],
+                    "noPriority": True,
+                },
+            ],
             "requiresCommander": False,
-            "description": "Any token created triggers Rosie's counter onto Scurry Oak, "
-                           "whose counter trigger makes a Squirrel — infinite tokens; "
-                           "Impact Tremors/Purphoros or next-turn combat closes.",
+            "description": "Rosie Cotton and Scurry Oak make Squirrels without end once started "
+                           "(the Oak out before Rosie, or a later token or counter; Spellbook "
+                           "2433-4186); Impact Tremors, Purphoros or Warleader's Call already out "
+                           "kills, and Baylen draws to Halo Fountain or to a payoff, which needs "
+                           "token creation restarted after it is cast.",
         }
     ],
     "witherbloom-the-balancer": [
@@ -443,11 +488,18 @@ KEY_COMBOS = {
             "slots": [
                 ["Witherbloom, the Balancer"],
                 ["Sprout Swarm"],
+                # Added without cast priority (owner decision 27, 6b).
+                {
+                    "members": ["Witherbloom Apprentice", "Exsanguinate", "Torment of Hailfire"],
+                    "noPriority": True,
+                },
             ],
             "requiresCommander": True,
-            "description": "Commander grants instants affinity for creatures; convoke + "
-                           "buyback Sprout Swarm recasts itself free once ~4 creatures are "
-                           "out — infinite Saprolings/storm (Spellbook 'included').",
+            "description": "Witherbloom's affinity lets Sprout Swarm with buyback recast itself "
+                           "once about four creatures and green mana are out: unbounded Saprolings "
+                           "and storm (Spellbook 3209-7496). Witherbloom Apprentice drains each "
+                           "opponent per cast; Exsanguinate or Torment of Hailfire, X paid by "
+                           "affinity and {B}{B} from outside the loop, kills.",
         },
         {
             "name": "Altar Skeleton Loop",
@@ -456,13 +508,12 @@ KEY_COMBOS = {
                 ["Pitiless Plunderer"],
                 ["Reassembling Skeleton"],
                 ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance",
-                 "Cauldron of Essence"],
+                 "Cauldron of Essence", "Arnyn, Deathbloom Botanist"],
             ],
             "requiresCommander": False,
-            "description": "Sac Skeleton to Altar (+{C}{C}), Plunderer mints a Treasure, "
-                           "recast Skeleton for {B} — net-positive mana with infinite death "
-                           "triggers; any drain piece makes it lethal (Spellbook 'included' "
-                           "1580-2034-4871, added DEC-379).",
+            "description": "Ashnod's Altar, Pitiless Plunderer and Reassembling Skeleton loop "
+                           "deaths and mana without end (Spellbook 1580-2034-4871); a drain "
+                           "payoff kills.",
         },
         {
             "name": "Altar Sprout Doubling",
@@ -470,12 +521,21 @@ KEY_COMBOS = {
                 ["Sprout Swarm"],
                 ["Ashnod's Altar"],
                 ["Parallel Lives"],
+                # Added without cast priority (owner decision 27, 6b).
+                {
+                    "members": [
+                        "Witherbloom Apprentice", "Blood Artist", "Zulaport Cutthroat",
+                        "Bastion of Remembrance", "Cauldron of Essence",
+                        "Arnyn, Deathbloom Botanist", "Exsanguinate", "Torment of Hailfire",
+                    ],
+                    "noPriority": True,
+                },
             ],
             "requiresCommander": False,
-            "description": "Each buyback Sprout Swarm makes 2 Saprolings; sacking both to "
-                           "Altar yields {C}{C}{C}{C}, more than the recast — infinite "
-                           "tokens and colorless mana (Spellbook 'included' 2034-2557-3209, "
-                           "added DEC-379).",
+            "description": "Sprout Swarm, Ashnod's Altar and Parallel Lives make unbounded "
+                           "Saprolings and colorless mana once started (up to {7}{G}, Spellbook "
+                           "2034-2557-3209); a drain payoff, or Exsanguinate or Torment of "
+                           "Hailfire with {B}{B} from outside the loop, kills.",
         }
     ],
     "gandalf-party-guest": [
@@ -486,12 +546,18 @@ KEY_COMBOS = {
             # (resilience component); it does not delay the assembly-turn
             # measurement.
             "name": "Fury Storm Magecraft",
-            "pieces": ["Fury Storm", "Storm-Kiln Artist"],
+            "slots": [
+                ["Fury Storm"],
+                ["Storm-Kiln Artist"],
+                # Added without cast priority (owner decision 27, 6b).
+                {"members": ["Twinflame"], "noPriority": True},
+            ],
             "requiresCommander": True,
-            "description": "After at least one Gandalf cast, Fury Storm copies "
-                           "itself per commander cast; each copy triggers "
-                           "Storm-Kiln Artist's magecraft for Treasure-positive "
-                           "storm turns.",
+            "description": "After Gandalf has been cast from the command zone, Fury Storm's "
+                           "copies make Treasures through Storm-Kiln Artist without end "
+                           "(Spellbook 2655-5195); Fury Storm's copies also copy Twinflame onto "
+                           "the Artist: three hasty Artists, one per opponent, before attackers "
+                           "are declared.",
         }
     ],
     # DEC-370 note: exponential-growth was audited and deliberately has NO entry —
@@ -1295,12 +1361,13 @@ def combat_phase_damage(attackers: list[dict], modifiers: dict | None,
 def combo_slot_lists(combo: dict) -> list[list[str]]:
     """Return a combo's slots as lists of interchangeable member card names.
 
-    Slot schema: ``combo["slots"]`` is a list of slots, each a list of names.
-    Back-compat: a combo declared with a bare ``combo["pieces"]`` list is read
-    as one 1-card slot per piece.
+    Slot schema: ``combo["slots"]`` is a list of slots, each a list of names
+    or ``{"members": [names], "noPriority": True}`` (build_combo_assembly_lines
+    refuses any other slot). Back-compat: a combo declared with a bare
+    ``combo["pieces"]`` list is read as one 1-card slot per piece.
     """
     if combo.get("slots"):
-        return [list(slot) for slot in combo["slots"]]
+        return [list(slot["members"]) if isinstance(slot, dict) else list(slot) for slot in combo["slots"]]
     return [[piece] for piece in combo.get("pieces", [])]
 
 
@@ -1309,34 +1376,52 @@ def build_combo_assembly_lines(deck_id: str, decklist: list[str],
     """Per-combo slot spec for the goldfish assembly tracker.
 
     Each line: ``{name, pieces, slots, requiresCommander, description}`` where
-    every slot is ``{members: [names present in deck], isCommander: bool}``. A
-    slot is valid if it names the commander (auto-filled from the command zone)
-    or holds >=1 member present in the decklist; a combo whose every slot is
-    valid is included. Combos with a missing-from-deck slot are dropped (the
-    deck cannot assemble them) — mirrors the old closed-form behaviour.
+    every slot is ``{members: [names present in deck], isCommander: bool,
+    noPriority: bool}``. A slot is valid if it names the commander (auto-filled
+    from the command zone) or holds >=1 member present in the decklist; a
+    combo whose every slot is valid is included. Combos with a
+    missing-from-deck slot are dropped (the deck cannot assemble them) —
+    mirrors the old closed-form behaviour.
 
-    A card listed in two slots of one combo raises ValueError: assembly
-    (assembly_tutor_cost) reads each slot as filled by any of its drawn
-    members, so one card would fill both, and two slots could keep the same
-    card from paying an extra cost. With every member in one slot only, one
-    card fills at most one slot.
+    A slot is a non-empty list of card names, or ``{"members": [card names],
+    "noPriority": True}`` with a non-empty list, a slot added without cast
+    priority (owner decision 27, 6b: its cards are not line members by it,
+    build_goldfish_context); any other slot, a combo with no slot (no
+    slots and no pieces) or one with both slots and pieces raises ValueError. A card listed in two slots of one combo
+    raises ValueError: assembly (assembly_tutor_cost) reads each slot as filled
+    by any of its drawn members, so one card would fill both, and two slots
+    could keep the same card from paying an extra cost. With every member in
+    one slot only, one card fills at most one slot.
     """
     deck_cards = set(decklist)
     lines = []
     for combo in KEY_COMBOS.get(deck_id, []):
+        if "slots" in combo and "pieces" in combo:
+            raise ValueError(f"KEY_COMBOS {deck_id} {combo.get('name')!r}: both slots and pieces (give one)")
+        raw_slots = combo.get("slots") or (
+            [[piece] for piece in combo["pieces"]] if isinstance(combo.get("pieces"), list) else [])
+        if not raw_slots:
+            raise ValueError(f"KEY_COMBOS {deck_id} {combo.get('name')!r}: no slot")
+        for slot in raw_slots:
+            members = (slot["members"] if isinstance(slot, dict) and set(slot) == {"members", "noPriority"}
+                       and slot["noPriority"] is True else slot)
+            if not (isinstance(members, list) and members and all(isinstance(member, str) for member in members)):
+                raise ValueError(f"KEY_COMBOS {deck_id} {combo.get('name')!r}: slot {slot!r} is not a non-empty "
+                                 "list of card names or {\"members\": [card names], \"noPriority\": true}")
         listed = [member for members in combo_slot_lists(combo) for member in members]
         repeated = sorted({member for member in listed if listed.count(member) > 1})
         if repeated:
             raise ValueError(f"KEY_COMBOS {deck_id} {combo.get('name')!r}: {repeated} listed in two slots")
         slots = []
         complete = True
-        for members in combo_slot_lists(combo):
+        for raw, members in zip(raw_slots, combo_slot_lists(combo)):
             is_commander = commander_name in members
             present = [m for m in members if m != commander_name and m in deck_cards]
+            no_priority = isinstance(raw, dict)
             if is_commander:
-                slots.append({"members": present, "isCommander": True})
+                slots.append({"members": present, "isCommander": True, "noPriority": no_priority})
             elif present:
-                slots.append({"members": present, "isCommander": False})
+                slots.append({"members": present, "isCommander": False, "noPriority": no_priority})
             else:
                 complete = False
                 break
@@ -1615,8 +1700,10 @@ def goldfish_holds_back(primary_role: str | None, meta: dict) -> bool:
     keeps (Muddle the Mixture, also a tutor) goes with the kept spells, the
     dearest first; from a seven with five or more playable lands a land goes
     first (goldfish_bottom_cards). An imprint that can exile it exiles it
-    first (imprint_choice: never a kept or reserved card); a cascade declines
-    it."""
+    first, ranked with an alternative a combo line or a table slot keeps in
+    the hand and no line names plainly (imprint_choice: the most colours,
+    then the highest mana value, then the name latest in the alphabet; never a kept card or another
+    reserved card); a cascade declines it."""
     return primary_role in GOLDFISH_HELD_ROLES and not is_permanent_card(meta)
 
 
@@ -3514,9 +3601,33 @@ def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
     """Parse winConditions[] entries with kind=='combo' into combo-line specs.
 
     Each combo line: {pieces: [name], costs: [pip_dict], startPiece: name | None,
-    minX: {name: int}}; build_goldfish_context adds
-    ``deliveries`` (combo_deliveries). Pieces not found in profiles are skipped (with
-    the whole line dropped if any piece is missing).
+    minX: {name: int}, alternatives: [name], readyPieces: [name], readyHaste:
+    {static: [name], equip: {name: pip_dict}, instant: {name: pip_dict}},
+    castFromHand: [name], needsCreature: int, extraCost: pip_dict | None};
+    build_goldfish_context adds ``deliveries`` (combo_deliveries). The deck's
+    winConditions are checked by gate_tags_lib.win_conditions_errors
+    (validate_deck_json.py reports the same errors): the value and each
+    entry's type, its keys (a closed list) and its combo-line fields, against
+    the cards in ``profiles`` (gate_tags_lib.combo_line_cards: the decklist and
+    the commander) with their front faces' type lines; a partner is refused by
+    name. Any error raises ``ValueError`` naming the entry.
+
+    A list in ``pieces`` (owner decision 27, 2026-11-25, decision 6) is a choice
+    of one of its cards: the entry gives one line per choice
+    (itertools.product over its list entries), each with the cards it chose
+    from lists as ``alternatives``. An alternative is not a line member by that
+    line (decision 6b, build_goldfish_context).
+
+    The combo-line corrections' fields (decisions 1, 1b, 2 and 7), read by
+    combo_line_costs and combo_deliveries: ``readyPieces``, pieces that count
+    only once they have been on the battlefield since the turn began, else with
+    one of the line's ``readyHaste`` sources; ``castFromHand``, pieces that
+    count only when cast during the combo (never from the battlefield) and that
+    the goldfish keeps in the hand (handOnlyPieces); ``needsCreature``, the
+    number of other creatures the line needs on the battlefield to target
+    (0: none); ``extraCost``, a mana cost added to the line's cost each time it
+    is counted. A commander named as a piece is never supplied by a tutor or
+    recursion card (combo_deliveries).
 
     ``startPiece`` is the optional piece the loop starts by casting (e.g. Sensei's
     Divining Top recast through Mystic Forge). In ``combo_line_costs`` it is free
@@ -3524,7 +3635,8 @@ def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
     the battlefield since an earlier turn its cost is paid again; if it entered this
     turn before a partner, or could only be put onto the battlefield (a tutor or
     recursion card that puts it there), the line is not ready that turn. A
-    ``startPiece`` that is not one of the line's ``pieces`` raises ``ValueError``.
+    ``startPiece`` that is not one of the line's ``pieces`` named outside a list
+    raises ``ValueError``.
 
     ``minX`` (owner-approved 2026-11-19, built 2026-11-21) maps a piece with {X} in its
     cost to the X it is priced at: the cheapest direct cast with which the line's listed
@@ -3533,48 +3645,46 @@ def extract_combo_lines(deck_data: dict, profiles: dict) -> list[dict]:
     X = 2 is 4 mana), and ``combo_line_costs`` takes the piece only from the hand, or
     through a card that puts it into the hand or lets it be cast from the graveyard
     (decision 5, 2026-11-24), cast at that X; never through one that puts it onto the
-    battlefield or a bargained free cast (combo_deliveries). ``minX`` must be a mapping,
-    on a ``kind: "combo"`` entry whose
-    ``pieces`` is a list, whose keys are pieces of that line named exactly as the deck
+    battlefield or a bargained free cast (combo_deliveries). ``minX`` must be a mapping
+    whose keys are cards the line's pieces name (in a list or not) exactly as the deck
     lists them (a face name is not the card's name) with {X} in their mana cost, and
-    whose values are positive integers; anything else raises ``ValueError``
-    (validate_deck_json.py reports the same inputs).
+    whose values are positive integers; a line priced from a list entry carries the
+    minX of the card it chose only.
     """
     lines = []
-    for wincon in deck_data.get("winConditions", []) or []:
-        title = wincon.get("title")
-        if "minX" in wincon and wincon.get("kind") != "combo":
-            raise ValueError(f"winConditions[] {title!r}: minX is read only on a kind 'combo' entry")
+    cards = {name: profile["typeLine"].split(" // ")[0] for name, profile in profiles.items()}
+    x_cards = {name for name, profile in profiles.items() if profile["manaCost"]["X"]}
+    win_conditions = deck_data.get("winConditions", [])
+    errors = gate_tags_lib.win_conditions_errors(win_conditions, cards, x_cards, deck_data.get("partner"))
+    if errors:
+        messages = []
+        for index, error in errors:
+            wincon = None if index is None else win_conditions[index]
+            title = f" {wincon.get('title')!r}" if isinstance(wincon, dict) else ""
+            messages.append(f"winConditions{'' if index is None else f'[{index}]'}{title}: {error}")
+        raise ValueError("; ".join(messages))
+    for wincon in win_conditions:
         if wincon.get("kind") != "combo":
             continue
-        if "minX" in wincon and not isinstance(wincon.get("pieces"), list):
-            raise ValueError(f"winConditions[] combo {title!r}: minX needs pieces to be a list")
-        pieces = wincon.get("pieces") or []
-        start_piece = wincon.get("startPiece")
-        if start_piece is not None and start_piece not in pieces:
-            raise ValueError(
-                f"winConditions[] combo {title!r}: startPiece "
-                f"{start_piece!r} is not one of its pieces")
-        min_x = wincon.get("minX", {})
-        if not isinstance(min_x, dict):
-            raise ValueError(f"winConditions[] combo {title!r}: minX {min_x!r} is not a mapping")
-        for piece, x in min_x.items():
-            if (piece not in pieces or piece not in profiles or type(x) is not int or x < 1
-                    or not profiles[piece]["manaCost"]["X"]):
-                raise ValueError(
-                    f"winConditions[] combo {title!r}: minX {piece!r}: {x!r} must be a positive "
-                    "integer for one of its pieces that is in the deck and has {X} in its mana cost")
-        if not pieces:
-            continue
-        if not all(p in profiles for p in pieces):
-            continue
-        costs = [x_spell_cost(profiles[p]["manaCost"], min_x.get(p, 0)) for p in pieces]
-        lines.append({
-            "pieces": list(pieces),
-            "costs": costs,
-            "startPiece": start_piece,
-            "minX": dict(min_x),
-        })
+        haste = wincon.get("readyHaste", {})
+        ready_haste = {"static": list(haste.get("static", [])),
+                       **{kind: {name: parse_generic_mana_cost(cost) for name, cost in haste.get(kind, {}).items()}
+                          for kind in ("equip", "instant")}}
+        entries = wincon["pieces"]
+        for chosen in itertools.product(*(entry if isinstance(entry, list) else [entry] for entry in entries)):
+            min_x = {piece: x for piece, x in wincon.get("minX", {}).items() if piece in chosen}
+            lines.append({
+                "pieces": list(chosen),
+                "costs": [x_spell_cost(profiles[p]["manaCost"], min_x.get(p, 0)) for p in chosen],
+                "startPiece": wincon.get("startPiece"),
+                "minX": min_x,
+                "alternatives": [piece for entry, piece in zip(entries, chosen) if isinstance(entry, list)],
+                "readyPieces": list(wincon.get("readyPieces", [])),
+                "readyHaste": ready_haste,
+                "castFromHand": list(wincon.get("castFromHand", [])),
+                "needsCreature": wincon.get("needsCreature", {}).get("count", 0),
+                "extraCost": parse_generic_mana_cost(wincon["extraCost"]) if "extraCost" in wincon else None,
+            })
     return lines
 
 
@@ -3731,7 +3841,8 @@ def x_paid(use: dict, piece: dict) -> dict:
     return dict(combine_mana_costs([]), generic=paid, total=paid)
 
 
-def combo_deliveries(line: dict, profiles: dict, tutor_meta: dict, recursion_meta: dict) -> dict:
+def combo_deliveries(line: dict, profiles: dict, tutor_meta: dict, recursion_meta: dict,
+                     commander_name: str = "") -> dict:
     """For each piece of a combo line, every way a substitute can supply it
     when it is missing (rule B3), as dicts: ``card``, ``use``
     (substitute_use), ``route``, ``parts`` (the costs paid on top of the use:
@@ -3742,30 +3853,36 @@ def combo_deliveries(line: dict, profiles: dict, tutor_meta: dict, recursion_met
       hand or castable from the graveyard (a recursion card, decision 5): the
       piece is cast and paid, at its line's minX;
     - onto the battlefield (a tutor or a recursion card): only a permanent
-      piece that is neither a minX piece nor the line's startPiece, not paid;
+      piece that is neither a minX piece, the line's startPiece nor one of its
+      castFromHand pieces, not paid;
     - Beseech the Mirror bargained (``tutor_free_cast_via_bargain``): a piece
-      of mana value 4 or less that is not a minX piece, cast free, with one
-      bargain object; its other route is the paid route to the hand.
+      of mana value 4 or less that is neither a minX piece nor a castFromHand
+      piece, cast free, with one bargain object; its other route is the paid
+      route to the hand.
+
+    The commander, named as a piece, is never supplied (owner decision 27,
+    decision 1): it counts only on the battlefield.
     """
     deliveries = {}
     for piece, piece_cost in zip(line["pieces"], line["costs"]):
         profile = profiles[piece]
         start = piece == line["startPiece"]
         min_x = piece in line["minX"]
+        cast_only = piece in line["castFromHand"]
         options = []
         for card, use in itertools.chain(tutor_meta.items(), recursion_meta.items()):
-            if not use["credits"] or not substitute_allows(use, profile):
+            if piece == commander_name or not use["credits"] or not substitute_allows(use, profile):
                 continue
             kinds = (use["extra"],) if use["extra"] else ()
             x_cost = x_paid(use, profile)
             if use["mode"] == "to_battlefield":
-                if is_front_permanent(profile) and not start and not min_x:
+                if is_front_permanent(profile) and not start and not min_x and not cast_only:
                     options.append({"card": card, "use": use, "route": "battlefield", "parts": [x_cost],
                                     "kinds": kinds})
                 continue
             options.append({"card": card, "use": use, "route": "hand", "parts": [x_cost, piece_cost],
                             "kinds": kinds})
-            if use["bargain"] and profile["cmc"] <= BARGAIN_FREE_MV and not min_x:
+            if use["bargain"] and profile["cmc"] <= BARGAIN_FREE_MV and not min_x and not cast_only:
                 options.append({"card": card, "use": use, "route": "bargain", "parts": [],
                                 "kinds": kinds + ("bargain",)})
         deliveries[piece] = options
@@ -3810,7 +3927,10 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         role = entry.get("primary_role")
         primary_roles.setdefault(entry.get("name"), role if isinstance(role, str) else None)
     profiles = {}
-    for name in ordered_unique(decklist + [commander_name]):
+    # The deck's cards: the decklist and the commander, the definition the
+    # combo-line check reads as the cards a line may name (no partner: the
+    # goldfish models none).
+    for name in gate_tags_lib.combo_line_cards(commander_name, decklist):
         profiles[name] = build_goldfish_profile(
             name=name,
             meta=metadata.get(name, {}),
@@ -3830,7 +3950,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
     if not needs_substitution:
         tutor_meta, recursion_meta = {}, {}
     for line in combo_lines:
-        line["deliveries"] = combo_deliveries(line, profiles, tutor_meta, recursion_meta)
+        line["deliveries"] = combo_deliveries(line, profiles, tutor_meta, recursion_meta, commander_name)
     for line in assembly_lines:
         line["fetches"] = assembly_fetches(line, profiles, tutor_meta)
     # DEC-944 — every card the deck's two gates name: combo-gate pieces
@@ -3838,28 +3958,39 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
     # These are cast ahead of filler and are never held back by either hold
     # in the cast loop, because casting a piece advances the line instead of
     # spending it; an X piece or a non-permanent one among them is kept in the
-    # hand instead (handOnlyPieces, below).
+    # hand instead (handOnlyPieces, below). Not a member by a line (owner
+    # decision 27, 6b): a card it names only in a list entry of its pieces (an
+    # alternative) or in a KEY_COMBOS slot flagged noPriority; such a card is
+    # a member when another line names it plainly.
     line_members = frozenset(
-        {piece for line in combo_lines for piece in line["pieces"]}
+        {piece for line in combo_lines for piece in line["pieces"] if piece not in line["alternatives"]}
         | {member
            for line in assembly_lines
-           for slot in line["slots"]
+           for slot in line["slots"] if not slot["noPriority"]
            for member in slot["members"]}
     )
-    # The combo-line and assembly members the goldfish keeps in the hand
-    # (handOnlyPieces), where the combo checks read them: one whose front face
-    # is not a permanent (Demonic Consultation; an instant or sorcery slot
-    # member is not spent before its slot counts as filled; a modal DFC whose
-    # front is a spell is not played as its land), and one with {X} in its
-    # cost whatever its type (owner-approved 2026-11-23, decision C: the combo
-    # gate prices it at its line's minX, else at X = 0; cast at X = 0, a 0/0
-    # Walking Ballista would die). The goldfish never casts one from the hand,
-    # plays one as its land (choose_land_to_play), deploys one free (the
-    # DEC-405 deploy engine) or casts one from a cascade
-    # (resolve_cascade_triggers). Permanent pieces (Thassa's Oracle) are cast
-    # proactively and stay available to the checks on the battlefield.
-    hand_only_pieces = frozenset(member for member in line_members
-                                 if not is_front_permanent(profiles[member]) or profiles[member]["manaCost"]["X"])
+    alternatives = frozenset(
+        {piece for line in combo_lines for piece in line["alternatives"]}
+        | {member for line in assembly_lines for slot in line["slots"] if slot["noPriority"]
+           for member in slot["members"]})
+    # The combo-line and assembly cards the goldfish keeps in the hand
+    # (handOnlyPieces), where the combo checks read them: a member or an
+    # alternative whose front face is not a permanent (Demonic Consultation;
+    # an instant or sorcery slot member is not spent before its slot counts as
+    # filled; a modal DFC whose front is a spell is not played as its land),
+    # or with {X} in its cost whatever its type (owner-approved 2026-11-23,
+    # decision C: the combo gate prices it at its line's minX, else at X = 0;
+    # cast at X = 0, a 0/0 Walking Ballista would die), and every
+    # castFromHand piece (owner decision 27, decision 2: it counts only cast
+    # during the combo). The goldfish never casts one from the hand, plays one
+    # as its land (choose_land_to_play), deploys one free (the DEC-405 deploy
+    # engine) or casts one from a cascade (resolve_cascade_triggers). Other
+    # permanent pieces (Thassa's Oracle) are cast proactively and stay
+    # available to the checks on the battlefield.
+    hand_only_pieces = frozenset(
+        {member for member in line_members | alternatives
+         if not is_front_permanent(profiles[member]) or profiles[member]["manaCost"]["X"]}
+        | {piece for line in combo_lines for piece in line["castFromHand"]})
     # Reserved from filler casting and from the DEC-405 deploy engine's free
     # deploy, which leaves them in the hand: those pieces, and the tutor and
     # recursion cards the checks read as substitutes (none in a deck with no
@@ -3870,6 +4001,10 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
     # and assembly-line member (imprint_from_hand).
     imprint_keep = (frozenset(role_names(deck_data, "tutor")) | role_names(deck_data, "recursion")
                     | line_members)
+    # The alternatives kept in the hand that are no member of any line
+    # (decision 6b): reserved like a line piece, but an imprint may exile
+    # them, as it may a card held back as interaction (imprint_choice).
+    held_alternatives = (alternatives - line_members) & hand_only_pieces
     # The spells a paid mulligan bottoms last of the spells (goldfish_bottom_cards): those
     # the goldfish takes from the hand without casting them as filler. Every
     # combo-line and assembly-line member; the tutor and recursion cards whose
@@ -3929,6 +4064,7 @@ def build_goldfish_context(decklist: list[str], deck_data: dict, metadata: dict,
         "assemblyLines": assembly_lines,
         "reservedPieces": reserved_pieces,
         "handOnlyPieces": hand_only_pieces,
+        "heldAlternatives": held_alternatives,
         "lineMembers": line_members,
         "cascade": COMMANDER_CASCADE.get(deck_id),
         "copyEngine": COMMANDER_COPY_ENGINE.get(deck_id),
@@ -4154,7 +4290,9 @@ def proactive_cast_priority(name: str, profile: dict, commander_name: str,
     """Sort order for proactive solitaire decisions.
 
     DEC-944 — ``line_members`` are the cards named by the deck's combo gate
-    (``winConditions[] kind:'combo'``) and KEY_COMBOS assembly slots. A piece
+    (``winConditions[] kind:'combo'``) and KEY_COMBOS assembly slots, not a
+    card named only in a list entry of a line's pieces or in a slot flagged
+    noPriority (owner decision 27, build_goldfish_context). A piece
     outranks the generic threat/draw/filler tiers because it is the cast that
     advances the turn's line. The order: mana sources first (they are mana
     positive across the turn and the line needs the mana), then the commander
@@ -4601,6 +4739,17 @@ def payable_assignments(fixed: list[dict], options: list[list[dict]], leaf_ok) -
     return [cost for _, cost in frontier]
 
 
+def creature_now(profile: dict, permanents: list[dict], profiles: dict) -> bool:
+    """Whether a permanent on the goldfish battlefield is a creature: its
+    battlefield face's type line says so, and one that is a creature only
+    while a condition holds (``conditionalCreature``) is one only when that
+    condition is a devotion (``creatureDevotion``) met on ``permanents``
+    (devotion_to, its own mana cost included)."""
+    devotion = profile["creatureDevotion"]
+    return "Creature" in profile["typeWords"] and (not profile["conditionalCreature"] or (
+        devotion is not None and devotion_to(devotion[0], permanents, profiles) >= devotion[1]))
+
+
 def extra_cost_objects(permanents: list[dict], hand: list[str], profiles: dict, commander_name: str,
                        excluded: set[str]) -> list[tuple]:
     """The objects that can pay an extra cost (rule B5), as (key, card name,
@@ -4631,11 +4780,8 @@ def extra_cost_objects(permanents: list[dict], hand: list[str], profiles: dict, 
         if profile["onceLeaves"]:
             continue
         words = profile["typeWords"]
-        devotion = profile["creatureDevotion"]
-        is_creature = "Creature" in words and (not profile["conditionalCreature"] or (
-            devotion is not None and devotion_to(devotion[0], permanents, profiles) >= devotion[1]))
         kinds = set()
-        if is_creature:
+        if creature_now(profile, permanents, profiles):
             kinds.add("sacrifice-creature")
             if "G" in profile["colors"]:
                 kinds.add("sacrifice-green-creature")
@@ -4688,9 +4834,10 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
     substitute in hand, as the line's ``deliveries`` (combo_deliveries) say:
     a tutor or recursion card whose tags allow the piece, paying its use and,
     when the piece goes to the hand or is cast from the graveyard, the piece;
-    onto the battlefield it is not paid and never supplies a minX piece or
-    the startPiece; bargained Beseech the Mirror casts a piece of mana value
-    4 or less free. Every assignment of the missing pieces to different cards
+    onto the battlefield it is not paid and never supplies a minX piece, the
+    startPiece or a castFromHand piece; bargained Beseech the Mirror casts a
+    piece of mana value 4 or less free (not a minX or castFromHand piece);
+    nothing supplies the commander. Every assignment of the missing pieces to different cards
     is tried (rule B7). One use per card (B6): a card that is a piece in hand
     supplies another piece only if it is a permanent, paying only its
     ``*_cost`` on top of the cast already counted (Sun Titan cast as a piece
@@ -4706,9 +4853,10 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
     before it in ``permanents``); out since an earlier turn its cost is paid
     again (a minX piece at its minX); entered this turn before a partner, the
     line is not ready this turn. Missing, it is supplied only by a route that
-    casts it. The rule cannot tell a line that recasts the piece from the
-    battlefield (Mystic Forge) from one that needs it in hand (Echoes), so it
-    under-counts the former on purpose. The goldfish does not plan its casts
+    casts it. A line whose loop recasts the piece from the battlefield
+    (Mystic Forge) pays its cost again, a one-mana restart; a line that needs
+    it cast from the hand (Echoes of Eternity) also lists it in castFromHand,
+    so on the battlefield it never counts there. The goldfish does not plan its casts
     around the start piece: it casts line pieces cheapest first, so a start
     piece cast in the same turn as its last partner lands first and the line
     waits a turn.
@@ -4719,18 +4867,52 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
     loop never casts it, a cascade declines it and a deploy never takes it;
     the hatch, the other free put the goldfish models, is in no deck that
     holds it.
+
+    The combo-line corrections' fields (owner decision 27, 2026-11-25;
+    extract_combo_lines):
+
+    - ``needsCreature``: the line is ready only with that many creatures on
+      the battlefield that are not its pieces (creature_now: a land creature
+      counts, a Theros god at its devotion), and an extra cost never takes
+      one of them below that many; tokens are not objects here, so they are
+      not seen.
+    - ``castFromHand``: such a piece counts in the hand (its cost paid) or
+      supplied by a route that casts it (combo_deliveries); on the
+      battlefield the line is not ready.
+    - ``readyPieces``: such a piece counts once its record shows it entered
+      on an earlier turn (whether it is untapped is not checked). One that
+      entered this turn, is in the hand or is supplied takes one of the
+      line's ``readyHaste`` sources, chosen with the rest of the assignment,
+      so the cheapest payable is kept: a static grant on the battlefield,
+      free, for any number of pieces; an Equipment on the battlefield, its
+      equip added, or an instant in the hand, its cost added, each for one
+      piece. A source an assignment relies on is never an extra cost's
+      object. With no source the line is not ready.
+    - ``extraCost`` is added to the line's cost each time it is counted.
     """
     costs = []
     if not combo_lines:
         return costs
     battlefield_names = {permanent["name"] for permanent in permanents if permanent["kind"] != "land"}
     hand_names = set(hand)
+    # The latest record of each non-land permanent, for the readyPieces rule.
+    records = {permanent["name"]: permanent for permanent in permanents if permanent["kind"] != "land"}
     # Entry position of each non-land permanent (latest copy), for the startPiece rule.
     entry_index = (
         {p["name"]: idx for idx, p in enumerate(permanents) if p["kind"] != "land"}
         if any(line["startPiece"] for line in combo_lines) else {}
     )
     for line in combo_lines:
+        # The creatures the line may target (needsCreature), by their keys in
+        # extra_cost_objects: those on the battlefield, a land creature
+        # included, that are not its pieces. No extra cost may take them below
+        # the count (leaf_ok).
+        targets = frozenset(("battlefield", index) for index, permanent in enumerate(permanents)
+                            if permanent["name"] not in line["pieces"]
+                            and creature_now(profiles[permanent["name"]], permanents, profiles)
+                            ) if line["needsCreature"] else frozenset()
+        if len(targets) < line["needsCreature"]:
+            continue  # no creature to target
         start_piece = line["startPiece"]
         start_recast = False
         if start_piece in entry_index:
@@ -4740,9 +4922,12 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
             elif not all(other in entry_index and entry_index[other] < start_idx
                          for other in line["pieces"] if other != start_piece):
                 continue  # entered this turn before a partner: no restart this turn
-        fixed, missing = [], []
+        fixed, missing, ready = [], [], True
         for piece, piece_cost in zip(line["pieces"], line["costs"]):
             if piece in battlefield_names:
+                if piece in line["castFromHand"]:
+                    ready = False  # on the battlefield it is not cast during the combo
+                    break
                 if piece == start_piece and start_recast:
                     fixed.append(piece_cost)
                 continue
@@ -4750,12 +4935,35 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
                 fixed.append(piece_cost)
                 continue
             missing.append(piece)
-        if not missing:
-            costs.append(combine_mana_costs(fixed))
+        # Each ready piece not out since the turn began takes one of the line's
+        # haste sources, chosen with the rest of the assignment (the cheapest
+        # payable is kept): a static grant on the battlefield, free and for any
+        # number of pieces; an Equipment on the battlefield at its equip, or an
+        # instant in the hand at its cost, one piece each. A source an option
+        # relies on is no object for an extra cost (leaf_ok: it is a card the
+        # assignment uses).
+        haste = line["readyHaste"]
+        options = []
+        for piece in line["readyPieces"] if ready else ():
+            if piece in records and records[piece].get("enteredTurn", turn) < turn:
+                continue  # on the battlefield since the turn began
+            grants = ([{"uses": frozenset(), "card": name, "kinds": (), "cost": combine_mana_costs([])}
+                       for name in haste["static"] if name in battlefield_names]
+                      + [{"uses": frozenset({name}), "card": name, "kinds": (), "cost": cost}
+                         for name, cost in haste["equip"].items() if name in battlefield_names]
+                      + [{"uses": frozenset({name}), "card": name, "kinds": (), "cost": cost}
+                         for name, cost in haste["instant"].items() if name in hand_names])
+            if not grants:
+                ready = False  # a piece not ready and nothing to haste it
+                break
+            options.append(sorted(grants, key=lambda option: option["cost"]["total"]))
+        if not ready:
             continue
+        if line["extraCost"] is not None:
+            fixed.append(line["extraCost"])
         hand_pieces = {piece for piece in line["pieces"]
                        if piece in hand_names and piece not in battlefield_names}
-        options = []
+        supplied = []
         for piece in missing:
             piece_options = []
             for delivery in line["deliveries"][piece]:
@@ -4772,18 +4980,24 @@ def combo_line_costs(turn: int, hand: list[str], permanents: list[dict],
                                       "cost": combine_mana_costs([base] + delivery["parts"])})
             if not piece_options:
                 break
-            options.append(sorted(piece_options, key=lambda option: option["cost"]["total"]))
-        if len(options) < len(missing):
+            supplied.append(sorted(piece_options, key=lambda option: option["cost"]["total"]))
+        if len(supplied) < len(missing):
+            continue
+        options += supplied
+        if not options:
+            costs.append(combine_mana_costs(fixed))
             continue
         line_objects = []
 
-        def leaf_ok(chosen: list[dict], pieces=frozenset(line["pieces"]), line_objects=line_objects) -> bool:
+        def leaf_ok(chosen: list[dict], pieces=frozenset(line["pieces"]), line_objects=line_objects,
+                    targets=targets, need=line["needsCreature"]) -> bool:
             kinds = [kind for option in chosen for kind in option["kinds"]]
             if not kinds:
                 return True
             if not line_objects:
                 line_objects.append(extra_cost_objects(permanents, hand, profiles, commander_name, set(pieces)))
-            return objects_found(kinds, line_objects[0], {option["card"] for option in chosen})
+            return objects_found(kinds, line_objects[0], {option["card"] for option in chosen},
+                                 lambda taken: len(targets - taken) >= need)
 
         costs.extend(payable_assignments(fixed, options, leaf_ok))
     return costs
@@ -5419,8 +5633,12 @@ def imprint_choice(profile: dict, hand: list[str], profiles: dict, context: dict
                     or (rule["atoms"] is None and not card_profile["colors"]))
 
     cards = [card for card in ordered_unique(hand) if eligible(card)]
-    idle = [card for card in cards if profiles[card]["isInteraction"]
-            and card not in context["reservedPieces"]]
+    # Never cast from the hand, so exiled first, ranked together: a card held
+    # back as interaction, and an alternative a combo line or a table slot
+    # keeps in the hand and no line names plainly (heldAlternatives, decision
+    # 6b: no imprint protection).
+    idle = [card for card in cards if (profiles[card]["isInteraction"] and card not in context["reservedPieces"])
+            or card in context["heldAlternatives"]]
     castable = [card for card in cards if not goldfish_never_casts(card, profiles[card], context)]
     if idle:
         return max(idle, key=lambda c: (len(profiles[c]["colors"]), profiles[c]["cmc"], c))
@@ -5440,13 +5658,16 @@ def imprint_from_hand(record: dict, profile: dict, hand: list[str], profiles: di
     nonland card, then one mana of its colours (a colourless one gives
     nothing, so it is never chosen); with no such card the Mox gives nothing.
 
-    The card chosen is one held back as interaction (goldfish_holds_back),
-    which the goldfish never casts, if the hand has any, else the castable
-    card last in its own cast order (ties:
+    The card chosen is one held back as interaction (goldfish_holds_back) or
+    an alternative a combo line or a table slot keeps in the hand and no line
+    names plainly (``heldAlternatives``, owner decision 27, 6b), ranked
+    together ahead of the castable cards (both are never cast; the most
+    colours, then the highest mana value, then the name latest in the alphabet, goes first), if the
+    hand has any, else the castable card last in its own cast order (ties:
     the higher mana value). Never exiled, in every deck: tutor and
     recursion cards (by their roles), every combo-line and assembly-line
-    member (``imprintKeep``), reserved combo pieces and the deploy engine's
-    Equipment; nor a land (a Pathway included) or a modal card with a spell
+    member (``imprintKeep``), the other reserved combo pieces and the deploy
+    engine's Equipment; nor a land (a Pathway included) or a modal card with a spell
     front and a land back, played as its land or kept in the hand as a line
     piece (handOnlyPieces). A transforming card with a land back (Growing
     Rites of Itlimoc, an enchantment on its front) can be exiled. Returns the
@@ -6896,9 +7117,12 @@ GOLDFISH_MANA_METHODOLOGY = (
     "value 7 or more from the hand and makes {C}{C}, else {C}; Chrome Mox exiles a coloured "
     "nonartifact, nonland card and makes one mana of its colours, and is not cast, paid or by "
     "cascade, while no card can be exiled for it; the card exiled is one the goldfish holds back as "
-    "interaction if the hand holds one, else the castable card last in its cast order, and it leaves the "
-    "hand; never exiled, in every deck: tutor and recursion cards (by their roles), combo-line "
-    "and assembly-line members, reserved combo pieces, deploy-engine Equipment, a land, and a modal "
+    "interaction or an alternative a combo line or a table slot keeps in the hand and no line names "
+    "plainly, ranked together (the most colours, then the highest mana value, then the name latest in the "
+    "alphabet, first), "
+    "if the hand holds one, else the castable card last in its cast order, and it leaves the hand; "
+    "never exiled, in every deck: tutor and recursion cards (by their roles), combo-line "
+    "and assembly-line members, the other reserved combo pieces, deploy-engine Equipment, a land, and a modal "
     "card with a spell front and a land back (played as its land, or kept in the hand as a line "
     "piece); a transforming card with a land back (Growing Rites of Itlimoc, an enchantment on its "
     "front) can be exiled. Land-ramp spells move the lands their text says, each destination "
@@ -7102,7 +7326,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "available mana (DEC-937). Sources that come online untapped mid-turn join the pool. "
             "Cast priority holds mana for the line instead of emptying the pool into filler "
             "(DEC-944). The commander, mana sources and the castable cards named by the deck's "
-            "combo gate or KEY_COMBOS assembly slots are cast freely — mana sources are mana-positive across "
+            "combo gate or KEY_COMBOS assembly slots (not a card named only in a list of a combo "
+            "line's pieces or in a slot flagged noPriority) are cast freely — mana sources are mana-positive across "
             "the turn and a piece cast advances a line rather than spending it. Every other cast "
             "is filler, and filler is skipped when the pool it would leave behind no longer pays "
             "for (a) a combo or assembly line that was reachable this turn before the cast, or "
@@ -7165,7 +7390,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "(Elena, Turk Recruit's historic card). Not tracked: the graveyard (a piece a recursion "
             "card could return is assumed to be in it, an over-read) and a tutor's target in the "
             "library. Not counted: life paid, cards exiled from the graveyard, a random discard, "
-            "equip, improvise; a card that finds or returns several counts one, and a piece put onto "
+            "equip (but a combo line's listed haste Equipment, winConditions[].readyHaste, pays its "
+            "equip), improvise; a card that finds or returns several counts one, and a piece put onto "
             "the battlefield does not then supply another piece with its own ability. A split card "
             "is read by its first half's type. In a cost, hybrid and Phyrexian mana symbols are read "
             "as free (devotion counts them). "
@@ -7183,7 +7409,11 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "then the spells it keeps (the combo checks' cards and a deploy engine's configured "
             "Equipment, the dearest first, a held card among them too: gandalf-party-guest's Muddle "
             "the Mixture), then lands; from five or more, a land first. An imprint "
-            "that can exile a held card exiles it first, never a kept or reserved card. "
+            "exiles first, if it can, a held card or an alternative a combo line or a table slot keeps "
+            "in the hand and no line names plainly, ranked together (the most colours, then the highest "
+            "mana value, then the name latest in the alphabet, first), ahead of the castable cards; never a "
+            "kept card or another "
+            "reserved card. "
             "Known limits: a creature is credited by mana value, by what the general parsers read in "
             "its text (a draw as it enters: exponential-growth's Zegana, Utopian Speaker; its mana) "
             "and by what an engine table credits (The Great Goblin's damage per amass, Vodalian "
@@ -7228,7 +7458,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "cast from the command zone at X = 0; one named only in a KEY_COMBOS slot waits for a "
             "positive X under the X rule (no commander in the fleet has {X}). "
             "The spells a paid mulligan keeps, bottoming them last of "
-            "the spells, are the line pieces, the tutor and recursion cards whose tags can supply one "
+            "the spells, are the line pieces (not a card named only in a list of a combo line's pieces "
+            "or in a slot flagged noPriority), the tutor and recursion cards whose tags can supply one "
             "of the deck's line pieces from the hand, and a deploy engine's configured Equipment. "
             "Other limitations: "
             "lines that do not win with the pieces they list still count, no opponent interaction, "
@@ -7243,7 +7474,7 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "cost is paid again; if it entered this turn before a partner, or could only "
             "be put onto the battlefield, the line is not ready that turn."
         )
-    priced_x = [f"{piece} at X = {x}" for line in combo_lines for piece, x in line["minX"].items()]
+    priced_x = ordered_unique([f"{piece} at X = {x}" for line in combo_lines for piece, x in line["minX"].items()])
     if priced_x:
         section["methodology"] += (
             " A combo line's X piece (winConditions[].minX, owner-approved 2026-11-19) is "
@@ -7255,6 +7486,75 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "and a bargained free cast do not supply it. Known limits: an X piece a card returns "
             "is assumed to be in the graveyard, which is not tracked (an over-read), and an X piece "
             "already on the battlefield counts whatever X it entered with."
+        )
+    # The combo-line corrections' fields (owner decision 27, 2026-11-25), each
+    # stated where one of the deck's lines uses it (extract_combo_lines).
+    ready_pieces = ordered_unique([piece for line in combo_lines for piece in line["readyPieces"]])
+    if ready_pieces:
+        section["methodology"] += (
+            " A combo line's ready pieces (winConditions[].readyPieces, owner-approved 2026-11-25: "
+            + ", ".join(ready_pieces) + ", the pieces its loop taps or attacks with) count only once "
+            "they have been on the battlefield since the turn began (whether they are untapped is not "
+            "checked). One that entered this turn, is cast from the hand or is supplied by a tutor or "
+            "recursion card counts only with one of the line's haste sources "
+            "(winConditions[].readyHaste), chosen with the rest of the line's cost so that the cheapest "
+            "payable one counts: a static grant on the battlefield, free; an Equipment on the "
+            "battlefield, at its equip cost, or an instant in the hand, at its cost, each for one piece. "
+            "A source the line relies on is never sacrificed or bargained for it. Known limits: a grant "
+            "a creature gets only as it enters after the grant (riot, a trigger) is read as static, an "
+            "over-read when the piece entered first; an equip is charged without checking that it can "
+            "be activated (at sorcery speed, on a creature that can be targeted); a listed haste "
+            "instant counts only while it is still in the hand, and the goldfish, which does not hold "
+            "it for the line, may already have cast it, an under-read."
+        )
+    cast_pieces = ordered_unique([piece for line in combo_lines for piece in line["castFromHand"]])
+    if cast_pieces:
+        section["methodology"] += (
+            " A combo line's cast pieces (winConditions[].castFromHand, owner-approved 2026-11-25: "
+            + ", ".join(cast_pieces) + ") count only when cast during the combo: from the hand, or "
+            "supplied by a tutor that puts one into the hand or a card that returns one to the hand "
+            "or lets it be cast from the graveyard; one on the battlefield does not count, and a card "
+            "that puts one onto the battlefield or a bargained free cast does not supply it. The "
+            "goldfish keeps them in the hand, for every line of the deck, not only the line that asks "
+            "for it: it never casts one from the hand, plays one as a land, deploys one or casts one "
+            "from a cascade."
+        )
+    if any(line["needsCreature"] for line in combo_lines):
+        section["methodology"] += (
+            " A combo line that needs a creature to target (winConditions[].needsCreature) is ready "
+            "only with that many creatures on the battlefield that are not its pieces (a land creature "
+            "counts; a Theros god once its devotion is met), and no extra cost of the line takes one "
+            "of them; tokens are not seen, an under-read."
+        )
+    if any(line["extraCost"] is not None for line in combo_lines):
+        section["methodology"] += (
+            " A combo line's extra cost (winConditions[].extraCost, owner-approved 2026-11-25: mana "
+            "its loop pays besides casting its pieces) is added to the line's cost each time it is "
+            "counted, its pieces on the battlefield or not."
+        )
+    commander_pieces = ordered_unique([piece for line in combo_lines for piece in line["pieces"]
+                                       if piece == commander_name])
+    if commander_pieces:
+        section["methodology"] += (
+            " A commander named as a combo line's piece (" + ", ".join(commander_pieces) + ") counts "
+            "only on the battlefield: a tutor or recursion card never supplies it."
+        )
+    listed = any(line["alternatives"] for line in combo_lines)
+    flagged = any(slot["noPriority"] for line in context.get("assemblyLines", []) for slot in line["slots"])
+    if listed:
+        section["methodology"] += (
+            " A list in a combo line's pieces (owner-approved 2026-11-25) is a choice of one of its "
+            "cards: the entry counts as one line per choice."
+        )
+    if listed or flagged:
+        where = " or ".join(text for text, used in (("in a list of a combo line's pieces", listed),
+                                                    ("in a KEY_COMBOS slot flagged noPriority", flagged)) if used)
+        section["methodology"] += (
+            " A card named only " + where + " (owner-approved 2026-11-25) is no line member: it is "
+            "cast like any other card (no cast priority, held back for a reachable gate) and gets no "
+            "paid-mulligan keep and no imprint protection from that line (an imprint may exile it: "
+            "with the held cards when it is kept in the hand, else as a castable card); it is kept in the hand like a line piece when its front face is not a "
+            "permanent or it has {X}."
         )
     if x_spells:
         # Only this deck's own X_SPELL_DRAW cards, in the table's words.

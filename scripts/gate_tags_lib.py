@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""The tutor and recursion tag vocabulary of a deck's ``decklist`` entries.
+"""The tutor and recursion tag vocabulary of a deck's ``decklist`` entries,
+and the fields of a ``winConditions`` combo line.
 
 The goldfish's two combo checks (scripts/export_simulation_results.py:
 ``combo_line_costs`` and ``assembly_tutor_cost``) read these fields to decide
@@ -12,15 +13,22 @@ call entry_errors, so a decklist entry one accepts the other accepts. What
 each value means to the checks is documented in data/bracket-philosophy.md
 ("comboLethal proxy schema") and in the exporter.
 
+The same holds for a deck's ``winConditions`` (the value, each entry's keys
+and its combo-line fields: pieces, startPiece, minX and the combo-line
+corrections' fields, owner decision 27, 2026-11-25): the exporter
+(extract_combo_lines) raises on what win_conditions_errors finds and the
+validator reports it.
+
 Known limit: a cost tag (``tutor_cost``, ``recursion_cost``) may hold the
 hybrid and Phyrexian symbols a printed cost can hold, and the exporter prices
-them as free, as it does in a card's printed cost.
+them as free, as it does in a card's printed cost; the same holds for a combo
+line's ``extraCost`` and ``readyHaste`` costs.
 """
 
 from __future__ import annotations
 
 import re
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Collection, Iterable, Mapping
 
 # The closed role set of decklist[].primary_role and secondary_role and of
 # commanderRoles (docs/role-taxonomy.md). compute_deck_metrics.py scores role
@@ -235,4 +243,191 @@ def entry_errors(entry: Mapping[str, object], has_combo_line: bool,
             mana_cost + str(cost_tag) if words & PERMANENT_TYPE_WORDS else str(cost_tag))
         if "{X}" not in paid:
             errors.append(f"{role}_mv_cap: \"X\" but the cost the card pays has no {{X}}")
+    return errors
+
+
+# The fields of a winConditions entry the combo check reads, on a kind
+# "combo" entry only: startPiece and minX, and the combo-line corrections'
+# fields (owner decision 27, 2026-11-25). Their meanings are in
+# export_simulation_results.extract_combo_lines and data/bracket-philosophy.md.
+COMBO_LINE_FIELDS = ("startPiece", "minX", "readyPieces", "readyHaste", "castFromHand", "needsCreature",
+                     "extraCost")
+# Every key a winConditions entry may carry, a closed list: the keys the deck
+# files use (the deck page reads title, description and cards; mana_cost and
+# sources are read by no code) and the combo-line fields. Any other key is
+# refused, not read as no field.
+WINCON_KEYS = frozenset({"title", "kind", "description", "cards", "sources", "mana_cost", "pieces",
+                         *COMBO_LINE_FIELDS})
+# The kinds of haste source readyHaste lists: a static grant on the battlefield
+# (a list of card names), an Equipment on the battlefield or an instant in the
+# hand (each a mapping of card names to the mana cost of the equip or the cast).
+HASTE_KINDS = ("static", "equip", "instant")
+
+
+def combo_line_cards(commander: str | None, decklist: Iterable[str]) -> list[str]:
+    """The cards a combo line may name, in one definition for both readers
+    (the exporter builds its card profiles from it, the validator its deck
+    set): the decklist and the commander, named as the deck lists them (a
+    face name is not the card's name). A partner is not one: the goldfish
+    models no partner (wincon_errors refuses a line that names it)."""
+    return list(dict.fromkeys([*decklist, *([] if commander is None else [commander])]))
+
+
+def win_conditions_errors(win_conditions: object, cards: Mapping[str, str], x_cards: Collection[str],
+                          partner: object = None) -> list[tuple[int | None, str]]:
+    """Every error of a deck's winConditions value, as (the entry's index, or
+    None for the value itself, the message): a value that is not a list (null
+    included; a reader passes [] for an omitted key), an entry that is not an
+    object, and each entry's wincon_errors."""
+    if not isinstance(win_conditions, list):
+        return [(None, f"{win_conditions!r} is not a list of win conditions")]
+    errors = []
+    for index, wincon in enumerate(win_conditions):
+        if not isinstance(wincon, Mapping):
+            errors.append((index, f"{wincon!r} is not an object"))
+            continue
+        errors.extend((index, error) for error in wincon_errors(wincon, cards, x_cards, partner))
+    return errors
+
+
+def _fixed_cost(value: object) -> str | None:
+    """The cost check of extraCost and of readyHaste's costs: a mana cost (the
+    cost tags' check) with no {X}, which nothing would pay."""
+    if _mana_cost(value) is None and "{X}" not in str(value):
+        return None
+    return ('a mana cost with no {X}, such as "{1}{W}" (symbols as cards print them: a number, W, U, B, R, G, '
+            'C, or a hybrid or Phyrexian symbol such as {B/G}, {2/W} or {G/P})')
+
+
+def wincon_errors(wincon: Mapping[str, object], cards: Mapping[str, str], x_cards: Collection[str],
+                  partner: object = None) -> list[str]:
+    """Every error of one winConditions entry.
+
+    ``cards`` maps each card a combo line may name (combo_line_cards) to its
+    front face's type line ("" when it is not known), ``x_cards`` holds those
+    whose front-face mana cost has {X}, ``partner`` is the deck's partner
+    commander, if any. The errors:
+
+    - a key that is not one of WINCON_KEYS;
+    - a combo-line field on an entry whose kind is not "combo";
+    - on a combo entry, ``pieces`` that is not a non-empty list whose entries
+      are card names or lists of two or more card names (a list is a choice
+      of one of its cards; lists do not nest), a card named twice in the
+      entry's pieces, a card that is not in the deck, the partner;
+    - ``startPiece`` that is not one of the pieces named outside a list;
+    - ``minX`` that is not a mapping of cards its pieces name (in a list or
+      not), with {X} in their cost, to positive integers;
+    - ``readyPieces`` or ``castFromHand`` that is not a non-empty list,
+      without repeats, of pieces named outside a list; a ``readyPieces``
+      card whose front face is a land (the goldfish does not track when a
+      land entered);
+    - ``readyHaste`` without ``readyPieces``, or that is not a non-empty
+      mapping of HASTE_KINDS (static: a non-empty list of card names; equip,
+      instant: a non-empty mapping of card names to mana costs with no {X}),
+      a haste card not in the deck, named twice or one of the entry's pieces,
+      an equip card known not to be an Equipment or an instant card known
+      not to be an instant;
+    - ``needsCreature`` that is not {"count": N}, N a positive integer;
+    - ``extraCost`` that is not a mana cost with no {X}."""
+    errors = [f"{key}: unknown field (known: {', '.join(sorted(WINCON_KEYS))})"
+              for key in wincon if key not in WINCON_KEYS]
+    present = [key for key in COMBO_LINE_FIELDS if key in wincon]
+    if wincon.get("kind") != "combo":
+        if present:
+            errors.append(f"{', '.join(present)}: read only on a kind \"combo\" entry")
+        return errors
+    pieces = wincon.get("pieces")
+    if not isinstance(pieces, list) or not pieces:
+        errors.append(f"pieces: {pieces!r} is not a non-empty list of card names and lists of card names")
+        return errors
+    plain, named = [], []
+    for entry in pieces:
+        if isinstance(entry, str):
+            plain.append(entry)
+            named.append(entry)
+        elif isinstance(entry, list):
+            if any(isinstance(item, list) for item in entry):
+                errors.append(f"pieces: {entry!r} holds a list (lists do not nest)")
+            errors.extend(f"pieces: {entry!r} holds {item!r}, not a card name"
+                          for item in entry if not isinstance(item, (str, list)))
+            if len(entry) < 2:
+                errors.append(f"pieces: {entry!r} is a list of fewer than two cards")
+            named.extend(item for item in entry if isinstance(item, str))
+        else:
+            errors.append(f"pieces: {entry!r} is not a card name or a list of card names")
+    errors.extend(f"pieces: {name!r} is named twice" for name in dict.fromkeys(named) if named.count(name) > 1)
+    errors.extend(_deck_errors("pieces", named, cards, partner))
+    if "startPiece" in wincon and wincon["startPiece"] not in plain:
+        errors.append(f"startPiece: {wincon['startPiece']!r} is not one of its pieces named outside a list")
+    if "minX" in wincon:
+        min_x = wincon["minX"]
+        if not isinstance(min_x, Mapping):
+            errors.append(f"minX: {min_x!r} is not a mapping")
+        else:
+            # A piece not in the deck is reported above, once.
+            errors.extend(
+                f"minX: {piece!r}: {x!r} is not a positive integer for one of its pieces that is in the deck and "
+                "has {X} in its mana cost"
+                for piece, x in min_x.items()
+                if piece not in named or type(x) is not int or x < 1 or (piece in cards and piece not in x_cards))
+    for key in ("readyPieces", "castFromHand"):
+        value = wincon.get(key)
+        if key in wincon and (not isinstance(value, list) or not value
+                              or not all(isinstance(name, str) and name in plain for name in value)
+                              or len(set(value)) != len(value)):
+            errors.append(f"{key}: {value!r} is not a non-empty list without repeats of its pieces named outside "
+                          "a list")
+    if isinstance(wincon.get("readyPieces"), list):
+        # Card names only: any other element is refused above, never hashed.
+        names = dict.fromkeys(name for name in wincon["readyPieces"] if isinstance(name, str))
+        errors.extend(f"readyPieces: {name!r} is a land: the goldfish does not track when a land entered, so it "
+                      "never counts on the battlefield" for name in names
+                      if "Land" in re.findall(r"[\w'-]+", cards.get(name) or ""))
+    if "readyHaste" in wincon:
+        errors.extend(_haste_errors(wincon["readyHaste"], cards, named, partner))
+        if "readyPieces" not in wincon:
+            errors.append("readyHaste: without readyPieces")
+    need = wincon.get("needsCreature")
+    if "needsCreature" in wincon and not (isinstance(need, Mapping) and set(need) == {"count"}
+                                          and type(need["count"]) is int and need["count"] >= 1):
+        errors.append(f"needsCreature: {need!r} is not {{\"count\": N}} with N a positive integer")
+    if "extraCost" in wincon and _fixed_cost(wincon["extraCost"]) is not None:
+        errors.append(f"extraCost: {wincon['extraCost']!r} is not {_fixed_cost(wincon['extraCost'])}")
+    return errors
+
+
+def _deck_errors(field: str, names: list[str], cards: Mapping[str, str], partner: object) -> list[str]:
+    """A card a field names that is the partner (whether or not the decklist
+    also lists it), or that is not in the deck."""
+    return [f"{field}: {name!r} is the partner commander, which the goldfish does not model" if name == partner
+            else f"{field}: {name!r} is not in the deck"
+            for name in dict.fromkeys(names) if name == partner or name not in cards]
+
+
+def _haste_errors(haste: object, cards: Mapping[str, str], pieces: list[str], partner: object) -> list[str]:
+    """The errors of a readyHaste value (wincon_errors)."""
+    if not isinstance(haste, Mapping) or not haste or not set(haste) <= set(HASTE_KINDS):
+        return [f"readyHaste: {haste!r} is not a non-empty mapping of {', '.join(HASTE_KINDS)}"]
+    errors, names = [], []
+    for kind, sources in haste.items():
+        if kind == "static":
+            if not isinstance(sources, list) or not sources or not all(isinstance(name, str) for name in sources):
+                errors.append(f"readyHaste: static: {sources!r} is not a non-empty list of card names")
+                continue
+            names.extend(sources)
+            continue
+        if not isinstance(sources, Mapping) or not sources:
+            errors.append(f"readyHaste: {kind}: {sources!r} is not a non-empty mapping of card names to mana costs")
+            continue
+        names.extend(sources)
+        errors.extend(f"readyHaste: {kind}: {name!r}: {cost!r} is not {_fixed_cost(cost)}"
+                      for name, cost in sources.items() if _fixed_cost(cost) is not None)
+        # A source of a known type that cannot give haste that way.
+        word, label = ("Equipment", "an Equipment") if kind == "equip" else ("Instant", "an instant")
+        errors.extend(f"readyHaste: {kind}: {name!r} is not {label}"
+                      for name in sources if cards.get(name) and word not in re.findall(r"[\w'-]+", cards[name]))
+    errors.extend(f"readyHaste: {name!r} is named twice" for name in dict.fromkeys(names) if names.count(name) > 1)
+    errors.extend(f"readyHaste: {name!r} is one of the line's pieces" for name in dict.fromkeys(names)
+                  if name in pieces)
+    errors.extend(_deck_errors("readyHaste", names, cards, partner))
     return errors

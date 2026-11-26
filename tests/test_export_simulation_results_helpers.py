@@ -9625,7 +9625,7 @@ class ComboLineMinXTests(unittest.TestCase):
                     self.assertIn("'Loop'", str(error))
                     exported = False
                 self.assertEqual(([issue.issue_type for issue in issues], exported),
-                                 ([] if accepted else ["invalid_min_x"], accepted))
+                                 ([] if accepted else ["invalid_combo_line"], accepted))
 
     def test_the_cast_loop_holds_the_x_piece_cost_for_the_gate(self):
         """Pinned game. Turn 1-2: Forests and {1} fillers (the gate needs {3}
@@ -9663,6 +9663,869 @@ class ComboLineMinXTests(unittest.TestCase):
         self.assertEqual([casts[turn] for turn in (1, 2, 3, 4, 5)],
                          [["Filler 0"], ["Filler 1", "Filler 2"], ["Partner Piece"], [], ["Filler 3"]])
         self.assertEqual([by_turn[turn]["comboLethal"] for turn in (3, 4)], [0, 1])
+
+
+class ComboLineFieldTests(unittest.TestCase):
+    """The combo-line corrections' fields (owner decision 27, approved
+    2026-11-25), read by combo_line_costs on turn 6: readyPieces and the
+    commander rule (decision 1), readyHaste (1b), castFromHand and
+    needsCreature (2), list entries in pieces (6), the cards a list entry or
+    a KEY_COMBOS slot flagged noPriority names are not line members (6b),
+    and extraCost (7). Each line is shaped on its deck-file block (W4, W8,
+    W9, W15, W17, W22) and each expected cost is a probe of the plan's
+    evidence (controls-and-probes.md) or worked from the printed costs in
+    data/card-metadata.json: Heartless Hidetsugu {3}{R}{R}, Lightning Greaves
+    equip {0}, Swiftfoot Boots equip {1}, Twinflame {1}{R}, Sublime Epiphany
+    {4}{U}{U}, Dualcaster Mage {1}{R}{R}, Conspicuous Snoop {R}{R}, Goblin
+    Recruiter {1}{R}, Expedite and Crimson Wisps {R}, Heliod, Sun-Crowned
+    {2}{W}, Walking Ballista {X}{X}, Zulaport Cutthroat {1}{B}, Demonic Tutor
+    {1}{B}, Sword of Feast and Famine {3}. A board is put on the battlefield
+    through resolve_cast_effects, each card on the turn it names. Made up:
+    Probe Field Commander, a {9} creature of no use here."""
+
+    TURN = 6
+    COMMANDER = "Probe Field Commander"
+    GANDALF = "Gandalf, Party Guest"
+    CAPTAIN = "Captain America, First Avenger"
+    COLORS = ["W", "U", "B", "R", "G"]
+    SYNTHETIC = {COMMANDER: {"type_line": "Legendary Creature — Human", "mana_cost": "{9}", "cmc": 9.0,
+                             "oracle_text": "", "colors": []}}
+    TAGS = {
+        "Demonic Tutor": {"primary_role": "tutor", "tutor_targets": ["any"]},
+        "Fabricate": {"primary_role": "tutor", "tutor_targets": ["artifact"]},
+        "Whir of Invention": {"primary_role": "tutor", "tutor_targets": ["artifact"], "tutor_mv_cap": "X",
+                              "tutor_mode": "to_battlefield"},
+        "Beseech the Mirror": {"primary_role": "tutor", "tutor_targets": ["any"],
+                               "tutor_free_cast_via_bargain": True},
+        "Diabolic Intent": {"primary_role": "tutor", "tutor_targets": ["any"],
+                            "tutor_extra_cost": "sacrifice-creature"},
+        "Reanimate": {"primary_role": "recursion", "recursion_targets": ["creature"],
+                      "recursion_mode": "to_battlefield"},
+    }
+
+    HIDETSUGU, SOLPHIM = "Heartless Hidetsugu", "Solphim, Mayhem Dominus"
+    W4 = {"title": "W4", "kind": "combo", "pieces": [HIDETSUGU, SOLPHIM], "readyPieces": [HIDETSUGU],
+          "readyHaste": {"equip": {"Lightning Greaves": "{0}", "Swiftfoot Boots": "{1}"}}}
+    W4_PLAIN = {"title": "W4", "kind": "combo", "pieces": [HIDETSUGU, SOLPHIM]}
+    W9 = {"title": "W9", "kind": "combo", "pieces": [["Twinflame", "Sublime Epiphany"], "Dualcaster Mage"],
+          "castFromHand": ["Dualcaster Mage"], "needsCreature": {"count": 1}}
+    W9_PLAIN = {"title": "W9", "kind": "combo", "pieces": ["Twinflame", "Dualcaster Mage"]}
+    SNOOP, RECRUITER, TREMORS = "Conspicuous Snoop", "Goblin Recruiter", "Impact Tremors"
+    W22 = {"title": "W22", "kind": "combo", "pieces": [SNOOP, RECRUITER, TREMORS], "readyPieces": [SNOOP],
+           "readyHaste": {"static": ["Goblin Chieftain", "Howlsquad Heavy"],
+                          "instant": {"Expedite": "{R}", "Crimson Wisps": "{R}"}},
+           "castFromHand": [RECRUITER]}
+    # Two ready pieces, two haste instants: an instant hastes one piece.
+    TWO_READY = {"title": "Two ready", "kind": "combo", "pieces": [SNOOP, RECRUITER, TREMORS],
+                 "readyPieces": [SNOOP, RECRUITER],
+                 "readyHaste": {"instant": {"Expedite": "{R}", "Crimson Wisps": "{R}"}}}
+    HELIOD, BALLISTA = "Heliod, Sun-Crowned", "Walking Ballista"
+    W17 = {"title": "W17", "kind": "combo", "pieces": [HELIOD, BALLISTA], "minX": {BALLISTA: 2},
+           "extraCost": "{1}{W}"}
+    W17_PLAIN = {"title": "W17", "kind": "combo", "pieces": [HELIOD, BALLISTA], "minX": {BALLISTA: 2}}
+    SWORD, ASSAULT = "Sword of Feast and Famine", "Aggravated Assault"
+    W15_PLAIN = {"title": "W15", "kind": "combo", "pieces": [SWORD, ASSAULT, CAPTAIN]}
+    W15 = dict(W15_PLAIN, readyPieces=[CAPTAIN],
+               readyHaste={"static": ["Dalakos, Crafter of Wonders"], "equip": {"Lightning Greaves": "{0}"}})
+    MIKAEUS, BLOOD, ZULAPORT = "Mikaeus, the Unhallowed", "Blood Artist", "Zulaport Cutthroat"
+    W8 = {"title": "W8", "kind": "combo", "pieces": [BALLISTA, MIKAEUS, [BLOOD, ZULAPORT]], "minX": {BALLISTA: 1}}
+
+    def context(self, lines, extra=(), commander=COMMANDER, combos=None, deck_id="synthetic-fields") -> dict:
+        """A deck of every card the lines name (pieces, list cards, haste
+        sources) and ``extra``, the commander apart."""
+        names = list(extra)
+        for line in lines:
+            for entry in line["pieces"]:
+                names += entry if isinstance(entry, list) else [entry]
+            for sources in line.get("readyHaste", {}).values():
+                names += list(sources)
+        for combo in combos or []:
+            names += [member for slot in exporter.combo_slot_lists(combo) for member in slot]
+        names = [name for name in dict.fromkeys(names) if name != commander]
+        metadata = {name: self.SYNTHETIC.get(name) or FLEET_METADATA[name] for name in names + [commander]}
+        deck_data = {"decklist": [dict({"name": name, **FIXTURE_ROLE}, **self.TAGS.get(name, {})) for name in names],
+                     "winConditions": [dict(line) for line in lines]}
+        with patch.dict(exporter.KEY_COMBOS, {deck_id: combos or []}):
+            return exporter.build_goldfish_context(names, deck_data, metadata, commander, self.COLORS, deck_id)
+
+    def board(self, context, entries) -> list[dict]:
+        """Each (name, turn) onto the battlefield: a land as the land drop
+        puts it (put_land_onto_battlefield), any other card as a cast."""
+        permanents = []
+        for name, turn in entries:
+            if context["profiles"][name]["isLand"]:
+                exporter.put_land_onto_battlefield(name, turn, False, permanents, [], context["profiles"],
+                                                   self.COLORS)
+                continue
+            exporter.resolve_cast_effects(name, context["profiles"][name], turn, exporter.GoldfishManaPool([]), [], [],
+                                          permanents, [], context["profiles"], self.COLORS)
+        return permanents
+
+    def totals(self, lines, hand, board, commander=COMMANDER) -> list[int]:
+        """The totals of every cost combo_line_costs gives, sorted."""
+        context = self.context(lines, list(hand) + [name for name, _ in board], commander)
+        return sorted(cost["total"] for cost in exporter.combo_line_costs(
+            self.TURN, list(hand), self.board(context, board), context["comboLines"], context["profiles"],
+            commander))
+
+    def check(self, cases, commander=COMMANDER) -> None:
+        for label, lines, hand, board, expected in cases:
+            with self.subTest(label):
+                self.assertEqual(self.totals(lines, hand, board, commander), expected)
+
+    def test_a_ready_piece_counts_out_since_the_turn_began_or_with_listed_haste(self):
+        w4, plain = [self.W4], [self.W4_PLAIN]
+        hidetsugu, solphim = self.HIDETSUGU, self.SOLPHIM
+        self.check([
+            ("W4 both out since an earlier turn: ready, 0", w4, [], [(hidetsugu, 5), (solphim, 4)], [0]),
+            ("W4 Hidetsugu entered this turn, no haste: not ready", w4, [], [(hidetsugu, 6), (solphim, 4)], []),
+            ("W4 Hidetsugu in hand, no haste: not ready", w4, [hidetsugu], [(solphim, 4)], []),
+            ("W4 Hidetsugu entered this turn, Lightning Greaves out: ready, equip {0}", w4, [],
+             [(hidetsugu, 6), (solphim, 4), ("Lightning Greaves", 3)], [0]),
+            ("W4 Hidetsugu in hand, Swiftfoot Boots out: {3}{R}{R} + equip {1}", w4, [hidetsugu],
+             [(solphim, 4), ("Swiftfoot Boots", 3)], [6]),
+            ("W4 Hidetsugu in hand, both Equipment out: the cheaper equip, {0}", w4, [hidetsugu],
+             [(solphim, 4), ("Lightning Greaves", 3), ("Swiftfoot Boots", 3)], [5]),
+            ("W4 Hidetsugu in hand, Lightning Greaves in hand only: not ready", w4, [hidetsugu, "Lightning Greaves"],
+             [(solphim, 4)], []),
+            # Control: the same board with no readyPieces.
+            ("W4 without the field, Hidetsugu entered this turn: ready, 0", plain, [],
+             [(hidetsugu, 6), (solphim, 4)], [0]),
+        ])
+
+    def test_a_haste_instant_is_paid_and_hastes_one_piece(self):
+        w22, two = [self.W22], [self.TWO_READY]
+        snoop, recruiter, tremors = self.SNOOP, self.RECRUITER, self.TREMORS
+        self.check([
+            ("W22 Snoop out since an earlier turn, Recruiter in hand: {1}{R}", w22, [recruiter],
+             [(snoop, 4), (tremors, 5)], [2]),
+            ("W22 Snoop entered this turn, no haste: not ready", w22, [recruiter], [(snoop, 6), (tremors, 5)], []),
+            ("W22 Snoop entered this turn, Goblin Chieftain out: static, 2", w22, [recruiter],
+             [(snoop, 6), (tremors, 5), ("Goblin Chieftain", 5)], [2]),
+            ("W22 Snoop and Expedite in hand: {R}{R} + {1}{R} + {R}", w22, [recruiter, snoop, "Expedite"],
+             [(tremors, 5)], [5]),
+            ("two ready pieces in hand, one haste instant: not ready", two, [recruiter, snoop, "Expedite"],
+             [(tremors, 5)], []),
+            ("two ready pieces in hand, two haste instants: {R}{R} + {1}{R} + {R} + {R}", two,
+             [recruiter, snoop, "Expedite", "Crimson Wisps"], [(tremors, 5)], [6]),
+        ])
+
+    def test_a_cast_piece_counts_only_cast_with_a_creature_to_target(self):
+        w9, plain = [self.W9], [self.W9_PLAIN]
+        gandalf = self.GANDALF
+        self.check([
+            ("W9 Dualcaster on the battlefield, Twinflame in hand: not ready", w9, ["Twinflame"],
+             [("Dualcaster Mage", 5), (gandalf, 4)], []),
+            ("W9 both in hand, no creature to target: not ready", w9, ["Twinflame", "Dualcaster Mage"], [], []),
+            ("W9 both in hand, the commander out to target: {1}{R} + {1}{R}{R}", w9,
+             ["Twinflame", "Dualcaster Mage"], [(gandalf, 4)], [5]),
+            ("W9 Sublime Epiphany route, a creature out: {4}{U}{U} + {1}{R}{R}", w9,
+             ["Sublime Epiphany", "Dualcaster Mage"], [(gandalf, 4)], [9]),
+            ("W9 both spells and Dualcaster in hand, a creature out: one line per choice", w9,
+             ["Twinflame", "Sublime Epiphany", "Dualcaster Mage"], [(gandalf, 4)], [5, 9]),
+            # Controls: the same boards with neither field.
+            ("W9 without the fields, Dualcaster on the battlefield: {1}{R}", plain, ["Twinflame"],
+             [("Dualcaster Mage", 5), (gandalf, 4)], [2]),
+            ("W9 without the fields, both in hand, no creature: {1}{R} + {1}{R}{R}", plain,
+             ["Twinflame", "Dualcaster Mage"], [], [5]),
+        ], commander=gandalf)
+        context = self.context([self.W9], commander=gandalf)
+        self.assertEqual(("Dualcaster Mage" in context["handOnlyPieces"],
+                          "Dualcaster Mage" in context["reservedPieces"]), (True, True))
+
+    def test_a_cast_piece_is_never_supplied_onto_the_battlefield_or_by_a_bargained_cast(self):
+        # Sword of Feast and Famine, an artifact of mana value 3: Fabricate
+        # finds it to the hand, Whir of Invention onto the battlefield,
+        # Beseech the Mirror to the hand or, bargained, cast free.
+        tutors = ["Fabricate", "Whir of Invention", "Beseech the Mirror"]
+        plain = {"title": "Sword line", "kind": "combo", "pieces": [self.SWORD, self.ASSAULT]}
+        routes = {}
+        for label, line in (("plain", plain), ("cast", dict(plain, castFromHand=[self.SWORD]))):
+            context = self.context([line], tutors)
+            routes[label] = sorted((option["card"], option["route"])
+                                   for option in context["comboLines"][0]["deliveries"][self.SWORD])
+        self.assertEqual(routes, {
+            "plain": [("Beseech the Mirror", "bargain"), ("Beseech the Mirror", "hand"), ("Fabricate", "hand"),
+                      ("Whir of Invention", "battlefield")],
+            "cast": [("Beseech the Mirror", "hand"), ("Fabricate", "hand")]})
+
+    def test_extra_cost_is_charged_each_time_the_line_counts(self):
+        heliod, ballista = self.HELIOD, self.BALLISTA
+        self.check([
+            ("W17 both out since an earlier turn: {1}{W}", [self.W17], [], [(heliod, 4), (ballista, 5)], [2]),
+            ("W17 both in hand: {2}{W} + X = 2 {4} + {1}{W}", [self.W17], [heliod, ballista], [], [9]),
+            ("W17 without the field, both out: 0", [self.W17_PLAIN], [], [(heliod, 4), (ballista, 5)], [0]),
+        ])
+        context = self.context([self.W17])
+        for mana, expected in (("WW" + "C" * 7, True), ("WW" + "C" * 6, False)):
+            with self.subTest(pool=mana):
+                self.assertEqual(exporter.combo_ready_this_turn(
+                    turn=self.TURN, hand=[heliod, ballista], permanents=[], combo_lines=context["comboLines"],
+                    profiles=context["profiles"], pool=exporter.GoldfishManaPool([frozenset({c}) for c in mana]),
+                    commander_name=self.COMMANDER), expected)
+        # An extra cost and an equip cost with a hybrid and a Phyrexian
+        # symbol: both read as free, as in a cost tag; {1}{W/U}{B/P} is {1}.
+        hybrid = self.context([dict(self.W17, extraCost="{1}{W/U}{B/P}")])
+        hybrid_board = self.board(hybrid, [(heliod, 4), (ballista, 5)])
+        equip = self.context([dict(self.W4, readyHaste={"equip": {"Lightning Greaves": "{G/W}{R/P}"}})])
+        equip_board = self.board(equip, [(self.HIDETSUGU, 6), (self.SOLPHIM, 4), ("Lightning Greaves", 3)])
+        for label, priced, board, mana, expected in (
+                ("extra cost {1}{W/U}{B/P}, pool C", hybrid, hybrid_board, "C", True),
+                ("extra cost {1}{W/U}{B/P}, empty pool", hybrid, hybrid_board, "", False),
+                ("equip {G/W}{R/P}, empty pool", equip, equip_board, "", True)):
+            with self.subTest(label):
+                self.assertEqual(exporter.combo_ready_this_turn(
+                    turn=self.TURN, hand=[], permanents=board, combo_lines=priced["comboLines"],
+                    profiles=priced["profiles"], pool=exporter.GoldfishManaPool([frozenset({c}) for c in mana]),
+                    commander_name=self.COMMANDER), expected)
+        # Both pieces out: the extra cost is {1}{W}, not two of any mana.
+        out = self.board(context, [(heliod, 4), (ballista, 5)])
+        for mana, expected in (("CC", False), ("WC", True)):
+            with self.subTest(pool=mana, board="both out"):
+                self.assertEqual(exporter.combo_ready_this_turn(
+                    turn=self.TURN, hand=[], permanents=out, combo_lines=context["comboLines"],
+                    profiles=context["profiles"], pool=exporter.GoldfishManaPool([frozenset({c}) for c in mana]),
+                    commander_name=self.COMMANDER), expected)
+
+    def test_a_commander_piece_is_never_supplied_by_a_tutor_or_recursion_card(self):
+        captain, sword, assault = self.CAPTAIN, self.SWORD, self.ASSAULT
+        context = self.context([self.W15_PLAIN], ["Demonic Tutor"], commander=captain)
+        deliveries = context["comboLines"][0]["deliveries"]
+        self.assertEqual(([option["card"] for option in deliveries[captain]],
+                          [option["card"] for option in deliveries[sword]]), ([], ["Demonic Tutor"]))
+        # A recursion card neither: Reanimate returns a creature card to the
+        # battlefield, Heartless Hidetsugu in a second line (the control),
+        # never the commander.
+        context = self.context([self.W15_PLAIN, self.W4_PLAIN], ["Reanimate"], commander=captain)
+        deliveries = {piece: [option["card"] for option in options]
+                      for line in context["comboLines"] for piece, options in line["deliveries"].items()}
+        self.assertEqual((deliveries[captain], deliveries[self.HIDETSUGU]), ([], ["Reanimate"]))
+        self.check([
+            ("Captain America in the command zone, Demonic Tutor in hand: not ready", [self.W15_PLAIN],
+             ["Demonic Tutor"], [(sword, 4), (assault, 4)], []),
+            # Control: Demonic Tutor finds the Sword, {1}{B} + {3}.
+            ("Captain America out, the Sword found by Demonic Tutor", [self.W15_PLAIN], ["Demonic Tutor"],
+             [(captain, 4), (assault, 4)], [5]),
+            # The commander as a ready piece: the record its cast leaves.
+            ("W15 Captain America entered this turn, no haste: not ready", [self.W15], [],
+             [(sword, 4), (assault, 4), (captain, 6)], []),
+            ("W15 Captain America entered this turn, Dalakos out: ready, 0", [self.W15], [],
+             [(sword, 4), (assault, 4), ("Dalakos, Crafter of Wonders", 5), (captain, 6)], [0]),
+            ("W15 Captain America out since an earlier turn: ready, 0", [self.W15], [],
+             [(sword, 4), (assault, 4), (captain, 5)], [0]),
+        ], commander=captain)
+
+    # A line with a creature to target, shaped on W9 (Twinflame {1}{R}, the
+    # cast piece Dualcaster Mage {1}{R}{R}).
+    TARGET = {"title": "Target", "kind": "combo", "pieces": ["Twinflame", "Dualcaster Mage"],
+              "castFromHand": ["Dualcaster Mage"], "needsCreature": {"count": 1}}
+
+    def test_one_card_fills_one_role_and_the_cheapest_haste_counts(self):
+        """Owner decision 27, round-1 review: a haste source the line relies
+        on is no extra cost's object, one Equipment hastes one piece, a static
+        grant any number, a creature to target is no extra cost's object, and
+        of the listed sources the cheapest payable counts. Beseech the Mirror
+        {1}{B}{B}{B}, bargained, casts Solphim (mana value 4) free; Diabolic
+        Intent {1}{B} sacrifices a creature; Kaldra Compleat equip {7};
+        Expedite {R}."""
+        hidetsugu, solphim = self.HIDETSUGU, self.SOLPHIM
+        greaves, boots, kaldra = "Lightning Greaves", "Swiftfoot Boots", "Kaldra Compleat"
+        two_equip = {"title": "Two ready", "kind": "combo", "pieces": [hidetsugu, solphim],
+                     "readyPieces": [hidetsugu, solphim], "readyHaste": {"equip": {greaves: "{0}", boots: "{1}"}}}
+        two_static = dict(two_equip, readyHaste={"static": ["Goblin Chieftain"]})
+        kaldra_line = dict(self.W4, readyHaste={"equip": {greaves: "{0}", boots: "{1}", kaldra: "{7}"},
+                                                "instant": {"Expedite": "{R}"}})
+        target = [self.TARGET]
+        self.check([
+            ("Greaves hastes Hidetsugu and is the only bargain object: Beseech by its paid route, "
+             "{1}{B}{B}{B} + {2}{R}{R}", [self.W4], ["Beseech the Mirror"], [(hidetsugu, 6), (greaves, 3)], [8]),
+            ("Boots out too: Greaves hastes, Boots is bargained, {1}{B}{B}{B}", [self.W4], ["Beseech the Mirror"],
+             [(hidetsugu, 6), (greaves, 3), (boots, 3)], [4]),
+            ("Hammer of Purphoros hastes Hidetsugu and is the only bargain object: {1}{B}{B}{B} + {2}{R}{R}",
+             [dict(self.W4, readyHaste={"static": ["Hammer of Purphoros"]})], ["Beseech the Mirror"],
+             [(hidetsugu, 6), ("Hammer of Purphoros", 3)], [8]),
+            ("Hidetsugu out since turn 5: Hammer of Purphoros is bargained, {1}{B}{B}{B}",
+             [dict(self.W4, readyHaste={"static": ["Hammer of Purphoros"]})], ["Beseech the Mirror"],
+             [(hidetsugu, 5), ("Hammer of Purphoros", 3)], [4]),
+            ("two ready pieces, one Equipment: not ready", [two_equip], [], [(hidetsugu, 6), (solphim, 6), (greaves, 3)],
+             []),
+            ("two ready pieces, two Equipment: equip {0} + equip {1}", [two_equip], [],
+             [(hidetsugu, 6), (solphim, 6), (greaves, 3), (boots, 3)], [1]),
+            ("two ready pieces, one static grant hastes both: 0", [two_static], [],
+             [(hidetsugu, 6), (solphim, 6), ("Goblin Chieftain", 5)], [0]),
+            ("Kaldra Compleat out, Expedite in hand: equip {7} or {R}, both kept", [kaldra_line], ["Expedite"],
+             [(hidetsugu, 6), (solphim, 4), (kaldra, 3)], [1, 7]),
+            ("the sole creature is the target: Diabolic Intent sacrifices nothing", target,
+             ["Dualcaster Mage", "Diabolic Intent"], [(self.BLOOD, 4)], []),
+            ("two creatures, one sacrificed, one the target: {1}{B} + {1}{R} + {1}{R}{R}", target,
+             ["Dualcaster Mage", "Diabolic Intent"], [(self.BLOOD, 4), (self.ZULAPORT, 4)], [7]),
+        ])
+        context = self.context([kaldra_line], ["Expedite"])
+        board = self.board(context, [(hidetsugu, 6), (solphim, 4), (kaldra, 3)])
+        self.assertTrue(exporter.combo_ready_this_turn(
+            turn=self.TURN, hand=["Expedite"], permanents=board, combo_lines=context["comboLines"],
+            profiles=context["profiles"], pool=exporter.GoldfishManaPool([frozenset({"R"})]),
+            commander_name=self.COMMANDER))
+
+    def test_the_creature_to_target_and_a_cast_piece_on_the_battlefield(self):
+        """needsCreature counts a creature on the battlefield by its face
+        there: a land creature (Dryad Arbor) counts, a Theros god only at its
+        devotion (Heliod, Sun-Crowned: five white; Heliod {2}{W}, Cathars'
+        Crusade {3}{W}{W}, Gift of Immortality {2}{W}: four; Angelic Renewal
+        {1}{W}: five), a piece of the line never. A cast piece on the
+        battlefield never counts, a start piece that entered this turn last
+        included (Sensei's Divining Top {1}, Echoes of Eternity, Glaring
+        Fleshraker)."""
+        target, both = [self.TARGET], ["Twinflame", "Dualcaster Mage"]
+        epiphany_artist = [{"title": "Own piece", "kind": "combo", "pieces": ["Sublime Epiphany", "Storm-Kiln Artist"],
+                            "needsCreature": {"count": 1}}]
+        enchantments = [("Heliod, Sun-Crowned", 4), ("Cathars' Crusade", 4), ("Gift of Immortality", 4)]
+        top = [{"title": "Echoes", "kind": "combo",
+                "pieces": ["Sensei's Divining Top", "Echoes of Eternity", "Glaring Fleshraker"],
+                "startPiece": "Sensei's Divining Top", "castFromHand": ["Sensei's Divining Top"]}]
+        self.check([
+            ("Dryad Arbor, a land creature, the only target: {1}{R} + {1}{R}{R}", target, both,
+             [("Dryad Arbor", 4)], [5]),
+            ("the only creature is a piece of the line: not ready", epiphany_artist, ["Sublime Epiphany"],
+             [("Storm-Kiln Artist", 4)], []),
+            ("another creature out: {4}{U}{U}", epiphany_artist, ["Sublime Epiphany"],
+             [("Storm-Kiln Artist", 4), (self.BLOOD, 4)], [6]),
+            ("Heliod below its devotion is no creature: not ready", target, both, enchantments, []),
+            ("Heliod at its devotion: {1}{R} + {1}{R}{R}", target, both, enchantments + [("Angelic Renewal", 4)], [5]),
+            ("a cast start piece that entered this turn last: not ready", top, [],
+             [("Echoes of Eternity", 3), ("Glaring Fleshraker", 3), ("Sensei's Divining Top", 6)], []),
+            ("the cast start piece in hand: {1}", top, ["Sensei's Divining Top"],
+             [("Echoes of Eternity", 3), ("Glaring Fleshraker", 3)], [1]),
+        ])
+
+    def test_a_list_entry_is_one_line_per_choice(self):
+        ballista, mikaeus, blood, zulaport = self.BALLISTA, self.MIKAEUS, self.BLOOD, self.ZULAPORT
+        self.check([
+            ("W8 Blood Artist out, Ballista in hand: X = 1, {2}", [self.W8], [ballista],
+             [(mikaeus, 4), (blood, 4)], [2]),
+            ("W8 Zulaport in hand: {2} + {1}{B}", [self.W8], [ballista, zulaport], [(mikaeus, 4)], [4]),
+            ("W8 no payoff: not ready", [self.W8], [ballista], [(mikaeus, 4)], []),
+            ("W8 both payoffs out: one line each", [self.W8], [ballista], [(mikaeus, 4), (blood, 4), (zulaport, 4)],
+             [2, 2]),
+        ])
+        lines = self.context([self.W8, self.W9], commander=self.GANDALF)["comboLines"]
+        self.assertEqual([(line["pieces"], line["minX"]) for line in lines], [
+            ([ballista, mikaeus, blood], {ballista: 1}), ([ballista, mikaeus, zulaport], {ballista: 1}),
+            (["Twinflame", "Dualcaster Mage"], {}), (["Sublime Epiphany", "Dualcaster Mage"], {})])
+        # A minX key in a list prices that card only in the lines that choose it.
+        listed = {"title": "Listed X", "kind": "combo", "pieces": [[ballista, "Stonecoil Serpent"], self.HELIOD],
+                  "minX": {ballista: 2}}
+        lines = self.context([listed])["comboLines"]
+        self.assertEqual([(line["pieces"], line["minX"], [cost["total"] for cost in line["costs"]])
+                          for line in lines],
+                         [([ballista, self.HELIOD], {ballista: 2}, [4, 3]),
+                          (["Stonecoil Serpent", self.HELIOD], {}, [0, 3])])
+
+    def test_alternatives_and_no_priority_slots_are_not_line_members(self):
+        def sets(context, card):
+            return tuple(card in context[key] for key in ("lineMembers", "mulliganKeep", "imprintKeep",
+                                                           "handOnlyPieces"))
+
+        fury = {"title": "W12", "kind": "combo", "pieces": ["Fury Storm", "Storm-Kiln Artist", "Twinflame"]}
+        w9 = self.context([self.W9], commander=self.GANDALF)
+        both = self.context([self.W9, fury], commander=self.GANDALF)
+        w8 = self.context([self.W8])
+        k22 = {"name": "K22", "slots": [["Fury Storm"], ["Storm-Kiln Artist"],
+                                        {"members": ["Twinflame"], "noPriority": True}], "requiresCommander": True}
+        slot = self.context([], commander=self.GANDALF, combos=[k22])
+        plain_slot = self.context([], commander=self.GANDALF, combos=[dict(k22, slots=[
+            ["Fury Storm"], ["Storm-Kiln Artist"], ["Twinflame"]])])
+        self.assertEqual({
+            "W9 Twinflame, a list card": sets(w9, "Twinflame"),
+            "W9 Sublime Epiphany, a list card": sets(w9, "Sublime Epiphany"),
+            "W9 Dualcaster Mage, a plain piece": sets(w9, "Dualcaster Mage"),
+            "Twinflame, a list card in W9 and a plain piece in W12": sets(both, "Twinflame"),
+            "Sublime Epiphany beside W12": sets(both, "Sublime Epiphany"),
+            "W8 Zulaport Cutthroat, a permanent list card": sets(w8, self.ZULAPORT),
+            "K22 Twinflame in a noPriority slot": sets(slot, "Twinflame"),
+            "K22 Storm-Kiln Artist in a plain slot": sets(slot, "Storm-Kiln Artist"),
+            "K22 Twinflame in a plain slot": sets(plain_slot, "Twinflame"),
+        }, {
+            "W9 Twinflame, a list card": (False, False, False, True),
+            "W9 Sublime Epiphany, a list card": (False, False, False, True),
+            "W9 Dualcaster Mage, a plain piece": (True, True, True, True),
+            "Twinflame, a list card in W9 and a plain piece in W12": (True, True, True, True),
+            "Sublime Epiphany beside W12": (False, False, False, True),
+            "W8 Zulaport Cutthroat, a permanent list card": (False, False, False, False),
+            "K22 Twinflame in a noPriority slot": (False, False, False, True),
+            "K22 Storm-Kiln Artist in a plain slot": (True, True, True, False),
+            "K22 Twinflame in a plain slot": (True, True, True, True),
+        })
+
+    def test_an_alternative_kept_in_the_hand_has_no_imprint_protection(self):
+        """Chrome Mox ("you may exile a nonartifact, nonland card from your
+        hand") through imprint_choice: Torment of Hailfire ({X}{B}{B}, kept in
+        the hand) named only in a noPriority slot, or Twinflame ({1}{R}, a
+        sorcery) named only in a list entry, can be exiled; named plainly by
+        another line or slot, it cannot."""
+        mox = "Chrome Mox"
+        torment_slot = {"name": "K19", "requiresCommander": False, "slots": [
+            ["Sprout Swarm"], {"members": ["Witherbloom Apprentice", "Exsanguinate", "Torment of Hailfire"],
+                               "noPriority": True}]}
+        plain_slot = dict(torment_slot, slots=[["Sprout Swarm"],
+                                               ["Witherbloom Apprentice", "Exsanguinate", "Torment of Hailfire"]])
+        fury = {"title": "W12", "kind": "combo", "pieces": ["Fury Storm", "Storm-Kiln Artist", "Twinflame"]}
+
+        def choice(lines, combos, card):
+            context = self.context(lines, [mox, card], combos=combos)
+            return exporter.imprint_choice(context["profiles"][mox], [card], context["profiles"], context, False)
+
+        # Torment of Hailfire, kept in the hand only by a noPriority slot,
+        # ranks with the held cards, ahead of Fury Storm, a castable card.
+        context = self.context([], [mox, "Fury Storm"], combos=[torment_slot])
+        self.assertEqual(exporter.imprint_choice(context["profiles"][mox], ["Fury Storm", "Torment of Hailfire"],
+                                                 context["profiles"], context, False), "Torment of Hailfire")
+        # W8's Blood Artist, an alternative the goldfish casts (a creature),
+        # is no held card: of it and Fury Storm ({2}{R}{R}, an instant, later
+        # in the cast order) the castable card last in the cast order goes.
+        context = self.context([self.W8], [mox, "Fury Storm"])
+        self.assertEqual(exporter.imprint_choice(context["profiles"][mox], [self.BLOOD, "Fury Storm"],
+                                                 context["profiles"], context, False), "Fury Storm")
+        self.assertEqual({
+            "Torment of Hailfire in a noPriority slot": choice([], [torment_slot], "Torment of Hailfire"),
+            "Torment of Hailfire in a plain slot": choice([], [plain_slot], "Torment of Hailfire"),
+            "Twinflame in a list entry only": choice([self.W9], None, "Twinflame"),
+            "Twinflame in a list entry and plainly in W12": choice([self.W9, fury], None, "Twinflame"),
+        }, {
+            "Torment of Hailfire in a noPriority slot": "Torment of Hailfire",
+            "Torment of Hailfire in a plain slot": None,
+            "Twinflame in a list entry only": "Twinflame",
+            "Twinflame in a list entry and plainly in W12": None,
+        })
+
+    def _converter_game(self, win_conditions, combos):
+        """Pinned game (only random.shuffle is pinned,
+        ComboCheckSubstituteTests.pinned_deal; the real mulligan keeps the
+        seven): three Forests, three {2} cards (Piece Permanent, an artifact;
+        Piece Instant; Zeta Converter, an artifact) and a {9} Bear, Forests
+        drawn every turn, {9} Bears below; Converter B and Other Instant are
+        never drawn. The gate is Piece Permanent + Piece Instant. Returns
+        (by_turn, casts by turn)."""
+        def card(type_line, cost, cmc):
+            return {"type_line": type_line, "oracle_text": "", "mana_cost": cost, "cmc": cmc, "colors": [],
+                    "color_identity": []}
+
+        metadata = {"Forest": CastPriorityHoldTests._forest(),
+                    self.COMMANDER: card("Legendary Creature — Human", "{9}", 9),
+                    "Piece Permanent": card("Artifact", "{2}", 2), "Piece Instant": card("Instant", "{2}", 2),
+                    "Zeta Converter": card("Artifact", "{2}", 2), "Converter B": card("Artifact", "{2}", 2),
+                    "Other Instant": card("Instant", "{2}", 2)}
+        bears = [f"Bear {i}" for i in range(20)]
+        for name in bears:
+            metadata[name] = card("Creature — Bear", "{9}", 9)
+        opening = ["Forest"] * 3 + ["Piece Permanent", "Piece Instant", "Zeta Converter", "Bear 19"]
+        library = ["Converter B", "Other Instant"] + bears[:19] + ["Forest"] * 17
+        decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in dict.fromkeys(decklist)],
+                     "winConditions": [{"title": "Gate", "kind": "combo",
+                                        "pieces": ["Piece Permanent", "Piece Instant"]}] + list(win_conditions)}
+        with patch.dict(exporter.KEY_COMBOS, {"synthetic-converter": combos}):
+            context = exporter.build_goldfish_context(decklist, deck_data, metadata, self.COMMANDER, ["G"],
+                                                      "synthetic-converter")
+        self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
+        casts = defaultdict(list)
+        original_resolve = exporter.resolve_cast_effects
+
+        def recording_resolve(name, profile, turn, *args, **kwargs):
+            casts[turn].append(name)
+            return original_resolve(name, profile, turn, *args, **kwargs)
+
+        with patch.object(exporter.random, "shuffle", shuffle), \
+                patch.object(exporter, "resolve_cast_effects", recording_resolve):
+            by_turn, _ = exporter.simulate_goldfish_game(decklist, context, 6)
+        return by_turn, casts
+
+    def test_a_converter_in_hand_is_held_like_any_card_and_a_member_is_cast(self):
+        """Turn 2 casts Piece Permanent ({2}). Turn 3 has {3} and the gate
+        needs Piece Instant's {2}: Zeta Converter as a member is cast (a
+        line piece is never held back) and the gate waits for turn 4; as a
+        list card or in a noPriority slot it is filler, held while it would
+        leave the gate unpaid, and the gate fires on turn 3."""
+        listed = {"title": "List", "kind": "combo",
+                  "pieces": ["Piece Permanent", "Other Instant", ["Zeta Converter", "Converter B"]]}
+        named = dict(listed, pieces=["Piece Permanent", "Other Instant", "Zeta Converter"])
+        slot = {"name": "Converter line", "requiresCommander": False,
+                "slots": [["Piece Permanent"], {"members": ["Zeta Converter", "Converter B"], "noPriority": True}]}
+        plain_slot = dict(slot, slots=[["Piece Permanent"], ["Zeta Converter", "Converter B"]])
+        outcomes = {}
+        for label, win_conditions, combos in (("list card", [listed], []), ("plain piece", [named], []),
+                                              ("noPriority slot", [], [slot]), ("plain slot", [], [plain_slot])):
+            by_turn, casts = self._converter_game(win_conditions, combos)
+            outcomes[label] = ([casts[turn] for turn in (2, 3, 4)],
+                               [by_turn[turn]["comboLethal"] for turn in (3, 4)])
+        held = ([["Piece Permanent"], [], ["Zeta Converter"]], [1, 1])
+        cast = ([["Piece Permanent"], ["Zeta Converter"], []], [0, 1])
+        self.assertEqual(outcomes, {"list card": held, "plain piece": cast, "noPriority slot": held,
+                                    "plain slot": cast})
+
+    def _methodology(self, win_conditions, commander=COMMANDER, deck_id="synthetic-fields", combos=()) -> dict:
+        names = []
+        for line in win_conditions:
+            for entry in line["pieces"]:
+                names += entry if isinstance(entry, list) else [entry]
+            for sources in line.get("readyHaste", {}).values():
+                names += list(sources)
+        for combo in combos:
+            names += [member for slot in exporter.combo_slot_lists(combo) for member in slot]
+        names = [name for name in dict.fromkeys(names) if name != commander]
+        decklist = names + ["Mountain"] * (99 - len(names))
+        metadata = {name: self.SYNTHETIC.get(name) or FLEET_METADATA[name] for name in names + ["Mountain", commander]}
+        deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in names] + [{"name": "Mountain"}],
+                     "winConditions": [dict(line) for line in win_conditions]}
+        with patch.object(exporter, "GOLDFISH_GAMES", 16), patch("multiprocessing.Pool", SerialPool), \
+                patch.dict(exporter.KEY_COMBOS, {deck_id: list(combos)}):
+            goldfish, _ = exporter.compute_goldfish_section(
+                decklist=decklist, deck_data=deck_data, metadata=metadata, commander_name=commander,
+                commander_colors=self.COLORS, deck_id=deck_id)
+        return goldfish
+
+    def test_the_methodology_states_the_fields_a_deck_uses(self):
+        fragments = {
+            "ready": "winConditions[].readyPieces",
+            "haste": "chosen with the rest of the line's cost",
+            "haste instant limit": "a listed haste instant counts only while it is still in the hand",
+            "cast": "winConditions[].castFromHand",
+            "cast for every line": "for every line of the deck, not only the line that asks for it",
+            "creature": "winConditions[].needsCreature",
+            "extra": "winConditions[].extraCost",
+            "list": "is a choice of one of its cards",
+            "list card": "A card named only in a list of a combo line's pieces (owner-approved",
+            "slot card": "in a KEY_COMBOS slot flagged noPriority (owner-approved",
+            "commander": "a tutor or recursion card never supplies it",
+        }
+        k22 = {"name": "K22", "slots": [["Fury Storm"], ["Storm-Kiln Artist"],
+                                        {"members": ["Twinflame"], "noPriority": True}], "requiresCommander": False}
+        fielded = self._methodology([self.W4, self.W9, self.W17, self.W15], commander=self.CAPTAIN)
+        plain = self._methodology([self.W4_PLAIN, self.W9_PLAIN, self.W17_PLAIN])
+        # A noPriority slot and no list entry: the slot sentence alone.
+        slotted = self._methodology([self.W4_PLAIN], combos=[k22])
+        self.assertEqual(({key: text in fielded["methodology"] for key, text in fragments.items()},
+                          {key: text in plain["methodology"] for key, text in fragments.items()},
+                          {key: text in slotted["methodology"] for key, text in fragments.items()}),
+                         ({key: key != "slot card" for key in fragments}, {key: False for key in fragments},
+                          {key: key == "slot card" for key in fragments}))
+        # The section lists one combo line per choice of a list entry.
+        self.assertEqual([line["pieces"] for line in fielded["comboLines"]], [
+            [self.HIDETSUGU, self.SOLPHIM], ["Twinflame", "Dualcaster Mage"], ["Sublime Epiphany", "Dualcaster Mage"],
+            [self.HELIOD, self.BALLISTA], [self.SWORD, self.ASSAULT, self.CAPTAIN]])
+
+
+class ComboLineCheckTests(unittest.TestCase):
+    """The combo-line check (gate_tags_lib.win_conditions_errors) is one
+    definition: the validator reports, as invalid_combo_line issues, exactly
+    the entries the exporter (extract_combo_lines) raises on. The deck holds
+    the real cards below and a partner, Sakashima of a Thousand Faces, read by
+    both from data/card-metadata.json (the validator's mirror is written from
+    it: names, front-face mana costs and type lines)."""
+
+    COMMANDER = "Probe Field Commander"
+    PARTNER = "Sakashima of a Thousand Faces"
+    HIDETSUGU, SOLPHIM = "Heartless Hidetsugu", "Solphim, Mayhem Dominus"
+    CARDS = [HIDETSUGU, SOLPHIM, "Lightning Greaves", "Swiftfoot Boots", "Walking Ballista", "Stonecoil Serpent",
+             "Heliod, Sun-Crowned", "Twinflame", "Sublime Epiphany", "Dualcaster Mage", "Dryad Arbor", "Mountain"]
+    BASE = {"title": "Probe line", "kind": "combo", "cards": [HIDETSUGU, SOLPHIM], "pieces": [HIDETSUGU, SOLPHIM]}
+    FULL = dict(BASE, readyPieces=[HIDETSUGU],
+                readyHaste={"static": ["Dualcaster Mage"], "equip": {"Lightning Greaves": "{0}"},
+                            "instant": {"Sublime Epiphany": "{4}{U}{U}"}},
+                castFromHand=[SOLPHIM], needsCreature={"count": 1}, extraCost="{1}{W}")
+
+    OMITTED = object()
+
+    def deck_outcome(self, win_conditions, partner_listed=False) -> tuple:
+        """(the validator's (issue type, json path, detail) triples, the
+        exporter's error or None) for the deck with this winConditions value
+        (OMITTED: no winConditions key); with ``partner_listed`` the partner is
+        also in the decklist."""
+        validator = importlib.import_module("scripts.validate_deck_json")
+        cards = self.CARDS + ([self.PARTNER] if partner_listed else [])
+        metadata = {name: FLEET_METADATA[name] for name in self.CARDS + [self.PARTNER]}
+        metadata[self.COMMANDER] = ComboLineFieldTests.SYNTHETIC[self.COMMANDER]
+        index = validator.ScryfallNameIndex({name: name for name in metadata},
+                                            {name: meta["mana_cost"] for name, meta in metadata.items()},
+                                            {name: meta["type_line"].split(" // ")[0] for name, meta in metadata.items()})
+        deck = {"id": "test-deck", "commander": self.COMMANDER, "partner": self.PARTNER,
+                "decklist": [{"name": name, **FIXTURE_ROLE} for name in cards]}
+        if win_conditions is not self.OMITTED:
+            deck["winConditions"] = win_conditions
+        with tempfile.TemporaryDirectory() as tmpdir:
+            deck_file = Path(tmpdir) / "deck.json"
+            deck_file.write_text(json.dumps(deck))
+            issues = validator.validate_deck_json([deck_file], index)
+        # The exporter's profiles: the decklist and the commander
+        # (build_goldfish_context through gate_tags_lib.combo_line_cards).
+        profiles = {name: exporter.build_goldfish_profile(name, metadata[name], set(), "utility",
+                                                          ["W", "U", "B", "R", "G"], self.COMMANDER)
+                    for name in exporter.gate_tags_lib.combo_line_cards(self.COMMANDER, cards)}
+        try:
+            exporter.extract_combo_lines(deck, profiles)
+            error = None
+        except ValueError as exc:
+            error = str(exc)
+        return [(issue.issue_type, issue.reference.json_path, issue.detail) for issue in issues], error
+
+    def outcome(self, wincon) -> tuple:
+        """(the validator's (issue type, detail) pairs, the exporter's error
+        or None) for a deck with the one win condition."""
+        issues, error = self.deck_outcome([wincon])
+        return [(issue_type, detail) for issue_type, _, detail in issues], error
+
+    def test_valid_entries_pass_both(self):
+        hidetsugu, solphim = self.HIDETSUGU, self.SOLPHIM
+        for label, wincon in (
+                ("no field", self.BASE),
+                ("every field", self.FULL),
+                ("a start piece named outside a list", dict(self.BASE, startPiece=hidetsugu)),
+                ("a list entry, minX on one of its cards",
+                 dict(self.BASE, pieces=[["Walking Ballista", "Stonecoil Serpent"], "Heliod, Sun-Crowned"],
+                      minX={"Walking Ballista": 2})),
+                ("fields of a combo line beside a list entry",
+                 dict(self.FULL, pieces=[hidetsugu, solphim, ["Walking Ballista", "Stonecoil Serpent"]])),
+                # Hybrid and Phyrexian symbols pass the cost check (read as free).
+                ("an extra cost with a hybrid symbol", dict(self.BASE, extraCost="{1}{W/U}")),
+                ("every key the deck files use", dict(self.BASE, description="", sources=[], mana_cost=4)),
+                ("an entry of another kind that lists pieces", dict(self.BASE, kind="combat")),
+                ("an entry with no kind that lists pieces",
+                 {"title": "Probe line", "cards": self.BASE["cards"], "pieces": self.BASE["pieces"]})):
+            with self.subTest(label):
+                self.assertEqual(self.outcome(wincon), ([], None))
+        for label, value in (("no winConditions key", self.OMITTED), ("an empty list", [])):
+            with self.subTest(label):
+                self.assertEqual(self.deck_outcome(value), ([], None))
+
+    def test_the_value_and_each_entry_must_be_of_their_type(self):
+        for label, value, path, message in (
+                ("null in place of the list", None, "winConditions", "winConditions: None is not a list"),
+                ("a null entry", [None], "winConditions[0]", "winConditions[0]: None is not an object"),
+                ("a string entry", [self.BASE, "Probe line"], "winConditions[1]",
+                 "winConditions[1]: 'Probe line' is not an object"),
+                ("an object in place of the list", {"Probe line": self.BASE}, "winConditions",
+                 "winConditions: {'Probe line':"),
+                ("an empty object in place of the list", {}, "winConditions", "winConditions: {} is not a list"),
+                ("a string in place of the list", "Probe line", "winConditions",
+                 "winConditions: 'Probe line' is not a list")):
+            with self.subTest(label):
+                issues, error = self.deck_outcome(value)
+                self.assertEqual([(issue_type, json_path) for issue_type, json_path, _ in issues],
+                                 [("invalid_combo_line", path)])
+                self.assertIsNotNone(error)
+                self.assertIn(message, error)
+
+    def test_a_nested_list_or_an_object_as_an_element_is_refused_never_raised(self):
+        """Each list- or mapping-valued field with a list or an object where a
+        card name, a cost or a count goes: the field's refusal in both
+        readers, never another exception."""
+        hidetsugu, solphim, ballista, heliod = self.HIDETSUGU, self.SOLPHIM, "Walking Ballista", "Heliod, Sun-Crowned"
+        base = self.BASE
+        hasted = dict(base, readyPieces=[hidetsugu])
+        lists_of_pieces = "is not a non-empty list without repeats of its pieces named outside a list"
+        cost = 'is not a mana cost with no {X}'
+        cases = [
+            ("pieces, an object", dict(base, pieces=[hidetsugu, {"name": solphim}]),
+             "pieces: {'name': 'Solphim, Mayhem Dominus'} is not a card name or a list of card names"),
+            ("pieces, a list holding an object", dict(base, pieces=[[hidetsugu, {"name": solphim}], "Twinflame"]),
+             "pieces: ['Heartless Hidetsugu', {'name': 'Solphim, Mayhem Dominus'}] holds {'name': 'Solphim, "
+             "Mayhem Dominus'}, not a card name"),
+            ("pieces, a list holding a list", dict(base, pieces=[[hidetsugu, [solphim]], "Twinflame"]),
+             "pieces: ['Heartless Hidetsugu', ['Solphim, Mayhem Dominus']] holds a list (lists do not nest)"),
+            *((f"{key}, {label}", dict(base, **{key: value}), f"{key}: {value!r} {lists_of_pieces}")
+              for key in ("readyPieces", "castFromHand")
+              for label, value in (("a nested list", [[hidetsugu]]), ("an object", [{"name": hidetsugu}]))),
+            ("readyHaste static, a nested list", dict(hasted, readyHaste={"static": [["Dualcaster Mage"]]}),
+             "readyHaste: static: [['Dualcaster Mage']] is not a non-empty list of card names"),
+            ("readyHaste static, an object", dict(hasted, readyHaste={"static": [{"name": "Dualcaster Mage"}]}),
+             "readyHaste: static: [{'name': 'Dualcaster Mage'}] is not a non-empty list of card names"),
+            ("readyHaste equip, a list for a cost", dict(hasted, readyHaste={"equip": {"Lightning Greaves": ["{0}"]}}),
+             f"readyHaste: equip: 'Lightning Greaves': ['{{0}}'] {cost}"),
+            ("readyHaste equip, an object for a cost",
+             dict(hasted, readyHaste={"equip": {"Lightning Greaves": {"cost": "{0}"}}}),
+             f"readyHaste: equip: 'Lightning Greaves': {{'cost': '{{0}}'}} {cost}"),
+            ("readyHaste instant, a list for a cost",
+             dict(hasted, readyHaste={"instant": {"Sublime Epiphany": ["{4}{U}{U}"]}}),
+             f"readyHaste: instant: 'Sublime Epiphany': ['{{4}}{{U}}{{U}}'] {cost}"),
+            ("readyHaste instant, an object for a cost",
+             dict(hasted, readyHaste={"instant": {"Sublime Epiphany": {"cost": "{4}{U}{U}"}}}),
+             f"readyHaste: instant: 'Sublime Epiphany': {{'cost': '{{4}}{{U}}{{U}}'}} {cost}"),
+            *((f"minX, {label}", dict(base, pieces=[ballista, heliod], minX={ballista: value}),
+               f"minX: 'Walking Ballista': {value!r} is not a positive integer")
+              for label, value in (("a list", [2]), ("an object", {"x": 2}))),
+            *((f"needsCreature, {label}", dict(base, needsCreature={"count": value}),
+               f"needsCreature: {{'count': {value!r}}} is not {{\"count\": N}} with N a positive integer")
+              for label, value in (("a list", [1]), ("an object", {"n": 1}))),
+        ]
+        for label, wincon, message in cases:
+            with self.subTest(label):
+                issues, error = self.outcome(wincon)
+                self.assertEqual([issue_type for issue_type, _ in issues], ["invalid_combo_line"])
+                self.assertIn(message, issues[0][1])
+                self.assertIsNotNone(error)
+                self.assertIn(message, error)
+
+    def test_the_partner_is_refused_even_when_the_decklist_lists_it(self):
+        message = f"pieces: '{self.PARTNER}' is the partner commander, which the goldfish does not model"
+        issues, error = self.deck_outcome([dict(self.BASE, pieces=[self.HIDETSUGU, self.PARTNER])],
+                                          partner_listed=True)
+        self.assertEqual([(issue_type, path) for issue_type, path, _ in issues],
+                         [("invalid_combo_line", "winConditions[0]")])
+        self.assertIn(message, issues[0][2])
+        self.assertIsNotNone(error)
+        self.assertIn(message, error)
+
+    def test_every_committed_entry_passes(self):
+        gate_tags_lib = exporter.gate_tags_lib
+        root = Path(__file__).resolve().parent.parent
+        for deck_file in sorted((root / "data" / "commanders").glob("*/deck.json")):
+            with self.subTest(deck=deck_file.parent.name):
+                deck = json.loads(deck_file.read_text())
+                names = gate_tags_lib.combo_line_cards(deck["commander"], [entry["name"] for entry in deck["decklist"]])
+                cards = {name: FLEET_METADATA[name]["type_line"].split(" // ")[0] for name in names}
+                x_cards = {name for name in names if "{X}" in FLEET_METADATA[name]["mana_cost"].split("//")[0]}
+                self.assertEqual(gate_tags_lib.win_conditions_errors(deck.get("winConditions"), cards, x_cards,
+                                                                     deck.get("partner")), [])
+
+    def test_each_refusal_is_reported_by_the_validator_and_raised_by_the_exporter(self):
+        base, full = self.BASE, self.FULL
+        hidetsugu, solphim = self.HIDETSUGU, self.SOLPHIM
+        listed = [[hidetsugu, "Twinflame"], solphim]
+        lists_of_pieces = "is not a non-empty list without repeats of its pieces named outside a list"
+        count = 'is not {"count": N} with N a positive integer'
+        cases = [
+            # The keys are a closed list (gate_tags_lib.WINCON_KEYS): any
+            # other key is refused, not read as no field, on any entry.
+            *((key, dict(base, **{key: value}), f"{key}: unknown field")
+              for key, value in (("ready_pieces", [hidetsugu]), ("CastFromHand", [solphim]), ("extra_cost", "{1}"),
+                                 ("needsCreatures", {"count": 1}), ("readyhaste", {"static": ["Dualcaster Mage"]}),
+                                 ("start_piece", hidetsugu), ("min_x", {"Walking Ballista": 1}),
+                                 ("needCreature", {"count": 1}), ("castFormHand", [solphim]),
+                                 ("startPeice", hidetsugu), ("startingPiece", hidetsugu), ("extraMana", "{1}"),
+                                 ("readiedPieces", [hidetsugu]))),
+            ("alreadyReviewed on an entry of another kind", dict(base, kind="combat", alreadyReviewed=True),
+             "alreadyReviewed: unknown field"),
+            # A field is read only on a combo entry.
+            ("a field on an entry of another kind", dict(base, kind="combat", readyPieces=[hidetsugu]),
+             'readyPieces: read only on a kind "combo" entry'),
+            ("a field on an entry with no kind",
+             {"title": "Probe line", "cards": base["cards"], "pieces": base["pieces"], "extraCost": "{1}"},
+             'extraCost: read only on a kind "combo" entry'),
+            # pieces.
+            ("pieces as a string", dict(base, pieces=hidetsugu),
+             "pieces: 'Heartless Hidetsugu' is not a non-empty list"),
+            ("pieces empty", dict(base, pieces=[]), "pieces: [] is not a non-empty list"),
+            ("a list of one card", dict(base, pieces=[[hidetsugu], solphim]),
+             "pieces: ['Heartless Hidetsugu'] is a list of fewer than two cards"),
+            ("a nested list", dict(base, pieces=[[hidetsugu, ["Twinflame", "Sublime Epiphany"]], solphim]),
+             "holds a list (lists do not nest)"),
+            ("a list holding a number", dict(base, pieces=[[hidetsugu, 3], solphim]),
+             "pieces: ['Heartless Hidetsugu', 3] holds 3, not a card name"),
+            ("an entry that is a number", dict(base, pieces=[hidetsugu, 3]),
+             "pieces: 3 is not a card name or a list of card names"),
+            ("a card named plainly and in a list", dict(base, pieces=[hidetsugu, [hidetsugu, "Twinflame"], solphim]),
+             "pieces: 'Heartless Hidetsugu' is named twice"),
+            ("a card named twice in one list", dict(base, pieces=[["Twinflame", "Twinflame"], solphim]),
+             "pieces: 'Twinflame' is named twice"),
+            ("a piece not in the deck", dict(base, pieces=[hidetsugu, "Hangarback Walker"]),
+             "pieces: 'Hangarback Walker' is not in the deck"),
+            ("a list card not in the deck", dict(base, pieces=[hidetsugu, [solphim, "Hangarback Walker"]]),
+             "pieces: 'Hangarback Walker' is not in the deck"),
+            ("a face name for a card the deck lists by its full name", dict(base, pieces=[hidetsugu, "Solphim"]),
+             "pieces: 'Solphim' is not in the deck"),
+            # The goldfish models no partner commander.
+            ("the partner as a piece", dict(base, pieces=[hidetsugu, self.PARTNER]),
+             f"pieces: '{self.PARTNER}' is the partner commander, which the goldfish does not model"),
+            ("the partner in a list", dict(base, pieces=[hidetsugu, [solphim, self.PARTNER]]),
+             f"pieces: '{self.PARTNER}' is the partner commander, which the goldfish does not model"),
+            # startPiece and minX with list entries.
+            ("a start piece in a list", dict(base, pieces=listed, startPiece=hidetsugu),
+             "startPiece: 'Heartless Hidetsugu' is not one of its pieces named outside a list"),
+            ("a start piece outside the pieces", dict(base, startPiece="Twinflame"),
+             "startPiece: 'Twinflame' is not one of its pieces named outside a list"),
+            ("minX on a list card with no {X}",
+             dict(base, pieces=[["Walking Ballista", "Heliod, Sun-Crowned"], solphim],
+                  minX={"Heliod, Sun-Crowned": 1}),
+             "minX: 'Heliod, Sun-Crowned': 1 is not a positive integer for one of its pieces"),
+            # readyPieces and castFromHand.
+            *((f"{key} {label}", dict(base, pieces=listed if label == "a list card" else base["pieces"],
+                                      **{key: value}),
+               f"{key}: {value!r} {lists_of_pieces}")
+              for key in ("readyPieces", "castFromHand")
+              for label, value in (("as a string", hidetsugu), ("empty", []), ("repeated", [hidetsugu, hidetsugu]),
+                                   ("not a piece", ["Twinflame"]), ("a list card", [hidetsugu]),
+                                   ("not a string", [3]))),
+            # readyHaste.
+            ("readyHaste without readyPieces", dict(base, readyHaste={"static": ["Dualcaster Mage"]}),
+             "readyHaste: without readyPieces"),
+            *((f"readyHaste {label}", dict(base, readyPieces=[hidetsugu], readyHaste=value), message)
+              for label, value, message in (
+                  ("as a list", ["Dualcaster Mage"],
+                   "readyHaste: ['Dualcaster Mage'] is not a non-empty mapping of static, equip, instant"),
+                  ("empty", {}, "readyHaste: {} is not a non-empty mapping of static, equip, instant"),
+                  ("an unknown kind", {"land": {"Lightning Greaves": "{0}"}},
+                   "readyHaste: {'land': {'Lightning Greaves': '{0}'}} is not a non-empty mapping of static, "
+                   "equip, instant"),
+                  ("static as a string", {"static": "Dualcaster Mage"},
+                   "readyHaste: static: 'Dualcaster Mage' is not a non-empty list of card names"),
+                  ("static empty", {"static": []}, "readyHaste: static: [] is not a non-empty list of card names"),
+                  ("equip as a list", {"equip": ["Lightning Greaves"]},
+                   "readyHaste: equip: ['Lightning Greaves'] is not a non-empty mapping of card names to mana costs"),
+                  ("an equip cost without braces", {"equip": {"Lightning Greaves": "0"}},
+                   "readyHaste: equip: 'Lightning Greaves': '0' is not a mana cost"),
+                  ("an instant cost with an unknown symbol", {"instant": {"Sublime Epiphany": "{1}{Q}"}},
+                   "readyHaste: instant: 'Sublime Epiphany': '{1}{Q}' is not a mana cost"),
+                  # An {X} nothing would pay.
+                  ("an equip cost with {X}", {"equip": {"Lightning Greaves": "{X}"}},
+                   "readyHaste: equip: 'Lightning Greaves': '{X}' is not a mana cost with no {X}"),
+                  ("an instant cost with {X}", {"instant": {"Sublime Epiphany": "{X}{U}"}},
+                   "readyHaste: instant: 'Sublime Epiphany': '{X}{U}' is not a mana cost with no {X}"),
+                  ("a card not in the deck", {"static": ["Goblin Chieftain"]},
+                   "readyHaste: 'Goblin Chieftain' is not in the deck"),
+                  ("the partner", {"static": [self.PARTNER]},
+                   f"readyHaste: '{self.PARTNER}' is the partner commander, which the goldfish does not model"),
+                  ("a card named twice", {"static": ["Lightning Greaves"], "equip": {"Lightning Greaves": "{0}"}},
+                   "readyHaste: 'Lightning Greaves' is named twice"),
+                  # One card, one role: a source is not a piece of the line.
+                  ("a piece of the line as a source", {"static": [solphim]},
+                   f"readyHaste: '{solphim}' is one of the line's pieces"),
+                  # Dualcaster Mage is a creature, Twinflame a sorcery.
+                  ("an equip card that is no Equipment", {"equip": {"Dualcaster Mage": "{1}"}},
+                   "readyHaste: equip: 'Dualcaster Mage' is not an Equipment"),
+                  ("an instant card that is no instant", {"instant": {"Twinflame": "{1}{R}"}},
+                   "readyHaste: instant: 'Twinflame' is not an instant"))),
+            # needsCreature.
+            *((f"needsCreature {label}", dict(base, needsCreature=value), f"needsCreature: {value!r} {count}")
+              for label, value in (("a number", 1), ("count 0", {"count": 0}), ("count a string", {"count": "1"}),
+                                   ("count a boolean", {"count": True}),
+                                   ("another key", {"count": 1, "notTypes": ["Human"]}), ("empty", {}))),
+            # extraCost.
+            ("extraCost without braces", dict(base, extraCost="1W"), "extraCost: '1W' is not a mana cost"),
+            ("extraCost a number", dict(base, extraCost=2), "extraCost: 2 is not a mana cost"),
+            ("extraCost with {X}", dict(base, extraCost="{X}"), "extraCost: '{X}' is not a mana cost with no {X}"),
+            # A lower-case x: the message says no {X}, and lists no X.
+            ("extraCost with {x}", dict(base, extraCost="{x}"),
+             "extraCost: '{x}' is not a mana cost with no {X}, such as \"{1}{W}\" (symbols as cards print them: a "
+             "number, W, U, B, R, G, C, or a hybrid or Phyrexian symbol such as {B/G}, {2/W} or {G/P})"),
+            # A land as a ready piece: a land's record carries no entry turn.
+            *((f"readyPieces a land, {land}", dict(base, pieces=[hidetsugu, land], readyPieces=[land]),
+               f"readyPieces: {land!r} is a land: the goldfish does not track when a land entered, so it never "
+               "counts on the battlefield")
+              # Dryad Arbor: "Land Creature — Forest Dryad"; Mountain: "Basic Land — Mountain".
+              for land in ("Dryad Arbor", "Mountain")),
+            # A list alternative is one of the line's pieces too.
+            ("a list card as a haste source", dict(base, pieces=listed, readyPieces=[solphim],
+                                                    readyHaste={"static": ["Twinflame"]}),
+             "readyHaste: 'Twinflame' is one of the line's pieces"),
+        ]
+        for label, wincon, message in cases:
+            with self.subTest(label):
+                issues, error = self.outcome(wincon)
+                self.assertEqual([issue_type for issue_type, _ in issues], ["invalid_combo_line"])
+                self.assertIn(message, issues[0][1])
+                self.assertIsNotNone(error)
+                self.assertIn("'Probe line'", error)
+                self.assertIn(message, error)
 
 
 PERM = ["artifact", "battle", "creature", "enchantment", "land", "planeswalker"]
@@ -10667,7 +11530,9 @@ class SubstituteFleetTests(unittest.TestCase):
     every one loads through the tag vocabulary, and what the combo checks let
     each tutor and recursion entry supply is what the accepted checklist says
     (tests/fixtures/gate_substitutes.json, written by hand from its "Step 1"
-    column)."""
+    column; for the lines the combo-line corrections changed, owner decision
+    27, 2026-11-25, by hand from each entry's tags and the approved line
+    blocks)."""
 
     ROOT = Path(__file__).resolve().parent.parent
     FIXTURE = json.loads((Path(__file__).resolve().parent / "fixtures" / "gate_substitutes.json").read_text())
@@ -10725,7 +11590,9 @@ class SubstituteFleetTests(unittest.TestCase):
                                    and context["comboLines"]))}
                 self.assertEqual(set(expected), listed)
                 lines += len(expected)
-        self.assertEqual(lines, 113)
+        # 113 checklist lines, less the recursion entries of anvil-chorus and
+        # armory-protocol, which keep no combo line (W1, W2).
+        self.assertEqual(lines, 111)
 
     def test_a_paid_mulligan_keeps_only_the_substitutes_the_checks_use(self):
         # Decision 6, in gandalf-party-guest: a kept seven of four lands, one
@@ -11397,11 +12264,12 @@ class EngineTableCastGuardTests(unittest.TestCase):
     data/commanders/{id}/deck.json and data/card-metadata.json, read through
     each deck's goldfish context): every card a table credits only while it
     is on the battlefield, and every KEY_COMBOS or combo-line member that is a
-    permanent with no {X} and neither a tutor nor a recursion card, is one
-    the goldfish casts from the hand. A table entry the goldfish never casts
-    is credited nowhere. Not read here: lands (played), the deploy engine's
-    Equipment (held for its free deploy) and TOKEN_MAKER_ENGINE (its own
-    guard, TokenMakerTableGuardTests).
+    permanent with no {X}, neither a tutor nor a recursion card, and not a
+    line's castFromHand piece (kept in the hand all game: owner decision 27,
+    decision 2), is one the goldfish casts from the hand. A table entry the
+    goldfish never casts is credited nowhere. Not read here: lands (played),
+    the deploy engine's Equipment (held for its free deploy) and
+    TOKEN_MAKER_ENGINE (its own guard, TokenMakerTableGuardTests).
 
     Expected exception, with its reason: Foray of Orcs in gathering-shadow's
     amassOnResolve is a removal-spot sorcery in that deck, held back as
@@ -11451,9 +12319,13 @@ class EngineTableCastGuardTests(unittest.TestCase):
                                                       metadata[deck["commander"]]["colors"] or ["C"], deck_id)
             profiles = context["profiles"]
             substitutes = exporter.role_names(deck, "tutor") | exporter.role_names(deck, "recursion")
+            # The cast pieces as the deck file declares them, not as the
+            # exporter parsed them.
+            cast_pieces = {piece for wincon in deck.get("winConditions") or [] if wincon.get("kind") == "combo"
+                           for piece in wincon.get("castFromHand", [])}
             members = {name for name in context["lineMembers"]
                        if name in profiles and profiles[name]["isPermanent"] and not profiles[name]["manaCost"]["X"]
-                       and name not in substitutes}
+                       and name not in substitutes and name not in cast_pieces}
             checked = (battlefield.get(deck_id, set()) | members) & set(decklist)
             never = sorted(name for name in checked if not profiles[name]["isLand"]
                            and exporter.goldfish_never_casts(name, profiles[name], context))

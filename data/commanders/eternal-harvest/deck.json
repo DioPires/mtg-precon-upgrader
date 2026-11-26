@@ -330,25 +330,26 @@
       ]
     },
     {
-      "title": "Mikaeus + Yawgmoth Infinite Drain",
+      "title": "Mikaeus + Yawgmoth + Blood Artist + Drivnod",
       "kind": "combo",
       "pieces": [
         "Mikaeus, the Unhallowed",
         "Yawgmoth, Thran Physician",
-        "Blood Artist"
+        "Blood Artist",
+        "Drivnod, Carnage Dominus"
       ],
       "cards": [
         "Mikaeus, the Unhallowed",
         "Yawgmoth, Thran Physician",
-        "Blood Artist"
+        "Blood Artist",
+        "Drivnod, Carnage Dominus"
       ],
-      "description": "Sacrifice any 2 non-Human creatures to Yawgmoth alternately. Each sac draws a card and puts -1/-1 on the other creature, canceling the +1/+1 counter from undying. Both creatures loop infinitely. Blood Artist or Bastion of Remembrance drains each opponent for every death. With 25+ non-Human creatures in the deck, assembling this is trivial once Mikaeus and Yawgmoth are in play.",
+      "description": "Blood Artist and Drivnod, Carnage Dominus, both non-Human, die to Yawgmoth in turn and return through Mikaeus's undying; Drivnod makes Blood Artist trigger twice on every death, its own included: 2 life from opponents a death, 60 sacrifices for three opponents at 40. Needs at least 2 life to start (each sacrifice pays 1 life; the two triggers gain 2) and enough library for Yawgmoth's draws, about one card per sacrifice. No included record in this deck has this engine.",
       "sources": [
         {
-          "type": "commanderspellbook",
-          "name": "Commander Spellbook",
-          "url": "https://commanderspellbook.com/combo/628-2123-4279/",
-          "detail": "Mikaeus + Yawgmoth infinite death triggers"
+          "type": "ai-inferred",
+          "name": "Card-text deduction",
+          "detail": "no included record in this deck; Drivnod doubles Blood Artist (the old URL, 628-2123-4279, is the Kokusho line); deduced from card text, confirmed by two reviewers (2026-11-25)"
         }
       ]
     },
@@ -399,26 +400,75 @@
       ]
     },
     {
-      "title": "Walking Ballista Undying Loop",
+      "title": "Walking Ballista + Mikaeus + drain payoff",
       "kind": "combo",
       "pieces": [
         "Walking Ballista",
-        "Mikaeus, the Unhallowed"
+        "Mikaeus, the Unhallowed",
+        [
+          "Blood Artist",
+          "Zulaport Cutthroat",
+          "Bastion of Remembrance",
+          "Sephiroth, Fabled SOLDIER"
+        ]
       ],
       "minX": {
         "Walking Ballista": 1
       },
       "cards": [
         "Walking Ballista",
-        "Mikaeus, the Unhallowed"
+        "Mikaeus, the Unhallowed",
+        "Blood Artist",
+        "Zulaport Cutthroat",
+        "Bastion of Remembrance",
+        "Sephiroth, Fabled SOLDIER"
       ],
-      "description": "2-card infinite death/ETB trigger engine. Cast Ballista at X=0 with Mikaeus out — enters as 1/1 (Mikaeus buff), no counters. Sacrifice to any outlet for the first death. Undying returns Ballista with 1 +1/+1 counter (now 2/2). Remove counter to ping itself — 1/1 with 1 damage, dies. Undying loops infinitely. Converts to a win via Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, Grave Pact, or Altar of Dementia. Most compact Mikaeus combo — tutorable via Entomb/Buried Alive + any reanimate spell.",
+      "description": "Walking Ballista beside Mikaeus pings itself to death and undying returns it, without end; Blood Artist, Zulaport Cutthroat, Bastion of Remembrance or Sephiroth drains on each death. Ballista is cast with X = 1; engine in Commander Spellbook 628-3693, the drain finish deduced.",
       "sources": [
         {
           "type": "commanderspellbook",
-          "name": "Commander Spellbook",
+          "name": "Commander Spellbook 628-3693",
           "url": "https://commanderspellbook.com/combo/628-3693/",
-          "detail": "Mikaeus + Walking Ballista infinite death triggers"
+          "detail": "engine: Mikaeus + Walking Ballista, infinite death triggers"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Card-text deduction",
+          "detail": "drain payoff finish; deduced from card text, confirmed by two reviewers (2026-11-25)"
+        }
+      ]
+    },
+    {
+      "title": "Walking Ballista + Mikaeus + free outlet",
+      "kind": "combo",
+      "pieces": [
+        "Walking Ballista",
+        "Mikaeus, the Unhallowed",
+        [
+          "Ashnod's Altar",
+          "Phyrexian Altar",
+          "Altar of Dementia"
+        ]
+      ],
+      "cards": [
+        "Walking Ballista",
+        "Mikaeus, the Unhallowed",
+        "Ashnod's Altar",
+        "Phyrexian Altar",
+        "Altar of Dementia"
+      ],
+      "description": "Walking Ballista beside Mikaeus, sacrificed to a free outlet, returns with a counter that pings an opponent, without end. Ballista is cast with X = 0; engine in Commander Spellbook 628-3693 (which starts with a counter), the X = 0 outlet start and finish deduced.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook 628-3693",
+          "url": "https://commanderspellbook.com/combo/628-3693/",
+          "detail": "engine: Mikaeus + Walking Ballista, infinite death triggers"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Card-text deduction",
+          "detail": "X = 0 start through a free outlet; ping finish; deduced from card text, confirmed by two reviewers (2026-11-25)"
         }
       ]
     }

@@ -4,9 +4,9 @@
 Checks that every card-name reference resolves against the local Scryfall
 oracle mirror and that category/highlight/synergy/win-condition references
 point at cards in the deck; `candidate_pins` must list objects with a non-empty
-`name`, a combo line's `minX` must map its in-deck {X}-cost pieces to integers >= 1,
+`name`, the win conditions must pass gate_tags_lib.win_conditions_errors,
 and a decklist entry's roles and tutor and recursion tags must pass gate_tags_lib.entry_errors,
-the check the simulation exporter runs.
+the checks the simulation exporter runs.
 """
 
 from __future__ import annotations
@@ -67,8 +67,8 @@ class ValidationIssue:
 @dataclass(frozen=True)
 class ScryfallNameIndex:
     canonical_by_alias: dict[str, str]
-    # Front-face mana cost by canonical name, for the win-condition minX check
-    # and the tag checks.
+    # Front-face mana cost by canonical name, for the win-condition combo-line
+    # check and the tag checks.
     mana_cost_by_canonical: dict[str, str] = field(default_factory=dict)
     # Front-face type line by canonical name, for the tag checks.
     type_line_by_canonical: dict[str, str] = field(default_factory=dict)
@@ -236,38 +236,37 @@ def iter_candidate_pin_issues(
             yield ValidationIssue("invalid_candidate_pins", reference, detail)
 
 
-def iter_min_x_issues(
+def iter_combo_line_issues(
     deck: Mapping[str, object],
     deck_file: Path,
     scryfall_index: ScryfallNameIndex,
-    deck_names: set[str],
 ) -> Iterator[ValidationIssue]:
-    """Yield issues for each win condition's optional `minX`: on a `kind: "combo"`
-    entry whose `pieces` is a list, a mapping from pieces of that line named exactly as
-    the deck lists them (`deck_names`: commander, partner, decklist; a face name does
-    not match) whose front-face mana cost has {X} to positive integers (the X each is
-    priced at; export_simulation_results.extract_combo_lines raises on the same inputs)."""
+    """Yield one issue per error gate_tags_lib.win_conditions_errors finds in
+    the deck's winConditions: the value and each entry's type, its keys (a
+    closed list) and its combo-line fields. The cards a line may name are
+    gate_tags_lib.combo_line_cards (the decklist and the commander, named as the
+    deck lists them; a face name does not match; a partner is refused by name),
+    read with their front faces' type lines and mana costs. The exporter
+    (export_simulation_results.extract_combo_lines) raises on the same errors."""
     deck_id = str(deck.get("id") or deck_file.parent.name)
-    wincons = deck.get("winConditions")
-    if not isinstance(wincons, list):
-        return
-    for index, wincon in enumerate(wincons):
-        if not isinstance(wincon, Mapping) or "minX" not in wincon:
-            continue
-        detail = (f"Deck {deck_id}: winConditions[{index}].minX must be on a kind \"combo\" entry with a list of "
-                  "pieces and map pieces of that line, named as the deck lists them, whose mana cost has {X} to "
-                  "positive integers.")
-        min_x = wincon["minX"]
-        pieces = wincon.get("pieces")
-        if not isinstance(min_x, Mapping) or wincon.get("kind") != "combo" or not isinstance(pieces, list):
-            reference = CardReference(deck_id, deck_file, f"winConditions[{index}].minX", repr(min_x), False)
-            yield ValidationIssue("invalid_min_x", reference, detail)
-            continue
-        for piece, x in min_x.items():
-            if (piece not in pieces or piece not in deck_names
-                    or type(x) is not int or x < 1 or "{X}" not in scryfall_index.mana_cost(piece)):
-                reference = CardReference(deck_id, deck_file, f"winConditions[{index}].minX", piece, False)
-                yield ValidationIssue("invalid_min_x", reference, detail)
+    decklist = deck.get("decklist")
+    names = [entry["name"] for entry in decklist if isinstance(entry, Mapping) and isinstance(entry.get("name"), str)
+             ] if isinstance(decklist, list) else []
+    commander = deck.get("commander")
+    cards = {}
+    for name in gate_tags_lib.combo_line_cards(commander if isinstance(commander, str) else None, names):
+        front = scryfall_index.front(name)
+        cards[name] = front[0] if front else ""
+    x_names = {name for name in cards if "{X}" in scryfall_index.mana_cost(name)}
+    wincons = deck.get("winConditions", [])
+    for index, error in gate_tags_lib.win_conditions_errors(wincons, cards, x_names, deck.get("partner")):
+        if index is None:
+            reference = CardReference(deck_id, deck_file, "winConditions", repr(wincons), False)
+        else:
+            wincon = wincons[index]
+            title = wincon.get("title") if isinstance(wincon, Mapping) else wincon
+            reference = CardReference(deck_id, deck_file, f"winConditions[{index}]", str(title), False)
+        yield ValidationIssue("invalid_combo_line", reference, f"Deck {deck_id}: {error}")
 
 
 def iter_tag_issues(
@@ -345,8 +344,7 @@ def validate_deck_json(
                 )
 
         issues.extend(iter_candidate_pin_issues(deck, deck_file))
-        deck_names = {reference.name for reference in iter_deck_core_references(deck, deck_file)}
-        issues.extend(iter_min_x_issues(deck, deck_file, scryfall_index, deck_names))
+        issues.extend(iter_combo_line_issues(deck, deck_file, scryfall_index))
         issues.extend(iter_tag_issues(deck, deck_file, scryfall_index))
 
     return issues
@@ -368,8 +366,8 @@ def main(argv: list[str]) -> int:
         description=(
             "Fail if deck.json card references are absent from the local Scryfall "
             "mirror or point outside the decklist, or if candidate_pins, a "
-            "win condition's minX or a decklist entry's tutor/recursion tags "
-            "are malformed."
+            "win condition's combo-line fields or a decklist entry's "
+            "tutor/recursion tags are malformed."
         )
     )
     parser.add_argument(

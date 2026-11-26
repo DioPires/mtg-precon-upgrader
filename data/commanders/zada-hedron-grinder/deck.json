@@ -571,7 +571,6 @@
     },
     {
       "title": "Snoop+Reflection of Kiki-Jiki+Impact Tremors (backup combo)",
-      "kind": "combo",
       "pieces": [
         "Conspicuous Snoop",
         "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
@@ -584,7 +583,7 @@
         "Goblin Recruiter",
         "Impact Tremors"
       ],
-      "description": "Backup line: Reflection of Kiki-Jiki (back-face of Fable) is a non-legendary Goblin Shaman with `{1}, {T}: create a haste-copy of nonlegendary creature you control, sac at next EOS`. Snoop inherits this ability when Reflection is on top of library (via Goblin Recruiter stacking). Infinite token Snoops trigger Impact Tremors. Functions even if Kiki-Jiki is exiled — Fable Chapter III flip is the redundancy lane.",
+      "description": "Backup line: Reflection of Kiki-Jiki (back-face of Fable) is a non-legendary Goblin Shaman with `{1}, {T}: create a haste-copy of nonlegendary creature you control, sac at next EOS`. Snoop inherits this ability when Reflection is on top of library (via Goblin Recruiter stacking). Infinite token Snoops trigger Impact Tremors. Functions even if Kiki-Jiki is exiled — Fable Chapter III flip is the redundancy lane. The simulator does not count this line: in the library the card is its front face, a Saga, so Goblin Recruiter cannot find it and Snoop does not gain its ability.",
       "sources": [
         {
           "type": "ai-inferred",
@@ -593,77 +592,150 @@
       ]
     },
     {
-      "title": "Snoop+Kiki+Impact Tremors (infinite damage)",
+      "title": "Snoop + Goblin Recruiter + Impact Tremors",
       "kind": "combo",
       "pieces": [
         "Conspicuous Snoop",
-        "Kiki-Jiki, Mirror Breaker",
         "Goblin Recruiter",
         "Impact Tremors"
+      ],
+      "readyPieces": [
+        "Conspicuous Snoop"
+      ],
+      "readyHaste": {
+        "static": [
+          "Goblin Chieftain",
+          "Howlsquad Heavy"
+        ],
+        "instant": {
+          "Expedite": "{R}",
+          "Crimson Wisps": "{R}"
+        }
+      },
+      "castFromHand": [
+        "Goblin Recruiter"
       ],
       "cards": [
         "Conspicuous Snoop",
-        "Kiki-Jiki, Mirror Breaker",
         "Goblin Recruiter",
-        "Impact Tremors"
+        "Impact Tremors",
+        "Kiki-Jiki, Mirror Breaker"
       ],
-      "description": "Combo assembly: Goblin Recruiter ETB → search library + put Kiki-Jiki on top. Snoop in play has Kiki's `{T}: hasted token copy` ability (because top of library is a Goblin card with that activated ability). Tap Snoop → hasted token Snoop; token also has Kiki's ability (top still Kiki) → infinite hasted Snoop ETBs. Each ETB triggers Impact Tremors for 1 damage to each opponent. Infinite damage to all opponents simultaneously.",
+      "description": "Goblin Recruiter stacks Kiki-Jiki on top of the library, Conspicuous Snoop gains its ability and copies itself into unbounded hasty Snoops and Impact Tremors deals 1 damage to each opponent as each one enters. Needs Kiki-Jiki still in the library, Snoop ready and Recruiter entering this turn; the mechanism is that of Commander Spellbook 618-1827-2240 (a tutor to the top in Recruiter's place).",
       "sources": [
         {
           "type": "commanderspellbook",
-          "name": "Commander Spellbook — Snoop combos catalog"
+          "name": "Commander Spellbook 618-1827-2240 (near miss: the mechanism)",
+          "url": "https://commanderspellbook.com/combo/618-1827-2240/",
+          "detail": "Snoop + Kiki-Jiki with a tutor to the top"
         },
         {
           "type": "ai-inferred",
-          "name": "DEC-271 analysis"
+          "name": "Card-text deduction",
+          "detail": "Goblin Recruiter in place of the tutor; deduced from card text, confirmed by two reviewers (2026-11-25)"
         }
       ]
     },
     {
-      "title": "Snoop+Kiki+Goblin Bombardment (infinite single-target damage)",
+      "title": "Snoop + Goblin Recruiter + Goblin Bombardment",
       "kind": "combo",
       "pieces": [
         "Conspicuous Snoop",
-        "Kiki-Jiki, Mirror Breaker",
         "Goblin Recruiter",
         "Goblin Bombardment"
+      ],
+      "readyPieces": [
+        "Conspicuous Snoop"
+      ],
+      "readyHaste": {
+        "static": [
+          "Goblin Chieftain",
+          "Howlsquad Heavy"
+        ],
+        "instant": {
+          "Expedite": "{R}",
+          "Crimson Wisps": "{R}"
+        }
+      },
+      "castFromHand": [
+        "Goblin Recruiter"
       ],
       "cards": [
         "Conspicuous Snoop",
-        "Kiki-Jiki, Mirror Breaker",
         "Goblin Recruiter",
-        "Goblin Bombardment"
+        "Goblin Bombardment",
+        "Kiki-Jiki, Mirror Breaker"
       ],
-      "description": "Same Snoop+Kiki combo, alternate damage output. Each token Snoop is sacrificed to Goblin Bombardment for 1 damage to any target. Cleanly finishes a single high-life opponent or a planeswalker. Independent of Impact Tremors — second kill output of the same combo, providing combo redundancy.",
+      "description": "Goblin Recruiter stacks Kiki-Jiki on top of the library, Conspicuous Snoop gains its ability and copies itself into unbounded hasty Snoops and Goblin Bombardment deals 1 damage to any target for each one sacrificed to it, enough for every opponent. Needs Kiki-Jiki still in the library, Snoop ready and Recruiter entering this turn; the mechanism is that of Commander Spellbook 618-1827-2240 (a tutor to the top in Recruiter's place).",
       "sources": [
         {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook 618-1827-2240 (near miss: the mechanism)",
+          "url": "https://commanderspellbook.com/combo/618-1827-2240/",
+          "detail": "Snoop + Kiki-Jiki with a tutor to the top"
+        },
+        {
           "type": "ai-inferred",
-          "name": "DEC-271 analysis",
-          "detail": "Added in Gate 3 v3 revision"
+          "name": "Card-text deduction",
+          "detail": "Goblin Recruiter in place of the tutor; deduced from card text, confirmed by two reviewers (2026-11-25)"
         }
       ]
     },
     {
-      "title": "Reiterate Buyback Infinite Mana → Grapeshot",
+      "title": "Reiterate + Seething Song → Grapeshot",
       "kind": "combo",
       "pieces": [
         "Reiterate",
-        "Mana Geyser",
+        "Seething Song",
+        [
+          "Storm-Kiln Artist",
+          "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "Ruby Medallion",
+          "Bonus Round",
+          "Spinerock Tyrant"
+        ],
         "Grapeshot"
       ],
       "cards": [
         "Reiterate",
         "Seething Song",
-        "Mana Geyser",
-        "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+        "Grapeshot",
         "Storm-Kiln Artist",
-        "Grapeshot"
+        "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+        "Ruby Medallion",
+        "Bonus Round",
+        "Spinerock Tyrant"
       ],
-      "description": "Win the game under any of these conditions: (a) Birgi in play + cast Reiterate {1}{R}{R} with buyback {3} = net 5R; (b) Storm-Kiln Artist in play converting Magecraft into Treasures; (c) Underworld Breach + 3 yard cards to escape the loop fuel. Target Seething Song or Mana Geyser, copy with Reiterate, buyback Reiterate, repeat indefinitely. Cast Grapeshot at storm 30+ for table kill.",
+      "description": "Reiterate with buyback copying Seething Song keeps its loop mana-neutral or better with Storm-Kiln Artist, Birgi, Ruby Medallion or Spinerock Tyrant on the battlefield, or after Bonus Round (a sorcery) has resolved earlier that turn; storm grows without end and Grapeshot kills the table. Needs the start mana for Song and Reiterate with buyback. Steps in Commander Spellbook 3368-4036-5195, 392-3368-4036, 3368-4036-4833 and 2492-3368-4036.",
       "sources": [
         {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook 3368-4036-5195",
+          "url": "https://commanderspellbook.com/combo/3368-4036-5195/",
+          "detail": "Storm-Kiln Artist"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook 392-3368-4036",
+          "url": "https://commanderspellbook.com/combo/392-3368-4036/",
+          "detail": "Birgi"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook 3368-4036-4833",
+          "url": "https://commanderspellbook.com/combo/3368-4036-4833/",
+          "detail": "Ruby Medallion"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook 2492-3368-4036",
+          "url": "https://commanderspellbook.com/combo/2492-3368-4036/",
+          "detail": "Bonus Round"
+        },
+        {
           "type": "ai-inferred",
-          "name": "DEC-282 analysis"
+          "name": "Card-text deduction",
+          "detail": "Spinerock Tyrant copies the single-target Reiterate; deduced from card text, confirmed by two reviewers (2026-11-25)"
         }
       ]
     },
@@ -683,6 +755,36 @@
         {
           "type": "ai-inferred",
           "name": "DEC-271 analysis"
+        }
+      ]
+    },
+    {
+      "title": "Reiterate + Pyretic Ritual + Bonus Round → Grapeshot",
+      "kind": "combo",
+      "pieces": [
+        "Reiterate",
+        "Pyretic Ritual",
+        "Bonus Round",
+        "Grapeshot"
+      ],
+      "cards": [
+        "Reiterate",
+        "Pyretic Ritual",
+        "Bonus Round",
+        "Grapeshot"
+      ],
+      "description": "With Bonus Round copying each cast, Reiterate with buyback copying Pyretic Ritual is mana-neutral and storm grows without end; Grapeshot kills the table. Steps in Commander Spellbook 2492-3105-3368.",
+      "sources": [
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook 2492-3105-3368",
+          "url": "https://commanderspellbook.com/combo/2492-3105-3368/",
+          "detail": "Reiterate + Pyretic Ritual + Bonus Round"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Card-text deduction",
+          "detail": "Grapeshot; deduced from card text, confirmed by two reviewers (2026-11-25)"
         }
       ]
     }

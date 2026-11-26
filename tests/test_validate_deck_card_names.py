@@ -145,7 +145,9 @@ class ValidateDeckJsonTests(unittest.TestCase):
 
     def test_validate_deck_json_reports_malformed_min_x(self):
         pieces = ["Walking Ballista", "Heliod, Sun-Crowned"]
-        # (label, minX, the reported json path's name or None when valid)
+        # (label, minX, what the issue's detail names, or None when valid). The
+        # combo-line check (gate_tags_lib.wincon_errors) reports each error of
+        # an entry as one invalid_combo_line issue on that entry.
         cases = [
             ("valid", {"Walking Ballista": 2}, None),
             ("empty", {}, None),
@@ -156,7 +158,7 @@ class ValidateDeckJsonTests(unittest.TestCase):
             ("a string", {"Walking Ballista": "2"}, "Walking Ballista"),
             ("a boolean", {"Walking Ballista": True}, "Walking Ballista"),
             ("a float", {"Walking Ballista": 2.0}, "Walking Ballista"),
-            ("not a mapping", ["Walking Ballista"], "['Walking Ballista']"),
+            ("not a mapping", ["Walking Ballista"], ["Walking Ballista"]),
         ]
         scryfall_names = validator.ScryfallNameIndex(
             {name: name for name in ["Known Commander", "Hangarback Walker"] + pieces},
@@ -178,8 +180,9 @@ class ValidateDeckJsonTests(unittest.TestCase):
                 issues = validator.validate_deck_json([deck_file], scryfall_names)
 
                 self.assertEqual(
-                    [(issue.issue_type, issue.reference.json_path, issue.reference.name) for issue in issues],
-                    [] if reported is None else [("invalid_min_x", "winConditions[1].minX", reported)],
+                    [(issue.issue_type, issue.reference.json_path, issue.reference.name,
+                      f"minX: {reported!r}" in issue.detail) for issue in issues],
+                    [] if reported is None else [("invalid_combo_line", "winConditions[1]", "Loop", True)],
                 )
 
     @unittest.skipUnless(

@@ -100,6 +100,59 @@ class ComboAssemblySpecTests(unittest.TestCase):
         combo = {"slots": [["X"], ["Y", "Z"]]}
         self.assertEqual(exporter.combo_slot_lists(combo), [["X"], ["Y", "Z"]])
 
+    def test_slot_lists_reads_a_no_priority_slot(self):
+        # A slot added without cast priority (owner decision 27, 6b) is
+        # written {"members": [...], "noPriority": true}.
+        combo = {"slots": [["X"], {"members": ["Y", "Z"], "noPriority": True}]}
+        self.assertEqual(exporter.combo_slot_lists(combo), [["X"], ["Y", "Z"]])
+
+    def test_assembly_line_marks_a_no_priority_slot(self):
+        with patch.dict(exporter.KEY_COMBOS, {
+            "test-deck": [{"name": "C", "slots": [["X"], {"members": ["Y", "Absent", "Z"], "noPriority": True}],
+                           "requiresCommander": False}]
+        }, clear=False):
+            lines = exporter.build_combo_assembly_lines("test-deck", ["X", "Y", "Z"], "Cmdr")
+        self.assertEqual((lines[0]["pieces"], lines[0]["slots"]), (
+            ["X", "Y", "Absent", "Z"],
+            [{"members": ["X"], "isCommander": False, "noPriority": False},
+             {"members": ["Y", "Z"], "isCommander": False, "noPriority": True}]))
+
+    def test_assembly_line_refuses_a_slot_it_cannot_read(self):
+        # Either form: a non-empty list of card names, or the noPriority object
+        # holding one; a slot of the pieces form is checked the same way.
+        for combo in ({"slots": [["X"], {"members": ["Y"]}]}, {"slots": [["X"], {"members": ["Y"], "noPriority": False}]},
+                      {"slots": [["X"], {"members": [], "noPriority": True}]},
+                      {"slots": [["X"], {"members": "Y", "noPriority": True}]},
+                      {"slots": [["X"], {"members": ["Y"], "noPriority": True, "inLibrary": True}]},
+                      {"slots": [["X"], {"members": ["Y", 42], "noPriority": True}]},
+                      {"slots": [["X"], "Y"]}, {"slots": [["X"], []]}, {"slots": [["X"], ["Y", 42]]},
+                      {"pieces": ["X", 42]}):
+            with self.subTest(combo=combo), patch.dict(exporter.KEY_COMBOS, {
+                    "test-deck": [dict({"name": "C", "requiresCommander": False}, **combo)]
+            }, clear=False):
+                with self.assertRaisesRegex(ValueError, r"KEY_COMBOS test-deck 'C': slot .* is not a non-empty list "
+                                                        r"of card names or \{\"members\": \[card names\], "
+                                                        r"\"noPriority\": true\}"):
+                    exporter.build_combo_assembly_lines("test-deck", ["X", "Y"], "Cmdr")
+
+    def test_assembly_line_refuses_a_combo_with_no_slot(self):
+        # No slot would make a line assembled on an empty board for nothing.
+        for combo in ({"slots": []}, {"pieces": []}, {}):
+            with self.subTest(combo=combo), patch.dict(exporter.KEY_COMBOS, {
+                    "test-deck": [dict({"name": "C", "requiresCommander": False}, **combo)]
+            }, clear=False):
+                with self.assertRaisesRegex(ValueError, r"KEY_COMBOS test-deck 'C': no slot"):
+                    exporter.build_combo_assembly_lines("test-deck", ["X", "Y"], "Cmdr")
+
+    def test_assembly_line_refuses_a_combo_with_both_slots_and_pieces(self):
+        # The assembly would read the slots and the export list the pieces.
+        for combo in ({"slots": [["X"]], "pieces": ["Y"]}, {"slots": [], "pieces": []}):
+            with self.subTest(combo=combo), patch.dict(exporter.KEY_COMBOS, {
+                    "test-deck": [dict({"name": "C", "requiresCommander": False}, **combo)]
+            }, clear=False):
+                with self.assertRaisesRegex(ValueError, r"KEY_COMBOS test-deck 'C': both slots and pieces"):
+                    exporter.build_combo_assembly_lines("test-deck", ["X", "Y"], "Cmdr")
+
     def test_assembly_line_drops_combo_with_missing_slot(self):
         with patch.dict(exporter.KEY_COMBOS, {
             "test-deck": [{"name": "C", "slots": [["X"], ["Absent"]], "requiresCommander": False}]

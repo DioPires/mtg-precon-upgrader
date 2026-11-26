@@ -383,97 +383,129 @@
   ],
   "winConditions": [
     {
-      "title": "Dualcaster Mage + Twinflame",
+      "title": "Dualcaster Mage + Twinflame / Sublime Epiphany",
       "kind": "combo",
       "pieces": [
-        "Twinflame",
+        [
+          "Twinflame",
+          "Sublime Epiphany"
+        ],
         "Dualcaster Mage"
       ],
-      "cards": [
-        "Twinflame",
+      "castFromHand": [
         "Dualcaster Mage"
+      ],
+      "needsCreature": {
+        "count": 1
+      },
+      "cards": [
+        "Dualcaster Mage",
+        "Twinflame",
+        "Sublime Epiphany"
       ],
       "mana_cost": 5,
-      "description": "Cast Twinflame targeting a creature you control; holding priority, flash in Dualcaster Mage. Its enters trigger copies Twinflame targeting Dualcaster; the hasty token copy re-copies the original. Infinite hasty 2/2 attackers swing the same turn — Dualcaster is not legendary, so the tokens all survive. Only 3 mana when Gandalf free-casts Twinflame at combat.",
+      "description": "Dualcaster Mage, cast while Twinflame or Sublime Epiphany targets a creature you control, copies the spell onto itself again and again: unbounded hasty attackers with Twinflame, or unbounded draws that deck every opponent with Epiphany's draw mode. Needs a creature already on the battlefield, Dualcaster cast during the combo and, for Twinflame, the attack still to come; steps in Commander Spellbook 147-1235 and 147-892.",
       "sources": [
         {
           "type": "commanderspellbook",
           "name": "Commander Spellbook 147-1235",
           "url": "https://commanderspellbook.com/combo/147-1235/",
-          "detail": "Verified on the final 99, 2026-08-15"
+          "detail": "Dualcaster Mage + Twinflame"
+        },
+        {
+          "type": "commanderspellbook",
+          "name": "Commander Spellbook 147-892",
+          "url": "https://commanderspellbook.com/combo/147-892/",
+          "detail": "Dualcaster Mage + Sublime Epiphany"
         }
       ]
     },
     {
-      "title": "Naru Meha + Ghostly Flicker / Displace",
+      "title": "Naru Meha + Sublime Epiphany",
       "kind": "combo",
       "pieces": [
         "Naru Meha, Master Wizard",
-        "Ghostly Flicker"
+        "Sublime Epiphany"
       ],
+      "castFromHand": [
+        "Naru Meha, Master Wizard"
+      ],
+      "needsCreature": {
+        "count": 1
+      },
       "cards": [
         "Naru Meha, Master Wizard",
-        "Ghostly Flicker",
-        "Displace",
-        "Storm-Kiln Artist",
-        "Archmage Emeritus",
-        "Deekah, Fractal Theorist"
+        "Sublime Epiphany"
       ],
-      "mana_cost": 7,
-      "description": "With Naru Meha in hand, cast Flicker or Displace on any two permanents, flash in Naru in response; her trigger copies the blink spell targeting Naru plus a land, restarting her trigger each loop. Infinite casts convert through any magecraft payoff: Storm-Kiln (infinite Treasure), Archmage (draw the deck), Deekah (infinite Fractals). Never pre-cast Naru — the trigger only fires on entry.",
+      "mana_cost": 10,
+      "description": "Naru Meha, cast while Sublime Epiphany targets a creature you control, copies it onto herself again and again; Epiphany's draw mode decks every opponent. Needs a creature already on the battlefield and Naru cast during the combo; steps in Commander Spellbook 141-892.",
       "sources": [
         {
           "type": "commanderspellbook",
-          "name": "Commander Spellbook — Naru Meha + blink lines",
-          "detail": "Confirmed via find-my-combos on the final 99, 2026-08-15"
+          "name": "Commander Spellbook 141-892",
+          "url": "https://commanderspellbook.com/combo/141-892/",
+          "detail": "Naru Meha + Sublime Epiphany: infinite card draw for any number of players"
         }
       ]
     },
     {
-      "title": "Naru Meha + Twinflame",
+      "title": "Naru Meha + Twinflame + Sakashima",
       "kind": "combo",
       "pieces": [
         "Naru Meha, Master Wizard",
-        "Twinflame"
+        "Twinflame",
+        "Sakashima of a Thousand Faces"
+      ],
+      "castFromHand": [
+        "Naru Meha, Master Wizard"
       ],
       "cards": [
         "Naru Meha, Master Wizard",
         "Twinflame",
-        "Storm-Kiln Artist",
-        "Archmage Emeritus",
-        "Deekah, Fractal Theorist"
+        "Sakashima of a Thousand Faces"
       ],
-      "mana_cost": 6,
-      "description": "Naru's copies of Twinflame make token Narus whose legend-rule deaths do not stop the loop of copy triggers. The legend rule kills the token bodies, so this line needs a magecraft payoff on board to convert the infinite copies.",
+      "mana_cost": 10,
+      "description": "Naru Meha, cast while Twinflame targets Sakashima of a Thousand Faces, copies Twinflame onto herself again and again; Sakashima turns off the legend rule, so the hasty Naru tokens all stay to attack. Needs Naru cast during the combo and the attack still to come; engine in Commander Spellbook 141-1235.",
       "sources": [
         {
           "type": "commanderspellbook",
           "name": "Commander Spellbook 141-1235",
           "url": "https://commanderspellbook.com/combo/141-1235/",
-          "detail": "Verified on the final 99, 2026-08-15"
+          "detail": "Naru Meha + Twinflame: infinite ETB"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Card-text deduction",
+          "detail": "Sakashima keeps the tokens; deduced from card text, confirmed by two reviewers (2026-11-25)"
         }
       ]
     },
     {
-      "title": "Fury Storm + magecraft payoff",
+      "title": "Fury Storm + Storm-Kiln Artist + Twinflame",
       "kind": "combo",
       "pieces": [
         "Fury Storm",
-        "Storm-Kiln Artist"
+        "Storm-Kiln Artist",
+        "Twinflame"
       ],
       "cards": [
         "Fury Storm",
         "Storm-Kiln Artist",
-        "Archmage Emeritus",
-        "Deekah, Fractal Theorist"
+        "Twinflame"
       ],
-      "mana_cost": 4,
-      "description": "With one prior commander re-cast, Fury Storm's cast trigger copies it; pointing copies at each other with Storm-Kiln out nets Treasure per iteration — infinite Treasure, then infinite draw or Fractals through the other payoffs.",
+      "mana_cost": 6,
+      "description": "Fury Storm's copies copy the original again and again, each making a Treasure through Storm-Kiln Artist, whose power grows without end; copying Twinflame onto the Artist ends the chain with three hasty Artists, one per opponent. Needs Gandalf cast from the command zone earlier this game, the Artist out, the attack still to come, and five mana from outside (the two spells cost six; the Artist's Treasure from Twinflame pays one, and the check charges the six); engine in Commander Spellbook 2655-5195, the Twinflame finish deduced.",
       "sources": [
         {
           "type": "commanderspellbook",
-          "name": "Commander Spellbook — Fury Storm lines",
-          "detail": "Confirmed via find-my-combos on the final 99, 2026-08-15"
+          "name": "Commander Spellbook 2655-5195",
+          "url": "https://commanderspellbook.com/combo/2655-5195/",
+          "detail": "Fury Storm + Storm-Kiln Artist: infinite Treasure and power"
+        },
+        {
+          "type": "ai-inferred",
+          "name": "Card-text deduction",
+          "detail": "Twinflame on the Artist; deduced from card text, confirmed by two reviewers (2026-11-25)"
         }
       ]
     },
