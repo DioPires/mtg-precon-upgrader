@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useMatch } from 'react-router-dom';
 import { deckLoader } from '../data/loader';
 import { LAST_DECK_KEY } from '../data/lastDeck';
 import { Glyph } from './atoms/Glyph';
@@ -33,33 +33,32 @@ export function Topbar() {
   const { pathname } = useLocation();
   const menuId = useId();
   const [storedDeckId, setStoredDeckId] = useState<string | null>(() => readLastDeck());
+  const [deckIds, setDeckIds] = useState<string[] | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   // Pick up writes from DeckGuide / Scrying when navigation occurs.
-  // Only adopt non-null reads — the first-visit fallback below seeds storedDeckId
-  // from the index when LS is empty, and we don't want a no-op LS read to clobber it.
   useEffect(() => {
     const stored = readLastDeck();
     if (stored && stored !== storedDeckId) setStoredDeckId(stored);
   }, [pathname, storedDeckId]);
 
-  // First-visit fallback: resolve to first commander in the index.
+  // The index's deck ids. A saved or routed deck id is dropped once the
+  // loaded index does not list it (a removed deck's id can stay in
+  // localStorage); before the index loads, or if it fails to, it is used as
+  // it is. With no usable id the links take the first commander.
   useEffect(() => {
-    if (storedDeckId) return;
     let cancelled = false;
     deckLoader
       .loadIndex()
       .then((idx) => {
-        if (cancelled) return;
-        const first = idx.commanders[0]?.id;
-        if (first) setStoredDeckId(first);
+        if (!cancelled) setDeckIds(idx.commanders.map((c) => c.id));
       })
       .catch(() => {});
     return () => {
       cancelled = true;
     };
-  }, [storedDeckId]);
+  }, []);
 
   // Close mobile menu on route change.
   useEffect(() => {
@@ -85,9 +84,16 @@ export function Topbar() {
     };
   }, [menuOpen]);
 
-  const urlMatch = pathname.match(/^\/(?:deck|scrying|m)\/([^/]+)/);
-  const fromUrl = urlMatch && urlMatch[1] !== '_' ? urlMatch[1] : null;
-  const activeDeckId = fromUrl ?? storedDeckId;
+  // The router's own matches give the URL's deck id decoded
+  // (/deck/%65ternal-agony gives eternal-agony).
+  const deckMatch = useMatch('/deck/:id');
+  const scryingMatch = useMatch('/scrying/:id');
+  const mobileMatch = useMatch('/m/:id');
+  const urlId = (deckMatch ?? scryingMatch ?? mobileMatch)?.params.id;
+  const fromUrl = urlId && urlId !== '_' ? urlId : null;
+  const usable = (id: string | null): string | null =>
+    id && (deckIds === null || deckIds.includes(id)) ? id : null;
+  const activeDeckId = usable(fromUrl) ?? usable(storedDeckId) ?? deckIds?.[0] ?? null;
 
   const resolveTo = (item: NavItem): string =>
     item.kind === 'deck'

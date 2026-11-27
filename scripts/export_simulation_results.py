@@ -32,17 +32,12 @@ import mana_simulation_witherbloom_the_balancer as sim_witherbloom
 import mana_simulation_the_white_forge as sim_mono_white
 import mana_simulation_verdant_tide as sim_mono_green
 import mana_simulation_creeping_corruption as sim_wubg_poison
-import mana_simulation_grave_dividends as sim_grave_dividends
 import mana_simulation_hoard_and_bleed as sim_hoard_and_bleed
 import mana_simulation_hidden_legion as sim_hidden_legion
 import mana_simulation_zada_hedron_grinder as sim_zada
 import mana_simulation_exponential_growth as sim_exponential_growth
-import mana_simulation_slivers as sim_slivers
 import mana_simulation_stampede_acres as sim_stampede_acres
 import mana_simulation_tidal_legion as sim_tidal_legion
-import mana_simulation_armory_protocol as sim_armory_protocol
-import mana_simulation_shield_doctrine as sim_shield_doctrine
-import mana_simulation_gandalf_party_guest as sim_gandalf
 import mana_simulation_broodfire_hatchery as sim_broodfire_hatchery
 import mana_simulation_anvil_chorus as sim_anvil_chorus
 import gate_tags_lib
@@ -263,51 +258,6 @@ KEY_COMBOS = {
         }
     ],
     # hidden-legion: Snoop+Kiki+Tremors combo cut in DEC-373 (1.4% assembly by T7 — phantom line).
-    "grave-dividends": [
-        {
-            "name": "Recursive-ETB + Death-Return Aura + Free Outlet",
-            "slots": [
-                ["Sun Titan", "Angel of Indemnity"],
-                ["Kaya's Ghostform", "Gift of Immortality", "Angelic Renewal", "Necrogen Communion"],
-                ["Viscera Seer", "Carrion Feeder", "Ashnod's Altar", "Umbral Collar Zealot"],
-                ["Blood Artist", "Zulaport Cutthroat", "Elas il-Kor, Sadistic Pilgrim",
-                 "Bastion of Remembrance", "Marionette Apprentice"],
-            ],
-            "requiresCommander": False,
-            "description": "Enchant a recursive-ETB creature with a cheap death-return aura it can "
-                           "rebuy on enter; sac to a free outlet — the aura returns the body, the "
-                           "body returns the aura. Infinite death + ETB; any drain payoff wins. "
-                           "(Spellbook 2292-2730-3175.) Shepherd of the Cosmos is left out: it "
-                           "returns mana value 2 or less, not Gift of Immortality.",
-        },
-        {
-            "name": "Leonin Relic-Warder + Reanimation Aura",
-            "slots": [
-                ["Leonin Relic-Warder"],
-                ["Animate Dead", "Necromancy"],
-                ["Blood Artist", "Zulaport Cutthroat", "Elas il-Kor, Sadistic Pilgrim",
-                 "Bastion of Remembrance", "Marionette Apprentice"],
-            ],
-            "requiresCommander": False,
-            "description": "Reanimate Relic-Warder; its ETB exiles the aura, the aura leaving makes "
-                           "Relic-Warder be sacrificed, returning the aura to reanimate it again. "
-                           "Two-card infinite ETB/LTB — any drain payoff closes.",
-        },
-        {
-            "name": "Plunderer + Ashnod's Altar + Reassembling Skeleton",
-            "slots": [
-                ["Pitiless Plunderer"],
-                ["Ashnod's Altar"],
-                ["Reassembling Skeleton"],
-                ["Blood Artist", "Zulaport Cutthroat", "Bastion of Remembrance",
-                 "Elas il-Kor, Sadistic Pilgrim", "Marionette Apprentice"],
-            ],
-            "requiresCommander": False,
-            "description": "Sac Skeleton to Altar ({C}{C}) + Plunderer Treasure covers the "
-                           "{1}{B} rebuy — infinite mana + infinite death triggers drain the table. "
-                           "(Spellbook 1580-2034-4871.)",
-        },
-    ],
     # hoard-and-bleed (DEC-543): both lines are Commander Spellbook `included[]`
     # entries on the committed 99, with manaNeeded "". The payoff slots differ
     # between the two lines because the loops move different objects, so they are
@@ -447,16 +397,6 @@ KEY_COMBOS = {
         # DEC-935 (2026-09-30): the Mirror Entity X=0 mass-hatch line was removed
         # with the combat remake (Mirror Entity cut, board verdict card 5e9a7eeb).
     ],
-    "shield-doctrine": [
-        {
-            "name": "Feast and Famine Assault",
-            "pieces": ["Sword of Feast and Famine", "Aggravated Assault"],
-            "requiresCommander": False,
-            "description": "Sword of Feast and Famine untaps all lands on combat damage; "
-                           "Aggravated Assault converts {3}{R}{R} into an extra combat — "
-                           "every connect pays for the next attack step.",
-        }
-    ],
     "stampede-acres": [
         {
             "name": "Scurry Rosie Squirrels",
@@ -536,28 +476,6 @@ KEY_COMBOS = {
                            "Saprolings and colorless mana once started (up to {7}{G}, Spellbook "
                            "2034-2557-3209); a drain payoff, or Exsanguinate or Torment of "
                            "Hailfire with {B}{B} from outside the loop, kills.",
-        }
-    ],
-    "gandalf-party-guest": [
-        {
-            # Fury Storm copies itself once per prior commander cast from the
-            # command zone — with zero casts it makes no copies, so the line is
-            # commander-gated. requiresCommander flags commander dependency
-            # (resilience component); it does not delay the assembly-turn
-            # measurement.
-            "name": "Fury Storm Magecraft",
-            "slots": [
-                ["Fury Storm"],
-                ["Storm-Kiln Artist"],
-                # Added without cast priority (owner decision 27, 6b).
-                {"members": ["Twinflame"], "noPriority": True},
-            ],
-            "requiresCommander": True,
-            "description": "After Gandalf has been cast from the command zone, Fury Storm's "
-                           "copies make Treasures through Storm-Kiln Artist without end "
-                           "(Spellbook 2655-5195); Fury Storm's copies also copy Twinflame onto "
-                           "the Artist: three hasty Artists, one per opponent, before attackers "
-                           "are declared.",
         }
     ],
     # DEC-370 note: exponential-growth was audited and deliberately has NO entry —
@@ -708,26 +626,11 @@ COMMANDER_TOKEN_ENGINE = {
 #       text, instead of hard-casting it where it never attaches.
 #   doubleStrikeNames — Equipment granting double strike (Fireshrieker,
 #       Embercleave): doubles the commander's combat damage while attached.
-COMMANDER_DEPLOY_ENGINE = {
-    "armory-protocol": {
-        "transformCost": {"generic": 4, "U": 1, "R": 1},
-        "reducedTransformCost": {"generic": 2, "U": 1, "R": 1},
-        "reducerName": "Training Grounds",
-        "transformedPower": 5,
-        "equipmentPower": {
-            "Excalibur, Sword of Eden": 10,
-            "Colossus Hammer": 10,
-            "Kaldra Compleat": 5,
-            "Aettir and Priwen": 15,
-            "Embercleave": 1,
-            "The Reaver Cleaver": 1,
-            "Sword of the Animist": 1,
-            "Iron Man Armor": 2,
-            "Mjölnir, Hammer of Thor": 0,
-        },
-        "doubleStrikeNames": {"Fireshrieker", "Embercleave"},
-    },
-}
+# No fleet deck is configured: armory-protocol, the only one, left the fleet
+# on 2026-11-27. The engine stays for a later deck; its tests carry that
+# deck's config inline (DEPLOY_ENGINE in
+# tests/test_export_simulation_results_helpers.py).
+COMMANDER_DEPLOY_ENGINE: dict[str, dict] = {}
 
 # DEC-472 — opponent-independent activated draw engines. The goldfish credits
 # draw only on cast resolution (immediateDraw), so a repeatable tap engine like
@@ -754,10 +657,7 @@ COMMANDER_DEPLOY_ENGINE = {
 #   maxActivations — total activations including the cast turn (One Ring: 4)
 #   drawsPerTurn — cards drawn at the start of each later turn (Jace: 3)
 PERMANENT_DRAW_ENGINE = {
-    "gandalf-party-guest": {
-        "The One Ring": {"maxActivations": 4},
-    },
-    # DEC-533: same One Ring stopping rule as gandalf-party-guest.
+    # DEC-533: the One Ring stopping rule of DEC-472.
     "gathering-shadow": {
         "The One Ring": {"maxActivations": 4},
         "The Theorist, Jace Beleren": {"drawsPerTurn": 3},
@@ -1284,8 +1184,7 @@ COMMANDER_HASTE_SOURCES = {
 # multipliers.
 #
 # Decks that carry these effects and could opt in later, each with its own
-# review and a calibration re-run: shield-doctrine (Aggravated Assault, double
-# strike), armory-protocol (Genji Glove), hidden-legion, gathering-shadow,
+# review and a calibration re-run: hidden-legion, gathering-shadow,
 # anvil-chorus and eternal-agony (double strike or damage doublers).
 COMBAT_MODIFIERS = {
     "broodfire-hatchery": {
@@ -7122,7 +7021,12 @@ GOLDFISH_MANA_METHODOLOGY = (
     "alphabet, first), "
     "if the hand holds one, else the castable card last in its cast order, and it leaves the hand; "
     "never exiled, in every deck: tutor and recursion cards (by their roles), combo-line "
-    "and assembly-line members, the other reserved combo pieces, deploy-engine Equipment, a land, and a modal "
+    "and assembly-line members, the other reserved combo pieces, "
+)
+# The rest of GOLDFISH_MANA_METHODOLOGY; goldfish_mana_methodology puts the
+# deploy engine's Equipment between the two only for a deck that has one.
+GOLDFISH_MANA_METHODOLOGY_REST = (
+    "a land, and a modal "
     "card with a spell front and a land back (played as its land, or kept in the hand as a line "
     "piece); a transforming card with a land back (Growing Rites of Itlimoc, an enchantment on its "
     "front) can be exiled. Land-ramp spells move the lands their text says, each destination "
@@ -7216,7 +7120,8 @@ def goldfish_mana_methodology(context: dict, decklist: list[str]) -> str:
     parts = [f"{label}: {cards}" for label, cards in classes if cards]
     if floors:
         parts.append("abilities not credited: " + ", ".join(floors))
-    return GOLDFISH_MANA_METHODOLOGY + (" In this deck, " + "; ".join(parts) + "." if parts else "")
+    return (GOLDFISH_MANA_METHODOLOGY + ("deploy-engine Equipment, " if context.get("deployEngine") else "")
+            + GOLDFISH_MANA_METHODOLOGY_REST + (" In this deck, " + "; ".join(parts) + "." if parts else ""))
 
 
 def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dict,
@@ -7285,6 +7190,9 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
         name for name, profile in context["profiles"].items()
         if profile["manaCost"]["X"] and not goldfish_never_casts(name, profile, context))
     x_creature_score = ", MV + X for an X creature cast with X paid" if x_spells else ""
+    # The deploy engine (COMMANDER_DEPLOY_ENGINE, DEC-405) is named in the
+    # methodology only for a deck that has one; its own note follows below.
+    deploy = bool(context.get("deployEngine"))
     section = {
         "numGames": GOLDFISH_GAMES,
         "byTurn": by_turn,
@@ -7406,9 +7314,10 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "either), and a transforming card is cast as its front (verdant-tide's Growing Rites of "
             "Itlimoc). A paid mulligan bottoms from a seven with fewer than five lands it can play "
             "the spells it does not keep first (a held card before the others, then the dearest), "
-            "then the spells it keeps (the combo checks' cards and a deploy engine's configured "
-            "Equipment, the dearest first, a held card among them too: gandalf-party-guest's Muddle "
-            "the Mixture), then lands; from five or more, a land first. An imprint "
+            "then the spells it keeps (the combo checks' cards"
+            + (" and a deploy engine's configured Equipment" if deploy else "")
+            + ", the dearest first, a held card among them too), then lands; from five or "
+            "more, a land first. An imprint "
             "exiles first, if it can, a held card or an alternative a combo line or a table slot keeps "
             "in the hand and no line names plainly, ranked together (the most colours, then the highest "
             "mana value, then the name latest in the alphabet, first), ahead of the castable cards; never a "
@@ -7425,21 +7334,14 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "symmetric sacrifice; an Aura is cast without checking that something can be "
             "enchanted (creeping-corruption's Corrupted Conscience, as before); ordinary paid equips "
             "are not modeled: an Equipment cast from the hand stays unattached and counts by its "
-            "pressure score (shield-doctrine's Mjölnir, Hammer of Thor and Sword of Fire and Ice), "
-            "or, if it is also a creature, as any creature does, by its mana value "
-            "(shield-doctrine's The Reality Chip: 2 pressure, and 2 combat once ready), except where "
+            "pressure score, "
+            "or, if it is also a creature, as any creature does, by its mana value, except where "
             "a table models an attachment: broodfire-hatchery's "
             "Thornbite Staff attaches to the commander when she enters after it, and its "
             "Skullclamp's {1} equip on a 0/1 Egg (the commander's or Palani's Hatcher's) draws two, "
-            "while Nesting Dragon's 0/2 Dragon Egg survives the -1 and draws nothing; "
-            "armory-protocol's deploy engine, once the "
-            "commander has transformed, puts one artifact from the hand onto the battlefield free at "
-            "each combat (a put, not a cast; never a reserved card, below), the one with the highest "
-            "score, as that deck's own "
-            "methodology states: an Equipment it "
-            "puts out counts as attached and adds its table's bonus to the commander's damage (none "
-            "when the table does not list it), its own pressure score applying once it is out, and "
-            "only the table's Equipment is held in the hand for it; +1/+1 counter growth is not modeled, "
+            "while Nesting Dragon's 0/2 Dragon Egg survives the -1 and draws nothing"
+            + ("; the commander's free deploy attaches the Equipment it puts out (below)" if deploy else "")
+            + "; +1/+1 counter growth is not modeled, "
             "so a counter doubler adds no damage of its own; a protection spell with a proactive "
             "use (a pump, a draw) is held; gathering-shadow's Foray of Orcs is in the amass table "
             "but held as a removal sorcery, so its amass never counts. "
@@ -7450,8 +7352,10 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "cards is lifted, and the other rules still apply (a held instant or sorcery stays "
             "held; a modal card with a spell front and a land back is still played as its land). "
             "Those line pieces kept in the hand are also never played as a land, counted as a land "
-            "by the mulligan, deployed free or cast from a cascade. A reserved tutor or recursion "
-            "card is neither cast from the hand nor deployed free (it is left in the hand), but one "
+            "by the mulligan, " + ("deployed free " if deploy else "") + "or cast from a cascade. "
+            "A reserved tutor or recursion card is "
+            + ("neither cast from the hand nor deployed free" if deploy else "not cast from the hand")
+            + " (it is left in the hand), but one "
             "played as a land (a land, or a modal card with "
             "a land back) is played and counted as a land, and a cascade can free-cast any other "
             "that is a permanent. A commander with {X} named in a combo line's pieces is "
@@ -7460,8 +7364,9 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "The spells a paid mulligan keeps, bottoming them last of "
             "the spells, are the line pieces (not a card named only in a list of a combo line's pieces "
             "or in a slot flagged noPriority), the tutor and recursion cards whose tags can supply one "
-            "of the deck's line pieces from the hand, and a deploy engine's configured Equipment. "
-            "Other limitations: "
+            "of the deck's line pieces from the hand"
+            + (", and a deploy engine's configured Equipment" if deploy else "")
+            + ". Other limitations: "
             "lines that do not win with the pieces they list still count, no opponent interaction, "
             "no multi-turn assembly tracking, no stack-trigger ordering."
         ) + goldfish_mana_methodology(context, decklist),
@@ -7516,8 +7421,8 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "or lets it be cast from the graveyard; one on the battlefield does not count, and a card "
             "that puts one onto the battlefield or a bargained free cast does not supply it. The "
             "goldfish keeps them in the hand, for every line of the deck, not only the line that asks "
-            "for it: it never casts one from the hand, plays one as a land, deploys one or casts one "
-            "from a cascade."
+            "for it: it never casts one from the hand, plays one as a land, "
+            + ("deploys one " if deploy else "") + "or casts one from a cascade."
         )
     if any(line["needsCreature"] for line in combo_lines):
         section["methodology"] += (
@@ -7864,10 +7769,10 @@ def compute_goldfish_section(decklist: list[str], deck_data: dict, metadata: dic
             "Zopandrel's trigger (x4 per phase), Roaming Throne under Maskwood Nexus "
             "doubling the combat triggers again, Ghalta and Mavren's attack token, and "
             "Combat Celebrant untapping off a later untap-all effect are all "
-            "unmodelled. Only this deck is configured; shield-doctrine, "
-            "armory-protocol, hidden-legion, gathering-shadow, anvil-chorus and "
-            "eternal-agony carry comparable effects and can opt in later, each with "
-            "its own review and a calibration re-run."
+            "unmodelled. Only this deck is configured; hidden-legion, "
+            "gathering-shadow, anvil-chorus and eternal-agony carry comparable "
+            "effects and can opt in later, each with its own review and a "
+            "calibration re-run."
         )
     return section, combo_assembly
 
@@ -8764,19 +8669,6 @@ def export_hidden_legion(metadata: dict) -> dict:
     return result
 
 
-def export_gandalf_party_guest(metadata: dict) -> dict:
-    """Export Arcane Convocation (Jeskai — Gandalf, Party Guest) simulation."""
-    return _export_colored(
-        sim_module=sim_gandalf,
-        deck_id="gandalf-party-guest",
-        deck_name="Arcane Convocation",
-        commander_name="Gandalf, Party Guest",
-        commander_cmc=4,
-        colors=["U", "R", "W"],
-        metadata=metadata,
-    )
-
-
 def export_zada(metadata: dict) -> dict:
     """Export Hedron Storm (mono-R — Zada, Hedron Grinder) simulation."""
     return _export_colored(
@@ -8799,37 +8691,6 @@ def export_tidal_legion(metadata: dict) -> dict:
         commander_name="Namor the Sub-Mariner",
         commander_cmc=3,
         colors=["U"],
-        metadata=metadata,
-    )
-
-
-def export_armory_protocol(metadata: dict) -> dict:
-    """Export Armory Protocol (Izzet — Tony Stark) simulation.
-
-    commander_cmc=6 is the transform activation ({4}{U}{R}) — the sim's
-    commanderTiming tracks the suit-online event, not the {1}{U} front-face
-    cast (Esika/Prismatic Bridge precedent, DEC-405).
-    """
-    return _export_colored(
-        sim_module=sim_armory_protocol,
-        deck_id="armory-protocol",
-        deck_name="Armory Protocol",
-        commander_name="Tony Stark // The Invincible Iron Man",
-        commander_cmc=6,
-        colors=["U", "R"],
-        metadata=metadata,
-    )
-
-
-def export_grave_dividends(metadata: dict) -> dict:
-    """Export Grave Dividends (Orzhov Bartolomé aristocrats sacrifice-loop) simulation."""
-    return _export_colored(
-        sim_module=sim_grave_dividends,
-        deck_id="grave-dividends",
-        deck_name="Grave Dividends",
-        commander_name="Bartolomé del Presidio",
-        commander_cmc=2,
-        colors=["W", "B"],
         metadata=metadata,
     )
 
@@ -8860,19 +8721,6 @@ def export_exponential_growth(metadata: dict) -> dict:
     )
 
 
-def export_slivers(metadata: dict) -> dict:
-    """Export Hivebound Cascade (5C Slivers — The First Sliver) simulation."""
-    return _export_colored(
-        sim_module=sim_slivers,
-        deck_id="slivers",
-        deck_name="Hivebound Cascade",
-        commander_name="The First Sliver",
-        commander_cmc=5,
-        colors=["W", "U", "B", "R", "G"],
-        metadata=metadata,
-    )
-
-
 def export_stampede_acres(metadata: dict) -> dict:
     """Export Field of Blades (Naya tokens — Baylen, the Haymaker) simulation."""
     return _export_colored(
@@ -8895,19 +8743,6 @@ def export_broodfire_hatchery(metadata: dict) -> dict:
         commander_name="Atla Palani, Nest Tender",
         commander_cmc=4,
         colors=["R", "G", "W"],
-        metadata=metadata,
-    )
-
-
-def export_shield_doctrine(metadata: dict) -> dict:
-    """Export Shield Doctrine (Jeskai equipment voltron — Captain America) simulation."""
-    return _export_colored(
-        sim_module=sim_shield_doctrine,
-        deck_id="shield-doctrine",
-        deck_name="Shield Doctrine",
-        commander_name="Captain America, First Avenger",
-        commander_cmc=3,
-        colors=["W", "U", "R"],
         metadata=metadata,
     )
 
@@ -8985,16 +8820,11 @@ DECKS = [
     ("the-white-forge", "The White Forge", export_mono_white),
     ("verdant-tide", "Verdant Tide", export_verdant_tide),
     ("creeping-corruption", "Creeping Corruption", export_wubg_poison),
-    ("grave-dividends", "Grave Dividends", export_grave_dividends),
     ("hidden-legion", "Hidden Legion", export_hidden_legion),
     ("zada-hedron-grinder", "Hedron Storm", export_zada),
     ("exponential-growth", "Exponential Growth", export_exponential_growth),
-    ("slivers", "Hivebound Cascade", export_slivers),
     ("stampede-acres", "Field of Blades", export_stampede_acres),
     ("tidal-legion", "Tidal Legion", export_tidal_legion),
-    ("armory-protocol", "Armory Protocol", export_armory_protocol),
-    ("shield-doctrine", "Shield Doctrine", export_shield_doctrine),
-    ("gandalf-party-guest", "Arcane Convocation", export_gandalf_party_guest),
     ("hoard-and-bleed", "Hoard and Bleed", export_hoard_and_bleed),
     ("broodfire-hatchery", "Broodfire Hatchery", export_broodfire_hatchery),
     ("anvil-chorus", "Anvil Chorus", export_anvil_chorus),

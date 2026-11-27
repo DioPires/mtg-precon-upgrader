@@ -704,9 +704,9 @@ def export_enhanced_json(metadata: dict) -> dict:
     """Reuse bulk exporter path so standalone JSON stays schema-compatible."""
     import export_simulation_results as exporter
 
-    result = exporter.export_slivers(metadata)
-    if not exporter.validate_output(result, "slivers"):
-        raise ValueError("export_slivers produced invalid simulation output")
+    result = exporter.export_stampede_acres(metadata)
+    if not exporter.validate_output(result, "stampede-acres"):
+        raise ValueError("export_stampede_acres produced invalid simulation output")
     return result
 
 

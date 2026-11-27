@@ -450,7 +450,7 @@ describe('Apothecary', () => {
     });
 
     it('keys a role gap and a resilience gap of the same name apart', () => {
-      // grave-dividends carries `protection` in both shapes.
+      // grave-dividends (removed 2026-11-27) carried `protection` in both shapes.
       const { container } = render(
         <Apothecary
           apothecary={makeApothecary({

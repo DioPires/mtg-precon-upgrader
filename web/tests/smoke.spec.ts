@@ -43,6 +43,31 @@ test('Guide and Scrying nav links resolve to a real deck (DEC-168)', async ({ pa
   await expect(page.locator('.gv1-stub-title', { hasText: /not found/i })).toHaveCount(0);
 });
 
+// A deck saved as the last one viewed, or named in the URL, that the index no
+// longer lists (five decks left the fleet on 2026-11-27) is not a link target:
+// the Guide and Scrying links take the first commander. A saved deck the index
+// lists, the second one here, stays the target. The links are read once the
+// page shows that the index has loaded (the Codex's deck list, the guide's
+// not-found state): before it, the bar uses a saved id as it is.
+test('Guide and Scrying links skip a deck the index does not list', async ({ page }) => {
+  const indexResp = await page.request.get('/data/index.json');
+  const [first, second] = ((await indexResp.json()) as { commanders: { id: string }[] }).commanders.map((c) => c.id);
+  const codexList = page.locator('.gv1-codex-grid .gv1-codex-card').first();
+  const notFound = page.locator('.gv1-stub-title', { hasText: 'Tomus not found' });
+  await page.goto('/codex');
+  for (const [saved, path, target, loaded] of [
+    ['slivers', '/codex', first, codexList],
+    ['slivers', '/deck/slivers', first, notFound],
+    [second, '/codex', second, codexList],
+  ] as const) {
+    await page.evaluate((id) => window.localStorage.setItem('grimoire-last-deck', id), saved);
+    await page.goto(path);
+    await loaded.waitFor();
+    await expect(page.getByRole('link', { name: /guide/i })).toHaveAttribute('href', `/deck/${target}`);
+    await expect(page.getByRole('link', { name: /scrying/i })).toHaveAttribute('href', `/scrying/${target}`);
+  }
+});
+
 test('SPA refresh serves index.html on deep routes (DEC-173)', async ({ page }) => {
   const indexResp = await page.request.get('/data/index.json');
   const idx = (await indexResp.json()) as { commanders: { id: string }[] };

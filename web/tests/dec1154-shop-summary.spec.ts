@@ -15,6 +15,31 @@
 
 import { expect, test, type Page } from './support/test';
 
+// The index has had no brewing deck since 2026-11-27, so the case marks its
+// last deck brewing, as dec1021-selector-pill.spec.ts does: the app reads a
+// deck's status from its deck.json. "Include brewing" then shows, and the
+// case clicks it (includeBrewing). Returns the marked deck's name.
+async function markLastDeckBrewing(page: Page): Promise<string> {
+  const r = await page.request.get('/data/index.json');
+  const last = ((await r.json()) as { commanders: { id: string; name: string }[] }).commanders.at(-1)!;
+  await page.route(`**/data/commanders/${last.id}/deck.json`, async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({ response, json: { ...(await response.json()), status: 'brewing' } });
+  });
+  return last.name;
+}
+
+// The toggle shows the marked deck in the picker: no chip for it before the
+// click, an unselected one after it. "Select all" then selects it.
+async function includeBrewing(page: Page, name: string): Promise<void> {
+  const picker = page.getByRole('group', { name: 'Deck selection' });
+  const brewing = page.getByRole('button', { name: 'Include brewing' });
+  await expect(brewing, 'the "Include brewing" toggle').toBeVisible();
+  await expect(picker.getByRole('button', { name: new RegExp(`^(Add|Remove) ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) }), `${name} before the toggle`).toHaveCount(0);
+  await brewing.click();
+  await expect(picker.getByRole('button', { name: `Add ${name}`, pressed: false }), `${name} after the toggle`).toHaveCount(1);
+}
+
 // The widths of DEC-1154, and 480px, the widest that the rule holds. At 480px
 // the action row's buttons need less than the box, so the row shows that it
 // takes the box's width.
@@ -93,6 +118,7 @@ for (const fonts of ['live', 'blocked'] as const) {
       test(`at ${width}px no stat passes the right edge of the box`, async ({ page }, testInfo) => {
         test.setTimeout(60_000);
         await page.setViewportSize({ width, height: 900 });
+        const marked = await markLastDeckBrewing(page);
         await page.goto('/shopping');
         await page.locator('.gv1-shop-row').first().waitFor();
         const summary = page.locator('.gv1-shop-summary');
@@ -104,9 +130,12 @@ for (const fonts of ['live', 'blocked'] as const) {
         await summary.screenshot({ path: testInfo.outputPath(`summary-${width}-${fonts}-first.png`), animations: 'disabled' });
 
         // Every deck, with the brewing decks: the longest counts and cost.
-        const brewing = page.getByRole('button', { name: 'Include brewing' });
-        if ((await brewing.count()) > 0) await brewing.click();
+        await includeBrewing(page, marked);
         await page.getByRole('button', { name: 'Select all' }).click();
+        await expect(
+          page.getByRole('group', { name: 'Deck selection' }).getByRole('button', { name: `Remove ${marked}`, pressed: true }),
+          `${marked} after "Select all"`,
+        ).toHaveCount(1);
         await expect(page.getByRole('button', { name: /^Add / })).toHaveCount(0);
         const all = await readSummary(page);
         await summary.screenshot({ path: testInfo.outputPath(`summary-${width}-${fonts}-all.png`), animations: 'disabled' });

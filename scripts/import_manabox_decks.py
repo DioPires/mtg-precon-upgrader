@@ -33,7 +33,7 @@ Version fields written into each matched decklist[] entry:
 
 Usage:
     uv run python scripts/import_manabox_decks.py --dir exports/
-    uv run python scripts/import_manabox_decks.py --file exports/slivers.csv --deck slivers
+    uv run python scripts/import_manabox_decks.py --file exports/hidden-legion.csv --deck hidden-legion
     uv run python scripts/import_manabox_decks.py --dir exports/ --apply
 
 With --dir, each file stem is the deck id: exports/titan-convergence.csv feeds

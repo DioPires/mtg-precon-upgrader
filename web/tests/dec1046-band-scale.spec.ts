@@ -103,12 +103,14 @@ for (const fonts of ['live', 'blocked'] as const) {
 // In this face one word of three deck names is wider than the dossier. The
 // dossier keeps its track (minmax(0, 1fr)) and the word breaks, a known limit
 // of the face (DEC-1043). A track that takes width from its content would run
-// the name past the content edge (titan-convergence: 31.6px at 769px).
+// the name past the content edge (titan-convergence: 31.6px at 769px). The
+// third, gandalf-party-guest ("Convocation"), left the fleet on 2026-11-27;
+// the case reads the two that remain.
 test.describe('DEC-1046 band, a face wider than the web fonts', () => {
   test.use({ cards: 'seeded', fonts: 'blocked', viewport: { width: 769, height: 900 } });
 
   test('769 to 1020px: the dossier keeps its track, and no box passes the content edge', async ({ page }) => {
-    for (const deck of ['titan-convergence', 'gandalf-party-guest', DECK]) {
+    for (const deck of ['titan-convergence', DECK]) {
       await page.setViewportSize({ width: 769, height: 900 });
       await page.goto(`/deck/${deck}`);
       await page.addStyleTag({ content: WIDE_FACE });

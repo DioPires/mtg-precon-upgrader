@@ -34,7 +34,7 @@ Manabase model (37 lands):
   - Painlands (Battlefield Forge, Brushland, Karplusan Forest) — the 1 damage
     is free in a goldfish.
 - Fetches (Windswept Heath, Flooded Strand, Bloodstained Mire) are modeled as
-  flexible R/G/W sources (shield-doctrine's Flooded Strand precedent): each one
+  flexible R/G/W sources: each one
   reaches two typed duals that between them cover all three colors — Heath gets
   Temple Garden (G/W) or Stomping Ground (R/G), Strand gets Temple Garden (G/W)
   or Sacred Foundry (R/W), Mire gets Sacred Foundry (R/W) or Stomping Ground

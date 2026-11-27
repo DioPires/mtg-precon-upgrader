@@ -41,7 +41,7 @@ mtg-precon-upgrader/
 
 ## Decks
 
-`data/index.json` catalogs 21 decks: 15 built and 6 still brewing. The app lists them all.
+`data/index.json` catalogs 16 decks: 16 built and 0 still brewing. The app lists them all.
 
 ## Commander Brackets
 

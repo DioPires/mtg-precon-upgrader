@@ -21,6 +21,27 @@ exporter = importlib.import_module("scripts.export_simulation_results")
 FIXTURE_ROLE = {"primary_role": "utility"}
 # The fleet's card data, for fixtures that use real cards' text.
 FLEET_METADATA = json.loads((Path(__file__).resolve().parent.parent / "data" / "card-metadata.json").read_text())
+# The commander deploy engine (DEC-405) as armory-protocol shipped it, the
+# exporter's last COMMANDER_DEPLOY_ENGINE entry until that deck left the fleet
+# on 2026-11-27. The deploy tests patch it in under their own deck id.
+DEPLOY_ENGINE = {
+    "transformCost": {"generic": 4, "U": 1, "R": 1},
+    "reducedTransformCost": {"generic": 2, "U": 1, "R": 1},
+    "reducerName": "Training Grounds",
+    "transformedPower": 5,
+    "equipmentPower": {
+        "Excalibur, Sword of Eden": 10,
+        "Colossus Hammer": 10,
+        "Kaldra Compleat": 5,
+        "Aettir and Priwen": 15,
+        "Embercleave": 1,
+        "The Reaver Cleaver": 1,
+        "Sword of the Animist": 1,
+        "Iron Man Armor": 2,
+        "Mjölnir, Hammer of Thor": 0,
+    },
+    "doubleStrikeNames": {"Fireshrieker", "Embercleave"},
+}
 
 
 class ExportSimulationResultsHelperTests(unittest.TestCase):
@@ -2325,9 +2346,10 @@ class DrawEngineGoldfishTests(unittest.TestCase):
     def test_one_ring_sequence_is_unchanged(self):
         # Turns 1-4 draw 1 (the draw step). Cast on turn 4 and draws 1 then
         # (88 -> 87); turns 5, 6, 7 draw the draw step plus activations 2, 3,
-        # 4; then the draw step alone.
+        # 4; then the draw step alone. gathering-shadow's shipped config: The
+        # One Ring at maxActivations 4.
         self.assertEqual(
-            self._engine_card_sizes("The One Ring", "gandalf-party-guest"),
+            self._engine_card_sizes("The One Ring", "gathering-shadow"),
             [91, 90, 89, 88, 84, 80, 75, 74, 73, 72, 72])
 
     def test_jace_cards_arrive_before_the_upkeep_tempt(self):
@@ -2495,8 +2517,9 @@ class TurnOneDrawTests(unittest.TestCase):
 
     @staticmethod
     def _rock_cost(rock: dict) -> int:
-        """A ROCK_DEFS entry's mana value (armory-protocol names it cast_generic)."""
-        return rock.get("cmc", rock.get("cast_generic"))
+        """A ROCK_DEFS entry's mana value (cmc in every fleet module since
+        armory-protocol's, which named it cast_generic, left with that deck)."""
+        return rock["cmc"]
 
     def test_every_mana_simulation_plays_the_land_its_turn_1_draw_took(self):
         # Each deck's mana simulation through run_simulation, one game with
@@ -2786,15 +2809,6 @@ class ManaSimPaidMulliganCountTests(unittest.TestCase):
     # seven lands, so the land the module's land drop ranks lowest on turn
     # 1's empty battlefield goes; each fixture's comment gives that ranking.
     LAND_SEVENS = (
-        # grave-dividends scores 20 for a fetch land, else 10 untapped or 0
-        # tapped, plus 5 for a black-and-white land or 2 for one of the two.
-        # Dakmor Salvage enters tapped and adds {B}: 0 + 2 = 2. Volrath's
-        # Stronghold (untapped, colourless) 10, Swamp and Plains 12, Caves of
-        # Koilos and Godless Shrine (scored untapped) 15, Bloodstained Mire
-        # 20.
-        ("grave-dividends",
-         ["Bloodstained Mire", "Swamp", "Plains", "Caves of Koilos", "Godless Shrine",
-          "Volrath's Stronghold", "Dakmor Salvage"], "Dakmor Salvage"),
         # hidden-legion scores 10 untapped or 0 tapped, plus 2 a colour the
         # land adds, 5 for a fetch land, and 3 for each of four named lands
         # (Command Tower, Reflecting Pool, Mana Confluence, City of Brass). Two
@@ -2806,16 +2820,6 @@ class ManaSimPaidMulliganCountTests(unittest.TestCase):
         ("hidden-legion",
          ["Mana Confluence", "Forest", "Command Tower", "Indatha Triome", "Overgrown Tomb",
           "Path of Ancestry", "Flooded Strand"], "Indatha Triome"),
-        # gandalf-party-guest scores 10 untapped or 0 tapped, plus 2 a colour
-        # among blue, red and white, on turn 1. Glacial Fortress enters tapped
-        # unless you control an Island or a Plains, so on turn 1's empty
-        # battlefield it scores 0 + 4 = 4; Spire of Industry (untapped, only
-        # {C} with no artifact out) 10, Island and Mountain 12, Skycloud Expanse and
-        # Steam Vents 14, Command Tower 16. Once an Island or a Plains is down
-        # the Fortress ranks above Spire of Industry; the turn-1 score stands.
-        ("gandalf-party-guest",
-         ["Island", "Command Tower", "Skycloud Expanse", "Glacial Fortress", "Steam Vents",
-          "Spire of Industry", "Mountain"], "Glacial Fortress"),
     )
 
     def test_a_seven_of_lands_bottoms_the_land_the_land_drop_ranks_lowest(self):
@@ -5144,17 +5148,32 @@ class ManaLegalityReplayTests(unittest.TestCase):
     DECKS = {"titan-convergence": "sim_titan", "eternal-agony": "sim_rakdos", "gathering-shadow": "sim_grixis",
              "eternal-harvest": "sim_golgari", "witherbloom-the-balancer": "sim_witherbloom",
              "the-white-forge": "sim_mono_white", "verdant-tide": "sim_mono_green",
-             "creeping-corruption": "sim_wubg_poison", "grave-dividends": "sim_grave_dividends",
+             "creeping-corruption": "sim_wubg_poison",
              "hidden-legion": "sim_hidden_legion", "zada-hedron-grinder": "sim_zada",
-             "exponential-growth": "sim_exponential_growth", "slivers": "sim_slivers",
+             "exponential-growth": "sim_exponential_growth",
              "stampede-acres": "sim_stampede_acres", "tidal-legion": "sim_tidal_legion",
-             "armory-protocol": "sim_armory_protocol", "shield-doctrine": "sim_shield_doctrine",
-             "gandalf-party-guest": "sim_gandalf", "hoard-and-bleed": "sim_hoard_and_bleed",
+             "hoard-and-bleed": "sim_hoard_and_bleed",
              "broodfire-hatchery": "sim_broodfire_hatchery", "anvil-chorus": "sim_anvil_chorus"}
     GAMES = 30
-    # Enough games for the rarer boards a control mutant needs (review round
-    # 5): armory-protocol's artifact creatures beside Urza.
-    GAMES_BY_DECK = {"armory-protocol": 100}
+    # armory-protocol (Urza, Lord High Artificer beside artifact creatures,
+    # 100 games for review round 5's control mutant) left the fleet on
+    # 2026-11-27, and no fleet deck plays Urza now. URZA_DECK stands in for it
+    # (test_a_pinned_urza_deck_spends_only_the_mana_the_table_gives), with
+    # Urza's entry as the table held it then (URZA_TABLE).
+    URZA_TABLE = {"Urza, Lord High Artificer": {
+        "mana": ["U"], "board": ["count:idleArtifacts:1:U:0"], "from": "now",
+        "note": "taps his Construct token, and each noncreature artifact with no mana of its own (fix 4)",
+        "taps": False}}
+    # Urza as the commander; mana rocks with mana of their own, noncreature
+    # artifacts with none (Urza taps them for {U}: Isochron Scepter too, as in
+    # armory-protocol, which held it in no combo line, so it was never kept
+    # untapped (urzaKeep); the four with a note-only table entry let check K
+    # read the taps flag of his grant), and artifact creatures (he does not
+    # tap them).
+    URZA_DECK = (["Island"] * 30 + ["Sol Ring", "Mind Stone", "Arcane Signet"]
+                 + ["Lightning Greaves", "Whispersilk Cloak", "Skullclamp", "Mithril Coat", "Isochron Scepter"]
+                 + ["Ashnod's Altar", "Krark-Clan Ironworks", "Cloud Key", "Sapphire Medallion"]
+                 + ["Thought Monitor", "Steel Hellkite", "Kappa Cannoneer", "Armory Automaton"])
     ROOT = Path(__file__).resolve().parent.parent
     BASIC_TYPES = {"Plains", "Island", "Swamp", "Mountain", "Forest"}
     LAND_COLOURS = {"Plains": "W", "Island": "U", "Swamp": "B", "Mountain": "R", "Forest": "G"}
@@ -5381,13 +5400,17 @@ class ManaLegalityReplayTests(unittest.TestCase):
         return bool(entry.get("taps"))
 
     # ---- the replay
-    def run_deck(self, deck_id: str, games: int | None = None) -> tuple:
-        """(violations by rule, mana spent) over the deck's seeded games."""
-        deck = json.loads((self.ROOT / "data" / "commanders" / deck_id / "deck.json").read_text())
-        index = {e["id"]: e for e in json.loads((self.ROOT / "data" / "index.json").read_text())["commanders"]}
-        decklist = getattr(exporter, self.DECKS[deck_id]).build_decklist(deck)
-        context = exporter.build_goldfish_context(decklist, deck, self.meta, deck["commander"],
-                                                  list(index[deck_id]["colors"]) or ["C"], deck_id)
+    def run_deck(self, deck_id: str, games: int | None = None, deck: dict | None = None,
+                 decklist: list[str] | None = None, colours: list[str] | None = None) -> tuple:
+        """(violations by rule, mana spent) over the deck's seeded games: a
+        fleet deck by its id, or the ``deck``, ``decklist`` and ``colours``
+        given. self.observed["urza"] counts the mana Urza's grant paid."""
+        if deck is None:
+            deck = json.loads((self.ROOT / "data" / "commanders" / deck_id / "deck.json").read_text())
+            index = {e["id"]: e for e in json.loads((self.ROOT / "data" / "index.json").read_text())["commanders"]}
+            decklist = getattr(exporter, self.DECKS[deck_id]).build_decklist(deck)
+            colours = list(index[deck_id]["colors"]) or ["C"]
+        context = exporter.build_goldfish_context(decklist, deck, self.meta, deck["commander"], colours, deck_id)
         cmd = [c for c in context["commanderColors"] if c in "WUBRG"]
         violations = defaultdict(list)
         st = {"spent": 0}
@@ -5406,7 +5429,7 @@ class ManaLegalityReplayTests(unittest.TestCase):
         # What the game chose, read as it happens: the face each Pathway
         # entered as (the table's face whose colours its mana has; None when
         # none matches) and the card each imprint exiled (allowed_colours).
-        self.observed = {"face": {}, "imprint": {}}
+        self.observed = {"face": {}, "imprint": {}, "urza": 0}
 
         def recording_imprint(record, *args, **kwargs):
             card = imprint(record, *args, **kwargs)
@@ -5473,6 +5496,8 @@ class ManaLegalityReplayTests(unittest.TestCase):
                         violations["I one-shot mana over one arming"].append((turn, name, st["arming"][id(record)]))
                 if not set(atom) <= self.allowed_colours(record, here, cmd):
                     violations["B a colour the card cannot make"].append((turn, name, "".join(sorted(atom))))
+                if self.urza_eligible(record, here):
+                    self.observed["urza"] += 1
                 if atom.taps and tapped_before.get(id(record)) and id(record) not in used_before:
                     violations["C a tapped source paid with mana that taps it"].append((turn, name))
                 entry = self.table.get(name, {})
@@ -5537,7 +5562,7 @@ class ManaLegalityReplayTests(unittest.TestCase):
                                combat_phase_damage=checked_combat, rearm_once_sources=counting_rearm,
                                metrics_from_board=turn_end, put_land_onto_battlefield=recording_put,
                                imprint_from_hand=recording_imprint):
-            for _ in range(games or self.GAMES_BY_DECK.get(deck_id, self.GAMES)):
+            for _ in range(games or self.GAMES):
                 st.update(turn=1, floated=0, free_in=Counter(), free_out=Counter(), lasting=Counter(),
                           once=Counter(), cap={}, names={}, attacked={}, tapped_for_mana={}, ability={},
                           arming=Counter(), entered={}, alive=[])
@@ -5550,6 +5575,20 @@ class ManaLegalityReplayTests(unittest.TestCase):
                 violations, spent = self.run_deck(deck_id)
                 self.assertGreater(spent, 200)
                 self.assertEqual({kind: found[:3] for kind, found in violations.items()}, {})
+
+    def test_a_pinned_urza_deck_spends_only_the_mana_the_table_gives(self):
+        # URZA_DECK over 100 seeded games, the games review round 5 gave
+        # armory-protocol: the same checks as a fleet deck, and Urza's grant
+        # pays some of the mana (an artifact the checker reads as eligible).
+        deck = {"commander": "Urza, Lord High Artificer",
+                "decklist": [{"name": name, **FIXTURE_ROLE} for name in dict.fromkeys(self.URZA_DECK)
+                             if name != "Island"] + [{"name": "Island"}]}
+        with patch.dict(self.table, self.URZA_TABLE):
+            violations, spent = self.run_deck("synthetic-urza", games=100, deck=deck,
+                                              decklist=list(self.URZA_DECK), colours=["U"])
+        self.assertGreater(spent, 200)
+        self.assertGreater(self.observed["urza"], 0)
+        self.assertEqual({kind: found[:3] for kind, found in violations.items()}, {})
 
     def test_reflecting_pool_reads_counted_mana_on_the_payment_board(self):
         # The seeded games never reach this board (hoard-and-bleed: 0 of
@@ -5566,18 +5605,23 @@ class ManaLegalityReplayTests(unittest.TestCase):
 
 class ManaOnOfferInvariantTests(unittest.TestCase):
     """I1 (review round 3): the mana on offer always equals what the board
-    gives. Seeded games of seven fleet decks (data/commanders, the exporter's
-    own seed); after every resolution (a cast or a put, an imprint, a
+    gives. Seeded games of six fleet decks (data/commanders, the exporter's
+    own seed) and of ManaLegalityReplayTests.URZA_DECK; after every resolution (a cast or a put, an imprint, a
     cascade, a land search) and before every read of the pool (each payment
     and payment search, the combo and assembly gates, the end of the turn's
     untaps and land fetches) its unspent mana must be the mana already
     floating (no source, or a source this turn has used) plus board_mana for
     the battlefield as it stands."""
 
-    DECKS = {"titan-convergence": "sim_titan", "the-white-forge": "sim_mono_white", "slivers": "sim_slivers",
-             "armory-protocol": "sim_armory_protocol", "verdant-tide": "sim_mono_green",
+    DECKS = {"titan-convergence": "sim_titan", "the-white-forge": "sim_mono_white",
+             "verdant-tide": "sim_mono_green",
              # Chrome Mox; the hatch engine with High Market.
-             "gathering-shadow": "sim_grixis", "broodfire-hatchery": "sim_broodfire_hatchery"}
+             "gathering-shadow": "sim_grixis", "broodfire-hatchery": "sim_broodfire_hatchery",
+             # In place of slivers (removed 2026-11-27): Reflecting Pool, the
+             # one board term (landColors) slivers gave that the five above
+             # lack. armory-protocol's (Urza's idleArtifacts count) is
+             # URZA_DECK's: no fleet deck plays Urza now.
+             "hidden-legion": "sim_hidden_legion"}
     GAMES = 12
 
     @staticmethod
@@ -5585,14 +5629,18 @@ class ManaOnOfferInvariantTests(unittest.TestCase):
         return Counter((frozenset(a), exporter.atom_source_id(a), a.once, a.group is not None, a.order,
                         a.reserve, a.taps) for a in atoms)
 
-    def run_deck(self, deck_id: str) -> int:
+    def run_deck(self, deck_id: str, deck: dict | None = None, decklist: list[str] | None = None,
+                 colours: list[str] | None = None) -> int:
+        """The checks run over a fleet deck's seeded games, or over those of
+        the ``deck``, ``decklist`` and ``colours`` given."""
         root = Path(__file__).resolve().parent.parent
-        deck = json.loads((root / "data" / "commanders" / deck_id / "deck.json").read_text())
         metadata = json.loads((root / "data" / "card-metadata.json").read_text())
-        index = {e["id"]: e for e in json.loads((root / "data" / "index.json").read_text())["commanders"]}
-        decklist = getattr(exporter, self.DECKS[deck_id]).build_decklist(deck)
-        context = exporter.build_goldfish_context(decklist, deck, metadata, deck["commander"],
-                                                  list(index[deck_id]["colors"]) or ["C"], deck_id)
+        if deck is None:
+            deck = json.loads((root / "data" / "commanders" / deck_id / "deck.json").read_text())
+            index = {e["id"]: e for e in json.loads((root / "data" / "index.json").read_text())["commanders"]}
+            decklist = getattr(exporter, self.DECKS[deck_id]).build_decklist(deck)
+            colours = list(index[deck_id]["colors"]) or ["C"]
+        context = exporter.build_goldfish_context(decklist, deck, metadata, deck["commander"], colours, deck_id)
         profiles = context["profiles"]
         board = {"permanents": None}
         checks = []
@@ -5663,6 +5711,12 @@ class ManaOnOfferInvariantTests(unittest.TestCase):
         for deck_id in self.DECKS:
             with self.subTest(deck=deck_id):
                 self.assertGreater(self.run_deck(deck_id), 100)
+        urza = ManaLegalityReplayTests
+        with self.subTest(deck="synthetic-urza"):
+            deck = {"commander": "Urza, Lord High Artificer",
+                    "decklist": [{"name": name, **FIXTURE_ROLE} for name in dict.fromkeys(urza.URZA_DECK)
+                                 if name != "Island"] + [{"name": "Island"}]}
+            self.assertGreater(self.run_deck("synthetic-urza", deck, list(urza.URZA_DECK), ["U"]), 100)
 
 
 PAY_ONE = {"W": 0, "U": 0, "B": 0, "R": 0, "G": 0, "C": 0, "generic": 1, "X": 0, "total": 1}
@@ -6982,12 +7036,12 @@ class ManaRoundFourGoldfishTests(unittest.TestCase):
         self.assertEqual(self._series(by_turn, "lands"), [1, 3, 3, 3, 3, 3])
 
     def test_the_one_ring_is_tapped_by_its_draw(self):
-        # Fix 2. gandalf-party-guest's draw engine: The One Ring ({4}) on turn
+        # Fix 2. gathering-shadow's draw engine: The One Ring ({4}) on turn
         # 4 draws as it is cast and on turns 5-7 (four activations); each taps
         # it, so Urza could not tap it for {U} those turns. Turn 8 it rests.
         tapped = {}
         by_turn, _ = self._run(["The One Ring"] + ["Island"] * 4 + ["Probe Nine"] * 2, ["Probe Nine"] * 92,
-                               ("U",), deck_id="gandalf-party-guest",
+                               ("U",), deck_id="gathering-shadow",
                                spy=lambda turn, permanents: tapped.update({turn: next(
                                    (p.get("tapped") for p in permanents if p["name"] == "The One Ring"), None)}))
         self.assertEqual([tapped[t] for t in range(4, 9)], [True, True, True, True, False])
@@ -8437,7 +8491,7 @@ class GoldfishMulliganTests(unittest.TestCase):
 class GoldfishManaTableGuardTests(unittest.TestCase):
     """Every fleet card's goldfish mana against a reviewed table.
 
-    tests/fixtures/goldfish_mana.json holds, for every card in the 21 decks
+    tests/fixtures/goldfish_mana.json holds, for every card in the 16 decks
     that is a land or has mana text ("add", "adds", "produces", a land
     search), the mana read off its text by hand (owner-approved mana model,
     2026-11-19). The test reads the live decks (data/commanders/*/deck.json,
@@ -8644,7 +8698,7 @@ class GoldfishManaTableGuardTests(unittest.TestCase):
 
     @staticmethod
     def deck_cards(root: Path, exporter_module) -> set:
-        """(card, deck id) for every card of the 21 decks."""
+        """(card, deck id) for every card of the fleet's decks."""
         pairs = set()
         for deck_id, _, _ in exporter_module.DECKS:
             deck = json.loads((root / "data" / "commanders" / deck_id / "deck.json").read_text())
@@ -11515,7 +11569,7 @@ class SubstituteTagVocabularyTests(unittest.TestCase):
                 with self.subTest(message, card=entry["name"], combo=bool(win_conditions)):
                     self.assertEqual(self.outcome(entry, win_conditions, details=True),
                                      ([f"Deck test-deck: {message}"], f"test-deck: {entry['name']}: {message}"))
-        # A land needs no role (every entry of the 21 decks carries a role).
+        # A land needs no role (every entry of the fleet's decks carries a role).
         for win_conditions in ([], [self.LINE]):
             with self.subTest("a land without a role", combo=bool(win_conditions)):
                 self.assertEqual(self.outcome({"name": "Academy Ruins"}, win_conditions), ([], None))
@@ -11526,7 +11580,8 @@ class SubstituteTagVocabularyTests(unittest.TestCase):
 
 
 class SubstituteFleetTests(unittest.TestCase):
-    """The 21 deck files after the step-1 tags (owner-accepted 2026-11-24):
+    """The fleet's deck files after the step-1 tags (owner-accepted 2026-11-24;
+    21 decks then, 16 since five were removed on 2026-11-27):
     every one loads through the tag vocabulary, and what the combo checks let
     each tutor and recursion entry supply is what the accepted checklist says
     (tests/fixtures/gate_substitutes.json, written by hand from its "Step 1"
@@ -11548,7 +11603,7 @@ class SubstituteFleetTests(unittest.TestCase):
     def test_every_deck_file_loads_through_the_vocabulary(self):
         gate_tags_lib = importlib.import_module("scripts.gate_tags_lib")
         deck_ids = sorted(path.name for path in (self.ROOT / "data" / "commanders").iterdir() if path.is_dir())
-        self.assertEqual(len(deck_ids), 21)
+        self.assertEqual(len(deck_ids), 16)
         for deck_id in deck_ids:
             with self.subTest(deck=deck_id):
                 # Building the context raises on a vocabulary error or a
@@ -11591,21 +11646,27 @@ class SubstituteFleetTests(unittest.TestCase):
                 self.assertEqual(set(expected), listed)
                 lines += len(expected)
         # 113 checklist lines, less the recursion entries of anvil-chorus and
-        # armory-protocol, which keep no combo line (W1, W2).
-        self.assertEqual(lines, 111)
+        # armory-protocol, which keep no combo line (W1, W2): 111. Less the
+        # blocks of the four removed decks with a combo check (2026-11-27):
+        # armory-protocol 5, gandalf-party-guest 7, grave-dividends 29 and
+        # shield-doctrine 7, 48 in all: 63.
+        self.assertEqual(lines, 63)
 
     def test_a_paid_mulligan_keeps_only_the_substitutes_the_checks_use(self):
-        # Decision 6, in gandalf-party-guest: a kept seven of four lands, one
-        # line piece (Twinflame), Mystical Tutor (puts the card on top of the
-        # library: no credit) and Mox Amber, one card to bottom. Neither
-        # Tutor nor Mox is kept; the dearer goes: Mystical Tutor ({U}) before
-        # Mox Amber ({0}).
-        _, context = self.deck_context("gandalf-party-guest")
-        hand = ["Command Tower", "Glacial Fortress", "Sulfur Falls", "Clifftop Retreat", "Twinflame",
-                "Mystical Tutor", "Mox Amber"]
-        self.assertEqual(exporter.goldfish_bottom_cards(hand, 1, context["profiles"], ["W", "U", "R"], [],
+        # Decision 6, in the-white-forge (gandalf-party-guest's case until
+        # that deck left the fleet): a kept seven of four lands, one line
+        # piece (Heliod, Sun-Crowned), Enlightened Tutor (puts the card on top
+        # of the library: no credit; it supplies nothing in the accepted
+        # checklist) and Hangarback Walker (no line piece), one card to
+        # bottom. Neither Tutor nor Walker is kept; the dearer goes:
+        # Enlightened Tutor ({W}) before Hangarback Walker ({X}{X}, mana
+        # value 0).
+        _, context = self.deck_context("the-white-forge")
+        hand = ["Plains", "Ancient Den", "Minas Tirith", "War Room", "Heliod, Sun-Crowned",
+                "Enlightened Tutor", "Hangarback Walker"]
+        self.assertEqual(exporter.goldfish_bottom_cards(hand, 1, context["profiles"], ["W"], [],
                                                         context["mulliganKeep"], context["handOnlyPieces"]),
-                         ["Mystical Tutor"])
+                         ["Enlightened Tutor"])
 
 
 class ControlDeckGoldfishEqualityTests(unittest.TestCase):
@@ -12145,10 +12206,10 @@ class GoldfishHoldTests(unittest.TestCase):
                           for label, casts in resolved.items()},
                          {"line piece": [], "no line": [2]})
 
-    def test_armory_protocols_deploy_leaves_a_reserved_tutor_in_the_hand(self):
-        # armory-protocol's deploy engine (transform for {4}{U}{R}, then one
-        # artifact from the hand put onto the battlefield free at each
-        # combat) in a deck with a combo line, Probe Piece A + Probe Piece B
+    def test_a_deploy_engine_leaves_a_reserved_tutor_in_the_hand(self):
+        # armory-protocol's deploy engine (DEPLOY_ENGINE: transform for
+        # {4}{U}{R}, then one artifact from the hand put onto the battlefield
+        # free at each combat) in a deck with a combo line, Probe Piece A + Probe Piece B
         # ({1} enchantments). Wishclaw Talisman (Artifact, {1}{B}: "{1}, {T},
         # Remove a wish counter from this artifact: Search your library for a
         # card, put it into your hand", tagged as ComboCheckSubstituteTests
@@ -12182,8 +12243,9 @@ class GoldfishHoldTests(unittest.TestCase):
                                         "pieces": ["Probe Piece A", "Probe Piece B"],
                                         "cards": ["Probe Piece A", "Probe Piece B"]}]}
         decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
-        context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, ["U", "B", "R"],
-                                                  "armory-protocol")
+        with patch.dict(exporter.COMMANDER_DEPLOY_ENGINE, {"synthetic-deploy": DEPLOY_ENGINE}):
+            context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, ["U", "B", "R"],
+                                                      "synthetic-deploy")
         self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
         self.assertEqual(exporter.deploy_engine_choice(context["deployEngine"],
                                                        ["Probe Huge A", "Probe Huge B", wishclaw, "Probe Nine"],
@@ -12220,6 +12282,35 @@ class GoldfishHoldTests(unittest.TestCase):
                  "permanent or that has {X} in its cost, a reserved tutor or recursion card that is not a "
                  "permanent, and a card the goldfish plays as its land face are declined and bottomed)")),
             (1, 1))
+
+    def test_the_methodology_names_a_deploy_engine_only_in_a_deck_that_has_one(self):
+        # A deck of Forests with armory-protocol's deploy engine (DEPLOY_ENGINE)
+        # under a synthetic id; the same deck without it; and the same deck
+        # without it while another deck id has the engine. The deploy wording
+        # (the engine's note, its Equipment in the mulligan, imprint and
+        # reserved-card sentences, "deployed free", the attachment) is in the
+        # first only.
+        def methodology(engines: dict) -> str:
+            with patch.object(exporter, "GOLDFISH_GAMES", 16), patch("multiprocessing.Pool", SerialPool), \
+                    patch.dict(exporter.COMMANDER_DEPLOY_ENGINE, engines):
+                goldfish, _ = exporter.compute_goldfish_section(
+                    decklist=["Forest"] * 99, deck_data={"decklist": []}, metadata=CARDS,
+                    commander_name="The Ur-Dragon", commander_colors=["G"], deck_id="synthetic-deploy")
+            return goldfish["methodology"]
+
+        phrases = ("Commander transform/free-deploy engine modeled (DEC-405)",
+                   "the combo checks' cards and a deploy engine's configured Equipment",
+                   "the other reserved combo pieces, deploy-engine Equipment, a land",
+                   "neither cast from the hand nor deployed free",
+                   "from the hand, and a deploy engine's configured Equipment.",
+                   "by the mulligan, deployed free or cast from a cascade",
+                   "the commander's free deploy attaches the Equipment it puts out")
+        with_engine = methodology({"synthetic-deploy": DEPLOY_ENGINE})
+        without = methodology({})
+        elsewhere = methodology({"other-deck": DEPLOY_ENGINE})
+        self.assertEqual(([phrase in with_engine for phrase in phrases], re.findall(r"\bdeploy\w*", without),
+                          re.findall(r"\bdeploy\w*", elsewhere)),
+                         ([True] * len(phrases), [], []))
 
     def test_an_imprint_exiles_a_held_card_before_a_castable_one(self):
         """The one path that consumes a held card while step 1 reads the
@@ -12333,25 +12424,34 @@ class EngineTableCastGuardTests(unittest.TestCase):
                 found[deck_id] = never
         self.assertEqual(found, self.EXCEPTIONS)
 
-    def test_armory_protocols_mjolnir_waits_for_the_free_deploy(self):
+    def test_a_deploy_engines_mjolnir_waits_for_the_free_deploy(self):
         # Mjölnir, Hammer of Thor (Legendary Artifact — Equipment, {3}{R};
-        # "Double all damage equipped creature would deal."): in the deck's
-        # goldfish context it is a deploy-engine Equipment (bonus 0), so it is
-        # never cast from the hand, where it would never attach.
-        metadata = json.loads(Path(exporter.METADATA_FILE).read_text())
-        deck = json.loads((self.ROOT / "data" / "commanders" / "armory-protocol" / "deck.json").read_text())
-        decklist = [card["name"] for card in deck["decklist"] for _ in range(card.get("quantity", 1))]
-        context = exporter.build_goldfish_context(decklist, deck, metadata, deck["commander"],
-                                                  metadata[deck["commander"]]["colors"], "armory-protocol")
-        name = "Mjölnir, Hammer of Thor"
-        self.assertEqual((context["deployEngine"]["equipmentPower"].get(name),
-                          exporter.goldfish_never_casts(name, context["profiles"][name], context)),
-                         (0, True))
+        # "Double all damage equipped creature would deal."): under
+        # armory-protocol's deploy engine (DEPLOY_ENGINE) it is a deploy-engine
+        # Equipment (bonus 0), so it is never cast from the hand, where it
+        # would never attach. Without the engine the same card in the same
+        # deck is cast like any other. The deck: Mjölnir with the role
+        # armory-protocol gave it (wincon), Islands and Mountains; made up:
+        # Probe Deploy Commander ({1}).
+        commander, name = "Probe Deploy Commander", "Mjölnir, Hammer of Thor"
+        decklist = [name] + ["Island"] * 20 + ["Mountain"] * 20
+        metadata = {"Island": CARDS["Island"], "Mountain": CARDS["Mountain"], name: FLEET_METADATA[name],
+                    commander: {"type_line": "Legendary Creature — Human", "mana_cost": "{1}", "cmc": 1.0,
+                                "oracle_text": "", "colors": []}}
+        deck_data = {"decklist": [{"name": name, "primary_role": "wincon"}]}
+        never = {}
+        for label, engines in (("deploy engine", {"synthetic-deploy": DEPLOY_ENGINE}), ("no engine", {})):
+            with patch.dict(exporter.COMMANDER_DEPLOY_ENGINE, engines):
+                context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, ["U", "R"],
+                                                          "synthetic-deploy")
+            never[label] = ((context["deployEngine"] or {}).get("equipmentPower", {}).get(name),
+                            exporter.goldfish_never_casts(name, context["profiles"][name], context))
+        self.assertEqual(never, {"deploy engine": (0, True), "no engine": (None, False)})
 
-    def test_armory_protocols_mjolnir_enters_through_the_free_deploy(self):
-        # armory-protocol's deploy engine (transform for {4}{U}{R}, then one
-        # artifact from the hand put onto the battlefield free at each
-        # combat). Pinned game: kept seven two Islands, two Mountains,
+    def test_a_deploy_engines_mjolnir_enters_through_the_free_deploy(self):
+        # armory-protocol's deploy engine (DEPLOY_ENGINE: transform for
+        # {4}{U}{R}, then one artifact from the hand put onto the battlefield
+        # free at each combat). Pinned game: kept seven two Islands, two Mountains,
         # Mjölnir and two Probe Huges ({20} sorceries); an Island and a
         # Mountain are drawn on turns 1 and 2, then Probe Nines. Probe Deploy
         # Commander ({1}) is cast on turn 1 and transforms on turn 6 with six
@@ -12369,8 +12469,9 @@ class EngineTableCastGuardTests(unittest.TestCase):
         deck_data = {"decklist": [{"name": name, **FIXTURE_ROLE} for name in dict.fromkeys(opening + library)
                                   if name != mjolnir] + [{"name": mjolnir, "primary_role": "wincon"}]}
         decklist, shuffle = ComboCheckSubstituteTests.pinned_deal(opening, library)
-        context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, ["U", "R"],
-                                                  "armory-protocol")
+        with patch.dict(exporter.COMMANDER_DEPLOY_ENGINE, {"synthetic-deploy": DEPLOY_ENGINE}):
+            context = exporter.build_goldfish_context(decklist, deck_data, metadata, commander, ["U", "R"],
+                                                      "synthetic-deploy")
         self.assertFalse(exporter.should_goldfish_mulligan(opening, context["profiles"], context["handOnlyPieces"]))
         casts = []
         original_resolve = exporter.resolve_cast_effects

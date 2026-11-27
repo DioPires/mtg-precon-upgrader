@@ -326,7 +326,9 @@ for (const { width, blocked } of BLOCKED.flatMap((blocked) => WIDTHS.map((width)
 // Chromium rounds each glyph's advance to 7px, so "Recursion" ran past the
 // chart. The Performance blocks now stack up to 1190px, and at 1191px the
 // chart is 461.5px wide. The case reads every deck at 1191px (DEC-1095 N1),
-// so a deck whose labels need more fails on CI's own layout.
+// so a deck whose labels need more fails on CI's own layout. slivers left the
+// fleet on 2026-11-27; the stacked read opens the-white-forge, whose labels
+// needed as much (styles.css, DEC-1074).
 const STACKED_UP_TO = 1190;
 
 test.describe('DEC-1074 Performance blocks', () => {
@@ -336,7 +338,7 @@ test.describe('DEC-1074 Performance blocks', () => {
     const tracks = () => page.locator('.gv1-perf-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
 
     await page.setViewportSize({ width: STACKED_UP_TO, height: 900 });
-    await openSettled(page, 'slivers');
+    await openSettled(page, 'the-white-forge');
     expect.soft(await tracks(), `blocks across at ${STACKED_UP_TO}px`).toBe(1);
 
     // DEC-1095 guard (a): every deck at the first width with the blocks side by side.

@@ -23,6 +23,12 @@
 // the rules act, that the engine tiles keep each word whole with the web
 // fonts, and that the eternal-agony note that this issue reworded breaks only
 // between words in the fallback faces.
+//
+// grave-dividends and gandalf-party-guest left the fleet on 2026-11-27; the
+// cases read the decks that remain. grave-dividends' win-condition text held
+// the only Commander Spellbook URL in a win condition, so the two fallback
+// cases put that URL into eternal-agony's first win condition (withWinconUrl),
+// and a case of the rules' reach reads the rule's computed value too.
 
 import { expect, test, type Page } from './support/test';
 
@@ -37,6 +43,20 @@ const WIDE_FACES =
 const RULED = ['.gv1-cmd-deckname', '.gv1-engine-cards .gv1-card-tile-note', '.gv1-wincon-desc', '.gv1-combo-desc'].join(
   ', ',
 );
+
+// grave-dividends' URL (its win condition "Infinite sacrifice loop → drain")
+// at the end of eternal-agony's first win-condition text.
+const WINCON_URL = 'https://commanderspellbook.com/combo/2292-2730-3175/';
+async function withWinconUrl(page: Page): Promise<void> {
+  await page.route('**/data/commanders/eternal-agony/deck.json', async (route) => {
+    const response = await route.fetch();
+    const deck = (await response.json()) as { winConditions: { description: string }[] };
+    const [first, ...rest] = deck.winConditions;
+    const url = ` Combo URL example: ${WINCON_URL}`;
+    const winConditions = [{ ...first, description: first.description + url }, ...rest];
+    await route.fulfill({ response, json: { ...deck, winConditions } });
+  });
+}
 
 // Resolve once the fonts are in (or have failed) and the page has not moved
 // for 300ms: the selector's smooth scroll is still running at first paint.
@@ -93,10 +113,20 @@ async function readGuide(page: Page): Promise<Reading> {
   }, RULED);
 }
 
-async function offenders(page: Page, decks: string[], css?: string): Promise<string[]> {
+// `winconText`: a deck whose rendered win-condition texts must hold a text
+// (the routed URL) before its guide is measured.
+async function offenders(
+  page: Page,
+  decks: string[],
+  css?: string,
+  winconText: Record<string, string> = {},
+): Promise<string[]> {
   const out: string[] = [];
   for (const deck of decks) {
     await openSettled(page, deck, css);
+    if (winconText[deck]) {
+      await expect(page.locator('.gv1-wincon-desc', { hasText: winconText[deck] }), `${deck}: the routed text`).toHaveCount(1);
+    }
     const g = await readGuide(page);
     expect(g.loadedFaces, `${deck}: a web font loaded, so the fallback faces are not under test`).toBe(0);
     if (g.scrollWidth > g.clientWidth || g.past.length > 0) {
@@ -109,26 +139,33 @@ async function offenders(page: Page, decks: string[], css?: string): Promise<str
 test.describe('DEC-1116 @ 320px, web fonts blocked', () => {
   test.use({ cards: 'seeded', fonts: 'blocked', viewport: { width: 320, height: 900 } });
 
-  test('the five guides that ran past the viewport in the fallback faces fit it', async ({ page }) => {
+  test('the guides that ran past the viewport in the fallback faces fit it', async ({ page }) => {
     test.setTimeout(60_000);
-    const decks = ['eternal-agony', 'grave-dividends', 'broodfire-hatchery', 'witherbloom-the-balancer', 'titan-convergence'];
-    expect(await offenders(page, decks), 'Guides wider than a 320px viewport in the fallback faces').toEqual([]);
+    await withWinconUrl(page);
+    // eternal-agony: its tile note and the routed win-condition URL.
+    const decks = ['eternal-agony', 'broodfire-hatchery', 'witherbloom-the-balancer', 'titan-convergence'];
+    expect(
+      await offenders(page, decks, undefined, { 'eternal-agony': WINCON_URL }),
+      'Guides wider than a 320px viewport in the fallback faces',
+    ).toEqual([]);
   });
 
   test('with Verdana and Menlo, the guides where each rule acts fit the viewport', async ({ page }) => {
     test.setTimeout(60_000);
+    await withWinconUrl(page);
     const decks = [
       'titan-convergence', // deck name
       'exponential-growth', // deck name
-      'eternal-agony', // tile note text (393 / 320 on main)
+      'eternal-agony', // tile note text (393 / 320 on main); the routed win-condition URL
       'zada-hedron-grinder', // tile note
-      'grave-dividends', // win-condition and combo URLs
       'broodfire-hatchery', // combo URLs
       'hidden-legion', // engine role title (DEC-1156; 336 / 320 before it)
       'tidal-legion', // engine role title (338)
-      'gandalf-party-guest', // engine role title (338)
     ];
-    expect(await offenders(page, decks, WIDE_FACES), 'Guides wider than a 320px viewport in a wide face').toEqual([]);
+    expect(
+      await offenders(page, decks, WIDE_FACES, { 'eternal-agony': WINCON_URL }),
+      'Guides wider than a 320px viewport in a wide face',
+    ).toEqual([]);
   });
 });
 
@@ -294,6 +331,20 @@ test.describe('DEC-1116 rules: where they act', () => {
       }
     }
     expect(out, 'Widths where the tile rule does not reach exactly the engine tile note').toEqual([]);
+  });
+
+  // grave-dividends, the deck with Commander Spellbook URLs in its win-condition
+  // texts, left the fleet on 2026-11-27; broodfire-hatchery's combo texts still
+  // hold some. So the rule's reach to both texts is read here directly.
+  test('at 768px and below the win-condition and combo texts may break inside a word', async ({ page }) => {
+    const out: string[] = [];
+    for (const width of [320, 390, 768]) {
+      await page.setViewportSize({ width, height: 900 });
+      await open(page, 'eternal-agony');
+      const { wincon, combo } = (await readRules(page)).wrap;
+      if (wincon !== 'anywhere' || combo !== 'anywhere') out.push(`@${width}: win condition ${wincon}, combo ${combo}`);
+    }
+    expect(out, 'Widths where the win-condition or combo text does not break anywhere').toEqual([]);
   });
 
   // DEC-1046 scales the deck name from 769px to about 1000px, so the 88px

@@ -5,9 +5,9 @@ Usage:
   python compute_purchase_list.py --owned Owned.csv --shop deck1 deck2 [--built deck3 deck4]
 
 Example:
-  python compute_purchase_list.py --owned Owned.csv --shop grave-dividends \
+  python compute_purchase_list.py --owned Owned.csv --shop hidden-legion \
     --built gathering-shadow titan-convergence eternal-agony eternal-harvest \
-           the-white-forge verdant-tide mutant-multiplication creeping-corruption
+           the-white-forge verdant-tide creeping-corruption
 """
 
 import argparse

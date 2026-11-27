@@ -13,8 +13,32 @@
 // its row. At 768px and below the title is clamp(30px, 10vw, 42px): 32px at
 // 320px, 39px at 390px and 42px from 420px up. The size rule reaches the
 // engine title only; the other users of `.gv1-serif-xl` keep 42px.
+//
+// shield-doctrine and gandalf-party-guest left the fleet on 2026-11-27. No
+// deck has a role title as long as "Counteroffensive" now, so the web-fonts
+// case gives two of titan-convergence's tabs shield-doctrine's two titles
+// (withShieldTitles). With both rules taken out they read 332 / 320 and
+// 376 / 320 there, as on shield-doctrine (checked 2026-11-27).
 
 import { expect, test, type Page } from './support/test';
+
+const DECK = 'titan-convergence';
+
+// shield-doctrine's role titles, the way dec1177-empty-sigils.spec.ts changes
+// a deck file: "Quartermaster Corps" (4 cards there) on titan-convergence's
+// tab 4 ("Flash & Instant Speed", 3 cards) and "Counteroffensive" (12 cards)
+// on its tab 6 ("Engine & Value", 14 cards). A two-digit card count in the
+// head, as shield-doctrine's, is what takes the root past 320px when the
+// head does not wrap.
+async function withShieldTitles(page: Page): Promise<void> {
+  await page.route(`**/data/commanders/${DECK}/deck.json`, async (route) => {
+    const response = await route.fetch();
+    const deck = (await response.json()) as { categories: { name: string }[] };
+    const titles: Record<number, string> = { 3: 'Quartermaster Corps', 5: 'Counteroffensive' };
+    const categories = deck.categories.map((c, i) => (i in titles ? { ...c, name: titles[i] } : c));
+    await route.fulfill({ response, json: { ...deck, categories } });
+  });
+}
 
 // WIDE_FACES of dec1116-phone-fallback.spec.ts: a face wider than the web fonts.
 const WIDE_FACES =
@@ -104,7 +128,7 @@ test.describe('DEC-1156 rules: where they act', () => {
       1440: '42px',
     };
     const got: Record<number, string> = {};
-    await openDeck(page, 'shield-doctrine');
+    await openDeck(page, DECK);
     for (const width of Object.keys(want).map(Number)) {
       await page.setViewportSize({ width, height: 900 });
       got[width] = (await readHead(page)).title;
@@ -118,7 +142,7 @@ test.describe('DEC-1156 rules: where they act', () => {
     const want: Record<string, string> = { '740x360': '42px', '390x300': '39px', '320x280': '32px' };
     const got: Record<string, string> = {};
     await page.setViewportSize({ width: 740, height: 360 });
-    await page.goto('/deck/shield-doctrine');
+    await page.goto(`/deck/${DECK}`);
     await page.locator('.gv1-perf-grid').waitFor();
     for (const size of Object.keys(want)) {
       const [width, height] = size.split('x').map(Number);
@@ -137,7 +161,7 @@ test.describe('DEC-1156 rules: where they act', () => {
       991: 'nowrap normal',
     };
     const got: Record<number, string> = {};
-    await openDeck(page, 'shield-doctrine');
+    await openDeck(page, DECK);
     for (const width of Object.keys(want).map(Number)) {
       await page.setViewportSize({ width, height: 900 });
       const h = await readHead(page);
@@ -167,28 +191,32 @@ test.describe('DEC-1156 @ 320px: the guides fit', () => {
   test.describe('web fonts', () => {
     test.use({ cards: 'seeded' });
 
-    test('shield-doctrine tabs 4 and 7 fit the viewport', async ({ page }) => {
+    test('the longest role titles fit the viewport', async ({ page }) => {
       test.setTimeout(60_000);
-      await openDeck(page, 'shield-doctrine');
+      await withShieldTitles(page);
+      await openDeck(page, DECK);
       const out: string[] = [];
-      for (const tab of [4, 7]) {
+      const titles: string[] = [];
+      for (const tab of [4, 6]) {
         await page.locator('.gv1-engine-tabs [role="tab"]').nth(tab - 1).click();
         await settle(page);
         const g = await readGuide(page);
         expect(g.loadedFaces, `tab ${tab}: no web font loaded, so the web fonts are not under test`).toBeGreaterThan(0);
+        titles.push(await page.locator('.gv1-engine-panel-head h3').innerText());
         if (g.scrollWidth > g.clientWidth || g.titlePast) out.push(`tab ${tab}: root ${g.scrollWidth} / ${g.clientWidth}; ${g.title}`);
       }
-      expect(out, 'shield-doctrine tabs wider than a 320px viewport').toEqual([]);
+      expect(titles, 'the titles under test').toEqual(['Quartermaster Corps', 'Counteroffensive']);
+      expect(out, `${DECK} tabs wider than a 320px viewport`).toEqual([]);
     });
   });
 
   test.describe('Verdana and Menlo', () => {
     test.use({ cards: 'seeded', fonts: 'blocked' });
 
-    test('the three guides whose title ran past the viewport fit it', async ({ page }) => {
+    test('the guides whose title ran past the viewport fit it', async ({ page }) => {
       test.setTimeout(60_000);
       const out: string[] = [];
-      for (const deck of ['hidden-legion', 'tidal-legion', 'gandalf-party-guest']) {
+      for (const deck of ['hidden-legion', 'tidal-legion']) {
         await openDeck(page, deck, WIDE_FACES);
         const g = await readGuide(page);
         expect(g.loadedFaces, `${deck}: a web font loaded, so the wide face is not under test`).toBe(0);
